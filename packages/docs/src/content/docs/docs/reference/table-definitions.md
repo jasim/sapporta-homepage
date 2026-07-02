@@ -61,18 +61,28 @@ client payloads.
 
 Import semantic column factories from `@sapporta/server/table`.
 
-| Factory                   | SQLite storage                | Runtime value        | Notes                                |
-| ------------------------- | ----------------------------- | -------------------- | ------------------------------------ |
-| `text("name")`            | `TEXT`                        | `string`             | Free text, codes, enum strings.      |
-| `number("qty")`           | `REAL`                        | `number`             | General numeric measures.            |
-| `money("amount")`         | `REAL`                        | `number`             | Currency-formatted number.           |
-| `percentage("rate")`      | `REAL`                        | `number`             | Percent-formatted number.            |
-| `bool("active")`          | `INTEGER 0/1`                 | `boolean`            | Parses filters as `true` or `false`. |
-| `date("due_date")`        | `TEXT`, `YYYY-MM-DD`          | `Temporal.PlainDate` | Calendar dates.                      |
-| `timestamp("created_at")` | `TEXT`, canonical UTC instant | `Temporal.Instant`   | Points in time.                      |
+| Factory                   | SQLite storage                 | Runtime value        | Notes                                |
+| ------------------------- | ------------------------------ | -------------------- | ------------------------------------ |
+| `text("name")`            | `TEXT`                         | `string`             | Free text, codes, enum strings.      |
+| `number("qty")`           | `REAL`                         | `number`             | General numeric measures.            |
+| `money("amount")`         | `REAL`                         | `number`             | Currency-formatted number.           |
+| `percentage("rate")`      | `REAL`                         | `number`             | Percent-formatted number.            |
+| `bool("active")`          | `INTEGER 0/1`                  | `boolean`            | Parses filters as `true` or `false`. |
+| `date("due_date")`        | `TEXT`, `YYYY-MM-DD`           | `Temporal.PlainDate` | Calendar dates.                      |
+| `timestamp("created_at")` | `TEXT`, `YYYY-MM-DDTHH:mm:ssZ` | `Temporal.Instant`   | Points in time.                      |
 
 Use raw Drizzle `integer("id").primaryKey({ autoIncrement: true })` for integer
 primary keys and raw `integer()` columns for foreign keys.
+
+Money columns are stored as SQLite `REAL`, not text. They sort, filter, compare,
+and aggregate as numbers; currency display comes from
+`displayFormat: "currency"` stamped by `money()`. There is no separate
+`type: "money"` column metadata field.
+
+Date and timestamp factories parse values to Temporal types after the API
+boundary. Use `Temporal.PlainDate` for dates and `Temporal.Instant` for
+timestamps in application code; do not use `Date`, `dayjs`, or `date-fns` for
+Sapporta schema date/time parsing or arithmetic.
 
 ### Column metadata
 
@@ -99,6 +109,18 @@ Foreign keys give source-to-target navigation:
 customer_id: integer("customer_id")
   .notNull()
   .references(() => customersTable.id),
+```
+
+Name ordinary foreign-key columns after the referenced table role, usually
+`<singular_target>_id`, such as `customer_id` or `order_id`. For
+self-referential keys, Drizzle needs an explicit return type annotation:
+
+```ts
+import { type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
+
+parent_id: integer("parent_id").references(
+  (): AnySQLiteColumn => accountsTable.id,
+),
 ```
 
 Declare `children` on the referenced table when users need target-to-source

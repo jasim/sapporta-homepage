@@ -12,7 +12,7 @@ Sapporta apps model data in TypeScript. Each table lives in
 
 - A raw Drizzle table, such as `productsTable`, that owns SQL columns,
   constraints, indexes, and foreign keys.
-- A Sapporta `table()` wrapper, such as `products`, that owns product-facing
+- A Sapporta `sapportaTable()` wrapper, such as `products`, that owns product-facing
   metadata for labels, lookups, editing, search, relationships, and row
   ownership.
 
@@ -21,7 +21,13 @@ names, snake_case column names, and a human label for the generated UI.
 
 ```ts
 import { sqliteTable, integer } from "drizzle-orm/sqlite-core";
-import { table, text, money, bool, timestamp } from "@sapporta/server/table";
+import {
+  sapportaTable,
+  text,
+  money,
+  bool,
+  timestamp,
+} from "@sapporta/server/table";
 import { Temporal } from "@sapporta/shared/temporal";
 
 export const productsTable = sqliteTable("products", {

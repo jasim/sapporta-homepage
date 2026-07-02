@@ -24,6 +24,9 @@ If pnpm is not available yet, use npx for initialization:
 npx sapporta init task-app
 ```
 
+If the initializer does not install dependencies, run `pnpm install` before
+`pnpm dev`. A lockfile alone does not prove `node_modules` exists.
+
 The generated app is a regular TypeScript monorepo. Keep `pnpm dev` running
 while you work. The frontend is usually available at:
 

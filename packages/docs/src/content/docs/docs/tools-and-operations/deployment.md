@@ -17,6 +17,8 @@ The generated app gives you two starting points:
 - `.env.development` for local `pnpm dev`.
 - `.env.production.example` as a checklist for the variables your deployment
   platform should provide.
+- `DEPLOYMENT.md` as the project-local deployment source of truth for exact
+  commands, topology notes, and environment-variable checks.
 
 Do not deploy `.env.development`. It contains local defaults such as a
 development `BETTER_AUTH_SECRET`, a Vite-facing `SAPPORTA_PUBLIC_BASE_URL`, and
