@@ -35,6 +35,7 @@ import {
   type SchemaTableRootRowsOptions,
   type SchemaTableRowsByLevel,
   type TGridCellContext,
+  type TGridCellEditorContext,
   useSchemaStore,
 } from "@sapporta/frontend";
 import { Check, Copy, Maximize2 } from "lucide-react";
@@ -47,6 +48,7 @@ const quoteRowParam = "quoteRow";
 const booksGridRootRows = {
   pageSize: 15,
 } satisfies SchemaTableRootRowsOptions;
+const quoteTextBaseClassName = "homepage-quote-cell homepage-quote-grid-text";
 
 type QuoteDetailsOpenDetail = {
   path: string;
@@ -231,10 +233,12 @@ function BooksGrid({
           minWidth: 32,
           maxWidth: 100,
           // TGrid forbids assigning the same gesture to edit and activation.
-          // Enter owns the expand-or-edit activation; normal editing remains
-          // available through F2, typing, and double-click.
+          // Enter owns the expand-or-edit activation. Custom TGrid editors do
+          // not receive the typed seed, so quote editing starts through F2,
+          // double-click, or the second-Enter activation path.
           edit: {
-            startsOn: ["f2", "type", "doubleClick"],
+            editor: QuoteTextEditor,
+            startsOn: ["f2", "doubleClick"],
           },
           activation: {
             startsOn: ["enter"],
@@ -362,7 +366,7 @@ function QuoteTextCell({
     <div
       ref={ref}
       className={[
-        "homepage-quote-cell px-3 py-2 text-[1.04rem] leading-relaxed text-sap-fg",
+        quoteTextBaseClassName,
         expanded
           ? "max-h-none overflow-visible whitespace-pre-wrap"
           : "max-h-48 overflow-hidden",
@@ -370,6 +374,70 @@ function QuoteTextCell({
     >
       {String(value ?? "")}
     </div>
+  );
+}
+
+function QuoteTextEditor({
+  value,
+  commit,
+  cancel,
+}: TGridCellEditorContext<SchemaTableRowsByLevel, unknown, typeof quotesLevelName, "quote_text">) {
+  const [draft, setDraft] = useState(() => String(value ?? ""));
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const draftRef = useRef(draft);
+  const finishedRef = useRef(false);
+
+  useEffect(() => {
+    const node = textareaRef.current;
+    if (!node) return;
+
+    node.focus();
+    node.select();
+  }, []);
+
+  function commitDraft(target?: "next" | "prev") {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    commit(draftRef.current, target);
+  }
+
+  function cancelEdit() {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    cancel();
+  }
+
+  return (
+    <textarea
+      ref={textareaRef}
+      aria-label="Quote"
+      data-grid-part="editor-input"
+      className={[quoteTextBaseClassName, "homepage-quote-editor"].join(" ")}
+      value={draft}
+      onChange={(event) => {
+        draftRef.current = event.target.value;
+        setDraft(event.target.value);
+      }}
+      onBlur={() => commitDraft()}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          cancelEdit();
+          return;
+        }
+
+        if (event.key === "Tab") {
+          event.preventDefault();
+          commitDraft(event.shiftKey ? "prev" : "next");
+          return;
+        }
+
+        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+          event.preventDefault();
+          commitDraft();
+        }
+      }}
+    />
   );
 }
 

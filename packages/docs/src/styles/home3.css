@@ -401,6 +401,28 @@
   font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
+.homepage-quote-grid-text {
+  color: var(--sap-fg);
+  font-size: 1.04rem;
+  line-height: 1.625;
+  padding: 0.5rem 0.75rem;
+}
+
+.homepage-grid [data-grid-part="editor-overlay"] .homepage-quote-editor[data-grid-part="editor-input"] {
+  background: var(--sap-surface);
+  border: 0;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--sap-link) 35%, transparent);
+  display: block;
+  height: 100%;
+  min-height: 8rem;
+  outline: none;
+  overflow-wrap: normal;
+  padding: 0.5rem calc(0.75rem + 10px);
+  resize: none;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
 .homepage-grid-message {
   box-shadow: none;
 }
