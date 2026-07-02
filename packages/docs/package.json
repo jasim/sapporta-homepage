@@ -1,0 +1,33 @@
+{
+  "name": "sapporta-homepage-app-docs",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.7",
+    "@astrojs/starlight": "^0.38.4",
+    "@js-temporal/polyfill": "0.5.1",
+    "@sapporta/frontend": "link:///Users/jasim/m/a/code/sapporta/packages/frontend",
+    "@sapporta/grid": "link:///Users/jasim/m/a/code/sapporta/packages/grid",
+    "@sapporta/shared": "link:///Users/jasim/m/a/code/sapporta/packages/shared",
+    "@sapporta/ui": "link:///Users/jasim/m/a/code/sapporta/packages/ui",
+    "astro": "^6.1.9",
+    "lucide-react": "^0.513.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-router-dom": "7.15.1",
+    "sharp": "^0.34.5",
+    "zustand": "5.0.13"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

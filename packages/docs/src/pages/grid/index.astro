@@ -1,0 +1,444 @@
+---
+import { Code } from "astro:components";
+import SapportaMark from "../../components/SapportaMark.astro";
+import "../../styles/sapporta.css";
+import "../../styles/home3.css";
+import "../../styles/grid-site.css";
+import {
+  BookOpen,
+  Braces,
+  Database,
+  Github,
+  Keyboard,
+  Layers3,
+  MousePointerClick,
+  Rows3,
+  ShieldCheck,
+} from "lucide-react";
+
+const title = "Sapporta Grid";
+const description =
+  "A React grid framework for editable, hierarchical data surfaces.";
+const codeTheme = "github-light-default";
+const quickStartCode = `import {
+  GridLevel,
+  GridRuntimeProvider,
+  createGridRuntime,
+  inMemoryGridDataSource,
+  rootPath,
+  useGridRuntimeEffect,
+  type GridSchema,
+  type TreeNode,
+} from "@sapporta/grid";
+import { select, text } from "@sapporta/grid/column-preset";
+
+const schema: GridSchema = {
+  rootLevel: "tasks",
+  levels: {
+    tasks: {
+      name: "tasks",
+      childLevels: [],
+      columns: [
+        text({ id: "title", name: "Task", edit: "default", width: "fill" }),
+        select({
+          id: "status",
+          name: "Status",
+          edit: "default",
+          options: [
+            { value: "todo", label: "To do" },
+            { value: "doing", label: "Doing" },
+            { value: "done", label: "Done" },
+          ],
+        }),
+      ],
+      options: { rowKey: (node) => String(node.columns.id) },
+    },
+  },
+};
+
+const tree: TreeNode[] = [
+  { levelName: "tasks", columns: { id: "1", title: "Review import", status: "doing" } },
+  { levelName: "tasks", columns: { id: "2", title: "Ship keyboard polish", status: "todo" } },
+];
+
+export function TaskGrid() {
+  const runtime = useGridRuntimeEffect(
+    () =>
+      createGridRuntime({
+        schema,
+        dataSource: inMemoryGridDataSource({
+          schema,
+          tree,
+          levels: { tasks: { sortMode: "client", filterMode: "none" } },
+        }),
+      }),
+    [],
+  );
+
+  if (!runtime) return null;
+
+  return (
+    <GridRuntimeProvider runtime={runtime}>
+      <GridLevel path={rootPath(schema.rootLevel)} />
+    </GridRuntimeProvider>
+  );
+}`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta
+      name="description"
+      content={description}
+    />
+    <link
+      rel="canonical"
+      href="https://sapporta.com/grid/"
+    />
+    <link
+      rel="icon"
+      href="/favicon.svg"
+      type="image/svg+xml"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="homepage draft-page grid-page">
+    <header class="homepage-header homepage-pad">
+      <div class="homepage-header-inner">
+        <a class="homepage-wordmark" href="/">
+          <SapportaMark
+            class="homepage-wordmark-icon"
+            title=""
+          />
+          Sapporta
+        </a>
+        <nav
+          class="homepage-nav"
+          aria-label="Main navigation"
+        >
+          <a class="homepage-nav-link" href="/"
+            >Sapporta</a
+          >
+          <a
+            class="homepage-nav-link"
+            href="/grid/docs/">Docs</a
+          >
+          <a
+            class="homepage-nav-link"
+            href="https://github.com/jasim/sapporta/tree/main/packages/grid"
+          >
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid-hero homepage-pad">
+        <div class="grid-hero-copy">
+          <div class="grid-kicker">
+            Standalone React package
+          </div>
+          <h1>Sapporta Grid</h1>
+          <p class="grid-subtitle">
+            A React grid framework for editable,
+            hierarchical data surfaces.
+          </p>
+          <p class="grid-lede">
+            No Sapporta project required. Install
+            <code>@sapporta/grid</code> and wire it
+            to your own data source.
+          </p>
+          <div class="grid-actions">
+            <a
+              class="grid-action grid-action-primary"
+              href="/grid/docs/getting-started/"
+            >
+              <BookOpen
+                size={18}
+                aria-hidden="true"
+              />
+              Read the Grid docs
+            </a>
+            <a
+              class="grid-action"
+              href="https://github.com/jasim/sapporta/tree/main/packages/grid"
+            >
+              <Github
+                size={18}
+                aria-hidden="true"
+              />
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="grid-demo-shell"
+          aria-label="Sapporta Grid feature demo"
+        >
+          <div class="grid-demo-toolbar">
+            <span>Tasks</span>
+            <span>7 rows</span>
+          </div>
+          <div class="grid-demo-table">
+            <div
+              class="grid-demo-row grid-demo-head"
+            >
+              <span></span>
+              <span>Task</span>
+              <span>Status</span>
+              <span>Owner</span>
+              <span>Due</span>
+            </div>
+            <div
+              class="grid-demo-row grid-demo-active"
+            >
+              <span class="grid-demo-check"
+              ></span>
+              <span>Review import workflow</span>
+              <span
+                ><mark data-tone="green"
+                  >Doing</mark
+                ></span
+              >
+              <span>Jasim</span>
+              <span>Jul 3</span>
+            </div>
+            <div class="grid-demo-row">
+              <span></span>
+              <span>Ship keyboard polish</span>
+              <span
+                ><mark data-tone="blue"
+                  >Ready</mark
+                ></span
+              >
+              <span>Maya</span>
+              <span>Jul 5</span>
+            </div>
+            <div
+              class="grid-demo-row grid-demo-parent"
+            >
+              <span>v</span>
+              <span>Invoice editor</span>
+              <span
+                ><mark data-tone="gray">Open</mark
+                ></span
+              >
+              <span>Arun</span>
+              <span>Jul 8</span>
+            </div>
+            <div
+              class="grid-demo-row grid-demo-child"
+            >
+              <span></span>
+              <span>Line item lookup column</span>
+              <span
+                ><mark data-tone="green"
+                  >Doing</mark
+                ></span
+              >
+              <span>Arun</span>
+              <span>Jul 8</span>
+            </div>
+            <div
+              class="grid-demo-row grid-demo-child"
+            >
+              <span></span>
+              <span>Quantity save handler</span>
+              <span
+                ><mark data-tone="gray">Open</mark
+                ></span
+              >
+              <span>Arun</span>
+              <span>Jul 9</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-section homepage-pad">
+        <div
+          class="grid-section-inner grid-two-col"
+        >
+          <div class="grid-copy">
+            <h2>
+              Use the grid without adopting the
+              app framework
+            </h2>
+            <p>
+              Sapporta Grid is the grid runtime
+              used by Sapporta's generated table
+              screens. The package itself does not
+              depend on Sapporta routes, table
+              metadata, auth, reports, or the app
+              shell.
+            </p>
+            <p>
+              You provide the schema, rows, save
+              behavior, and transport. The grid
+              handles row identity, focus,
+              editing, selection, nested row
+              paths, and the React surface around
+              that runtime.
+            </p>
+          </div>
+          <figure
+            class="homepage-schema-panel grid-code-panel"
+          >
+            <figcaption
+              class="homepage-schema-header"
+            >
+              <span class="homepage-schema-path"
+                >TaskGrid.tsx</span
+              >
+            </figcaption>
+            <div class="homepage-schema-code">
+              <Code
+                code={quickStartCode}
+                lang="tsx"
+                theme={codeTheme}
+              />
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section class="grid-section homepage-pad">
+        <div class="grid-section-inner">
+          <div class="grid-feature-grid">
+            <article>
+              <Keyboard
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Keyboard-first editing</h2>
+              <p>
+                Cell focus, edit gestures, range
+                selection, and row selection are
+                part of the runtime instead of
+                page-local event handlers.
+              </p>
+            </article>
+            <article>
+              <Layers3
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Hierarchical rows</h2>
+              <p>
+                Model parent rows, child levels,
+                expanded paths, and nested data
+                without flattening everything into
+                one table.
+              </p>
+            </article>
+            <article>
+              <Rows3
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Column presets</h2>
+              <p>
+                Start with text, number, date,
+                select, lookup, and selection
+                columns, then replace only the
+                cells that need custom behavior.
+              </p>
+            </article>
+            <article>
+              <MousePointerClick
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Interaction presets</h2>
+              <p>
+                Choose spreadsheet editing,
+                active-row workflows, multi-select
+                lists, or master-detail row
+                interaction per grid.
+              </p>
+            </article>
+            <article>
+              <Database
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Your data source</h2>
+              <p>
+                Use the in-memory source for local
+                state or connect the runtime to
+                your own REST endpoints and save
+                handlers.
+              </p>
+            </article>
+            <article>
+              <Braces
+                size={22}
+                aria-hidden="true"
+              />
+              <h2>Typed model</h2>
+              <p>
+                Define levels, columns, row keys,
+                child relationships, and edit
+                capabilities in TypeScript before
+                rendering the grid.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-section homepage-pad">
+        <div
+          class="grid-section-inner grid-full-sapporta"
+        >
+          <ShieldCheck
+            size={26}
+            aria-hidden="true"
+          />
+          <h2>When to use full Sapporta</h2>
+          <p>
+            Use Sapporta Grid by itself when you
+            already have a React app and your own
+            backend. Use the full Sapporta toolkit
+            when you also want schema-as-code
+            tables, generated CRUD APIs,
+            auth-aware row access, OpenAPI
+            discovery, reports, and app shell
+            wiring.
+          </p>
+          <div
+            class="grid-actions grid-actions-centered"
+          >
+            <a
+              class="grid-action grid-action-primary"
+              href="/docs/getting-started/"
+            >
+              <BookOpen
+                size={18}
+                aria-hidden="true"
+              />
+              Build with full Sapporta
+            </a>
+            <a
+              class="grid-action"
+              href="/grid/docs/using-with-sapporta/"
+            >
+              <ShieldCheck
+                size={18}
+                aria-hidden="true"
+              />
+              Compare the two paths
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

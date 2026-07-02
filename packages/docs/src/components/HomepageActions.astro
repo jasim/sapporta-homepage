@@ -1,0 +1,551 @@
+---
+const actions = [
+  {
+    href: "/docs/getting-started/",
+    label: "Build a Sapporta app",
+    icon: "get-started",
+    primary: true,
+  },
+  {
+    href: "/grid/",
+    label: "Use Sapporta Grid in React",
+    icon: "docs",
+    primary: false,
+  },
+  {
+    href: "https://github.com/jasim/sapporta",
+    label: "GitHub",
+    icon: "github",
+    primary: false,
+  },
+];
+
+const { flush = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    "home3-actions",
+    flush && "home3-actions-flush",
+  ]}
+>
+  {
+    actions.map((action) => (
+      <a
+        class:list={[
+          "home3-action",
+          action.primary &&
+            "home3-action-primary",
+        ]}
+        href={action.href}
+      >
+        {action.icon === "get-started" && (
+          <svg
+            class="home3-action-icon"
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 192 192"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              class="home3-action-icon-door"
+              d="M88 172 C87 126, 86 72, 91 28 C114 20, 142 22, 166 31 C164 74, 165 124, 168 173"
+              stroke-width="9.5"
+            />
+            <path
+              class="home3-action-icon-pencil"
+              d="M88 172 C87 126, 86 72, 91 28 C114 20, 142 22, 166 31 C164 74, 165 124, 168 173"
+              transform="translate(2.4 -2.1)"
+              stroke-width="3"
+            />
+            <g class="home3-action-icon-arrow">
+              <path
+                class="home3-action-icon-main"
+                d="M25 126 C39 121, 49 113, 61 116 C73 119, 80 105, 92 104 C104 102, 111 94, 122 91"
+                stroke-width="12"
+              />
+              <path
+                class="home3-action-icon-main"
+                d="M104 75 C113 80, 119 85, 126 93"
+                stroke-width="12"
+              />
+              <path
+                class="home3-action-icon-main"
+                d="M122 91 C114 98, 108 107, 104 117"
+                stroke-width="12"
+              />
+              <path
+                class="home3-action-icon-pencil"
+                d="M25 126 C39 121, 49 113, 61 116 C73 119, 80 105, 92 104 C104 102, 111 94, 122 91"
+                transform="translate(2.4 -2.2)"
+                stroke-width="3.8"
+              />
+              <path
+                class="home3-action-icon-pencil"
+                d="M104 75 C113 80, 119 85, 126 93 M122 91 C114 98, 108 107, 104 117"
+                transform="translate(-2 2.2)"
+                stroke-width="3.8"
+              />
+            </g>
+          </svg>
+        )}
+        {action.icon === "docs" && (
+          <svg
+            class="home3-action-icon"
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 192 192"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <g
+              class="home3-action-icon-docs-sheet home3-action-icon-docs-sheet-back"
+              transform="translate(-21 -18) rotate(-9 96 96)"
+            >
+              <g class="home3-action-icon-docs-drift home3-action-icon-docs-drift-back">
+                <path
+                  class="home3-action-icon-docs-paper"
+                  d="M56 43 C69 38, 83 45, 96 41 C110 37, 124 43, 138 48 C135 67, 143 88, 139 109 C136 127, 144 142, 134 153 C119 150, 104 157, 88 152 C72 147, 59 156, 49 149 C53 129, 46 108, 51 88 C55 67, 48 53, 56 43 Z"
+                  stroke-width="3.5"
+                />
+                <path
+                  class="home3-action-icon-docs-edge"
+                  d="M57 45 C70 40, 84 47, 97 43 M49 91 C53 73, 48 56, 56 43 M50 148 C64 156, 73 146, 88 151"
+                  stroke-width="1.6"
+                />
+                <path
+                  class="home3-action-icon-docs-scribble"
+                  d="M65 65 C70 60, 76 69, 82 64 C88 59, 93 70, 100 65 M61 88 C67 84, 72 92, 80 87 C86 83, 92 91, 98 88 M68 113 C73 106, 79 116, 85 110"
+                  stroke-width="1.75"
+                />
+              </g>
+            </g>
+            <g
+              class="home3-action-icon-docs-sheet home3-action-icon-docs-sheet-middle"
+              transform="translate(5 14) rotate(7 96 96)"
+            >
+              <g class="home3-action-icon-docs-drift home3-action-icon-docs-drift-middle">
+                <path
+                  class="home3-action-icon-docs-paper"
+                  d="M47 45 C61 50, 77 42, 93 46 C109 51, 124 43, 140 48 C144 68, 141 88, 145 108 C149 127, 144 143, 138 153 C121 151, 106 157, 91 151 C75 146, 62 157, 49 150 C51 130, 45 113, 49 92 C52 72, 42 58, 47 45 Z"
+                  stroke-width="3.5"
+                />
+                <path
+                  class="home3-action-icon-docs-edge"
+                  d="M48 45 C63 51, 78 43, 94 47 M140 49 C143 69, 140 88, 145 109 M49 150 C64 156, 75 145, 92 151"
+                  stroke-width="1.6"
+                />
+                <path
+                  class="home3-action-icon-docs-scribble"
+                  d="M74 68 C80 75, 87 64, 94 72 C100 78, 107 68, 114 74 M65 91 C71 87, 78 98, 86 92 C92 86, 99 98, 108 94 M78 117 C85 113, 91 124, 99 119"
+                  stroke-width="1.75"
+                />
+              </g>
+            </g>
+            <g
+              class="home3-action-icon-docs-sheet home3-action-icon-docs-sheet-front"
+              transform="translate(18 -9) rotate(-3 96 96)"
+            >
+              <g class="home3-action-icon-docs-drift home3-action-icon-docs-drift-front">
+                <path
+                  class="home3-action-icon-docs-paper"
+                  d="M52 47 C66 43, 82 48, 97 44 C112 40, 126 47, 141 45 C143 66, 149 86, 145 108 C142 128, 148 143, 140 153 C124 150, 109 157, 92 153 C76 149, 61 155, 50 149 C47 130, 52 111, 47 93 C44 75, 47 61, 52 47 Z"
+                  stroke-width="3.7"
+                />
+                <path
+                  class="home3-action-icon-docs-edge"
+                  d="M52 47 C66 42, 82 49, 97 44 M141 45 C143 66, 150 85, 145 108 M50 149 C61 155, 76 149, 92 153"
+                  stroke-width="1.8"
+                />
+                <path
+                  class="home3-action-icon-docs-scribble"
+                  d="M68 71 C73 64, 80 77, 87 71 C92 66, 98 79, 106 72 M65 96 C71 104, 78 92, 86 100 C92 106, 100 95, 108 102 C114 107, 121 98, 127 102 M79 123 C85 117, 91 128, 99 121 C106 115, 112 126, 119 120"
+                  stroke-width="1.9"
+                />
+              </g>
+            </g>
+          </svg>
+        )}
+        {action.icon === "github" && (
+          <svg
+            class="home3-action-icon"
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 192 192"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              class="home3-action-icon-main"
+              d="M118 171 L118 139 C119 127, 115 116, 109 108 C135 107, 157 91, 157 63 C158 53, 154 43, 148 35 C151 25, 150 17, 148 12 C148 12, 137 12, 119 24 C104 20, 88 20, 72 24 C55 12, 44 12, 44 12 C42 19, 42 27, 45 35 C38 45, 35 54, 35 65 C35 91, 57 107, 83 108 C77 114, 74 123, 74 138 L74 171"
+              stroke-width="8.5"
+            />
+            <path
+              class="home3-action-icon-main"
+              d="M75 142 C54 151, 42 144, 31 129"
+              stroke-width="8.5"
+            />
+            <path
+              class="home3-action-icon-pencil"
+              d="M118 171 L118 139 C119 127, 115 116, 109 108 C135 107, 157 91, 157 63 C158 53, 154 43, 148 35 C151 25, 150 17, 148 12 C148 12, 137 12, 119 24 C104 20, 88 20, 72 24 C55 12, 44 12, 44 12 C42 19, 42 27, 45 35 C38 45, 35 54, 35 65 C35 91, 57 107, 83 108 C77 114, 74 123, 74 138 L74 171"
+              transform="translate(1.8 -1.1)"
+              stroke-width="3.2"
+            />
+            <g class="home3-action-icon-github-face">
+              <circle cx="78" cy="59" r="4.8" />
+              <circle cx="114" cy="59" r="4.8" />
+              <path
+                d="M95 64 L91 73 L99 73 Z"
+                fill="currentColor"
+                stroke="none"
+              />
+              <path
+                class="home3-action-icon-github-mouth"
+                d="M76 84 C88 96, 105 96, 117 84"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="5"
+              />
+            </g>
+          </svg>
+        )}
+        {action.label}
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .home3-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: clamp(1.4rem, 3vw, 2rem) 0 0;
+  }
+
+  .home3-actions-flush {
+    margin-top: 0;
+  }
+
+  .home3-action {
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 rgba(32, 86, 111, 0.18);
+    box-sizing: border-box;
+    color: var(--link);
+    display: inline-flex;
+    gap: 0.45rem;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.2;
+    min-height: 2.8125rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    transition:
+      background 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .home3-action:hover {
+    background: color-mix(
+      in srgb,
+      var(--accent) 18%,
+      var(--surface)
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--accent) 88%,
+      var(--link)
+    );
+    box-shadow: 0 4px 0 rgba(32, 86, 111, 0.24);
+    color: var(--link);
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  .home3-action:focus-visible {
+    outline: 3px solid rgba(15, 95, 196, 0.35);
+    outline-offset: 3px;
+  }
+
+  .home3-action-primary {
+    background: #0f5fc4;
+    border-color: var(--accent);
+    box-shadow: 0 2px 0 rgba(2, 39, 94, 0.22);
+    color: #ffffff;
+  }
+
+  .home3-action-primary:hover {
+    background: #0d56b3;
+    border-color: var(--accent);
+    box-shadow: 0 4px 0 rgba(2, 39, 94, 0.28);
+    color: #ffffff;
+  }
+
+  .home3-action-icon {
+    flex: 0 0 auto;
+    height: 1.75rem;
+    overflow: visible;
+    width: 1.75rem;
+  }
+
+  /* Animate wrapper groups so the hand-drawn paths stay intact. */
+  .home3-action-icon-arrow,
+  .home3-action-icon-docs-drift,
+  .home3-action-icon-github-face,
+  .home3-action-icon-github-mouth {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .home3-action-icon-main {
+    opacity: 0.4;
+  }
+
+  .home3-action-icon-door {
+    opacity: 0.62;
+  }
+
+  .home3-action-icon-pencil {
+    opacity: 0.88;
+  }
+
+  .home3-action-icon-docs-sheet-back {
+    opacity: 0.68;
+  }
+
+  .home3-action-icon-docs-sheet-middle {
+    opacity: 0.82;
+  }
+
+  .home3-action-icon-docs-sheet-front {
+    opacity: 0.96;
+  }
+
+  .home3-action-icon-docs-paper {
+    fill: var(--surface);
+    fill-opacity: 0.84;
+    stroke-opacity: 0.58;
+  }
+
+  .home3-action-icon-docs-edge,
+  .home3-action-icon-docs-scribble {
+    stroke-opacity: 0.58;
+  }
+
+  .home3-action-icon-github-face {
+    fill: currentColor;
+    opacity: 0;
+    stroke-linecap: round;
+    transform: translate(0, 3px);
+    transition: opacity 420ms ease;
+  }
+
+  .home3-action-icon-github-mouth {
+    transform: scaleX(0.5);
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-arrow {
+    animation: home3-arrow-hop 1s linear forwards;
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-docs-drift-back {
+    animation: home3-docs-breeze-back 1s linear
+      forwards;
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-docs-drift-middle {
+    animation: home3-docs-breeze-middle 1.15s
+      linear forwards;
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-docs-drift-front {
+    animation: home3-docs-breeze-front 2.4s linear
+      forwards;
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-github-face {
+    animation: home3-github-face-rise 1.2s linear
+      forwards;
+    opacity: 0.9;
+  }
+
+  .home3-action:is(:hover, :focus-visible)
+    .home3-action-icon-github-mouth {
+    animation: home3-github-mouth-grow 1.2s linear
+      forwards;
+  }
+
+  @keyframes home3-arrow-hop {
+    0% {
+      transform: translate(0, 0);
+    }
+
+    25% {
+      transform: translate(13px, -8px);
+    }
+
+    55%,
+    100% {
+      transform: translate(34px, -20px);
+    }
+  }
+
+  @keyframes home3-docs-breeze-back {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    28% {
+      transform: translate(-5px, -2px)
+        rotate(-3deg);
+    }
+
+    56%,
+    100% {
+      transform: translate(-12px, -6px)
+        rotate(-8deg);
+    }
+  }
+
+  @keyframes home3-docs-breeze-middle {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    26% {
+      transform: translate(4px, -3px) rotate(3deg);
+    }
+
+    54%,
+    100% {
+      transform: translate(9px, -7px) rotate(7deg);
+    }
+  }
+
+  @keyframes home3-docs-breeze-front {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    24% {
+      transform: translate(4px, -4px) rotate(3deg);
+    }
+
+    52%,
+    100% {
+      transform: translate(10px, -9px)
+        rotate(8deg);
+    }
+  }
+
+  @keyframes home3-github-face-rise {
+    0% {
+      transform: translate(0, 3px);
+    }
+
+    25% {
+      transform: translate(-1px, 1.5px);
+    }
+
+    48%,
+    72%,
+    100% {
+      transform: translate(-3px, -2px);
+    }
+  }
+
+  @keyframes home3-github-mouth-grow {
+    0% {
+      transform: scaleX(0.5);
+    }
+
+    25% {
+      transform: scaleX(0.68);
+    }
+
+    48%,
+    72%,
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .home3-actions {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin: 1.15rem auto 0;
+      max-width: 21rem;
+      width: min(100%, 14.5rem);
+    }
+
+    .home3-action {
+      box-shadow: 0 1px 0 rgba(32, 86, 111, 0.18);
+      font-size: 0.88rem;
+      gap: 0.38rem;
+      flex: 0 0 auto;
+      min-height: 2.8125rem;
+      padding: 0.5rem 0.7rem;
+      width: 100%;
+    }
+
+    .home3-action:hover {
+      box-shadow: 0 2px 0 rgba(32, 86, 111, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .home3-action-icon {
+      height: 1.75rem;
+      width: 1.75rem;
+    }
+  }
+
+  @media (max-width: 26rem) {
+    .home3-actions {
+      max-width: 19rem;
+      width: min(100%, 13.75rem);
+    }
+
+    .home3-action {
+      font-size: 0.82rem;
+      min-height: 2.8125rem;
+      padding: 0.5rem 0.62rem;
+    }
+
+    .home3-action-icon {
+      height: 1.75rem;
+      width: 1.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home3-action,
+    .home3-action-icon-github-face {
+      transition: none;
+    }
+
+    .home3-action:hover {
+      transform: none;
+    }
+  }
+</style>

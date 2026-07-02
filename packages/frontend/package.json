@@ -1,0 +1,35 @@
+{
+  "name": "sapporta-homepage-app-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@sapporta/frontend": "link:///Users/jasim/m/a/code/sapporta/packages/frontend",
+    "@sapporta/grid": "link:///Users/jasim/m/a/code/sapporta/packages/grid",
+    "@sapporta/rest-core": "3.52.2",
+    "@sapporta/shared": "link:///Users/jasim/m/a/code/sapporta/packages/shared",
+    "@sapporta/ui": "link:///Users/jasim/m/a/code/sapporta/packages/ui",
+    "sapporta-homepage-app-shared": "workspace:*",
+    "better-auth": "^1.6.13",
+    "@js-temporal/polyfill": "0.5.1",
+    "lucide-react": "^0.513.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-router-dom": "7.15.1",
+    "zod": "4.4.3",
+    "zustand": "5.0.13"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.3.5",
+    "@vitejs/plugin-react": "^4.6.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "tailwindcss": "^4.1.10"
+  }
+}

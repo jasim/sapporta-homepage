@@ -1,0 +1,341 @@
+.grid-page {
+  padding-bottom: clamp(3.5rem, 7vw, 6rem);
+}
+
+.grid-hero {
+  align-items: center;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  grid-template-columns: minmax(0, 0.82fr) minmax(24rem, 1.18fr);
+  margin: 0 auto;
+  max-width: 96rem;
+  padding-bottom: clamp(4rem, 7vw, 7rem);
+  padding-top: clamp(3rem, 6vw, 6rem);
+}
+
+.grid-hero-copy {
+  min-width: 0;
+}
+
+.grid-kicker {
+  color: var(--sap-fg-muted);
+  font-size: 0.78rem;
+  font-weight: 780;
+  letter-spacing: 0;
+  line-height: 1.2;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+}
+
+.grid-hero h1 {
+  color: var(--sap-fg);
+  font-size: clamp(3.2rem, 7.2vw, 6.5rem);
+  font-weight: 820;
+  letter-spacing: 0;
+  line-height: 0.98;
+  margin: 0;
+}
+
+.grid-subtitle {
+  color: var(--sap-fg);
+  font-size: clamp(1.18rem, 2vw, 1.65rem);
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.25;
+  margin: 1rem 0 0;
+  max-width: 40rem;
+}
+
+.grid-lede {
+  color: var(--sap-fg-soft);
+  font-size: clamp(1.02rem, 1.35vw, 1.22rem);
+  line-height: 1.6;
+  margin: 1.25rem 0 0;
+  max-width: 40rem;
+}
+
+.grid-lede code {
+  background: var(--sap-surface-soft);
+  border: 1px solid var(--sap-border);
+  border-radius: 4px;
+  padding: 0.12em 0.35em;
+}
+
+.grid-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.55rem;
+}
+
+.grid-actions-centered {
+  justify-content: center;
+}
+
+.grid-action {
+  align-items: center;
+  background: var(--sap-surface);
+  border: 1px solid var(--sap-border);
+  border-radius: 4px;
+  color: var(--sap-link);
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 650;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.95rem;
+  text-decoration: none;
+}
+
+.grid-action:hover {
+  border-color: var(--sap-accent);
+  color: var(--sap-link);
+  text-decoration: none;
+}
+
+.grid-action-primary {
+  background: #0f5fc4;
+  border-color: var(--sap-accent);
+  color: #ffffff;
+}
+
+.grid-action-primary:hover {
+  background: #0d56b3;
+  color: #ffffff;
+}
+
+.grid-demo-shell {
+  background: #fffffc;
+  border: 1px solid var(--sap-border);
+  border-radius: 6px;
+  box-shadow: 0 24px 70px rgb(10 11 13 / 0.12);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.grid-demo-toolbar {
+  align-items: center;
+  background: var(--sap-surface);
+  border-bottom: 1px solid var(--sap-border);
+  color: var(--sap-fg-soft);
+  display: flex;
+  font-size: 0.82rem;
+  font-weight: 680;
+  justify-content: space-between;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.grid-demo-table {
+  min-width: 42rem;
+  overflow: hidden;
+}
+
+.grid-demo-row {
+  align-items: center;
+  border-bottom: 1px solid var(--sap-border);
+  color: var(--sap-fg);
+  display: grid;
+  font-size: 0.88rem;
+  grid-template-columns: 2.25rem minmax(14rem, 1.5fr) 7rem 8rem 6rem;
+  min-height: 2.95rem;
+}
+
+.grid-demo-row > span {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.5rem 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grid-demo-head {
+  background: #f6f8fa;
+  color: var(--sap-fg-muted);
+  font-size: 0.76rem;
+  font-weight: 720;
+  min-height: 2.3rem;
+  text-transform: uppercase;
+}
+
+.grid-demo-active {
+  box-shadow:
+    inset 0 0 0 2px rgb(15 95 196 / 0.72),
+    inset 0 0 0 999px rgb(15 95 196 / 0.04);
+}
+
+.grid-demo-check {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.grid-demo-check::before {
+  background: #0f5fc4;
+  border-radius: 3px;
+  content: "";
+  display: block;
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
+.grid-demo-parent {
+  font-weight: 620;
+}
+
+.grid-demo-child {
+  background: #fbfcfd;
+}
+
+.grid-demo-child > span:nth-child(2) {
+  padding-left: 2.1rem;
+}
+
+.grid-demo-row mark {
+  border-radius: 999px;
+  color: var(--sap-fg);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 680;
+  line-height: 1;
+  padding: 0.35rem 0.5rem;
+}
+
+.grid-demo-row mark[data-tone="green"] {
+  background: #e6f4ed;
+}
+
+.grid-demo-row mark[data-tone="blue"] {
+  background: #e5f0ff;
+}
+
+.grid-demo-row mark[data-tone="gray"] {
+  background: var(--sap-surface-soft);
+}
+
+.grid-section {
+  padding-bottom: clamp(3.5rem, 6vw, 6rem);
+}
+
+.grid-section-inner {
+  margin: 0 auto;
+  max-width: 96rem;
+  width: 100%;
+}
+
+.grid-two-col {
+  align-items: start;
+  display: grid;
+  gap: clamp(2rem, 4vw, 4rem);
+  grid-template-columns: minmax(18rem, 0.72fr) minmax(24rem, 1.28fr);
+}
+
+.grid-copy {
+  max-width: 38rem;
+}
+
+.grid-copy h2,
+.grid-feature-grid h2,
+.grid-full-sapporta h2 {
+  color: var(--sap-fg);
+  font-size: clamp(1.45rem, 2.4vw, 2.1rem);
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 1.12;
+  margin: 0;
+}
+
+.grid-copy p,
+.grid-feature-grid p,
+.grid-full-sapporta p {
+  color: var(--sap-fg-soft);
+  font-size: 1.02rem;
+  line-height: 1.64;
+  margin: 1rem 0 0;
+}
+
+.grid-code-panel {
+  max-height: 38rem;
+}
+
+.grid-code-panel .homepage-schema-code {
+  max-height: 35rem;
+}
+
+.grid-feature-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-feature-grid article {
+  border-top: 1px solid var(--sap-border);
+  padding-top: 1.1rem;
+}
+
+.grid-feature-grid svg,
+.grid-full-sapporta svg {
+  color: var(--sap-accent);
+  margin-bottom: 0.85rem;
+}
+
+.grid-feature-grid h2 {
+  font-size: 1.08rem;
+}
+
+.grid-feature-grid p {
+  font-size: 0.95rem;
+  margin-top: 0.6rem;
+}
+
+.grid-full-sapporta {
+  border-top: 1px solid var(--sap-border);
+  max-width: 52rem;
+  padding-top: clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.grid-full-sapporta p {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 44rem;
+}
+
+@media (max-width: 64rem) {
+  .grid-hero,
+  .grid-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-demo-shell {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 48rem) {
+  .grid-hero {
+    padding-top: 2.25rem;
+  }
+
+  .grid-actions {
+    align-items: stretch;
+    flex-direction: column;
+    max-width: 21rem;
+  }
+
+  .grid-action {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .grid-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-code-panel .homepage-schema-code {
+    max-height: 30rem;
+  }
+}

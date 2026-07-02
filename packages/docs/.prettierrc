@@ -1,0 +1,20 @@
+{
+  "plugins": ["prettier-plugin-astro"],
+  "printWidth": 120,
+  "proseWrap": "always",
+  "overrides": [
+    {
+      "files": ["*.astro", "**/*.astro"],
+      "options": {
+        "parser": "astro",
+        "printWidth": 50
+      }
+    },
+    {
+      "files": ["*.md", "**/*.md"],
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
+}

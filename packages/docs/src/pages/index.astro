@@ -1,0 +1,495 @@
+---
+import { Code } from "astro:components";
+import { toAppHref } from "../app-links";
+import BooksTableDataGrid from "../components/BooksTableDataGrid";
+import HomepageActions from "../components/HomepageActions.astro";
+import SapportaMark from "../components/SapportaMark.astro";
+import "../styles/sapporta.css";
+import "../styles/home3.css";
+import { Code2, Table2 } from "lucide-react";
+
+const title = "Sapporta";
+const description =
+  "Minimal markdown-style Sapporta homepage draft.";
+const appBaseUrl =
+  process.env.SAPPORTA_PUBLIC_BASE_URL ?? "";
+const codeTheme = "github-light-default";
+const booksSchemaCode = `export const booksTable = sqliteTable("books", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  author: text("author").notNull(),
+});
+
+export const books = sapportaTable({
+  drizzle: booksTable,
+  meta: {
+    label: "Books",
+    rowScope: "systemGlobal",
+    rowLabelColumns: ["title"],
+    search: { columns: ["author", "title"] },
+    children: [
+      {
+        table: "quotes",
+        foreignKey: "book_id",
+        label: "Quotes",
+        columns: ["quote_text"],
+        defaultSort: "-created_at",
+      },
+    ],
+    columns: {
+      title: { width: 64 },
+      author: { width: 36 },
+    },
+  },
+});`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta
+      name="description"
+      content={description}
+    />
+    <link
+      rel="icon"
+      href="/favicon.svg"
+      type="image/svg+xml"
+    />
+    <title>{title}</title>
+    <style>
+      .draft-page {
+        margin: 0;
+        min-width: 20rem;
+        padding-bottom: clamp(3.5rem, 7vw, 6rem);
+      }
+
+      .home3-actions-wrap {
+        box-sizing: border-box;
+        margin: 0 auto;
+        max-width: 96rem;
+        padding-top: clamp(2rem, 4vw, 3.5rem);
+      }
+
+      .home3-copy p,
+      .home3-copy li {
+        font-size: clamp(1.08rem, 1.3vw, 1.28rem);
+        line-height: 1.62;
+      }
+
+      .home3-copy p {
+        margin: 0;
+      }
+
+      .home3-copy p + p {
+        margin-top: 1.1rem;
+      }
+    </style>
+  </head>
+  <body class="homepage draft-page">
+    <header
+      class:list={[
+        "homepage-header",
+        "homepage-pad",
+      ]}
+    >
+      <div class="homepage-header-inner">
+        <a class="homepage-wordmark" href="/">
+          <SapportaMark
+            class="homepage-wordmark-icon"
+            title=""
+          />
+          Sapporta
+        </a>
+        <nav
+          class="homepage-nav"
+          aria-label="Main navigation"
+        >
+          <a
+            class="homepage-nav-link"
+            href="/docs/getting-started/"
+          >
+            Docs
+          </a>
+          <a
+            class="homepage-nav-link"
+            href="/grid/"
+          >
+            Grid
+          </a>
+          <a
+            class="homepage-nav-link"
+            href={toAppHref("/login", appBaseUrl)}
+          >
+            Demo
+          </a>
+          <a
+            class="homepage-nav-link"
+            href="https://github.com/jasim/sapporta"
+          >
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <section
+      class:list={[
+        "homepage-hero",
+        "homepage-pad",
+      ]}
+      aria-labelledby="hero-title"
+    >
+      <article class="homepage-hero-copy">
+        <div class="homepage-hero-heading">
+          <SapportaMark
+            class="homepage-hero-mark"
+            title=""
+          />
+          <h1
+            id="hero-title"
+            class="homepage-title"
+          >
+            Sapporta
+          </h1>
+          <p class="homepage-subtitle">
+            Database Application Toolkit for
+            TypeScript
+          </p>
+        </div>
+        <div class="homepage-hero-body">
+          <p class="homepage-lede">
+            Integrated stack to build polished,
+            production-ready database-backed web
+            applications in TypeScript
+          </p>
+          <p class="homepage-byline">
+            By <a
+              class="homepage-text-link"
+              href="https://x.com/jasim_ab"
+              >Jasim A Basheer</a
+            >
+          </p>
+          <HomepageActions />
+        </div>
+      </article>
+    </section>
+
+    <main>
+      <section
+        class:list={[
+          "homepage-section",
+          "homepage-section--showcase",
+          "homepage-pad",
+        ]}
+        aria-label="Books table grid"
+      >
+        <div class="homepage-section-inner">
+          <div class="home3-intro-layout">
+            <div class="home3-demo">
+              <input
+                class="home3-demo-tab-input"
+                type="radio"
+                name="home3-demo-view"
+                id="home3-demo-live"
+                checked
+              />
+              <input
+                class="home3-demo-tab-input"
+                type="radio"
+                name="home3-demo-view"
+                id="home3-demo-code"
+              />
+              <div class="home3-demo-header">
+                <div
+                  class="home3-demo-tabs"
+                  aria-label="Books demo view"
+                >
+                  <label
+                    class="home3-demo-tab"
+                    for="home3-demo-live"
+                  >
+                    <Table2
+                      className="home3-demo-tab-icon"
+                      aria-hidden="true"
+                      size={17}
+                      strokeWidth={2}
+                    />
+                    Live grid
+                  </label>
+                  <label
+                    class="home3-demo-tab"
+                    for="home3-demo-code"
+                  >
+                    <Code2
+                      className="home3-demo-tab-icon"
+                      aria-hidden="true"
+                      size={17}
+                      strokeWidth={2}
+                    />
+                    Schema code
+                  </label>
+                </div>
+              </div>
+              <div class="home3-demo-panels">
+                <div
+                  class="home3-demo-panel home3-demo-panel-live"
+                >
+                  <div class="homepage-grid-wrap">
+                    <BooksTableDataGrid
+                      client:only="react"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="home3-demo-panel home3-demo-panel-code"
+                >
+                  <figure
+                    class="homepage-schema-panel"
+                    aria-labelledby="books-schema-title"
+                  >
+                    <figcaption
+                      class="homepage-schema-header"
+                    >
+                      <span
+                        id="books-schema-title"
+                        class="homepage-schema-path"
+                      >
+                        packages/api/schema/books.ts
+                      </span>
+                    </figcaption>
+                    <div
+                      class="homepage-schema-code"
+                    >
+                      <Code
+                        code={booksSchemaCode}
+                        lang="ts"
+                        theme={codeTheme}
+                      />
+                    </div>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="home3-copy sl-markdown-content"
+            >
+              <p class="home3-lede">
+                Sapporta helps you build
+                applications that operate mostly
+                on relational data - like personal
+                databases, operational tools, and
+                business software.
+              </p>
+
+              <p>
+                It offers the following features
+                that makes it easy to build
+                database applications:
+              </p>
+
+              <ul>
+                <li>
+                  Editable data grids for every
+                  table, that support
+                  master-detail and nested data,
+                  and comes with filtering,
+                  sorting, and searching
+                </li>
+                <li>
+                  Reports that support nested
+                  rows, and drill down from
+                  summary rows to detail entries
+                </li>
+                <li>
+                  REST endpoints for create, read,
+                  update, delete, lookup, count,
+                  and export
+                </li>
+                <li>
+                  Forms for data entry with
+                  validation and keyboard
+                  navigation
+                </li>
+                <li>
+                  Row-scoped security that ties
+                  every read and write to the
+                  signed-in user's workspace and
+                  role
+                </li>
+                <li>
+                  Deployment wiring from <code
+                    >npx sapporta init</code
+                  > to running in production
+                </li>
+              </ul>
+
+              <h2>
+                The rich user experience of
+                collaborative databases
+              </h2>
+
+              <p>
+                Just like creating a new
+                spreadsheet, in Sapporta, once you
+                define a table, you immediately
+                get a live editable grid. The grid
+                brings a similar level of polish
+                and UX as that of AirTable, NocoDB
+                and similar collaborative
+                databases. It is filterable,
+                sortable, and searchable. They
+                also support nested master-detail
+                relationships, and full keyboard
+                support that work across levels.
+              </p>
+              <p>
+                The APIs used by the grid are
+                bounded by row-level security and
+                CASL authorization, and so it can
+                be shipped directly to end users
+                without additional hardening.
+              </p>
+              <p>
+                Sapporta includes Sapporta Grid,
+                the React grid framework behind
+                its generated table screens. In a
+                Sapporta app, the grid is
+                schema-aware and backed by
+                generated APIs, row security,
+                lookup labels, and nested records.
+                If you already have your own
+                backend, you can use Sapporta Grid
+                by itself in any React app.
+              </p>
+
+              <h2>Not an opaque framework</h2>
+
+              <p>
+                There is no inversion of control -
+                Sapporta projects are regular Hono
+                APIs + React single page
+                applications that your codebase
+                owns completely. There are no
+                opaque abstractions that obscures
+                control-flow or hide the
+                underlying implementation.
+              </p>
+
+              <h2>Agentic development</h2>
+              <p>
+                Sapporta projects are structured
+                for coding agents. The generated
+                codebase follows explicit
+                conventions for project structure.
+                These conventions cover data
+                modeling, API behavior, UI flows,
+                access rules, and migrations.
+                Sapporta also ships
+                <a
+                  href="https://github.com/jasim/sapporta-skills"
+                  >sapporta-skills</a
+                >
+                for table creation, reports, row access,
+                custom endpoints, and frontend workflows.
+                The <a
+                  href="https://github.com/jasim/legible-code"
+                  >legible-code</a
+                >
+                skill applies domain types, module boundaries,
+                and the functional core, imperative
+                shell design to agent-authored TypeScript.
+              </p>
+
+              <h2>Type-safe APIs and auth</h2>
+              <p>
+                Every table exposes auto-generated
+                REST endpoints (list, create,
+                update etc.), that adhere to
+                row-level security and CASL
+                authorization policies.
+              </p>
+              <p>
+                APIs don't require manual JSON
+                wiring for request/response
+                parsing. Both the auto-generated
+                APIs, as well as any domain APIs
+                you write, are all defined using
+                ts-rest. The definitions go into <code
+                  >packages/shared</code
+                >, and are immediately available
+                in the frontend as typed
+                functions.
+              </p>
+
+              <h2>Agentic use, out of the box</h2>
+              <p>
+                Applications that you build with
+                Sapporta can be operated fully
+                agentically by default. Agents can
+                insert new rows, or update
+                existing rows, map freeform data
+                into database entries, execute
+                multi-step workflows, run reports,
+                and answer data questions, all
+                through the same APIs used by the
+                application UI.
+              </p>
+
+              <p>
+                For example, if you built an
+                Expense Tracking system with
+                Sapporta, then its users can
+                scribble reimbursement details -
+                rough vendor names, relative
+                dates, all in a freeform structure
+                - into an LLM agent, and have it
+                be recorded accurately in the
+                database. This requires no
+                additional code (but the user
+                needs to have the <a
+                  href="http://github.com/jasim/sapporta-skills"
+                  >Sapporta skill</a
+                >
+                installed).
+              </p>
+
+              <p>
+                This works because Sapporta
+                publishes the application's API
+                surface at
+                <code>/api/openapi.json</code>. It
+                has detailed route descriptions,
+                usage examples, and documented
+                request parameters for every
+                available endpoint. This includes
+                all the automatically generated
+                table APIs as well as any domain
+                specific APIs written by you.
+              </p>
+
+              <p>
+                It is also secure by default -
+                since all endpoints are secured by
+                row-security and CASL, the agents
+                only have access to the exact data
+                that the user themselves have.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div
+      class="home3-actions-wrap homepage-pad pb-24"
+    >
+      <HomepageActions flush />
+    </div>
+  </body>
+</html>

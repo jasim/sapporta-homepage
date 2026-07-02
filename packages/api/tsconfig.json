@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "sapporta-homepage-app-shared": ["../shared/dist/index.d.ts"]
+    }
+  },
+  "include": ["*.ts", "app", "project-auth", "schema"],
+  "exclude": ["dist"]
+}

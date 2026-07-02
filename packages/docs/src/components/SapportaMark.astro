@@ -1,0 +1,141 @@
+---
+interface Props {
+  class?: string;
+  title?: string;
+}
+
+const className = Astro.props.class ?? "sapporta-mark";
+const title = Astro.props.title ?? "Sapporta";
+const accessibleTitle = title || undefined;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 128 128"
+  role={accessibleTitle ? "img" : "presentation"}
+  aria-label={accessibleTitle}
+  aria-hidden={accessibleTitle ? undefined : "true"}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  {accessibleTitle && <title>{accessibleTitle}</title>}
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path
+      fill="#4c9a39"
+      d="M53.4 25.8C45.9 9 27.8 4.2 11.4 15.7c17.1 5.6 29 14.8 41 32.9 5.4-8.5 5.8-16.1 1-22.8Z"
+    />
+    <path
+      fill="#65b848"
+      d="M53.6 24.8C56.4 7.5 72.7-1.5 91.9 3.7 78.4 14.8 68.9 27.5 58.5 49.1c-6.4-7.1-8-15.3-4.9-24.3Z"
+    />
+    <path
+      fill="#5baa42"
+      d="M51.3 29.1C38.8 20.4 22.2 23.8 10.6 37.9c17 .5 30 4.4 46.3 18.4 2.2-10.5.4-19.6-5.6-27.2Z"
+    />
+    <path
+      fill="#72bd55"
+      d="M52.1 27.9C43.8 15.8 30.9 11.9 18 16.8c14.4 5.5 24.3 13.1 34.2 27.6 3.1-6.4 3-11.9-.1-16.5Z"
+      opacity=".72"
+    />
+    <path
+      fill="none"
+      stroke="#276b27"
+      stroke-width="3.2"
+      d="M53.4 25.8C45.9 9 27.8 4.2 11.4 15.7c17.1 5.6 29 14.8 41 32.9 5.4-8.5 5.8-16.1 1-22.8Z"
+    />
+    <path
+      fill="none"
+      stroke="#2d752b"
+      stroke-width="3"
+      d="M53.6 24.8C56.4 7.5 72.7-1.5 91.9 3.7 78.4 14.8 68.9 27.5 58.5 49.1c-6.4-7.1-8-15.3-4.9-24.3Z"
+    />
+    <path
+      fill="none"
+      stroke="#286b26"
+      stroke-width="2.8"
+      d="M51.3 29.1C38.8 20.4 22.2 23.8 10.6 37.9c17 .5 30 4.4 46.3 18.4 2.2-10.5.4-19.6-5.6-27.2Z"
+    />
+    <path
+      fill="none"
+      stroke="#1f4f21"
+      stroke-width="1.5"
+      d="M13.8 16.3c15.1 5 27.4 14.1 37.8 28M55.2 45.2C62.4 28 73.2 14.8 88.1 4.7M13.3 38.1c15.7.9 29.2 5.9 41.3 15.4"
+      opacity=".74"
+    />
+    <path
+      fill="none"
+      stroke="#8fc66d"
+      stroke-width="1.6"
+      d="M30.1 14.8c2.5 4.2 3.6 8.9 3.4 14M43 18.6c1.8 4.4 2.1 8.8.8 13.3M71.3 12.1c-3.7 3.5-6.2 7.6-7.7 12.4"
+      opacity=".62"
+    />
+    <path
+      fill="#c7894d"
+      d="M75.9 31.1c21.8 4.2 35.9 24.2 34.7 49.1-1.3 26.1-19.7 42.4-45.2 40.1-25.9-2.4-43.5-21.2-42.8-45.8.8-27 24.7-48.8 53.3-43.4Z"
+    />
+    <path
+      fill="#dca86b"
+      d="M72.8 36.1c15.2 2.9 25.6 17.9 24.8 35.4-.9 20-14.7 33.4-33.4 32.5-18.5-.9-30.6-14.5-30-33.5.7-21 17.8-38.3 38.6-34.4Z"
+      opacity=".52"
+    />
+    <path
+      fill="#8b5d3c"
+      d="M95.4 91.7c-6.8 13.5-18.1 20-34 19.1-14.7-.8-26.5-8.2-32.6-20.1 5.7 16.9 19.4 28 36.6 29.6 21.3 2 37.5-9 43-28.7-4.4 3.8-8.8 4.1-13 .1Z"
+      opacity=".22"
+    />
+    <path
+      fill="none"
+      stroke="#7a553d"
+      stroke-width="7.6"
+      d="M75.9 31.1c21.8 4.2 35.9 24.2 34.7 49.1-1.3 26.1-19.7 42.4-45.2 40.1-25.9-2.4-43.5-21.2-42.8-45.8.8-27 24.7-48.8 53.3-43.4Z"
+    />
+    <path
+      fill="none"
+      stroke="#4b3b34"
+      stroke-width="2.3"
+      d="M75.1 30.2c22.5 4.5 37.3 24.6 35.7 50.6-1.7 27.2-20.9 42.8-45.7 40.7-26.8-2.3-44.5-22.3-43.5-47.2 1-27.5 24.9-49.3 53.5-44.1Z"
+      opacity=".85"
+    />
+    <path
+      fill="none"
+      stroke="#4b3b34"
+      stroke-width="1.4"
+      d="M77.9 33.9c19.4 5 32 24.1 30.1 48.3-1.9 24.1-18.2 38.1-40.6 36.7"
+      opacity=".42"
+    />
+    <g fill="none" stroke="#e5b779" stroke-width="2.7" opacity=".58">
+      <path d="M42.8 55.1c10.1-7.9 24.7-12.1 39.5-8.3" />
+      <path d="M35.8 70.9c17.4-8.5 37-7.4 57.1 2.8" />
+      <path d="M38.1 86.1c14.7 5.8 30.2 7.6 47 2.1" />
+      <path d="M52.5 101.8c9.8 2.2 19.3 1.9 28.4-.8" />
+    </g>
+    <g fill="none" stroke="#99683f" stroke-width="1.4" opacity=".38">
+      <path d="M48.7 45.3c13.5-3.9 26.1-2.2 38 5.1" />
+      <path d="M31.9 79.1c19.2 3.5 39.3 2.2 60.2-4" />
+      <path d="M45.4 96.7c11.7 4.6 25.7 5.1 41.7 1.2" />
+    </g>
+    <g fill="#6f4630" opacity=".26">
+      <circle cx="48" cy="58" r="1.2" />
+      <circle cx="68" cy="52" r="1" />
+      <circle cx="86" cy="61" r="1.1" />
+      <circle cx="39" cy="78" r="1" />
+      <circle cx="58" cy="83" r="1.2" />
+      <circle cx="78" cy="80" r=".9" />
+      <circle cx="50" cy="101" r=".9" />
+      <circle cx="70" cy="106" r="1" />
+      <circle cx="92" cy="89" r="1.1" />
+    </g>
+    <path
+      fill="none"
+      stroke="#5b3c2a"
+      stroke-width="6.2"
+      d="M61.2 36.7c-2.3-6.9-5.5-10.5-9.7-10.8"
+    />
+    <path
+      fill="none"
+      stroke="#2f241e"
+      stroke-width="1.8"
+      d="M60.5 36.9c-2.4-7.2-5.6-11-9.8-11.5"
+      opacity=".75"
+    />
+  </g>
+</svg>

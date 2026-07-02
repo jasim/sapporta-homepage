@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1781855902314,
+      "tag": "0000_initial_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1782208240331,
+      "tag": "0001_import_books_quotes",
+      "breakpoints": true
+    }
+  ]
+}

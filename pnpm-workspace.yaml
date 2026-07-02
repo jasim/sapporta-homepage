@@ -1,0 +1,20 @@
+packages:
+  - packages/*
+
+enableGlobalVirtualStore: false
+
+allowBuilds:
+  "@parcel/watcher": true
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - better-sqlite3
+  - esbuild
+  - sharp
+
+overrides:
+  postcss: 8.5.15
+  tsc-watch: 7.2.0
