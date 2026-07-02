@@ -457,11 +457,12 @@ function QuoteDetailsCell({
             &rdquo;
           </div>
           <figure className="relative z-10">
-            <blockquote className="homepage-quote-cell whitespace-pre-wrap text-[1.45rem] leading-[1.72] text-sap-fg sm:text-[1.8rem]">
+            <blockquote className="homepage-quote-cell whitespace-pre-wrap text-[1.25rem] leading-[1.52] text-sap-fg sm:text-[1.6rem]">
               {quote}
             </blockquote>
-            <figcaption className="mt-8 border-t border-sap-border-soft pt-5 text-right text-[0.98rem] font-medium text-sap-soft sm:text-[1.08rem]">
-              {quoteCredit}
+            <figcaption className="mt-5 border-t border-sap-border-soft pt-3 text-right text-[1.18rem] font-medium leading-snug sm:text-[1.28rem]">
+              <span className="block text-[color:var(--ink)]">- {book}</span>
+              <span className="mt-0.5 block text-[color:var(--link)]">by {author}</span>
             </figcaption>
           </figure>
           <div className="relative z-10 mt-7 flex items-center justify-end">

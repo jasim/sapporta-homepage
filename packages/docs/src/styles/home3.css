@@ -505,3 +505,20 @@
     padding: 0.85rem;
   }
 }
+
+@media (max-width: 23.4375rem) {
+  .homepage-header-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .homepage-wordmark {
+    flex: 0 0 auto;
+  }
+
+  .homepage-nav {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
