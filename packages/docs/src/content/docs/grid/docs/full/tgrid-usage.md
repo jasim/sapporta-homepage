@@ -514,6 +514,8 @@ function QuantityCell() {
 The hooks verify that the renderer/editor is mounted for the level it was
 declared for. Custom renderers, editors, and save handlers receive the current
 row, value, row key, grid path, runtime, and `appServices`.
+Custom editors also receive `editStart`. It records the gesture that opened the
+editor and includes `typedSeed` when editing starts from a typed character.
 
 ## Custom Row Clients
 

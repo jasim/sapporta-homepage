@@ -360,17 +360,21 @@ import { useState } from "react";
 import type { CellEditorProps, ColumnSchema } from "@sapporta/grid";
 
 function StatusEditor(props: CellEditorProps) {
-  const [value, setValue] = useState(String(props.value ?? "todo"));
+  const initialValue =
+    props.editStart.trigger === "type"
+      ? props.editStart.typedSeed
+      : String(props.value ?? "todo");
+  const [value, setValue] = useState(initialValue);
 
   return (
     <select
       autoFocus
       value={value}
       onChange={(event) => setValue(event.target.value)}
-      onBlur={() => props.onCommit(value)}
+      onBlur={() => props.commit(value)}
       onKeyDown={(event) => {
-        if (event.key === "Enter") props.onCommit(value, "down");
-        if (event.key === "Escape") props.onCancel();
+        if (event.key === "Enter") props.commit(value, "down");
+        if (event.key === "Escape") props.cancel();
       }}
     >
       <option value="todo">To do</option>
@@ -392,8 +396,9 @@ const statusColumn: ColumnSchema = {
 ```
 
 While an editor is open, the grid's key handler lets the focused editor element
-own keys such as Enter, Escape, and Tab. The editor calls `onCommit` or
-`onCancel`.
+own keys such as Enter, Escape, and Tab. The editor calls `commit` or `cancel`.
+The `editStart` object describes the gesture that opened the editor. Type-started
+edits include `typedSeed`.
 
 ## Nested Grids
 

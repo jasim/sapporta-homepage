@@ -278,14 +278,19 @@ type CellRenderProps = {
   activation: CellRenderActivation | null;
 };
 
-type CellEditorProps = CellEditorStart & {
+type CellEditorStart =
+  | { trigger: "type"; typedSeed: string }
+  | { trigger: "enter" | "f2" | "doubleClick" };
+
+type CellEditorProps = {
+  editStart: CellEditorStart;
   value: unknown;
   row: LevelRow;
   column: ColumnSchema;
   path: GridPath;
   anchor: HTMLElement;
-  onCommit: (newValue: unknown, commit?: CommitTarget) => void;
-  onCancel: () => void;
+  commit: (newValue: unknown, commit?: CommitTarget) => void;
+  cancel: () => void;
 };
 
 type CellEditGesture = "enter" | "f2" | "type" | "doubleClick";
@@ -326,17 +331,21 @@ import { useState } from "react";
 import type { CellEditorProps, ColumnSchema } from "@sapporta/grid";
 
 function TextEditor(props: CellEditorProps) {
-  const [value, setValue] = useState(String(props.value ?? ""));
+  const initialValue =
+    props.editStart.trigger === "type"
+      ? props.editStart.typedSeed
+      : String(props.value ?? "");
+  const [value, setValue] = useState(initialValue);
 
   return (
     <input
       autoFocus
       value={value}
       onChange={(event) => setValue(event.target.value)}
-      onBlur={() => props.onCommit(value)}
+      onBlur={() => props.commit(value)}
       onKeyDown={(event) => {
-        if (event.key === "Enter") props.onCommit(value, "down");
-        if (event.key === "Escape") props.onCancel();
+        if (event.key === "Enter") props.commit(value, "down");
+        if (event.key === "Escape") props.cancel();
       }}
     />
   );
