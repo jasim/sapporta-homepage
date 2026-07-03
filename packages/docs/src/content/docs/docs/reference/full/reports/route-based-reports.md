@@ -138,7 +138,7 @@ Render the route result in an app screen.
 For normal reports, use Sapporta's report component. If you are building a
 different grid-like screen with its own row shape, loading behavior, hierarchy,
 editing rules, or side panels, start with the
-[BaseGrid guide](../basegrid-guide/#build-a-custom-grid-screen) instead of
+[BaseGrid guide](/grid/docs/full/basegrid-guide/#build-a-custom-grid-screen) instead of
 copying report internals.
 
 ```tsx

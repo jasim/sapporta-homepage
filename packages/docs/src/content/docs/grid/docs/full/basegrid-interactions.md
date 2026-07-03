@@ -36,7 +36,10 @@ Each recipe shows the preset, the behavior, what to read, and what UI pieces you
 ### Editable Spreadsheet
 
 ```tsx
-const session = useTGridSession(invoicesDefinition);
+const runtime = useGridRuntimeEffect(
+  () => createGridRuntime({ schema, dataSource }),
+  [dataSource],
+);
 // interaction defaults to CELL_EDITING_GRID
 ```
 
@@ -47,9 +50,15 @@ const session = useTGridSession(invoicesDefinition);
 ### Editable Spreadsheet Without Cell Ranges
 
 ```tsx
-const session = useTGridSession(invoicesDefinition, {
-  interaction: CELL_EDITING_NO_SELECTION_GRID,
-});
+const runtime = useGridRuntimeEffect(
+  () =>
+    createGridRuntime({
+      schema,
+      dataSource,
+      interaction: CELL_EDITING_NO_SELECTION_GRID,
+    }),
+  [dataSource],
+);
 ```
 
 - Arrow keys move the active cell. Shift+Arrow moves without creating a range.
@@ -60,30 +69,49 @@ const session = useTGridSession(invoicesDefinition, {
 ```tsx
 import {
   CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+  GridLevel,
+  GridRuntimeProvider,
+  createGridRuntime,
+  rootPath,
+  useGridRuntimeEffect,
 } from "@sapporta/grid";
 import { rowSelectionColumn } from "@sapporta/grid/column-preset";
 
-const invoicesDefinition = defineTGrid<RowsByLevel>({
-  rootLevel: "invoices",
+const schema = {
+  rootLevel: "tasks",
   levels: {
-    invoices: {
-      table: invoicesTable,
+    tasks: {
+      name: "tasks",
       childLevels: [],
-      query: { owner: "host", pageSize: 50 },
       columns: [
         rowSelectionColumn(), // checkbox column
-        cols.table("customer_id", { header: "Customer" }),
-        cols.table("invoice_date", { header: "Date" }),
-        cols.table("status", { header: "Status" }),
-        cols.table("amount", { header: "Amount" }),
+        text({ id: "title", name: "Title", edit: "default" }),
+        select({ id: "status", name: "Status", options: ["todo", "done"] }),
       ],
+      options: { rowKey: (node) => String(node.columns.id) },
     },
   },
-});
+} satisfies GridSchema;
 
-const session = useTGridSession(invoicesDefinition, {
-  interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
-});
+function TaskGrid() {
+  const runtime = useGridRuntimeEffect(
+    () =>
+      createGridRuntime({
+        schema,
+        dataSource,
+        interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+      }),
+    [dataSource],
+  );
+
+  if (!runtime) return null;
+
+  return (
+    <GridRuntimeProvider runtime={runtime}>
+      <GridLevel path={rootPath(schema.rootLevel)} />
+    </GridRuntimeProvider>
+  );
+}
 ```
 
 - Arrow keys move the active cell. Space toggles the active row in/out of selection.
@@ -95,21 +123,36 @@ const session = useTGridSession(invoicesDefinition, {
 ### Detail Panel That Follows the Cursor Row
 
 ```tsx
-import { CELL_PRIMARY_WITH_SIDE_PANEL_ROW } from "@sapporta/grid";
+import {
+  CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
+  GridLevel,
+  GridRuntimeProvider,
+  createGridRuntime,
+  rootPath,
+  useGridRuntimeEffect,
+} from "@sapporta/grid";
 
-function InvoiceWithSidePanel() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
-  });
-  if (!session) return null;
+function TaskGridWithSidePanel() {
+  const runtime = useGridRuntimeEffect(
+    () =>
+      createGridRuntime({
+        schema,
+        dataSource,
+        interaction: CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
+      }),
+    [dataSource],
+  );
+  if (!runtime) return null;
 
   return (
     <div style={{ display: "flex" }}>
-      <TGrid session={session} />
-      <InvoiceDetailPanel session={session} />
+      <GridRuntimeProvider runtime={runtime}>
+        <GridLevel path={rootPath(schema.rootLevel)} />
+        <TaskDetailPanel path={rootPath(schema.rootLevel)} />
+      </GridRuntimeProvider>
     </div>
   );
-  // The detail panel reads runtime.selectedRowsFor(rootPath),
+  // The detail panel reads runtime.selectedRowsFor(path),
   // which always returns the row the keyboard is on.
 }
 ```
@@ -121,7 +164,9 @@ function InvoiceWithSidePanel() {
 ### Detail Panel With Independently Pinned Row
 
 ```tsx
-const session = useTGridSession(invoicesDefinition, {
+const runtime = createGridRuntime({
+  schema,
+  dataSource,
   interaction: CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW,
 });
 ```
@@ -135,16 +180,24 @@ const session = useTGridSession(invoicesDefinition, {
 ```tsx
 import { ROW_PRIMARY_MASTER_DETAIL } from "@sapporta/grid";
 
-function InvoiceMasterDetail() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: ROW_PRIMARY_MASTER_DETAIL,
-  });
-  if (!session) return null;
+function TaskMasterDetail() {
+  const runtime = useGridRuntimeEffect(
+    () =>
+      createGridRuntime({
+        schema,
+        dataSource,
+        interaction: ROW_PRIMARY_MASTER_DETAIL,
+      }),
+    [dataSource],
+  );
+  if (!runtime) return null;
 
   return (
     <div style={{ display: "flex" }}>
-      <TGrid session={session} />
-      <InvoiceDetailPanel session={session} />
+      <GridRuntimeProvider runtime={runtime}>
+        <GridLevel path={rootPath(schema.rootLevel)} />
+        <TaskDetailPanel path={rootPath(schema.rootLevel)} />
+      </GridRuntimeProvider>
     </div>
   );
   // Arrow keys move the row cursor. The detail panel always shows
@@ -162,17 +215,26 @@ function InvoiceMasterDetail() {
 import { ROW_MULTISELECT_LIST } from "@sapporta/grid";
 import { rowSelectionColumn } from "@sapporta/grid/column-preset";
 
-function InvoiceMultiSelect() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: ROW_MULTISELECT_LIST,
-  });
-  if (!session) return null;
+function TaskMultiSelect() {
+  const runtime = useGridRuntimeEffect(
+    () =>
+      createGridRuntime({
+        schema,
+        dataSource,
+        interaction: ROW_MULTISELECT_LIST,
+      }),
+    [dataSource],
+  );
+  if (!runtime) return null;
 
-  const selectedIds = session.runtime.selectedRowIds(rootPath());
+  const path = rootPath(schema.rootLevel);
+  const selectedIds = runtime.selectedRowIds(path);
 
   return (
     <>
-      <TGrid session={session} />
+      <GridRuntimeProvider runtime={runtime}>
+        <GridLevel path={path} />
+      </GridRuntimeProvider>
       <BulkActionBar
         selectedCount={selectedIds.length}
         onDelete={() => bulkDelete(selectedIds)}
@@ -309,12 +371,8 @@ Cell-grid defaults: `selectedCells: "range"`, `activeRow: "none"`, `selectedRows
 ```
 
 ```tsx
-function InvoiceSpreadsheet() {
-  // interaction defaults to CELL_EDITING_GRID
-  const session = useTGridSession(invoicesDefinition);
-  if (!session) return null;
-  return <TGrid session={session} />;
-}
+const runtime = createGridRuntime({ schema, dataSource });
+// interaction defaults to CELL_EDITING_GRID
 ```
 
 #### `CELL_EDITING_NO_SELECTION_GRID`
@@ -350,15 +408,14 @@ A spreadsheet with a derived active row. Useful for highlighting or driving a si
 ```
 
 ```tsx
-function InvoiceWithHighlight() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: CELL_GRID_WITH_ACTIVE_ROW,
-  });
-  if (!session) return null;
-  return <TGrid session={session} />;
-  // The active cell's row is available through
-  // runtime.activeRowFor(path) for styling or a side panel.
-}
+const runtime = createGridRuntime({
+  schema,
+  dataSource,
+  interaction: CELL_GRID_WITH_ACTIVE_ROW,
+});
+
+// The active cell's row is available through
+// runtime.activeRowFor(path) for styling or a side panel.
 ```
 
 #### `CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION`
@@ -812,7 +869,10 @@ type GridInteractionConfig =
   | RowListInteractionConfig;
 ```
 
-Discriminated union on `mode`. Pass to `createGridRuntime({ interaction })` or `useTGridSession(def, { interaction })`.
+Discriminated union on `mode`. Pass to `createGridRuntime({ interaction })`.
+Sapporta's framework table-grid layer forwards the same presets to BaseGrid; see
+[the framework table-grid reference](/docs/reference/full/grid/tgrid-usage/#tgrid-interaction-recipes)
+for table-aware examples.
 
 #### `CellGridInteractionConfig`
 

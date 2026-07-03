@@ -13,6 +13,7 @@ syntax, command inventories, or lookup tables.
 - [Schema Metadata Complete Reference](/docs/reference/full/schema-metadata/)
 - [Filter Syntax](/docs/reference/filter-syntax/)
 - [Table APIs](/docs/reference/table-apis/)
+- [TGrid Usage Guide](/docs/reference/full/grid/tgrid-usage/)
 - [Auth And Row Security](/docs/reference/auth-and-row-security/)
 - [Sapporta Auth: Building Row-Safe Apps With Workspaces](/docs/reference/full/auth-row-safe-apps/)
 - [CLI](/docs/reference/cli/)

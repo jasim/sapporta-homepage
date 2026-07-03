@@ -8,10 +8,9 @@ BaseGrid renders grid mechanics and stable DOM state. It does not own product
 visuals. Style rows, cells, nested levels, and editing state with
 `data-grid-part`, `data-row-*`, and `data-cell-*` selectors.
 
-The Sapporta column preset supplies the default admin chrome for `TGrid` and
-for grids that opt into `columnPreset.chrome()`. That preset may use CSS
-variables internally, but application overrides should target the DOM state
-attributes directly.
+The Sapporta column preset supplies default admin chrome for grids that opt into
+`columnPreset.chrome()`. That preset may use CSS variables internally, but
+application overrides should target the DOM state attributes directly.
 
 ## Choose the States Your Grid Uses
 
@@ -46,13 +45,6 @@ presets and keyboard behavior.
 
 ## Put a Class on the Grid
 
-For `TGrid`, pass a class name directly. It is applied to the root grid level,
-so descendant selectors can style both the root rows and nested rows.
-
-```tsx
-<TGrid session={session} className="projectGrid" />
-```
-
 For a direct BaseGrid composition, put the class on a wrapper or supply it
 through your grid chrome.
 
@@ -63,6 +55,9 @@ through your grid chrome.
   </GridRuntimeProvider>
 </div>
 ```
+
+For Sapporta framework table-grid root styling, see
+[the framework table-grid reference](/docs/reference/full/grid/tgrid-usage/#styling-tgrid-roots).
 
 ## Highlight the Current Row
 

@@ -48,9 +48,9 @@ import {
 import { columnPreset, text } from "@sapporta/grid/column-preset";
 ```
 
-Do not use TGrid APIs when you are building a BaseGrid from scratch. TGrid
-adapts Sapporta table schemas and table row APIs onto BaseGrid; this reference
-covers the lower-level primitives.
+Do not use Sapporta framework table-grid APIs when you are building a BaseGrid
+from scratch. Those APIs adapt Sapporta table schemas and table row APIs onto
+BaseGrid; this reference covers the lower-level primitives.
 
 ## Identity API
 

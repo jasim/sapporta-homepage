@@ -36,7 +36,7 @@ component renders that session in the grid UI.
 If your screen is not backed by Sapporta table APIs, use BaseGrid directly.
 Create the runtime with `useGridRuntimeEffect`, render after it returns a
 runtime, and pass that runtime to `GridRuntimeProvider`. See
-[Building a Grid from Scratch with BaseGrid](./basegrid-guide/#build-a-custom-grid-screen).
+[Building a Grid from Scratch with BaseGrid](/grid/docs/full/basegrid-guide/#build-a-custom-grid-screen).
 
 ## Minimal Example
 
@@ -376,8 +376,171 @@ navigation and row selection are the primary interaction.
 
 Interaction is structural session configuration, not a live session input. To
 change it, pass a new definition object so `useTGridSession` creates a new
-runtime. For the full preset list and behavior model, see
-[`BaseGrid interactions`](./basegrid-interactions/).
+	runtime. For the full preset list and behavior model, see
+	[`BaseGrid interactions`](/grid/docs/full/basegrid-interactions/).
+	
+## TGrid Interaction Recipes
+
+TGrid passes interaction presets through to the underlying BaseGrid runtime when
+the session is created. Choose the preset at the TGrid boundary when the table
+workflow needs a different keyboard or row-selection model.
+
+### Editable Spreadsheet
+
+```tsx
+const session = useTGridSession(invoicesDefinition);
+// interaction defaults to CELL_EDITING_GRID
+```
+
+- Arrow keys move the active cell. Shift+Arrow extends a cell range.
+- Double-click or Enter starts editing.
+- No row selection. No active row.
+
+### Editable Spreadsheet Without Cell Ranges
+
+```tsx
+const session = useTGridSession(invoicesDefinition, {
+  interaction: CELL_EDITING_NO_SELECTION_GRID,
+});
+```
+
+- Arrow keys move the active cell. Shift+Arrow moves without creating a range.
+- Double-click or Enter starts editing.
+
+### Bulk Actions in an Editable Grid
+
+```tsx
+import {
+  CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+} from "@sapporta/grid";
+import { rowSelectionColumn } from "@sapporta/grid/column-preset";
+
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
+  levels: {
+    invoices: {
+      table: invoicesTable,
+      childLevels: [],
+      query: { owner: "host", pageSize: 50 },
+      columns: [
+        rowSelectionColumn(), // checkbox column
+        cols.table("customer_id", { header: "Customer" }),
+        cols.table("invoice_date", { header: "Date" }),
+        cols.table("status", { header: "Status" }),
+        cols.table("amount", { header: "Amount" }),
+      ],
+    },
+  },
+});
+
+const session = useTGridSession(invoicesDefinition, {
+  interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+});
+```
+
+- Arrow keys move the active cell. Space toggles the active row in/out of
+  selection.
+- Checkboxes toggle operation targets without moving the cell cursor.
+- Moving the cell cursor does not change which rows are selected.
+- Read selected ids with `runtime.selectedRowIds(path)`.
+- UI: add `rowSelectionColumn()` to your column list.
+
+### Detail Panel That Follows the Cursor Row
+
+```tsx
+import { CELL_PRIMARY_WITH_SIDE_PANEL_ROW } from "@sapporta/grid";
+
+function InvoiceWithSidePanel() {
+  const session = useTGridSession(invoicesDefinition, {
+    interaction: CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
+  });
+  if (!session) return null;
+
+  return (
+    <div style={{ display: "flex" }}>
+      <TGrid session={session} />
+      <InvoiceDetailPanel session={session} />
+    </div>
+  );
+  // The detail panel reads runtime.selectedRowsFor(rootPath),
+  // which always returns the row the keyboard is on.
+}
+```
+
+- Arrow keys move the active cell; the detail panel follows automatically.
+- No checkbox or Space-bar interaction — selection is derived.
+- Read the detail row with `runtime.selectedRowsFor(path)`.
+
+### Detail Panel With Independently Pinned Row
+
+```tsx
+const session = useTGridSession(invoicesDefinition, {
+  interaction: CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW,
+});
+```
+
+- Arrow keys move the active cell. Space pins the current row as the detail
+  target.
+- The detail panel stays on the pinned row until the user presses Space again.
+- Read the pinned row with `runtime.selectedRowsFor(path)`.
+
+### Master-Detail Row List
+
+```tsx
+import { ROW_PRIMARY_MASTER_DETAIL } from "@sapporta/grid";
+
+function InvoiceMasterDetail() {
+  const session = useTGridSession(invoicesDefinition, {
+    interaction: ROW_PRIMARY_MASTER_DETAIL,
+  });
+  if (!session) return null;
+
+  return (
+    <div style={{ display: "flex" }}>
+      <TGrid session={session} />
+      <InvoiceDetailPanel session={session} />
+    </div>
+  );
+  // Arrow keys move the row cursor. The detail panel always shows
+  // the row the cursor is on. No cell editing.
+}
+```
+
+- Arrow keys move the row cursor. No cell editing at all.
+- The detail panel always shows the active row.
+- Read with `runtime.activeRowFor(path)` or `runtime.selectedRowsFor(path)`.
+
+### Multi-Select Row List
+
+```tsx
+import { ROW_MULTISELECT_LIST } from "@sapporta/grid";
+import { rowSelectionColumn } from "@sapporta/grid/column-preset";
+
+function InvoiceMultiSelect() {
+  const session = useTGridSession(invoicesDefinition, {
+    interaction: ROW_MULTISELECT_LIST,
+  });
+  if (!session) return null;
+
+  const selectedIds = session.runtime.selectedRowIds(rootPath());
+
+  return (
+    <>
+      <TGrid session={session} />
+      <BulkActionBar
+        selectedCount={selectedIds.length}
+        onDelete={() => bulkDelete(selectedIds)}
+      />
+    </>
+  );
+}
+```
+
+- Arrow keys move the row cursor. Shift+Arrow extends selection.
+- Space toggles the active row in/out of selection.
+- Checkboxes (from `rowSelectionColumn()`) toggle independently.
+- Read selected ids with `runtime.selectedRowIds(path)`.
+- UI: add `rowSelectionColumn()` for checkboxes, plus an action bar.
 
 ## Query Ownership
 
@@ -749,3 +912,20 @@ These helpers are exported from `@sapporta/frontend`:
   handle table URL state.
 - `startTGridLookupLoading(session)` starts FK label cache loading for a live
   session.
+
+## Styling TGrid Roots
+
+For `TGrid`, pass a class name directly. It is applied to the root grid level, so
+descendant selectors can style both the root rows and nested rows.
+
+```tsx
+<TGrid session={session} className="projectGrid" />
+```
+
+The Sapporta column preset supplies the default admin chrome for TGrid and for
+BaseGrid compositions that opt into `columnPreset.chrome()`. That preset may use
+CSS variables internally, but application overrides should target BaseGrid DOM
+state attributes such as `data-grid-part`, `data-row-*`, and `data-cell-*`.
+
+For the lower-level DOM contract, see
+[Styling BaseGrid Selection States](/grid/docs/full/basegrid-styling/).

@@ -62,7 +62,8 @@ Move to a custom TGrid definition when the screen needs product-specific
 columns, custom editing, selection, nested levels, or workflow actions around
 the grid. TGrid still uses Sapporta table APIs by default, so row visibility,
 validation, lookup loading, and ordinary create/update/delete behavior stay in
-one place.
+one place. For the full framework table-grid reference, see the
+[TGrid Usage Guide](/docs/reference/full/grid/tgrid-usage/).
 
 ## Customize schema table columns
 

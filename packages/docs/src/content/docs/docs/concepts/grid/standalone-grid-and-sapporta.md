@@ -1,5 +1,5 @@
 ---
-title: "Using With Sapporta"
+title: "Standalone Grid And Sapporta"
 description:
   "Know when to use standalone Sapporta Grid and when to use the full Sapporta
   framework around it."
@@ -32,3 +32,8 @@ more of the plumbing.
 
 The practical split is simple: use Grid when the frontend is the thing you are
 buying. Use Sapporta when the grid should sit inside a generated database app.
+
+For standalone grid mechanics, use the [Sapporta Grid docs](/grid/docs/). For
+schema-backed table grids inside a Sapporta app, use
+[Table-Aware Grids](/docs/subsystems/grid/) and the
+[TGrid Usage Guide](/docs/reference/full/grid/tgrid-usage/).

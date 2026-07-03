@@ -28,7 +28,7 @@ data, authorize the route, or place reports in navigation.
 
 This shape is for report data. If you are building a different custom
 grid-like screen, start with the
-[BaseGrid guide](../basegrid-guide/#build-a-custom-grid-screen) instead.
+[BaseGrid guide](/grid/docs/full/basegrid-guide/#build-a-custom-grid-screen) instead.
 
 Columns should include hidden identifiers when the frontend needs them for
 navigation:

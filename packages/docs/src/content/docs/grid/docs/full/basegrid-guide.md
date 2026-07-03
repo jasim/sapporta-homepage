@@ -5,8 +5,8 @@ description: "Complete walkthrough for constructing custom BaseGrid screens, col
 
 
 BaseGrid is Sapporta's low-level grid runtime and React renderer. Use it when
-you want grid mechanics without Sapporta table CRUD, TGrid sessions, or table
-API wiring.
+you want grid mechanics without Sapporta table CRUD, framework table-grid
+sessions, or table API wiring.
 
 This guide builds a project planning grid from scratch. The app owns its own
 data, persistence, query controls, and domain services. BaseGrid supplies the
@@ -29,7 +29,7 @@ Imagine a project planning screen with:
 That is a BaseGrid-shaped problem. You want grid behavior, but you do not want
 Sapporta to decide how rows are fetched or saved.
 
-## BaseGrid vs TGrid
+## BaseGrid vs Framework Table Grids
 
 BaseGrid is the foundation:
 
@@ -40,9 +40,11 @@ BaseGrid is the foundation:
 - `GridLevel` renders one level and recursively mounts expanded child levels.
 - ColumnPreset helpers create ordinary BaseGrid `ColumnSchema` values.
 
-TGrid is a table-aware adapter on top of BaseGrid. It knows about Sapporta table
-schemas, table row APIs, table query state, lookup loading, and CSV URLs. If you
-are building against your own backend or local state model, start with BaseGrid.
+Sapporta's framework table-grid layer adapts table schemas, table row APIs, table
+query state, lookup loading, and CSV URLs onto BaseGrid. If you are building
+against your own backend or local state model, start with BaseGrid. If the rows
+come from Sapporta generated table APIs, use
+[Table-Aware Grids](/docs/subsystems/grid/).
 
 ## The Mental Model
 
