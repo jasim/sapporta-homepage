@@ -376,18 +376,35 @@ navigation and row selection are the primary interaction.
 
 Interaction is structural session configuration, not a live session input. To
 change it, pass a new definition object so `useTGridSession` creates a new
-	runtime. For the full preset list and behavior model, see
-	[`BaseGrid interactions`](/grid/docs/full/basegrid-interactions/).
-	
+runtime. `useTGridSession` live args are for `services`, `onQueryUrlChange`, and
+`routeQuerySeeds`; they do not change the interaction mode. For the full preset
+list and behavior model, see
+[`BaseGrid interactions`](/grid/docs/full/basegrid-interactions/).
+
 ## TGrid Interaction Recipes
 
 TGrid passes interaction presets through to the underlying BaseGrid runtime when
-the session is created. Choose the preset at the TGrid boundary when the table
+the session is created. Choose the preset on the TGrid definition when the table
 workflow needs a different keyboard or row-selection model.
+
+The examples below assume `invoiceLevels` is the `levels` map for the invoices
+table graph. In real code, keep that map in a stable definition object or build
+the definition with `useMemo` when it depends on route props.
 
 ### Editable Spreadsheet
 
 ```tsx
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
+  levels: {
+    invoices: {
+      table: invoicesTable,
+      childLevels: [],
+      query: { owner: "host", pageSize: 50 },
+    },
+  },
+});
+
 const session = useTGridSession(invoicesDefinition);
 // interaction defaults to CELL_EDITING_GRID
 ```
@@ -399,9 +416,19 @@ const session = useTGridSession(invoicesDefinition);
 ### Editable Spreadsheet Without Cell Ranges
 
 ```tsx
-const session = useTGridSession(invoicesDefinition, {
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
   interaction: CELL_EDITING_NO_SELECTION_GRID,
+  levels: {
+    invoices: {
+      table: invoicesTable,
+      childLevels: [],
+      query: { owner: "host", pageSize: 50 },
+    },
+  },
 });
+
+const session = useTGridSession(invoicesDefinition);
 ```
 
 - Arrow keys move the active cell. Shift+Arrow moves without creating a range.
@@ -410,50 +437,52 @@ const session = useTGridSession(invoicesDefinition, {
 ### Bulk Actions in an Editable Grid
 
 ```tsx
-import {
-  CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
-} from "@sapporta/grid";
-import { rowSelectionColumn } from "@sapporta/grid/column-preset";
+import { CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION } from "@sapporta/grid";
 
 const invoicesDefinition = defineTGrid<RowsByLevel>({
   rootLevel: "invoices",
+  interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
   levels: {
     invoices: {
       table: invoicesTable,
       childLevels: [],
       query: { owner: "host", pageSize: 50 },
-      columns: [
-        rowSelectionColumn(), // checkbox column
-        cols.table("customer_id", { header: "Customer" }),
-        cols.table("invoice_date", { header: "Date" }),
-        cols.table("status", { header: "Status" }),
-        cols.table("amount", { header: "Amount" }),
+      columns: (columns) => [
+        columns.table("customer_id", { label: "Customer" }),
+        columns.table("invoice_date", { label: "Date" }),
+        columns.table("status", { label: "Status" }),
+        columns.table("amount", { label: "Amount" }),
       ],
     },
   },
 });
 
-const session = useTGridSession(invoicesDefinition, {
-  interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
-});
+const session = useTGridSession(invoicesDefinition);
 ```
 
 - Arrow keys move the active cell. Space toggles the active row in/out of
   selection.
-- Checkboxes toggle operation targets without moving the cell cursor.
 - Moving the cell cursor does not change which rows are selected.
-- Read selected ids with `runtime.selectedRowIds(path)`.
-- UI: add `rowSelectionColumn()` to your column list.
+- Read selected ids with `session.runtime.selectedRowIds(path)`.
+- Use `useTableSelection(session)` for table-level bulk actions such as delete.
+- If the table needs pointer checkbox chrome, add a TGrid `columns.client(...)`
+  renderer that calls `cell.runtime.rowInteraction.toggleRowSelection(...)`.
+  `rowSelectionColumn()` is a BaseGrid `ColumnSchema` helper and is not a TGrid
+  column spec.
 
 ### Detail Panel That Follows the Cursor Row
 
 ```tsx
 import { CELL_PRIMARY_WITH_SIDE_PANEL_ROW } from "@sapporta/grid";
 
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
+  interaction: CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
+  levels: invoiceLevels,
+});
+
 function InvoiceWithSidePanel() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: CELL_PRIMARY_WITH_SIDE_PANEL_ROW,
-  });
+  const session = useTGridSession(invoicesDefinition);
   if (!session) return null;
 
   return (
@@ -474,9 +503,13 @@ function InvoiceWithSidePanel() {
 ### Detail Panel With Independently Pinned Row
 
 ```tsx
-const session = useTGridSession(invoicesDefinition, {
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
   interaction: CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW,
+  levels: invoiceLevels,
 });
+
+const session = useTGridSession(invoicesDefinition);
 ```
 
 - Arrow keys move the active cell. Space pins the current row as the detail
@@ -489,10 +522,14 @@ const session = useTGridSession(invoicesDefinition, {
 ```tsx
 import { ROW_PRIMARY_MASTER_DETAIL } from "@sapporta/grid";
 
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
+  interaction: ROW_PRIMARY_MASTER_DETAIL,
+  levels: invoiceLevels,
+});
+
 function InvoiceMasterDetail() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: ROW_PRIMARY_MASTER_DETAIL,
-  });
+  const session = useTGridSession(invoicesDefinition);
   if (!session) return null;
 
   return (
@@ -513,16 +550,19 @@ function InvoiceMasterDetail() {
 ### Multi-Select Row List
 
 ```tsx
-import { ROW_MULTISELECT_LIST } from "@sapporta/grid";
-import { rowSelectionColumn } from "@sapporta/grid/column-preset";
+import { ROW_MULTISELECT_LIST, rootPath } from "@sapporta/grid";
+
+const invoicesDefinition = defineTGrid<RowsByLevel>({
+  rootLevel: "invoices",
+  interaction: ROW_MULTISELECT_LIST,
+  levels: invoiceLevels,
+});
 
 function InvoiceMultiSelect() {
-  const session = useTGridSession(invoicesDefinition, {
-    interaction: ROW_MULTISELECT_LIST,
-  });
+  const session = useTGridSession(invoicesDefinition);
   if (!session) return null;
 
-  const selectedIds = session.runtime.selectedRowIds(rootPath());
+  const selectedIds = session.runtime.selectedRowIds(rootPath("invoices"));
 
   return (
     <>
@@ -538,9 +578,9 @@ function InvoiceMultiSelect() {
 
 - Arrow keys move the row cursor. Shift+Arrow extends selection.
 - Space toggles the active row in/out of selection.
-- Checkboxes (from `rowSelectionColumn()`) toggle independently.
 - Read selected ids with `runtime.selectedRowIds(path)`.
-- UI: add `rowSelectionColumn()` for checkboxes, plus an action bar.
+- UI: render an action bar for selected rows. Add checkbox chrome with a TGrid
+  client column if pointer selection is part of the workflow.
 
 ## Query Ownership
 
