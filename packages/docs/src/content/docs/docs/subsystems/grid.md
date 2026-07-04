@@ -147,8 +147,9 @@ Use query settings to control what the table can show:
 - `initialFilters`, `initialSort`, `initialSearch`, and `initialPage` are user
   editable defaults.
 - `pageSize` sets the default page size for a level.
-- `query.owner: "host"` means visible controls own query state.
-- `query.owner: "source"` is the usual choice for expansion-loaded child rows.
+- `query.owner: "host"` means visible controls own root-level query state.
+- `query.owner: "source"` is the required choice for expansion-loaded child
+  rows inside the same TGrid definition.
 
 Do not use `fixedFilters` or hidden columns as authorization. In auth-enabled
 apps, built-in table APIs apply row visibility on the server. Custom row clients
@@ -326,10 +327,11 @@ const definition = defineTGrid<RowsByLevel>({
 ```
 
 The root level is usually host-owned so the table page and URL can control
-search, filters, sort, and pagination. Child levels are usually source-owned
-because they are loaded from the parent row's expansion path. When a user
+search, filters, sort, and pagination. Expanded child levels are source-owned
+because each expanded parent row has its own path-scoped source. When a user
 expands a row, the runtime resolves the child source, loads the child rows, and
-caches the materialized child path.
+caches the materialized child path. Mount a child table as the root level of its
+own TGrid when it needs visible host controls.
 
 Use path-like level ids such as `invoices.items` for readability. They are grid
 level ids, not route paths, and they do not have to match table names.

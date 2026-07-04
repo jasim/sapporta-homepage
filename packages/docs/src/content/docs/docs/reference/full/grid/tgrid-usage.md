@@ -588,6 +588,8 @@ function InvoiceMultiSelect() {
 
 Host-owned levels are controlled by UI state. They get a Zustand query store and
 can be used with `useTableLevelQuery` or the lower-level `useTGridQueryState`.
+In one TGrid definition, host-owned query state is for the root level only.
+Validation throws if a non-root level declares `query.owner: "host"`.
 
 ```ts
 query: { owner: "host", pageSize: 50, urlSync: true }
@@ -595,6 +597,11 @@ query: { owner: "host", pageSize: 50, urlSync: true }
 
 Source-owned levels do not have query stores. They use the expansion path plus
 static defaults from the definition. This is the normal choice for child rows.
+Child levels are source-owned because each expanded parent row has its own
+path-scoped source. Sharing one host query store across those paths would mix
+page, sort, filter, and count state between sibling child tables. Mount the
+child table as the root level of its own TGrid when it needs visible host
+controls.
 
 ```ts
 query: {
@@ -658,7 +665,7 @@ const session = createTGridSession(ordersGrid, {
 });
 
 try {
-  session.rootSource.refetch();
+  await session.reloadRows();
 } finally {
   session.dispose();
 }
@@ -668,6 +675,11 @@ try {
 `useTGridSession`. Updating `services` or callbacks does not rebuild the session;
 the hook keeps the latest values available through a ref. Changing the definition
 object does rebuild the session.
+
+`reloadRows`, `setLevelSort`, `setLevelFilter`, and `setLevelPage` return
+`Promise<SourceLoadResult>`. The promise resolves after the underlying source
+publishes the loaded state. URL sync runs only after a `ready` load result, so
+browser history follows rows that actually became visible.
 
 ## Columns
 

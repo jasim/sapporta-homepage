@@ -37,6 +37,7 @@ import {
   useActiveCellForPath,
   useActiveRow,
   useCellSelection,
+  useLevelSourceState,
   useRowInteractionSnapshot,
   useSelectedRowIds,
   useSelectedRows,
@@ -559,62 +560,148 @@ type GridDataSource = {
 ### Level Snapshots
 
 ```ts
-type LevelStatus = "idle" | "loading" | "error" | "ready";
-
-type LevelSnapshot<F = unknown> = {
-  status: LevelStatus;
-  error?: Error;
-  nodes: TreeNode[];
-  footerRows?: FooterRow[];
-  sort?: SortDescriptor[];
-  filter?: F;
-  applyFilter?: RowPredicate;
-  pagination?: { page: number; pageSize: number; totalCount?: number };
-  serverManaged: {
-    sort: boolean;
-    filter: boolean;
-    pagination: boolean;
-  };
+type LevelSnapshot = {
+  nodes: readonly TreeNode[];
+  footerRows?: readonly FooterRow[];
 };
 ```
 
-`serverManaged` tells displayed-row derivation which concerns the source has
-already applied. If `serverManaged.sort` is true, the runtime treats `nodes` as
-already sorted.
+Snapshots contain display-ready rows and optional footer rows. The runtime
+renders `nodes` as published. It does not read sort, filter, page, or lifecycle
+status from the snapshot.
 
-### Readonly Sources
+### Source State
 
 ```ts
-type ReadonlyLevelDataSource = {
-  writable: false;
-  snapshot(): LevelSnapshot;
-  subscribe(fn: () => void): () => void;
-  setSort: (sort?: SortDescriptor[]) => void;
-  setFilter: (filter?: unknown) => void;
-  setPage: (page: number, pageSize: number) => void;
-  refetch: () => void;
-  dispose(): void;
-};
+type LevelStatus =
+  | "initialLoading"
+  | "ready"
+  | "refreshing"
+  | "initialError"
+  | "refreshError";
+
+type LevelSourceState =
+  | { status: "initialLoading"; snapshot: LevelSnapshot }
+  | { status: "ready"; snapshot: LevelSnapshot }
+  | {
+      status: "refreshing";
+      snapshot: LevelSnapshot;
+      previous: LevelSnapshot;
+    }
+  | {
+      status: "initialError";
+      snapshot: LevelSnapshot;
+      error: Error;
+    }
+  | {
+      status: "refreshError";
+      snapshot: LevelSnapshot;
+      previous: LevelSnapshot;
+      error: Error;
+    };
 ```
 
-### Writable Sources
+Use `useLevelSourceState(path)` or `runtime.sourceStateFor(path)` when host UI
+needs loading, refresh, or error state. Use `useLevelSnapshot(path)` when it only
+needs the current display rows.
+
+### Load Results
 
 ```ts
+type SourceLoadResult =
+  | { kind: "ready"; state: Extract<LevelSourceState, { status: "ready" }> }
+  | {
+      kind: "error";
+      state: Extract<
+        LevelSourceState,
+        { status: "initialError" | "refreshError" }
+      >;
+    }
+  | { kind: "unchanged"; state: LevelSourceState }
+  | { kind: "superseded" }
+  | { kind: "disposed" };
+```
+
+Query and refetch commands are awaitable. Their promises resolve after the
+source publishes the state visible through `state()` and subscriptions. The
+result describes the source load only. It does not describe React rendering,
+focus, scroll, URL state, or host workflows that run after the load.
+
+### Level Sources
+
+```ts
+type SortQueryCapability = {
+  current(): readonly SortDescriptor[] | undefined;
+  set(sort: readonly SortDescriptor[] | undefined): Promise<SourceLoadResult>;
+};
+
+type FilterQueryCapability<TFilter = unknown> = {
+  current(): TFilter | undefined;
+  set(filter: TFilter | undefined): Promise<SourceLoadResult>;
+};
+
+type LevelQueryCapabilities = {
+  sort?: SortQueryCapability;
+  filter?: FilterQueryCapability<unknown>;
+  refetch?: () => Promise<SourceLoadResult>;
+};
+
 type CellChange = { rowKey: RowKey; colId: ColId; value: unknown };
 
-type WritableLevelDataSource = Omit<ReadonlyLevelDataSource, "writable"> & {
-  writable: true;
-  setCell: (rowKey: RowKey, colId: ColId, value: unknown) => void;
-  applyChanges: (changes: CellChange[]) => void;
-  insertNode: (node: TreeNode, atIndex?: number) => void;
-  removeNode: (rowKey: RowKey) => void;
+type CreateNodeResult = {
+  node: TreeNode;
+  atIndex: number;
+};
+
+type WriteCapability = {
+  setCell(rowKey: RowKey, colId: ColId, value: unknown): void;
+  applyChanges(changes: readonly CellChange[]): void;
+  createNode(node: TreeNode, atIndex?: number): Promise<CreateNodeResult>;
+  removeNode(rowKey: RowKey): void | Promise<void>;
   onReconcile(fn: (event: ReconcileEvent) => void): () => void;
+  canAppendRow?: () => boolean;
+};
+
+type LevelDataSource = {
+  state(): LevelSourceState;
+  subscribe(fn: () => void): () => void;
+  dispose(): void;
+  query?: LevelQueryCapabilities;
+  write?: WriteCapability;
 };
 ```
 
-The runtime hides write verbs behind runtime methods. App code should normally
-call `runtime.writeCell`, `runtime.applyChanges`, `runtime.insertRow`, and
-`runtime.removeRow`, not source write methods directly.
+Sources expose capabilities instead of readonly/writable subtypes. A source with
+no `write` capability is readonly. The runtime hides write verbs behind runtime
+methods, so app code normally calls `runtime.writeCell`,
+`runtime.applyChanges`, `runtime.createRow`, and `runtime.removeRow`. Query
+capabilities stay visible on `runtime.sourceFor(path)`:
+
+```ts
+const source = runtime.sourceFor(rootPath("projects"));
+
+await source.query?.sort?.set([{ colId: "dueDate", direction: "asc" }]);
+await source.query?.filter?.set({ status: "open" });
+await source.query?.refetch?.();
+```
+
+Pagination is not a core runtime command. A source or host can keep page state
+inside its query capability and publish a new display-ready snapshot when that
+state changes.
+
+### REST Source Helpers
+
+`restLevelSource` and `restGridDataSource` use four query concepts:
+
+- `rowQuery` stores mutable page, page-size, sort, and filter values.
+- `buildRowsRequest` adds fixed constraints before a fetch runs.
+- `sourceOwnedRowQuery(initial)` stores query state inside a source.
+- `hostBackedRowQuery(state)` adapts application-owned query state to the same
+  source command contract.
+
+Use `sourceOwnedRowQuery` for embedded levels and child levels without visible
+controls. Use `hostBackedRowQuery` when toolbar controls, URL state, exports,
+and row loading must read the same query store.
 
 ### Reconcile Events
 
@@ -707,10 +794,31 @@ type RuntimeArgs = {
   dataSource: GridDataSource;
   interaction?: GridInteractionConfig;
   initialPhantomsByPath?: Map<GridPath, PhantomRow[]>;
+  phantomRows?: PhantomRowsConfig;
+  onLoadedRowsBoundary?: (
+    event: LoadedRowsBoundaryEvent,
+  ) => Promise<SourceLoadResult> | false;
   on?: { [E in keyof GridEvents]?: (payload: GridEvents[E]) => void };
 };
 
 function createGridRuntime(args: RuntimeArgs): GridRuntime;
+
+type LoadedRowsBoundaryEvent =
+  | {
+      kind: "cell";
+      loadPath: GridPath;
+      direction: "before" | "after";
+      origin: CellCursor;
+      colPolicy: "preserve" | "first" | "last";
+      extend: boolean;
+    }
+  | {
+      kind: "row";
+      loadPath: GridPath;
+      direction: "before" | "after";
+      origin: RowCursor;
+      extend: boolean;
+    };
 ```
 
 Outside React:
@@ -737,7 +845,7 @@ Dispose runtimes you create outside React:
 const runtime = createGridRuntime({ schema, dataSource });
 
 try {
-  runtime.sourceFor(rootPath("projects")).refetch();
+  await runtime.sourceFor(rootPath("projects")).query?.refetch?.();
 } finally {
   runtime.dispose();
 }
@@ -772,6 +880,7 @@ type GridRuntime = {
 
   schemaAt(path: GridPath): LevelSchema;
   snapshotFor(path: GridPath): LevelSnapshot;
+  sourceStateFor(path: GridPath): LevelSourceState;
   sourceFor(path: GridPath): RuntimeLevelDataSource;
   controllerFor(path: GridPath): GridControllerPublic;
   materializedChildren(parentPath: GridPath, rowId: RowId): GridPath[];
@@ -792,9 +901,18 @@ type GridRuntime = {
 
   writeCell(path: GridPath, coord: Coord, value: unknown): void;
   applyChanges(path: GridPath, changes: CellChange[]): void;
-  insertRow(path: GridPath, node: TreeNode, atIndex?: number): void;
-  removeRow(path: GridPath, rowKey: RowKey): void;
-  commitPhantom(path: GridPath, rowKey: RowKey, atIndex?: number): void;
+  createRow(
+    path: GridPath,
+    node: TreeNode,
+    atIndex?: number,
+  ): Promise<CreateNodeResult>;
+  removeRow(path: GridPath, rowKey: RowKey): Promise<void>;
+  commitPhantomRow(
+    path: GridPath,
+    rowKey: RowKey,
+    atIndex?: number,
+  ): Promise<CreateNodeResult>;
+  requestLoadedRowsBoundary(event: LoadedRowsBoundaryEvent): boolean;
 
   on: GridEmitter["on"];
   dispose(): void;
@@ -832,12 +950,12 @@ runtime.applyChanges(path, [
   { rowKey: "project-1", colId: "completedAt", value: "2026-06-01" },
 ]);
 
-runtime.insertRow(path, {
+await runtime.createRow(path, {
   levelName: "projects",
   columns: { id: "project-2", name: "Migration", status: "active" },
 });
 
-runtime.removeRow(path, "project-2");
+await runtime.removeRow(path, "project-2");
 ```
 
 Write methods throw if the source for that path is readonly.
@@ -864,10 +982,13 @@ type GridEvents = {
     status: LevelStatus;
     error?: Error;
   };
-  phantomCommitted: {
+  phantomRowCommitted: {
     path: GridPath;
     rowKey: RowKey;
+    node: TreeNode;
+    atIndex: number;
   };
+  phantomRowCreateFailed: { path: GridPath; rowKey: RowKey; reason: string };
 };
 ```
 
@@ -936,7 +1057,9 @@ Reads the runtime from context.
 function RefreshButton({ path }: { path: GridPath }) {
   const runtime = useGridRuntime();
   return (
-    <button onClick={() => runtime.sourceFor(path).refetch()}>Refresh</button>
+    <button onClick={() => void runtime.sourceFor(path).query?.refetch?.()}>
+      Refresh
+    </button>
   );
 }
 ```
@@ -947,13 +1070,17 @@ function RefreshButton({ path }: { path: GridPath }) {
 function GridLevel({
   path,
   chrome,
+  presentation,
 }: {
   path: GridPath;
   chrome?: GridLevelChrome;
+  presentation?: GridPresentation;
 }): JSX.Element;
 
 type GridLevelChrome = {
-  renderLevelHeader?: (ctx: GridChromeContext) => ReactNode;
+  renderHeader?: (ctx: GridChromeContext) => ReactNode;
+  renderStatus?: (ctx: GridStatusContext) => ReactNode;
+  renderEmpty?: (ctx: GridEmptyContext) => ReactNode;
   levelContainerClassName?: (ctx: GridChromeContext) => string | undefined;
   levelContainerStyle?: (ctx: GridChromeContext) => CSSProperties | undefined;
 };
@@ -961,7 +1088,18 @@ type GridLevelChrome = {
 type GridChromeContext = {
   path: GridPath;
   levelName: string;
+  presentation: GridPresentation;
   schema: ColumnSchema[];
+};
+
+type GridStatusContext = GridChromeContext & {
+  state: LevelSourceState;
+  retry?: () => Promise<SourceLoadResult>;
+};
+
+type GridEmptyContext = GridChromeContext & {
+  state: Extract<LevelSourceState, { status: "ready" }>;
+  phantomCount: number;
 };
 ```
 
@@ -972,9 +1110,14 @@ rows.
 <GridLevel
   path={rootPath("projects")}
   chrome={{
-    renderLevelHeader: ({ levelName }) => (
+    renderHeader: ({ levelName }) => (
       <div data-grid-part="header">{levelName}</div>
     ),
+    renderStatus: ({ state, retry }) =>
+      state.status === "initialError" || state.status === "refreshError" ? (
+        <button onClick={() => void retry?.()}>{state.error.message}</button>
+      ) : null,
+    renderEmpty: ({ levelName }) => <p>No {levelName} rows</p>,
   }}
 />
 ```
@@ -983,6 +1126,7 @@ rows.
 
 ```ts
 function useLevelSnapshot(path: GridPath): LevelSnapshot;
+function useLevelSourceState(path: GridPath): LevelSourceState;
 function usePhantoms(path: GridPath): PhantomRow[];
 function useDisplayedRowSequence(path: GridPath): DisplayedRowSequence;
 function useDisplayedRow(path: GridPath, rowId: RowId): LevelRow;
@@ -999,8 +1143,8 @@ Example:
 
 ```tsx
 function LevelStatus({ path }: { path: GridPath }) {
-  const snapshot = useLevelSnapshot(path);
-  return <span>{snapshot.status}</span>;
+  const state = useLevelSourceState(path);
+  return <span>{state.status}</span>;
 }
 ```
 
@@ -1135,12 +1279,13 @@ const runtime = createGridRuntime({
   ]),
 });
 
-runtime.commitPhantom(rootPath("projects"), "draft-1");
+await runtime.commitPhantomRow(rootPath("projects"), "draft-1");
 ```
 
-`commitPhantom` inserts the phantom through the source's `insertNode`, removes
-the phantom from the phantom channel, and emits `phantomCommitted`. It throws if
-the source is readonly or the phantom does not exist.
+`commitPhantomRow` inserts the phantom through the source's `createNode`,
+removes the phantom from the phantom channel, and emits `phantomRowCommitted`.
+If creation fails, the runtime emits `phantomRowCreateFailed` and leaves the
+phantom available for retry.
 
 ## Styling and DOM Contract
 

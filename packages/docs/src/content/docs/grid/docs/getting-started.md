@@ -76,7 +76,11 @@ export function TaskGrid() {
           schema,
           tree,
           levels: {
-            tasks: { sortMode: "client", filterMode: "none" },
+            tasks: {
+              sortMode: "client",
+              filterMode: "none",
+              paginationMode: "none",
+            },
           },
         }),
       }),

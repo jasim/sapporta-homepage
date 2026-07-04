@@ -346,6 +346,14 @@ The most common implementation mistakes come from blurring the boundary between 
 | Shift+Click row | Extend row selection to that row.    |
 | Click checkbox  | Toggle row selection (cursor stays). |
 
+### Loaded Row Boundaries
+
+Keyboard movement can reach the edge of the currently loaded rows. When that
+happens, the runtime can call `onLoadedRowsBoundary` before it falls back to
+phantom-row append behavior. A host can translate the boundary event into a data
+load, page turn, or window shift and return the source load promise. TGrid uses
+that hook to turn row and cell movement at a page edge into a table page load.
+
 ## Presets
 
 The presets are ordinary compositions of the config primitives. They are not special cases in the runtime — any valid `GridInteractionConfig` you construct yourself works the same way.

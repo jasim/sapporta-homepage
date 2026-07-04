@@ -650,49 +650,78 @@ function projectDataSource(): GridDataSource {
 }
 ```
 
-A writable level source owns its rows and notifies subscribers when the snapshot
-changes:
+A level source owns its rows, lifecycle state, optional query commands, and
+optional write capability. It notifies subscribers after it publishes new state:
 
 ```ts
 import type {
   CellChange,
+  CreateNodeResult,
+  LevelDataSource,
   LevelSnapshot,
+  LevelSourceState,
   ReconcileEvent,
+  SortDescriptor,
+  SourceLoadResult,
   TreeNode,
-  WritableLevelDataSource,
 } from "@sapporta/grid";
 
-function createProjectLevelSource(): WritableLevelDataSource {
+type ProjectFilter = { status?: string };
+
+function createProjectLevelSource(): LevelDataSource {
   let nodes: TreeNode[] = [];
-  let snapshot: LevelSnapshot = {
-    status: "loading",
-    nodes,
-    serverManaged: { sort: true, filter: true, pagination: true },
-  };
+  let currentSort: readonly SortDescriptor[] | undefined;
+  let currentFilter: ProjectFilter | undefined;
+  let snapshot: LevelSnapshot = { nodes };
+  let sourceState: LevelSourceState = { status: "initialLoading", snapshot };
   const subscribers = new Set<() => void>();
   const reconcileSubscribers = new Set<(event: ReconcileEvent) => void>();
 
-  function publish(next: LevelSnapshot) {
-    snapshot = next;
+  function nextSnapshot(): LevelSnapshot {
+    snapshot = { nodes };
+    return snapshot;
+  }
+
+  function publish(next: LevelSourceState) {
+    sourceState = next;
     for (const subscriber of subscribers) subscriber();
   }
 
-  async function refetch() {
-    publish({ ...snapshot, status: "loading" });
+  function publishReady(): Extract<LevelSourceState, { status: "ready" }> {
+    const ready = { status: "ready" as const, snapshot: nextSnapshot() };
+    publish(ready);
+    return ready;
+  }
+
+  async function refetch(): Promise<SourceLoadResult> {
+    const previous =
+      sourceState.status === "ready" ? sourceState.snapshot : undefined;
+    publish(
+      previous
+        ? { status: "refreshing", snapshot, previous }
+        : { status: "initialLoading", snapshot },
+    );
     try {
-      nodes = await fetchProjectNodes();
-      publish({
-        status: "ready",
-        nodes,
-        serverManaged: { sort: true, filter: true, pagination: true },
+      nodes = await fetchProjectNodes({
+        sort: currentSort,
+        filter: currentFilter,
       });
+      return { kind: "ready", state: publishReady() };
     } catch (error) {
-      publish({
-        status: "error",
-        error: error instanceof Error ? error : new Error(String(error)),
-        nodes,
-        serverManaged: { sort: true, filter: true, pagination: true },
-      });
+      const errorState = previous
+        ? {
+            status: "refreshError" as const,
+            snapshot,
+            previous,
+            error: error instanceof Error ? error : new Error(String(error)),
+          }
+        : {
+            status: "initialError" as const,
+            snapshot,
+            error: error instanceof Error ? error : new Error(String(error)),
+          };
+      publish(errorState);
+      return { kind: "error", state: errorState };
     }
   }
 
@@ -703,7 +732,7 @@ function createProjectLevelSource(): WritableLevelDataSource {
         ? { ...node, columns: { ...node.columns, [colId]: value } }
         : node,
     );
-    publish({ ...snapshot, status: "ready", nodes });
+    publishReady();
 
     void saveCell(rowKey, colId, value).catch((error) => {
       for (const subscriber of reconcileSubscribers) {
@@ -720,40 +749,57 @@ function createProjectLevelSource(): WritableLevelDataSource {
     });
   }
 
+  async function createNode(
+    node: TreeNode,
+    atIndex = nodes.length,
+  ): Promise<CreateNodeResult> {
+    const saved = await saveNewProject(node);
+    nodes = [...nodes.slice(0, atIndex), saved, ...nodes.slice(atIndex)];
+    publishReady();
+    return { node: saved, atIndex };
+  }
+
+  void refetch();
+
   return {
-    writable: true,
-    snapshot: () => snapshot,
+    state: () => sourceState,
     subscribe(fn) {
       subscribers.add(fn);
       return () => subscribers.delete(fn);
     },
-    setSort(sort) {
-      void fetchProjectsWith({ sort });
+    query: {
+      sort: {
+        current: () => currentSort,
+        set(sort) {
+          currentSort = sort;
+          return refetch();
+        },
+      },
+      filter: {
+        current: () => currentFilter,
+        set(filter) {
+          currentFilter = filter as ProjectFilter | undefined;
+          return refetch();
+        },
+      },
+      refetch,
     },
-    setFilter(filter) {
-      void fetchProjectsWith({ filter });
-    },
-    setPage(page, pageSize) {
-      void fetchProjectsWith({ page, pageSize });
-    },
-    refetch,
-    setCell,
-    applyChanges(changes: CellChange[]) {
-      for (const change of changes) {
-        setCell(change.rowKey, change.colId, change.value);
-      }
-    },
-    insertNode(node, atIndex = nodes.length) {
-      nodes = [...nodes.slice(0, atIndex), node, ...nodes.slice(atIndex)];
-      publish({ ...snapshot, nodes });
-    },
-    removeNode(rowKey) {
-      nodes = nodes.filter((node) => String(node.columns.id) !== rowKey);
-      publish({ ...snapshot, nodes });
-    },
-    onReconcile(fn) {
-      reconcileSubscribers.add(fn);
-      return () => reconcileSubscribers.delete(fn);
+    write: {
+      setCell,
+      applyChanges(changes: readonly CellChange[]) {
+        for (const change of changes) {
+          setCell(change.rowKey, change.colId, change.value);
+        }
+      },
+      createNode,
+      removeNode(rowKey) {
+        nodes = nodes.filter((node) => String(node.columns.id) !== rowKey);
+        publishReady();
+      },
+      onReconcile(fn) {
+        reconcileSubscribers.add(fn);
+        return () => reconcileSubscribers.delete(fn);
+      },
     },
     dispose() {
       subscribers.clear();
@@ -764,8 +810,8 @@ function createProjectLevelSource(): WritableLevelDataSource {
 ```
 
 The example is intentionally minimal. A production source should preserve
-snapshot identity on no-op reads, abort stale requests, and make server-managed
-sort/filter/pagination explicit through `serverManaged`.
+snapshot identity on no-op reads, abort stale requests, and resolve query command
+promises only after the source has published the resulting state.
 
 ## Host Query Controls
 
@@ -775,36 +821,45 @@ state and exposes generic commands:
 ```tsx
 function TaskToolbar({ path }: { path: GridPath }) {
   const runtime = useGridRuntime();
-  const snapshot = useLevelSnapshot(path);
+  const state = useLevelSourceState(path);
   const source = runtime.sourceFor(path);
 
   return (
     <div>
       <button
-        onClick={() => source.setSort([{ colId: "dueDate", direction: "asc" }])}
+        onClick={() =>
+          void source.query?.sort?.set([
+            { colId: "dueDate", direction: "asc" },
+          ])
+        }
       >
         Sort by due date
       </button>
-      <button onClick={() => source.refetch()}>Refresh</button>
-      {snapshot.status === "loading" ? <span>Loading</span> : null}
+      <button onClick={() => void source.query?.refetch?.()}>Refresh</button>
+      {state.status === "initialLoading" || state.status === "refreshing" ? (
+        <span>Loading</span>
+      ) : null}
     </div>
   );
 }
 ```
 
 Your filter type can be anything. BaseGrid carries it as `unknown` at the
-cross-source boundary and only calls a compiled `RowPredicate` when local
-filtering is enabled.
+cross-source boundary. Core displayed-row derivation does not run filter or sort
+stages; sources publish nodes that are already shaped for display. The in-memory
+data source applies local sort and filter inside the source before it publishes a
+snapshot.
 
 ## Styling and Chrome
 
-`GridLevel` accepts optional chrome callbacks for headers and level containers.
+`GridLevel` accepts optional chrome callbacks for headers, status, empty state,
+and level containers.
 
 ```tsx
 <GridLevel
   path={rootPath("projects")}
   chrome={{
-    renderLevelHeader: ({ levelName, schema }) => (
+    renderHeader: ({ levelName, schema }) => (
       <div data-grid-part="header">
         {levelName} ({schema.length} columns)
       </div>

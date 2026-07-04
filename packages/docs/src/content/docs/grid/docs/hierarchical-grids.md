@@ -114,8 +114,16 @@ export function ProjectGrid() {
           schema,
           tree,
           levels: {
-            projects: { sortMode: "client", filterMode: "none" },
-            tasks: { sortMode: "client", filterMode: "none" },
+            projects: {
+              sortMode: "client",
+              filterMode: "none",
+              paginationMode: "none",
+            },
+            tasks: {
+              sortMode: "client",
+              filterMode: "none",
+              paginationMode: "none",
+            },
           },
         }),
       }),
