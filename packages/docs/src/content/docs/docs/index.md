@@ -15,24 +15,24 @@ realistic app-owned feature.
 
 ## Learning path
 
-1. [Create a project](/docs/getting-started/#create-a-project) and open the
-   generated app.
-2. [Build the task app](/docs/getting-started/#build-the-task-app) with stable
+1. [Create a project](/docs/getting-started/) and open the generated app.
+2. Review the
+   [generated project structure](/docs/getting-started/#inspect-the-generated-code).
+3. [Build the task app](/docs/getting-started/build-the-task-app/) with stable
    table names used by the tutorials.
-3. [Tour the running app](/docs/getting-started/#tour-the-running-app) with the
-   CLI.
-4. Read [What Is Sapporta](/docs/concepts/what-is-sapporta/) and
-   [Project Anatomy](/docs/concepts/project-anatomy/).
-5. Build [Task Triage](/docs/building-your-own-feature/overview/) to see schema,
+4. [Use a coding agent](/docs/getting-started/use-a-coding-agent/) to create an
+   agent token and add sample data through the running API.
+5. Read [What Is Sapporta](/docs/concepts/what-is-sapporta/).
+6. Build [Task Triage](/docs/building-your-own-feature/overview/) to see schema,
    endpoints, screens, reports, auth, and CLI validation together.
-6. Use [Subsystem Guides](/docs/subsystems/data-modeling/) and
+7. Use [Subsystem Guides](/docs/subsystems/data-modeling/) and
    [Reference](/docs/reference/) when you need a focused implementation guide or
    exact lookup page.
 
 ## Main sections
 
-- [Getting Started](/docs/getting-started/) gets you to a useful task app
-  quickly.
+- [Getting Started](/docs/getting-started/) creates a project, explains the
+  generated code, and opens the app shell.
 - [Concepts](/docs/concepts/what-is-sapporta/) explains the system without every
   API detail.
 - [Building Your Own Feature](/docs/building-your-own-feature/overview/) walks

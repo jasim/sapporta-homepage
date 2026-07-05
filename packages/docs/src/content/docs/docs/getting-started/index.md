@@ -1,211 +1,132 @@
 ---
 title: "Getting Started"
 description:
-  "Initialize a Sapporta app, build the task-app tutorial baseline, create agent
-  access, and add data with the CLI."
+  "Create a Sapporta project, inspect the generated TypeScript application, sign
+  up locally, and open the generated app shell."
 ---
 
-Follow this path from an empty Sapporta project to the stable task app used by
-the docs and CLI examples.
+Welcome to Sapporta. Sapporta is a TypeScript framework for database
+applications with schema-as-code table definitions, generated CRUD APIs,
+auth-aware row access, and a React app shell.
+
+This page creates a new project and opens the generated application. The next
+page builds the task app used by the rest of the tutorials.
 
 ## Create a project
 
-Create a new Sapporta project with pnpm:
+Sapporta projects use pnpm. If Node.js is installed but `pnpm` is not available,
+enable pnpm through Corepack:
+
+```bash
+corepack enable pnpm
+```
+
+Create a project named `task-app`, move into it, and build the generated
+application:
 
 ```bash
 pnpm dlx sapporta init task-app
 cd task-app
+pnpm build
+```
+
+Start the local development server:
+
+```bash
 pnpm dev
 ```
 
-If pnpm is not available yet, use npx for initialization:
-
-```bash
-npx sapporta init task-app
-```
-
-If the initializer does not install dependencies, run `pnpm install` before
-`pnpm dev`. A lockfile alone does not prove `node_modules` exists.
-
-The generated app is a regular TypeScript monorepo. Keep `pnpm dev` running
-while you work. The frontend is usually available at:
+The console prints the local browser URL, usually:
 
 ```text
 http://localhost:5173
 ```
 
-The API defaults to:
+The API usually runs on:
 
 ```text
 http://localhost:3000
 ```
 
-Run future Sapporta commands from the project root, the directory that contains
+Run future Sapporta commands from the project root. The project root contains
 `sapporta.json`, `package.json`, and `pnpm-workspace.yaml`.
 
-### Checkpoint
+## Inspect the generated code
 
-Open `http://localhost:5173`. On a new project, Sapporta should take you through
-signup and then into the app shell.
-
-## Sign up and open the app
-
-Sign up as the first user. Sapporta creates your first workspace and makes you
-the owner automatically when the authenticated app context loads. If the app
-asks you to verify your email, complete that step before continuing.
-
-### Checkpoints
-
-- First run redirects to `/signup`.
-- `/verify-email` appears only when verification is required.
-- You land on `/welcome` after auth and workspace context load.
-- The app shell renders.
-- The account/profile page is reachable at `/account/profile`.
-
-Use "sign up and verify if prompted" as the product model. You do not need to
-manually activate a current user.
-
-## Build the task app
-
-Open `/welcome`, choose **Task Management**, and copy the prompt into your
-coding agent from the project root.
-
-The prompt asks the agent to use stable names so the rest of the documentation
-can show copyable commands.
-
-### Canonical task-app contract
-
-Use these exact table names:
+The generated app is a pnpm workspace with a Hono API, a React frontend, and a
+shared package for API contracts and wire types.
 
 ```text
-projects, people, tasks, labels, task_labels, comments
+task-app/
+  sapporta.json
+  package.json
+  pnpm-workspace.yaml
+  .env.development
+  data/
+  packages/
+    api/
+      app/
+      authz/
+      migrations/
+      project-auth/
+      schema/
+    frontend/
+      src/
+    shared/
+      src/
+        contracts/
+  scripts/
+  Dockerfile
+  DEPLOYMENT.md
 ```
 
-Use these task columns:
+| Path                                     | What it contains                                                                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `sapporta.json`                          | The project marker used by the Sapporta CLI to find the app root.                                       |
+| `package.json` and `pnpm-workspace.yaml` | Workspace scripts, package manager metadata, and package membership.                                    |
+| `.env.development`                       | Local ports, auth settings, mail transport, and development-only secrets.                               |
+| `data/`                                  | The local SQLite database used by the generated app.                                                    |
+| `packages/api/`                          | The Hono server, Drizzle configuration, auth setup, migrations, schema files, and app-owned API routes. |
+| `packages/api/schema/`                   | Table definitions written as Drizzle schemas with Sapporta metadata.                                    |
+| `packages/api/app/`                      | Custom backend routes mounted under `/api`.                                                             |
+| `packages/api/authz/`                    | Authorization rules and request data-authority helpers for server-side access control.                  |
+| `packages/api/project-auth/`             | Better Auth integration, workspace bootstrap, email verification, and agent token support.              |
+| `packages/frontend/`                     | The React and Vite app shell, routes, styles, and browser API clients.                                  |
+| `packages/frontend/src/App.tsx`          | App-owned frontend routes and navigation entries.                                                       |
+| `packages/frontend/src/api.ts`           | Typed browser clients for shared API contracts.                                                         |
+| `packages/shared/`                       | Request and response contracts shared by the API and frontend.                                          |
+| `packages/shared/src/contracts/`         | ts-rest contract definitions for custom endpoints.                                                      |
+| `scripts/`                               | Local development helpers used by `pnpm dev` and build cleanup.                                         |
+| `Dockerfile` and `DEPLOYMENT.md`         | The default production image and deployment notes.                                                      |
 
-```text
-title, description, status, priority, due_date, assignee_id, project_id
-```
+Generated table endpoints, report endpoints, and app-owned endpoints are served
+under `/api`. Browser screens live in `packages/frontend`. Shared request and
+response shapes live in `packages/shared`; that package does not depend on the
+API or frontend packages.
 
-The tutorial app uses this table shape:
+## Sign up locally
 
-```text
-people: id, name, email
-projects: id, name, description, status
-tasks: id, title, description, status, priority, due_date, assignee_id, project_id
-labels: id, name, color
-task_labels: id, task_id, label_id
-comments: id, task_id, author_id, body
-```
+Open the local browser URL printed by `pnpm dev`. A new project opens at the
+signup screen when no signed-in session exists.
 
-Recommended values:
+![Generated Sapporta signup screen](/assets/getting-started/generated-app-signup.jpg)
 
-```text
-tasks.status: open, in_progress, blocked, done
-tasks.priority: low, normal, high
-projects.status: active, paused, complete
-```
+Enter a name, email address, and password. In local development, the stream mail
+transport writes the generated email to the API console. The verification email
+includes a local URL. Open that URL to verify the account and load the signed-in
+app context.
 
-For the first task app, use `workspaceGlobal` tables unless a later feature
-explicitly teaches private or user-owned records. That keeps one workspace with
-shared projects, tasks, people, labels, and comments. Browser clients, CLI
-commands, and coding agents must still omit trusted scope columns such as
-`workspace_id`, `workspaceId`, `scoped_to_user_id`, and `scopedToUserId`.
+After verification, Sapporta creates the first workspace and assigns the first
+user as the owner. The app shell shows the project navigation, generated table
+surfaces, account workspace, and the starter welcome screen.
 
-After the agent finishes, verify the project:
+![Generated Sapporta app after signup](/assets/getting-started/generated-app-welcome.jpg)
 
-```bash
-pnpm build
-pnpm dev
-```
+The project name and table list in the app shell come from the project on disk.
+As tables are added to `packages/api/schema/`, the table navigation and
+generated record screens update with the running application.
 
-### Checkpoints
+## Next step
 
-- Table navigation appears.
-- Projects, People, Tasks, Labels, and Comments are visible.
-- The task grid has rows.
-- A task can be created or edited.
-
-## Create an agent token
-
-Create an agent token after the task app is built. Before task tables exist,
-there is not much useful data-console work to do.
-
-1. Open `/account/profile`.
-2. Confirm your profile, workspace, and role.
-3. Create an agent access token.
-4. Copy the raw token once.
-
-Set the target API and token in your shell:
-
-```bash
-export SAPPORTA_API_URL="http://localhost:3000"
-export SAPPORTA_API_TOKEN="spat_..."
-```
-
-The token lets CLI and coding-agent calls act as this signed-in user in this
-workspace. Expiration, revocation, target selection, and auth failure recovery
-are covered in [Agent Access](/docs/tools-and-operations/agent-access/).
-
-## Tour the running app
-
-Run the project-local CLI from the project root while the API is running:
-
-```bash
-pnpm exec sapporta describe
-pnpm exec sapporta tables
-pnpm exec sapporta tables show tasks
-pnpm exec sapporta tables sample tasks
-```
-
-`describe` reads the live OpenAPI surface. `tables` reads registered Sapporta
-table metadata. `tables sample` uses the running app boundary, not a private
-database shortcut.
-
-Keep full OpenAPI details, filter grammar, SQL fallback, and custom endpoints
-for later. At this point, the goal is to prove the browser app, API metadata,
-and CLI all see the same task app.
-
-## Add data with the CLI
-
-Start with discovery:
-
-```bash
-pnpm exec sapporta tables show people
-pnpm exec sapporta tables show projects
-pnpm exec sapporta tables show tasks
-pnpm exec sapporta tables sample people
-pnpm exec sapporta tables sample projects
-```
-
-Create sample rows:
-
-```bash
-pnpm exec sapporta rows insert people --data '{"name":"Priya Shah","email":"priya@example.test"}'
-pnpm exec sapporta rows insert projects --data '{"name":"Website launch","description":"Prepare the launch plan.","status":"active"}'
-```
-
-Resolve IDs from your own app:
-
-```bash
-pnpm exec sapporta tables sample people --fields id,name,email
-pnpm exec sapporta tables sample projects --fields id,name
-```
-
-Insert a task using IDs returned by your commands:
-
-```bash
-pnpm exec sapporta rows insert tasks --data '{"title":"Draft launch checklist","description":"Create the first pass of launch tasks.","status":"open","priority":"high","due_date":"2026-07-03","assignee_id":1,"project_id":1}'
-```
-
-Do not blindly copy `1`; use the IDs returned by your own samples.
-
-### Freeform agent example
-
-```text
-Add a high-priority task for Priya in the Website launch project, due next Friday, and add a comment explaining that this is for the first launch review.
-```
-
-A coding agent should inspect table schemas, sample rows, resolve foreign keys,
-then use row commands. It must omit `workspace_id`, `workspaceId`,
-`scoped_to_user_id`, and `scopedToUserId`.
+Build the tutorial baseline in
+[Build the Task App](/docs/getting-started/build-the-task-app/).

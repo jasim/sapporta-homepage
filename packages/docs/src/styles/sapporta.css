@@ -646,6 +646,38 @@ h1#starlight__page-title {
   @apply mb-0;
 }
 
+.sl-markdown-content .sap-doc-prompt {
+  @apply my-5 rounded-[6px] border border-sap-rule bg-sap-bg px-5 py-4 text-sap-ink shadow-[0_14px_44px_rgb(10_11_13_/_0.05)];
+}
+
+.sl-markdown-content .sap-doc-prompt p {
+  @apply mb-4 text-[0.96rem] leading-[1.65] text-sap-ink;
+}
+
+.sl-markdown-content .sap-doc-prompt p:last-child {
+  @apply mb-0;
+}
+
+.sl-markdown-content .sap-doc-prompt ul {
+  @apply mt-1 mb-0 pl-5 text-[0.96rem];
+}
+
+.sl-markdown-content .sap-doc-prompt li + li {
+  margin-top: 0.35rem;
+}
+
+.sl-markdown-content .sap-doc-figure {
+  @apply my-7;
+}
+
+.sl-markdown-content .sap-doc-figure img {
+  @apply block w-full rounded-[6px] border border-sap-rule shadow-[0_18px_54px_rgb(10_11_13_/_0.08)];
+}
+
+.sl-markdown-content .sap-doc-figure figcaption {
+  @apply mt-2 text-[0.82rem] leading-[1.45] text-sap-dim;
+}
+
 .sl-markdown-content hr {
   @apply my-8 border-0 border-t border-sap-rule;
 }

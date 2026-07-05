@@ -59,7 +59,12 @@ export default defineConfig({
         },
         {
           label: "Sapporta Framework",
-          items: [{ slug: "docs/getting-started" }, { slug: "docs" }],
+          items: [
+            { slug: "docs/getting-started" },
+            { slug: "docs/getting-started/build-the-task-app" },
+            { slug: "docs/getting-started/use-a-coding-agent" },
+            { slug: "docs" },
+          ],
         },
         {
           label: "Concepts",
@@ -67,7 +72,6 @@ export default defineConfig({
             { slug: "docs/concepts/what-is-sapporta" },
             { slug: "docs/concepts/the-grid-and-record-surfaces" },
             { slug: "docs/concepts/grid/standalone-grid-and-sapporta" },
-            { slug: "docs/concepts/project-anatomy" },
             { slug: "docs/concepts/schema-as-code" },
             { slug: "docs/concepts/generated-apis-and-openapi" },
             { slug: "docs/concepts/auth-and-row-scope" },

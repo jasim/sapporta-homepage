@@ -6,7 +6,7 @@ description:
 ---
 
 Start with the task app from
-[Getting Started](/docs/getting-started/#build-the-task-app). Confirm the
+[Build the Task App](/docs/getting-started/build-the-task-app/). Confirm the
 starter tables before adding code:
 
 ```bash
