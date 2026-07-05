@@ -1,9 +1,11 @@
 ---
-title: "What Is Sapporta"
+title: "Welcome"
 description:
   "Understand Sapporta as a TypeScript database app toolkit with generated
   tables, APIs, grids, OpenAPI, and app-owned features."
 ---
+
+Welcome to Sapporta.
 
 Sapporta is a TypeScript toolkit for building database applications, like
 operational tools, personal databases, and business software. Sapporta can help
@@ -12,8 +14,9 @@ data.
 
 A Sapporta project is still an ordinary app. You own the Hono API, Drizzle
 schema, React routes, shared API contracts, auth policy, and deployment.
-Sapporta supplies the repeatable database-app surface so domain-specific code -
-both on the front end and back end - can operate closer to the domain.
+Sapporta supplies the building blocks common to database apps, so that 
+domain-specific code - both on the front end and back end - can operate 
+closer to the domain.
 
 This is made possible by the way Sapporta treats table definitions as the source
 for the rest of the application surface. You describe your relational model in
@@ -29,6 +32,3 @@ TypeScript, and Sapporta uses that same schema to provide:
 It also publishes the resulting application surface through OpenAPI and CLI
 discovery, making Sapporta apps fully agentic. And all of this is bounded by
 row-level security as well as fine-grained CASL permissions.
-
-Next:
-[The Grid And Record Surfaces](/docs/concepts/the-grid-and-record-surfaces/).

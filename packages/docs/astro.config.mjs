@@ -38,30 +38,11 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: "Sapporta Grid",
+          label: "Getting Started",
           items: [
-            { slug: "grid/docs" },
-            { slug: "grid/docs/getting-started" },
-            { slug: "grid/docs/core-model" },
-            { slug: "grid/docs/columns-and-editors" },
-            { slug: "grid/docs/data-sources" },
-            { slug: "grid/docs/editing-and-saving" },
-            { slug: "grid/docs/keyboard-and-selection" },
-            { slug: "grid/docs/hierarchical-grids" },
-            { slug: "grid/docs/advanced-rows" },
-            { slug: "grid/docs/styling" },
-            { slug: "grid/docs/reference" },
-            { slug: "grid/docs/full/basegrid-guide" },
-            { slug: "grid/docs/full/basegrid-api" },
-            { slug: "grid/docs/full/basegrid-interactions" },
-            { slug: "grid/docs/full/basegrid-styling" },
-          ],
-        },
-        {
-          label: "Sapporta Framework",
-          items: [
-            { slug: "docs/getting-started" },
-            { slug: "docs/getting-started/build-the-task-app" },
+            { slug: "docs/getting-started/welcome" },
+            { slug: "docs/getting-started/create-a-new-project" },
+            { slug: "docs/getting-started/build-the-task-management-app" },
             { slug: "docs/getting-started/use-a-coding-agent" },
             { slug: "docs" },
           ],
@@ -69,7 +50,6 @@ export default defineConfig({
         {
           label: "Concepts",
           items: [
-            { slug: "docs/concepts/what-is-sapporta" },
             { slug: "docs/concepts/the-grid-and-record-surfaces" },
             { slug: "docs/concepts/grid/standalone-grid-and-sapporta" },
             { slug: "docs/concepts/schema-as-code" },
@@ -131,7 +111,7 @@ export default defineConfig({
           ],
         },
         {
-          label: "Reference",
+          label: "Sapporta Reference",
           items: [
             { slug: "docs/reference" },
             { slug: "docs/reference/table-definitions" },
@@ -152,6 +132,26 @@ export default defineConfig({
             { slug: "docs/reference/deployment" },
             { slug: "docs/reference/full/deployment" },
             { slug: "docs/reference/troubleshooting" },
+          ],
+        },
+        {
+          label: "Sapporta Grid",
+          items: [
+            { slug: "grid/docs" },
+            { slug: "grid/docs/getting-started" },
+            { slug: "grid/docs/core-model" },
+            { slug: "grid/docs/columns-and-editors" },
+            { slug: "grid/docs/data-sources" },
+            { slug: "grid/docs/editing-and-saving" },
+            { slug: "grid/docs/keyboard-and-selection" },
+            { slug: "grid/docs/hierarchical-grids" },
+            { slug: "grid/docs/advanced-rows" },
+            { slug: "grid/docs/styling" },
+            { slug: "grid/docs/reference" },
+            { slug: "grid/docs/full/basegrid-guide" },
+            { slug: "grid/docs/full/basegrid-api" },
+            { slug: "grid/docs/full/basegrid-interactions" },
+            { slug: "grid/docs/full/basegrid-styling" },
           ],
         },
       ],
