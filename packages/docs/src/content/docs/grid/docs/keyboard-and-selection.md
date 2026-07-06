@@ -53,3 +53,7 @@ rectangular selection inside one rendered level. Row selection identifies rows
 for commands such as delete, export, bulk edit, or opening a side panel. Choose
 the preset first, then add columns or toolbar actions that use the selected row
 state.
+
+Grid copy uses the active cell or cell range. It does not read row selection.
+Keep row selection for row operations such as delete, export, bulk edit, or
+side-panel workflows.

@@ -13,7 +13,8 @@ editable grid on the page first. Move to [Core Model](/grid/docs/core-model/)
 when you need to understand levels, row paths, columns, and data sources.
 
 The Grid docs teach the standalone package: BaseGrid, ColumnPreset, data
-sources, runtime state, editing, hierarchy, keyboard behavior, and styling.
+sources, runtime state, editing, hierarchy, keyboard behavior, copying, and
+styling.
 
 Use main Sapporta docs when the grid is backed by Sapporta schema tables,
 generated `/api/tables/*` routes, row security, OpenAPI, reports, or the app
@@ -28,6 +29,7 @@ shell. Start with [Table-Aware Grids](/docs/subsystems/grid/) or the
 - [Data Sources](/grid/docs/data-sources/)
 - [Editing And Saving](/grid/docs/editing-and-saving/)
 - [Keyboard And Selection](/grid/docs/keyboard-and-selection/)
+- [Copying Grid Data](/grid/docs/copying-grid-data/)
 - [Hierarchical Grids](/grid/docs/hierarchical-grids/)
 - [Advanced Rows](/grid/docs/advanced-rows/)
 - [Styling](/grid/docs/styling/)

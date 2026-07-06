@@ -29,11 +29,19 @@ and `$details` create shape, see
 [Generated Table APIs](/docs/subsystems/generated-table-apis/).
 
 Use the generated screen for the common operational loop: find a record, review
-its fields, make a small correction, export the current result set, or follow an
-expandable relationship to child rows. If a table declares child relationships
-in its metadata, the grid can show those related rows under the parent record.
-This is useful for invoices with lines, orders with items, journal entries with
-detail rows, and similar parent-child data.
+its fields, make a small correction, copy selected cells or ranges, export the
+current result set, or follow an expandable relationship to child rows. If a
+table declares child relationships in its metadata, the grid can show those
+related rows under the parent record. This is useful for invoices with lines,
+orders with items, journal entries with detail rows, and similar parent-child
+data.
+
+Each generated grid has a right-click copy menu for the active cell selection.
+`Copy` writes the selected cell or range as CSV text. `Copy with headers` adds
+stable data headers based on column ids. Plain columns copy one raw clipboard
+column. Select, foreign-key, and lookup columns copy both the stored value and
+the label, so a selected `account_id` column can produce
+`account_id,account_id_label`.
 
 For custom record-heavy workflows, use the generated table route as the baseline
 and move to TGrid only when the workflow needs custom columns, nested levels,

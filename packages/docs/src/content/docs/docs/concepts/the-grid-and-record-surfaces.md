@@ -11,6 +11,7 @@ generated forms; developers get the same behavior behind generated table routes.
 Generated record surfaces include:
 
 - keyboard-friendly grids
+- right-click copy for selected cells and ranges
 - sorting, filtering, and search
 - lookup labels for foreign keys
 - child rows for parent/detail records

@@ -9,8 +9,8 @@ description:
 
 Use a table-aware grid when your custom screen is still working with Sapporta
 records. You get editable cells, keyboard navigation, filters, sort,
-pagination, lookup labels, CSV export, and relationship expansion without
-rewriting the generated table API plumbing.
+pagination, lookup labels, right-click copy, CSV export, and relationship
+expansion without rewriting the generated table API plumbing.
 
 Start with the standard schema grid for a custom route that should look and
 behave like Sapporta's built-in table screens:
@@ -57,6 +57,14 @@ export function InvoiceListRoute() {
 the table schema, uses the built-in table row APIs, keeps query state in the
 URL, resolves foreign-key labels, renders expandable child tables declared in
 metadata, and wires CSV export to the same filtered result set the user sees.
+
+The visible grid also has the standard right-click copy menu. `Copy` writes the
+active cell or range as CSV text. `Copy with headers` adds stable data headers
+based on column ids. For select, foreign-key, and lookup columns, one visible
+column contributes the stored value and the display label. When the default
+clipboard shape is not the contract you need, customize the column copy behavior
+as described in
+[Copying Grid Data](/grid/docs/copying-grid-data/).
 
 Move to a custom TGrid definition when the screen needs product-specific
 columns, custom editing, selection, nested levels, or workflow actions around

@@ -66,6 +66,11 @@ Use a raw column only when the cell needs a fully custom renderer, editor,
 parser, comparator, or activation contract. Otherwise, prefer a preset and
 replace only the renderer or behavior that is product-specific.
 
+Copy is column behavior too. Plain columns copy their raw value by default,
+while select and lookup-style presets can contribute both a stored value and a
+label. Use [Copying Grid Data](/grid/docs/copying-grid-data/) when a column
+needs a different clipboard contract.
+
 Move to a custom column when the cell has workflow behavior:
 
 - an action button

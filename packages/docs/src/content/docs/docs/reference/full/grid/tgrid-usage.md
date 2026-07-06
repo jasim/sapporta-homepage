@@ -704,8 +704,11 @@ computed or action columns that are not persisted directly. Use
 declared.
 
 Column options can set headers, widths, editability, edit triggers, custom
-renderers, custom editors, and custom save handlers. A `saveCellValue` handler
-can return:
+renderers, custom editors, custom copy behavior, and custom save handlers. Use
+`copy` on `columns.table(...)` or `columns.client(...)` when the clipboard
+columns should differ from the rendered column. See
+[Copying Grid Data](/grid/docs/copying-grid-data/) for the full clipboard
+contract. A `saveCellValue` handler can return:
 
 - `{ kind: "value", value }` to replace the edited value.
 - `{ kind: "patch", patch }` to patch several fields.

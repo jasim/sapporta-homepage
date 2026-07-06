@@ -12,6 +12,9 @@ typed route tools, a shared grid dataset shape, date range helpers, and a React
 renderer; your application owns the input schema, permission check, query logic,
 totals, navigation, and drill-down behavior.
 
+Report grids use the same right-click copy menu as other grids, so users can
+copy the active cell or range as CSV with or without headers.
+
 A report usually has four parts:
 
 1. A shared route contract in `packages/shared/src/contracts/`

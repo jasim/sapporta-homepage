@@ -27,6 +27,7 @@ ColumnPreset helpers are exported from `@sapporta/grid/column-preset`.
 
 ```ts
 import {
+  GridCopyContextMenu,
   GridLevel,
   GridRuntimeProvider,
   createGridRuntime,
@@ -43,6 +44,8 @@ import {
   useSelectedRows,
   rowInteractionStatusFor,
   type GridSchema,
+  type GridCopyColumn,
+  type GridColumnCopyBehavior,
   type RowInteractionSnapshot,
   type TreeNode,
 } from "@sapporta/grid";
@@ -261,6 +264,17 @@ function capabilitiesOf(row: LevelRow): RowCapabilities;
 BaseGrid renders `ColumnSchema`.
 
 ```ts
+type GridCopyColumn<TRow = LevelRow> = {
+  header: string;
+  valueAt: (row: TRow, rowIndex: number) => unknown;
+};
+
+type GridColumnCopyBehavior = (context: {
+  path: GridPath;
+  column: ColumnSchema;
+  rows: readonly LevelRow[];
+}) => readonly GridCopyColumn[] | Promise<readonly GridCopyColumn[]>;
+
 type ColumnSchema = {
   id: ColId;
   name: string;
@@ -268,6 +282,7 @@ type ColumnSchema = {
   compare?: (a: unknown, b: unknown) => number;
   edit?: CellEditBehavior;
   activation?: CellActivation;
+  copy?: GridColumnCopyBehavior;
   meta?: unknown;
 };
 
@@ -324,6 +339,34 @@ const statusColumn: ColumnSchema = {
   compare: (a, b) => String(a ?? "").localeCompare(String(b ?? "")),
 };
 ```
+
+### Copy Behavior
+
+`GridCopyContextMenu` uses `ColumnSchema.copy` when a selected cell or range
+includes that column. If the column does not provide copy behavior, BaseGrid
+copies `row.columns[column.id]` and uses `column.id` as the clipboard header.
+
+```ts
+const personColumn: ColumnSchema = {
+  id: "person_id",
+  name: "Person",
+  renderCell: ({ row }) => String(row.columns.person_name ?? ""),
+  copy: () => [
+    {
+      header: "person_id",
+      valueAt: (row) => row.columns.person_id,
+    },
+    {
+      header: "person_name",
+      valueAt: (row) => row.columns.person_name,
+    },
+  ],
+};
+```
+
+One visible grid column can contribute one or more `GridCopyColumn` values. A
+copy behavior may return a promise, so lookup-backed columns can load labels
+before the clipboard text is serialized.
 
 ### Raw Editor Example
 
@@ -426,6 +469,7 @@ type ColumnPresetOptions<TMeta = unknown> = {
   parse?: (value: string, props: CellEditorProps) => unknown;
   compare?: (a: unknown, b: unknown) => number;
   renderCell?: (props: CellRenderProps) => ReactNode;
+  copy?: GridColumnCopyBehavior;
   meta?: TMeta;
 };
 ```

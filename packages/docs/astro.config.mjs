@@ -144,6 +144,7 @@ export default defineConfig({
             { slug: "grid/docs/data-sources" },
             { slug: "grid/docs/editing-and-saving" },
             { slug: "grid/docs/keyboard-and-selection" },
+            { slug: "grid/docs/copying-grid-data" },
             { slug: "grid/docs/hierarchical-grids" },
             { slug: "grid/docs/advanced-rows" },
             { slug: "grid/docs/styling" },

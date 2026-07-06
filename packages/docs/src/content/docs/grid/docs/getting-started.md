@@ -21,6 +21,7 @@ Then create a schema, rows, a runtime, and a React surface:
 
 ```tsx
 import {
+  GridCopyContextMenu,
   GridLevel,
   GridRuntimeProvider,
   createGridRuntime,
@@ -91,11 +92,19 @@ export function TaskGrid() {
 
   return (
     <GridRuntimeProvider runtime={runtime}>
-      <GridLevel path={rootPath(schema.rootLevel)} />
+      <GridCopyContextMenu>
+        <GridLevel path={rootPath(schema.rootLevel)} />
+      </GridCopyContextMenu>
     </GridRuntimeProvider>
   );
 }
 ```
+
+`GridCopyContextMenu` gives the standalone grid the standard right-click copy
+menu. Right-click the active cell or a selected range, choose `Copy` to write
+CSV values, or choose `Copy with headers` to include stable column ids. The
+`status` select column contributes both the stored value and label, so copying
+it with headers produces `status,status_label`.
 
 That first grid is intentionally local. It proves the visible surface, column
 model, row identity, and keyboard behavior before you connect a backend.

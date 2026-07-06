@@ -220,6 +220,32 @@ This example uses `inMemoryGridDataSource` because it is the fastest way to get
 a grid on screen. A production app can replace it with a custom `GridDataSource`
 that calls your own API.
 
+### Add The Standard Copy Menu
+
+Standalone BaseGrid surfaces opt into the standard copy menu by wrapping the
+rendered levels with `GridCopyContextMenu`.
+
+```tsx
+import {
+  GridCopyContextMenu,
+  GridLevel,
+  GridRuntimeProvider,
+  rootPath,
+} from "@sapporta/grid";
+
+return (
+  <GridRuntimeProvider runtime={runtime}>
+    <GridCopyContextMenu>
+      <GridLevel path={rootPath(schema.rootLevel)} />
+    </GridCopyContextMenu>
+  </GridRuntimeProvider>
+);
+```
+
+Right-click the active cell or a selected range to copy CSV values. `Copy with
+headers` uses stable column ids as headers. If a column needs a different
+clipboard shape, add `copy` to its `ColumnSchema` or ColumnPreset options.
+
 ## ColumnPreset: The Practical Column API
 
 BaseGrid renders `ColumnSchema` values. You can write raw column schemas, but
