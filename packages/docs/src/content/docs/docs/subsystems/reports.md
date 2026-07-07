@@ -443,12 +443,12 @@ Instead, include hidden identifiers in `node.columns`, then pass link resolvers
 to `ReportGridDataset`.
 
 ```tsx
-import type { ReportGridLinkResolvers } from "@sapporta/frontend/report";
+import type { ReportCellLinkResolvers } from "@sapporta/frontend/report";
 import { createSnapshotUrl } from "@sapporta/frontend/report";
 
 type LedgerQuery = typeof defaultQuery;
 
-const ledgerLinks: ReportGridLinkResolvers<LedgerQuery> = {
+const ledgerLinks: ReportCellLinkResolvers<LedgerQuery> = {
   account: {
     row: ({ node }) => [
       {
