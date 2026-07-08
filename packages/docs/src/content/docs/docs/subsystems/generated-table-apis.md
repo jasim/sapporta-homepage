@@ -71,11 +71,11 @@ Every table gets these routes:
 | Update row    | `PUT /api/tables/<table>/<id>`       | Patch one visible row with a partial object. Returns `{ data: row }`.                  |
 | Delete row    | `DELETE /api/tables/<table>/<id>`    | Delete one visible row. Returns `{ data: deletedRow }`.                                |
 | Export CSV    | `GET /api/tables/<table>/export.csv` | Export the same visible, filtered, searched, sorted row set as CSV.                    |
-| Lookup labels | `GET /api/tables/<table>/_lookup`    | Resolve id-to-label maps for foreign-key controls.                                     |
+| Lookup labels | `GET /api/tables/<table>/_lookup`    | Resolve typed lookup entries for foreign-key controls.                                 |
 | Child counts  | `GET /api/tables/<table>/_count`     | Count child rows grouped by a parent foreign-key column.                               |
 
-Table responses are envelopes. Read `body.data`; do not treat the response as a
-bare array.
+Table responses are envelopes; do not treat them as bare arrays. Row, count, and
+mutation routes use `body.data`; lookup routes use `body.entries`.
 
 ```json
 {
@@ -213,7 +213,9 @@ user fields from the session or agent token.
 
 ## Lookup, count, and export
 
-`_lookup` resolves row IDs to human labels from `rowLabelColumns`:
+`_lookup` resolves row IDs to human labels from `rowLabelColumns`. The response
+keeps string and numeric IDs typed, so clients should read `entries` instead of
+turning the result into an object map:
 
 ```bash
 curl -fsS -G \
@@ -224,10 +226,10 @@ curl -fsS -G \
 
 ```json
 {
-  "data": {
-    "7": "Acme Co",
-    "8": "Northwind"
-  }
+  "entries": [
+    { "value": 7, "label": "Acme Co" },
+    { "value": 8, "label": "Northwind" }
+  ]
 }
 ```
 
@@ -240,6 +242,8 @@ curl -fsS -G \
   --data-urlencode "limit=10" \
   "${SAPPORTA_API_URL:-http://localhost:3000}/api/tables/customers/_lookup"
 ```
+
+Search responses use the same `{ "entries": [...] }` envelope.
 
 `_count` counts visible rows grouped by a parent foreign-key column:
 

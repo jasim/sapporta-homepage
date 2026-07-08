@@ -91,28 +91,31 @@ import {
 
 type CustomerOption = { id: string | number; name: string };
 
+type CustomerId = CustomerOption["id"];
+
 export function InvoiceForm({
   customers,
   onSubmit,
 }: {
   customers: CustomerOption[];
   onSubmit(input: {
-    customerId: string | null;
+    customerId: CustomerId | null;
     invoiceDate: string;
     status: "draft" | "sent";
     subtotal: number | null;
     taxable: boolean;
   }): Promise<void>;
 }) {
-  const [customerId, setCustomerId] = useState<string | null>(null);
+  const [customerId, setCustomerId] = useState<CustomerId | null>(null);
   const [invoiceDate, setInvoiceDate] = useState("");
   const [status, setStatus] = useState<"draft" | "sent">("draft");
   const [subtotal, setSubtotal] = useState<number | null>(null);
   const [taxable, setTaxable] = useState(false);
 
-  const customerOptions = Object.fromEntries(
-    customers.map((customer) => [String(customer.id), customer.name]),
-  );
+  const customerOptions = customers.map((customer) => ({
+    id: customer.id,
+    label: customer.name,
+  }));
 
   return (
     <form
@@ -205,9 +208,10 @@ Use the control that matches the data:
 | Short fixed option set         | `Select`                                                                                        |
 | Foreign key or long option set | `Combobox`                                                                                      |
 
-`Combobox` accepts `value: string | null`, `onChange`, and
-`options: Record<string, string>`. Convert numeric IDs to strings for the
-control and convert them back only if the submit API expects a number.
+`Combobox` accepts `value: string | number | null`, `onChange`, and
+`options: Array<{ id: string | number; label: string }>`. Keep numeric IDs as
+numbers; the control preserves the picked value type and passes `null` when the
+selection is cleared.
 
 In auth-enabled apps, do not add hidden inputs for `workspace_id`,
 `workspaceId`, `scoped_to_user_id`, or `scopedToUserId`. Do not submit columns

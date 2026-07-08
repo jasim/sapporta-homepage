@@ -22,7 +22,7 @@ For examples and behavioral guidance, see
 | Update row    | `PUT /api/tables/<table>/<id>`       | Body is a partial row object.                                                                          |
 | Delete row    | `DELETE /api/tables/<table>/<id>`    | Returns the deleted row envelope.                                                                      |
 | Export CSV    | `GET /api/tables/<table>/export.csv` | CSV response; uses row visibility plus filters, search, and sort.                                      |
-| Lookup labels | `GET /api/tables/<table>/_lookup`    | Query: `ids`, `q`, `limit`; lookup `limit` must be `1..500`; response `{ "data": { "id": "Label" } }`. |
+| Lookup labels | `GET /api/tables/<table>/_lookup`    | Query: `ids`, `q`, `limit`; lookup `limit` must be `1..500`; response `{ "entries": [{ "value": 1, "label": "Label" }] }`. |
 | Child counts  | `GET /api/tables/<table>/_count`     | Query: `group_by=<fk>&ids=1,2`; response `{ "data": { "1": 3 } }`.                                     |
 
 List responses are always enveloped:

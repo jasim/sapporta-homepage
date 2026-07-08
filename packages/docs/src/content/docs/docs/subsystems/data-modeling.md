@@ -68,7 +68,7 @@ export const products = sapportaTable({
 `rowLabelColumns` is required. It tells Sapporta how to name a row in lookup
 fields and reference displays. Pick short, stable columns such as `name`,
 `code`, `sku`, or `title`; multiple columns are joined with spaces. The
-`_lookup` route uses these labels for id-to-label maps; see
+`_lookup` route returns typed lookup entries with these labels; see
 [Generated Table APIs](/docs/subsystems/generated-table-apis/).
 
 Use Drizzle constraints for the database facts:

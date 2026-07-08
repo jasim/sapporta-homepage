@@ -46,7 +46,7 @@ narrowed to the requested data authority.
 | `create(input)`     | Client field policy, visible references, trusted scope stamping, and persistence.    |
 | `update(id, patch)` | Client field policy, visible references, and primary-key update inside visible rows. |
 | `delete(id)`        | Primary-key delete inside visible rows.                                              |
-| `lookup(query)`     | Autocomplete and id-to-label maps inside visible rows.                               |
+| `lookup(query)`     | Autocomplete and typed lookup entries inside visible rows.                           |
 | `count(query)`      | Grouped counts inside visible rows.                                                  |
 | `exportRows(query)` | CSV/export rows inside the same visibility as list.                                  |
 
