@@ -79,7 +79,6 @@ import { useState } from "react";
 import {
   Button,
   Checkbox,
-  Combobox,
   Input,
   Label,
   Select,
@@ -89,33 +88,20 @@ import {
   SelectValue,
 } from "@sapporta/ui";
 
-type CustomerOption = { id: string | number; name: string };
-
-type CustomerId = CustomerOption["id"];
-
 export function InvoiceForm({
-  customers,
   onSubmit,
 }: {
-  customers: CustomerOption[];
   onSubmit(input: {
-    customerId: CustomerId | null;
     invoiceDate: string;
     status: "draft" | "sent";
     subtotal: number | null;
     taxable: boolean;
   }): Promise<void>;
 }) {
-  const [customerId, setCustomerId] = useState<CustomerId | null>(null);
   const [invoiceDate, setInvoiceDate] = useState("");
   const [status, setStatus] = useState<"draft" | "sent">("draft");
   const [subtotal, setSubtotal] = useState<number | null>(null);
   const [taxable, setTaxable] = useState(false);
-
-  const customerOptions = customers.map((customer) => ({
-    id: customer.id,
-    label: customer.name,
-  }));
 
   return (
     <form
@@ -123,7 +109,6 @@ export function InvoiceForm({
       onSubmit={async (event) => {
         event.preventDefault();
         await onSubmit({
-          customerId,
           invoiceDate,
           status,
           subtotal,
@@ -131,17 +116,6 @@ export function InvoiceForm({
         });
       }}
     >
-      <div className="space-y-2">
-        <Label htmlFor="customer">Customer</Label>
-        <Combobox
-          value={customerId}
-          onChange={setCustomerId}
-          options={customerOptions}
-          placeholder="Choose a customer..."
-          className="w-full"
-        />
-      </div>
-
       <div className="space-y-2">
         <Label htmlFor="invoice-date">Invoice date</Label>
         <Input
@@ -206,12 +180,20 @@ Use the control that matches the data:
 | Timestamp                      | `Input type="datetime-local"` plus Sapporta temporal helpers when canonical wire format matters |
 | Boolean                        | `Checkbox` or `Switch`                                                                          |
 | Short fixed option set         | `Select`                                                                                        |
-| Foreign key or long option set | `Combobox`                                                                                      |
+| Foreign key or long option set | Base UI `Combobox` primitives                                                                   |
 
-`Combobox` accepts `value: string | number | null`, `onChange`, and
-`options: Array<{ id: string | number; label: string }>`. Keep numeric IDs as
-numbers; the control preserves the picked value type and passes `null` when the
-selection is cleared.
+Sapporta re-exports the Base UI `Combobox` namespace and provides shared theme
+classes:
+
+```tsx
+import { Combobox, comboboxClassNames } from "@sapporta/ui/combobox";
+```
+
+Use the [Base UI Combobox documentation](https://base-ui.com/react/components/combobox)
+for composition, accessibility, filtering, controlled state, and the API
+reference. Apply matching `comboboxClassNames` entries to use Sapporta's default
+styling. Foreign-key forms can keep an ID in form state and translate between
+that ID and the selected item object at the combobox boundary.
 
 In auth-enabled apps, do not add hidden inputs for `workspace_id`,
 `workspaceId`, `scoped_to_user_id`, or `scopedToUserId`. Do not submit columns
@@ -388,8 +370,8 @@ they are not authorization.
 ## Use UI components
 
 Sapporta frontend code uses React, Vite, Tailwind, `@sapporta/ui`, shadcn/ui
-conventions, Radix primitives, and lucide icons. Prefer the exported Sapporta UI
-components before introducing local component libraries.
+conventions, Base UI primitives, and lucide icons. Prefer the exported Sapporta
+UI components before introducing local component libraries.
 
 Common imports:
 
@@ -398,7 +380,6 @@ import {
   Badge,
   Button,
   Checkbox,
-  Combobox,
   Input,
   Label,
   Popover,
@@ -428,7 +409,7 @@ Use components by intent:
 | Binary field in a form                       | `Checkbox`              |
 | Binary setting or preference                 | `Switch`                |
 | Short fixed option set                       | `Select`                |
-| Searchable picker over IDs and labels        | `Combobox`              |
+| Searchable picker over IDs and labels        | `Combobox` primitives   |
 | Small contextual controls                    | `Popover`               |
 | Detail drawer, editor, or review panel       | `Sheet`                 |
 
