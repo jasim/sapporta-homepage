@@ -1,29 +1,17 @@
 ---
 title: "Reference"
-description:
-  "Focused lookup pages for Sapporta tables, filters, APIs, auth, CLI, reports,
-  OpenAPI, deployment, and troubleshooting."
+description: "Look up the canonical Sapporta package, HTTP, CLI, configuration, and runtime contracts."
 ---
 
-Use these pages when you already know the workflow and need exact shapes,
-syntax, command inventories, or lookup tables.
+Reference covers the public Sapporta 0.2.6 package surface, generated project contract, HTTP routes, CLI, configuration, runtime behavior, and diagnostics audited from framework source revision `98b33341d3aa63a4dd02e7a6e5edc2f6dbe54413`.
 
-- [Table Definitions](/docs/reference/table-definitions/)
-- [Schema And Migrations Complete Reference](/docs/reference/full/schema-and-migrations/)
-- [Schema Metadata Complete Reference](/docs/reference/full/schema-metadata/)
-- [Filter Syntax](/docs/reference/filter-syntax/)
-- [Table APIs](/docs/reference/table-apis/)
-- [TGrid Usage Guide](/docs/reference/full/grid/tgrid-usage/)
-- [Auth And Row Security](/docs/reference/auth-and-row-security/)
-- [Sapporta Auth: Building Row-Safe Apps With Workspaces](/docs/reference/full/auth-row-safe-apps/)
-- [CLI](/docs/reference/cli/)
-- [Sapporta CLI Complete Reference](/docs/reference/full/cli/)
-- [Report Datasets](/docs/reference/report-datasets/)
-- [Grid Dataset Shape Complete Reference](/docs/reference/full/reports/grid-result-shape/)
-- [Route-Based Reports Complete Reference](/docs/reference/full/reports/route-based-reports/)
-- [Scoped Report Data Complete Reference](/docs/reference/full/reports/scoped-report-data/)
-- [OpenAPI](/docs/reference/openapi/)
-- [Deployment](/docs/reference/deployment/)
-- [Deployment Complete Reference](/docs/reference/full/deployment/)
-- [Troubleshooting](/docs/reference/troubleshooting/)
-- [Sapporta Docs Migration Audit](/docs/reference/sapporta-docs-migration-audit/)
+## Lookup indexes
+
+- [Public symbols](/docs/reference/indexes/public-symbols/)
+- [HTTP endpoints](/docs/reference/indexes/http-endpoints/)
+- [CLI commands](/docs/reference/indexes/cli-commands/)
+- [Configuration](/docs/reference/indexes/configuration/)
+
+## Package boundaries
+
+`@sapporta/server` owns server schema, auth, row helpers, and route registration. `@sapporta/shared` owns browser-safe contracts and wire values. `@sapporta/frontend` owns the app shell, generated record surfaces, TGrid, and report rendering. Standalone `@sapporta/grid` has its own [Grid Reference](/grid/reference/).

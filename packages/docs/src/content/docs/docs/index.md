@@ -1,45 +1,19 @@
 ---
-title: "Sapporta Docs"
-description:
-  "Build database applications with schema-as-code tables, generated CRUD APIs,
-  React screens, reports, OpenAPI, and agent-ready tooling."
+title: "Sapporta documentation"
+description: "Choose a tutorial, guide, reference, or standalone Grid path."
 ---
 
-Sapporta is a TypeScript toolkit for building database applications. Define
-tables once, then get database migrations, generated CRUD APIs, app-shell table
-screens, lookup behavior, CSV export, OpenAPI discovery, CLI tooling, and secure
-row-scoped access.
+Sapporta is a TypeScript framework for database applications with schema-as-code tables, generated record surfaces and APIs, server-side row security, app-owned routes, React screens, reports, and operational tooling.
 
-Start with the fast path, then build a mental model, then work through one
-realistic app-owned feature.
+## Choose a path
 
-## Learning path
+| Path | Use it for | Start |
+| --- | --- | --- |
+| Getting Started | Build and then extend one task application | [Welcome to Sapporta](/docs/getting-started/introduction/) |
+| Guides | Understand one application subsystem and implement a common pattern | [Guides overview](/docs/guides/) |
+| Reference | Look up public symbols, routes, commands, configuration, and exact behavior | [Reference overview](/docs/reference/) |
+| Sapporta Grid | Build a standalone React grid without a Sapporta server or schema | [Sapporta Grid overview](/grid/) |
 
-1. [Create a project](/docs/getting-started/) and open the generated app.
-2. Review the
-   [generated project structure](/docs/getting-started/#inspect-the-generated-code).
-3. [Build the task app](/docs/getting-started/build-the-task-app/) with stable
-   table names used by the tutorials.
-4. [Use a coding agent](/docs/getting-started/use-a-coding-agent/) to create an
-   agent token and add sample data through the running API.
-5. Read [What Is Sapporta](/docs/concepts/what-is-sapporta/).
-6. Build [Task Triage](/docs/building-your-own-feature/overview/) to see schema,
-   endpoints, screens, reports, auth, and CLI validation together.
-7. Use [Subsystem Guides](/docs/subsystems/data-modeling/) and
-   [Reference](/docs/reference/) when you need a focused implementation guide or
-   exact lookup page.
+## Tutorial application
 
-## Main sections
-
-- [Getting Started](/docs/getting-started/) creates a project, explains the
-  generated code, and opens the app shell.
-- [Concepts](/docs/concepts/what-is-sapporta/) explains the system without every
-  API detail.
-- [Building Your Own Feature](/docs/building-your-own-feature/overview/) walks
-  through Task Triage.
-- [Subsystem Guides](/docs/subsystems/data-modeling/) cover practical
-  implementation areas.
-- [Tools And Operations](/docs/tools-and-operations/choose-apis-and-tools/)
-  cover CLI, agent access, deployment, and troubleshooting.
-- [Reference](/docs/reference/) keeps exact shapes, command syntax, and lookup
-  tables.
+The first tutorial stage defines `projects` and `tasks`, applies a migration, and uses generated record screens and table APIs. The second stage adds `task_events`, one atomic complete-task endpoint, a typed client, a progress screen, and a scoped report. The two-table checkpoint is a useful application and a valid stopping point.
