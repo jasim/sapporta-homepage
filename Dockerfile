@@ -51,7 +51,6 @@ RUN pnpm --filter ./packages/api --filter ./packages/shared install --prod --fro
 # metadata that Sapporta uses to find the project root.
 FROM node:${NODE_VERSION} AS runtime
 ENV NODE_ENV=production
-ENV PORT=3000
 WORKDIR /app
 
 # pnpm stores package contents under the root node_modules/.pnpm directory and
@@ -91,6 +90,6 @@ VOLUME ["/app/data"]
 # The public root page is served by the same Hono process after Sapporta boots.
 # Avoid `/api/*` here because production API routes are authentication-protected.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:' + (process.env.SAPPORTA_API_PORT || process.env.PORT || 3000) + '/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 CMD ["sh", "-c", "cd packages/api && ./node_modules/.bin/drizzle-kit migrate && node dist/boot.js"]

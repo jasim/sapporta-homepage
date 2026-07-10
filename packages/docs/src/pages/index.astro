@@ -12,7 +12,7 @@ const title = "Sapporta";
 const description =
   "Minimal markdown-style Sapporta homepage draft.";
 const appBaseUrl =
-  process.env.SAPPORTA_PUBLIC_BASE_URL ?? "";
+  process.env.SAPPORTA_PUBLIC_APP_URL ?? "";
 const codeTheme = "github-light-default";
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
   id: integer("id").primaryKey({ autoIncrement: true }),

@@ -183,7 +183,7 @@ serveStaticUse(app, "/grid/*", docsDist, { cache: noCache });
 //   (b) same-origin behind nginx - nginx serves packages/frontend/dist directly
 //       and proxies /api/ here; this block becomes harmless dead code
 //   (c) split - SPA on a CDN, API here. Delete this block, set VITE_API_URL
-//       for the SPA build, set SAPPORTA_PUBLIC_BASE_URL on the API host, and
+//       for the SPA build, set SAPPORTA_PUBLIC_APP_URL on the API host, and
 //       route public /api/auth/* requests to this API process.
 //
 // API routes have already matched above. Remaining browser requests fall
@@ -206,7 +206,7 @@ serveStaticUse(app, "/*", frontendDist, { cache: noCache });
 serveStaticGet(app, "/*", frontendDist, { file: "index.html" });
 
 // Start the API server.
-const port = projectEnv.port;
+const port = projectEnv.apiPort;
 const server = serve({ fetch: app.fetch, port }, () => {
   console.log(`sapporta-homepage-app API server ready (port ${port})`);
 });

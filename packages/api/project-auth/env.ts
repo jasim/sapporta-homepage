@@ -1,14 +1,15 @@
 import type { HealthPolicy } from "@sapporta/server";
+import { parseBoundedInteger } from "@sapporta/shared/validation";
 
 export type Origin = string & { readonly __origin: unique symbol };
-export type PublicBaseUrl = Origin & {
-  readonly __publicBaseUrl: unique symbol;
+export type PublicAppUrl = Origin & {
+  readonly __publicAppUrl: unique symbol;
 };
 
 export interface ProjectAuthEnv {
-  port: number;
+  apiPort: number;
   betterAuthSecret: string;
-  publicBaseUrl: PublicBaseUrl;
+  publicAppUrl: PublicAppUrl;
   trustedOrigins: Origin[];
   requireVerifiedEmail: boolean;
   healthPolicy: HealthPolicy;
@@ -40,15 +41,12 @@ export type ProjectSmtpConfig =
 export function readProjectAuthEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): ProjectAuthEnv {
-  const publicBaseUrl = readRequiredPublicBaseUrl(env);
+  const publicAppUrl = readRequiredPublicAppUrl(env);
   return {
-    port:
-      env.PORT === undefined || env.PORT === ""
-        ? 3000
-        : parseIntegerEnv(env.PORT, "PORT"),
+    apiPort: resolveApiPort(env),
     betterAuthSecret: readRequiredEnv(env, "BETTER_AUTH_SECRET"),
-    publicBaseUrl,
-    trustedOrigins: readTrustedOrigins(env, publicBaseUrl),
+    publicAppUrl,
+    trustedOrigins: readTrustedOrigins(env, publicAppUrl),
     requireVerifiedEmail: readBooleanEnv(
       env.SAPPORTA_REQUIRE_VERIFIED_EMAIL,
       "SAPPORTA_REQUIRE_VERIFIED_EMAIL",
@@ -110,8 +108,25 @@ function readRequiredEnv(
   throw new Error(`Project auth requires ${name}.`);
 }
 
-function readRequiredPublicBaseUrl(env: NodeJS.ProcessEnv): PublicBaseUrl {
-  return parsePublicBaseUrl(readRequiredEnv(env, "SAPPORTA_PUBLIC_BASE_URL"));
+function readRequiredPublicAppUrl(env: NodeJS.ProcessEnv): PublicAppUrl {
+  return parsePublicAppUrl(readRequiredEnv(env, "SAPPORTA_PUBLIC_APP_URL"));
+}
+
+function resolveApiPort(env: NodeJS.ProcessEnv): number {
+  const sapportaPort = readOptionalIntegerEnv(env, "SAPPORTA_API_PORT");
+  const platformPort = readOptionalIntegerEnv(env, "PORT");
+
+  if (
+    sapportaPort !== undefined &&
+    platformPort !== undefined &&
+    sapportaPort !== platformPort
+  ) {
+    throw new Error(
+      `SAPPORTA_API_PORT and PORT must match when both are set; received ${sapportaPort} and ${platformPort}.`,
+    );
+  }
+
+  return sapportaPort ?? platformPort ?? 3000;
 }
 
 function readBooleanEnv(
@@ -137,10 +152,10 @@ function readHealthPolicy(value: string | undefined): HealthPolicy {
 
 function readTrustedOrigins(
   env: NodeJS.ProcessEnv,
-  publicBaseUrl: PublicBaseUrl,
+  publicAppUrl: PublicAppUrl,
 ): Origin[] {
   return uniqueOrigins([
-    parseOrigin(publicBaseUrl, "SAPPORTA_PUBLIC_BASE_URL"),
+    parseOrigin(publicAppUrl, "SAPPORTA_PUBLIC_APP_URL"),
     ...readOrigins(env.SAPPORTA_FRONTEND_ORIGINS, "SAPPORTA_FRONTEND_ORIGINS"),
   ]);
 }
@@ -162,16 +177,26 @@ function readRequiredIntegerEnv(
   return parseIntegerEnv(value, String(name));
 }
 
-function parseIntegerEnv(value: string, name: string): number {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isInteger(parsed) || String(parsed) !== value) {
-    throw new Error(`${name} must be an integer.`);
-  }
-  return parsed;
+function readOptionalIntegerEnv(
+  env: NodeJS.ProcessEnv,
+  name: keyof NodeJS.ProcessEnv,
+): number | undefined {
+  const value = env[name];
+  if (value === undefined || value === "") return undefined;
+  return parseIntegerEnv(value, String(name));
 }
 
-function parsePublicBaseUrl(value: string): PublicBaseUrl {
-  return parseOrigin(value, "SAPPORTA_PUBLIC_BASE_URL") as PublicBaseUrl;
+function parseIntegerEnv(value: string, name: string): number {
+  return parseBoundedInteger(value, {
+    name,
+    min: 0,
+    defaultValue: 0,
+    makeError: () => new Error(`${name} must be an integer.`),
+  });
+}
+
+function parsePublicAppUrl(value: string): PublicAppUrl {
+  return parseOrigin(value, "SAPPORTA_PUBLIC_APP_URL") as PublicAppUrl;
 }
 
 function parseOrigin(value: string, name: string): Origin {
