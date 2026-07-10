@@ -10,7 +10,7 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:12339`.
 
 ## Commands
 
@@ -44,15 +44,15 @@ To run several Sapporta projects at the same time, assign each project a stable
 port pair and update its public app URL to match the frontend port:
 
 ```env
-SAPPORTA_API_PORT=3001
-SAPPORTA_FRONTEND_PORT=5174
-SAPPORTA_PUBLIC_APP_URL=http://localhost:5174
+SAPPORTA_API_PORT=12333
+SAPPORTA_FRONTEND_PORT=12339
+SAPPORTA_PUBLIC_APP_URL=http://localhost:12339
 ```
 
 Vite fails when the configured frontend port is occupied instead of silently
 selecting another one. API-backed CLI commands are clients of the running app;
-set `SAPPORTA_API_URL=http://localhost:3001` in the CLI process or pass
-`--api-url http://localhost:3001` when the API is not on the default port.
+set `SAPPORTA_API_URL=http://localhost:12333` in the CLI process or pass
+`--api-url http://localhost:12333` when the API is not on the default port.
 
 ## Deployment
 
