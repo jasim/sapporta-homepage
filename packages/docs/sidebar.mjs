@@ -3,9 +3,6 @@ export default [
     "label": "Getting Started",
     "items": [
       {
-        "slug": "docs"
-      },
-      {
         "slug": "docs/getting-started/introduction"
       },
       {

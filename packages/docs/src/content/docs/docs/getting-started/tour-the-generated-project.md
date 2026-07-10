@@ -1,45 +1,110 @@
 ---
 title: "Tour the generated project"
-description: "Locate schema, migration, contract, route, auth, client, and screen extension points in a generated project."
+description:
+  "Inspect the generated Sapporta workspace and use its welcome screen to start
+  building a task management application."
 ---
 
-The generated workspace has a one-way dependency boundary: the API and frontend may import the shared package, while the shared package contains no server, database, or React I/O.
-
-> Checkpoint: C01 → C02
-
-## Agent approach
+A Sapporta app is a pnpm workspace with a Hono API, a React frontend, and a
+shared package for API contracts and wire types.
 
 ```text
-Read the local project instructions and use the Sapporta skill. Starting at C01, implement this outcome: The generated workspace has a one-way dependency boundary: the API and frontend may import the shared package, while the shared package contains no server, database, or React I/O. Reach C02, run the validation described on this page, and report changed files and checks. Preserve server-controlled scope fields and use generated APIs for ordinary CRUD.
+task-app/
+  sapporta.json
+  package.json
+  pnpm-workspace.yaml
+  .env.development
+  data/
+  packages/
+    api/
+      app/
+      authz/
+      migrations/
+      project-auth/
+      schema/
+    frontend/
+      src/
+    shared/
+      src/
+        contracts/
+  scripts/
+  Dockerfile
+  DEPLOYMENT.md
 ```
 
-## Review the agent's work
+The API and frontend can import the shared package. The shared package contains
+browser-safe contracts and wire types, with no server, database, or React I/O.
 
-- `packages/api/schema/` owns table definitions; `packages/api/migrations/` owns generated SQL.
-- `packages/api/app.ts` mounts project routes; `packages/api/authz/` owns abilities and request authority.
-- `packages/frontend/src/App.tsx` owns app navigation and public/protected routes.
+The main extension points are:
 
-## Code approach
+- `packages/api/schema/` for table definitions
+- `packages/api/migrations/` for generated SQL
+- `packages/api/app.ts` for mounting project routes
+- `packages/api/authz/` for abilities and request authority
+- `packages/frontend/src/App.tsx` for navigation and public or protected routes
 
-```text
-packages/
-  api/       schema, migrations, auth, app routes, runtime services
-  shared/    browser-safe contracts and wire types
-  frontend/  typed clients, navigation, routes, and React screens
-```
+## The welcome screen
 
-Run the clean baseline build before changing the schema:
+The new project's `/welcome` screen contains starter prompts that show how to
+begin building with Sapporta.
+
+Choose **Task Management** and copy the prompt into a coding agent started from
+the root of the Sapporta project.
+
+## Task Management prompt
+
+<div class="sap-doc-prompt" aria-label="Task Management starter prompt">
+  <p>
+    <strong>Build a simple task management application.</strong>
+  </p>
+  <p>
+    Use Sapporta, the database framework for TypeScript, and ensure the Sapporta
+    skill is installed. Follow the setup instructions at
+    <a href="https://sapporta.com/docs/getting-started/introduction/">https://sapporta.com/docs/getting-started/introduction/</a>.
+  </p>
+  <p>
+    Keep the first version focused and easy to understand: include the core
+    workflows that make the app useful, and avoid exhaustive features or deep
+    customization.
+  </p>
+  <p>
+    Use workspaceGlobal tables with this exact contract: people(id, name,
+    email), projects(id, name, description, status), tasks(id, title,
+    description, status, priority, due_date, assignee_id, project_id),
+    labels(id, name, color), task_labels(id, task_id, label_id), comments(id,
+    task_id, author_id, body). Use status values open, in_progress, blocked,
+    done; priorities low, normal, high; and project statuses active, paused,
+    complete. Do not expose workspace_id, workspaceId, scoped_to_user_id, or
+    scopedToUserId in clients, CLI commands, or agent prompts.
+  </p>
+  <p>
+    Include workflows for creating a task, assigning it, changing its status,
+    and adding a comment. Include reports for open tasks, overdue tasks, tasks
+    by assignee, and tasks by project. Populate the application with realistic
+    sample projects, people, tasks, labels, and comments so the first run shows
+    an active todo app.
+  </p>
+  <p>Before changing the app, review:</p>
+  <ul>
+    <li>README.md</li>
+    <li>AGENTS.md</li>
+    <li>
+      <a href="https://github.com/jasim/sapporta-skills/tree/main/skills/sapporta">
+        Sapporta coding-agent skill
+      </a>
+    </li>
+  </ul>
+</div>
+
+## Try the generated app
+
+After the agent finishes, stop and restart the development server if needed:
 
 ```bash
 pnpm build
+pnpm dev
 ```
 
-## Observe and verify
-
-The build passes and each future change has one clear package boundary. Fix baseline failures before continuing.
-
-## What you built
-
-The project is at C02. The next page adds the first domain tables and reviews their generated migration.
-
-Continue with [the related guide](/docs/guides/discovery/develop-with-a-coding-agent/) or use [the exact reference](/docs/reference/project/generated-project-layout/).
+Add a few tasks and inspect the generated table screens. The next tutorial pages
+build the same application step by step, beginning with
+[Define projects and tasks](/docs/getting-started/define-projects-and-tasks/).

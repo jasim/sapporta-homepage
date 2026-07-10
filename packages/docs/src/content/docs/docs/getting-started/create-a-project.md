@@ -1,41 +1,75 @@
 ---
 title: "Create a Sapporta project"
-description: "Generate a Sapporta project, run its API and frontend, and enter the authenticated app shell."
+description:
+  "Create a Sapporta project, inspect the generated TypeScript application, sign
+  up locally, and open the generated app shell."
 ---
 
-A generated Sapporta workspace contains an API package, a shared package, and a React frontend. The local development process starts all three in dependency order.
-
-> Checkpoint: C00 → C01
-
-## Agent approach
-
-```text
-Read the local project instructions and use the Sapporta skill. Starting at C00, implement this outcome: A generated Sapporta workspace contains an API package, a shared package, and a React frontend. The local development process starts all three in dependency order. Reach C01, run the validation described on this page, and report changed files and checks. Preserve server-controlled scope fields and use generated APIs for ordinary CRUD.
-```
-
-## Review the agent's work
-
-- The generated root contains `sapporta.json` and a pnpm workspace.
-- Development email uses the stream transport and writes the verification message to the API console.
-- The first verified user creates the first workspace and becomes its owner.
-
-## Code approach
+Sapporta projects use pnpm. If Node.js is installed but `pnpm` is not available,
+enable pnpm through Corepack:
 
 ```bash
-corepack enable
-pnpm exec sapporta init task-app
+corepack enable pnpm
+```
+
+Create a project named `task-app`:
+
+```bash
+pnpm dlx sapporta init task-app
+```
+
+The Sapporta installation asks you to install the Sapporta skill. The skill is
+used both to build Sapporta projects and to operate them through coding agents.
+Ensure it is installed:
+
+```bash
+npx skills add https://github.com/jasim/sapporta-skills --skill sapporta
+```
+
+Start the local development server:
+
+```bash
 cd task-app
 pnpm dev
 ```
 
-Open `http://localhost:5173`, create an account, and follow the verification URL printed by the API process. The API listens on `http://localhost:3000`.
+The console prints the local browser URL. This is the Vite frontend server. It
+serves `index.html` and the React application, usually at:
 
-## Observe and verify
+```text
+http://localhost:5173
+```
 
-The browser loads the signed-in application shell and the API health endpoint responds. Keep this user and workspace for later access checks.
+The backend API runs at:
 
-## What you built
+```text
+http://localhost:3000
+```
 
-The scaffold is running at C01. The next page identifies the files that each later tutorial change will use.
+## Sign up locally
 
-Continue with [the related guide](/docs/guides/operations/application-configuration/) or use [the exact reference](/docs/reference/project/project-files/).
+Open the local browser URL printed by `pnpm dev`. A new project opens at the
+signup screen when no signed-in session exists.
+
+![Generated Sapporta signup screen](/assets/getting-started/generated-app-signup.jpg)
+
+Enter a name, email address, and password. The account requires email
+verification. In local development, the email server writes every message to
+the `pnpm dev` console. Open the verification URL from the console to verify the
+account.
+
+Sapporta uses [Better Auth](https://better-auth.com/) for authentication. The
+authentication UI and related screens are present in the generated application
+and can be customized locally.
+
+After verification, Sapporta creates the first workspace and assigns the first
+user as its owner. The app shell shows project navigation, generated table
+surfaces, the account workspace, and the starter welcome screen.
+
+![Generated Sapporta app after signup](/assets/getting-started/generated-app-welcome.jpg)
+
+The project name and table list in the app shell come from the project on disk.
+As tables are added to `packages/api/schema/`, the table navigation and
+generated record screens update with the running application.
+
+Continue with [Tour the generated project](/docs/getting-started/tour-the-generated-project/).
