@@ -9,14 +9,15 @@ Sapporta apps expose several API and tooling surfaces. Start by discovering the
 running app, then choose the narrowest tool that matches the work.
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
 pnpm exec sapporta tables show customers
 ```
 
-`describe` reads the live OpenAPI document from `/api/openapi.json`, so it sees
-table routes, metadata routes, SQL tooling, report routes, and custom workflow
-routes your app exposes. That live discovery surface is also part of Sapporta's
+`endpoints list` reads the live OpenAPI document from `/api/openapi.json`, so it
+sees table routes, metadata routes, SQL tooling, report routes, and custom
+workflow routes your app exposes. That live discovery surface is also part of
+Sapporta's
 [LLM-assisted engineering](/docs/tools-and-operations/llm-assisted-engineering/)
 review loop.
 
@@ -50,12 +51,12 @@ Every running app publishes its live OpenAPI document at:
 GET /api/openapi.json
 ```
 
-Use `describe` for a human-readable view:
+Use endpoint discovery for a human-readable view:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta describe "POST /api/invoices/123/void"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 ```
 
 For route selectors, raw OpenAPI access, protected discovery, and missing-route
@@ -74,8 +75,8 @@ and custom endpoint calls:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 ```
 
 The token belongs to one user and one workspace. Ordinary data requests do not
@@ -140,10 +141,10 @@ pnpm exec sapporta ...
 Discovery commands:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show customers
-pnpm exec sapporta tables sample customers --limit 10 --fields id,name,email
+pnpm exec sapporta tables sample customers --limit 10 --columns id,name,email
 ```
 
 Row commands call the same table APIs as the app, so validation, defaults,
@@ -151,11 +152,11 @@ trusted workspace/user fields, visible foreign-key checks, and row-access checks
 still run:
 
 ```bash
-pnpm exec sapporta rows insert customers \
-  --data '{"name":"Acme Co","email":"ops@example.com"}'
+pnpm exec sapporta rows create customers \
+  --values '{"name":"Acme Co","email":"ops@example.com"}'
 
 pnpm exec sapporta rows update customers 7 \
-  --data '{"email":"billing@example.com"}'
+  --values '{"email":"billing@example.com"}'
 
 pnpm exec sapporta rows delete customers 7
 ```
@@ -170,28 +171,21 @@ For the recommended operating loop and copyable task recipes, see
 
 ## Reports and custom endpoints
 
-Reports are app-owned routes. Use `describe` to inspect the route shape, then
-call the endpoint with `curl`, a typed client, or another HTTP client:
+Reports are app-owned routes. Use `endpoints show` to inspect the route shape,
+then call the endpoint with `api get`, `api post`, or a typed client:
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/trial-balance"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/reports/trial-balance?asOfDate=2026-06-30"
+pnpm exec sapporta endpoints show "GET /api/reports/trial-balance"
+pnpm exec sapporta api get /api/reports/trial-balance \
+  --query '{"asOfDate":"2026-06-30"}'
 ```
 
-Custom product endpoints follow the same pattern. The CLI can discover them, but
-it does not directly invoke arbitrary user-defined endpoints:
+Custom product endpoints follow the same pattern:
 
 ```bash
-pnpm exec sapporta describe "POST /api/invoices/123/void"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/invoices/123/void"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
 Use [Custom API Endpoints](/docs/subsystems/custom-api-endpoints/) for endpoint
@@ -204,21 +198,21 @@ Frontend product code should call custom app routes through typed clients over
 shared contracts. That keeps request and response shapes checked against the
 same contract the backend registers and OpenAPI exposes.
 
-Use direct `curl` or generic HTTP clients for scripts, CI, integration checks,
-and data-console work. Use
+Use direct CLI API calls, `curl`, or generic HTTP clients for scripts, CI,
+integration checks, and data-console work. Use
 [Typed API Clients](/docs/subsystems/typed-api-clients/) for browser app code.
 
 ## Use SQL as a fallback
 
 Use direct SQL only when no report route, table query, row command, or custom
-endpoint fits. `sapporta db exec-sql` calls `POST /api/meta/sql` on the running
-app.
+endpoint fits. `sapporta sql query` calls the running app's SQL query endpoint.
 
 Read-only inspection is the normal SQL use case:
 
 ```bash
-pnpm exec sapporta db exec-sql \
-  "SELECT id, name FROM customers ORDER BY id DESC LIMIT 10"
+pnpm exec sapporta sql query \
+  "SELECT id, name FROM customers ORDER BY id DESC" \
+  --limit 10
 ```
 
 SQL writes bypass forms, table save behavior, validation hooks, trusted

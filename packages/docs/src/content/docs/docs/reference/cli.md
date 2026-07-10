@@ -15,37 +15,42 @@ pnpm exec sapporta ...
 `sapporta init <name>` is local. Most other commands call a running API server.
 The default API URL is `http://localhost:3000`.
 
-| Option or env var                                        | Purpose                                         |
-| -------------------------------------------------------- | ----------------------------------------------- |
-| `--api-url <url>` / `SAPPORTA_API_URL`                   | Select the target app. Flags override env vars. |
-| `--api-token <token>` / `SAPPORTA_API_TOKEN`             | Bearer token for protected apps.                |
-| `--output-format table\|json` / `SAPPORTA_OUTPUT_FORMAT` | Human table output or JSON for scripts.         |
-| `--input-body-json '{...}'`                              | Body for commands that accept object input.     |
-| `--sapporta-project-dir <path>`                          | Override project-root auto-detection.           |
+| Option or env var                                 | Purpose                                         |
+| ------------------------------------------------- | ----------------------------------------------- |
+| `--api-url <url>` / `SAPPORTA_API_URL`            | Select the target app. Flags override env vars. |
+| `--api-token <token>` / `SAPPORTA_API_TOKEN`      | Bearer token for protected apps.                |
+| `--output table\|json` / `SAPPORTA_OUTPUT_FORMAT` | Human table output or JSON for scripts.         |
 
 Useful commands:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta describe "POST /api/invoices/{id}/void"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 
-pnpm exec sapporta tables
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show customers
 pnpm exec sapporta tables indexes customers
-pnpm exec sapporta tables sample customers --limit 10 --fields id,name,email
+pnpm exec sapporta tables sample customers --limit 10 --columns id,name,email
 
-pnpm exec sapporta rows customers --limit 50 --page 2 --sort name
+pnpm exec sapporta rows list customers --limit 50 --page 2 --sort name
 pnpm exec sapporta rows get customers 7
-pnpm exec sapporta rows insert customers --data '{"name":"Acme Co"}'
-pnpm exec sapporta rows update customers 7 --data '{"name":"Acme Ltd"}'
+pnpm exec sapporta rows create customers --values '{"name":"Acme Co"}'
+pnpm exec sapporta rows update customers 7 --values '{"name":"Acme Ltd"}'
 pnpm exec sapporta rows delete customers 7
 
-pnpm exec sapporta db exec-sql "SELECT * FROM customers"
-pnpm exec sapporta db exec-sql \
-  --input-body-json '{"sql":"SELECT * FROM customers","limit":50}'
+pnpm exec sapporta sql query "SELECT * FROM customers"
+pnpm exec sapporta sql query "SELECT * FROM customers" --limit 50
+pnpm exec sapporta sql execute \
+  "UPDATE customers SET name = ? WHERE id = ?" \
+  --params '["Acme Ltd",7]' \
+  --dry-run
+
+pnpm exec sapporta api get /api/tables/customers --query '{"limit":50}'
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
-The CLI can call built-in table, metadata, row, and SQL commands. It uses
-`describe` for custom routes, but does not directly invoke custom HTTP
-endpoints; call those with `curl`, a typed client, or another HTTP client.
+Use `endpoints list` and `endpoints show` for OpenAPI-backed discovery. Use
+`api get/post/put/delete` to call app-owned report and workflow endpoints when a
+dedicated `tables`, `rows`, or `sql` command is not the right fit.

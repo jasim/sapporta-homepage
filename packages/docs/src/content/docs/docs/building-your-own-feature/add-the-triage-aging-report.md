@@ -46,7 +46,7 @@ to `/tables/tasks/:id`.
 Verify:
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/triage-aging"
+pnpm exec sapporta endpoints show "GET /api/reports/triage-aging"
 ```
 
 Next: [Seed And Validate](/docs/building-your-own-feature/seed-and-validate/).

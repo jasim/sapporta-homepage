@@ -20,13 +20,13 @@ Every Sapporta app exposes its current API shape at:
 GET /api/openapi.json
 ```
 
-`pnpm exec sapporta describe` reads that live OpenAPI document and is the first
-human-readable discovery step:
+`pnpm exec sapporta endpoints list` reads that live OpenAPI document and is the
+first human-readable discovery step:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta describe "POST /api/invoices/123/void"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 ```
 
 The document includes generated table APIs, metadata routes, SQL tooling, report
@@ -36,27 +36,28 @@ selected running app, not directly to local files.
 Use this operating loop:
 
 ```txt
-target app -> authenticate -> describe API -> inspect tables -> sample rows
+target app -> authenticate -> discover API -> inspect tables -> sample rows
            -> choose report/table/row/custom endpoint -> execute -> verify
 ```
 
 ## Core discovery commands
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta describe "POST /api/invoices/123/void"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 
-pnpm exec sapporta tables
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show customers
 pnpm exec sapporta tables indexes customers
-pnpm exec sapporta tables sample customers --limit 10 --fields id,name,email
+pnpm exec sapporta tables sample customers --limit 10 --columns id,name,email
 ```
 
 | Command          | Use                                                                                 |
 | ---------------- | ----------------------------------------------------------------------------------- |
-| `describe`       | Find route paths, methods, request schemas, response schemas, and mounted app APIs. |
-| `tables`         | See table names registered by the running app.                                      |
+| `endpoints list` | Find route paths, methods, summaries, and mounted app APIs.                         |
+| `endpoints show` | Inspect one route's parameters, request body, and response schemas.                 |
+| `tables list`    | See table names registered by the running app.                                      |
 | `tables show`    | Inspect columns, constraints, metadata, relationships, and row shape.               |
 | `tables indexes` | Check indexes before diagnosing query performance or uniqueness.                    |
 | `tables sample`  | See real values and resolve foreign keys before writes.                             |
@@ -69,14 +70,13 @@ Use the highest-level surface that fits the work:
 | ----------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | Business questions, balances, ledgers, summaries, or rollups                              | Report routes                                  |
 | Row-level questions that fit search, filters, sort, and pagination                        | Table list APIs                                |
-| Ordinary table mutations                                                                  | `pnpm exec sapporta rows insert/update/delete` |
+| Ordinary table mutations                                                                  | `pnpm exec sapporta rows create/update/delete` |
 | Domain actions such as voiding, importing, approving, reserving, or multi-table workflows | Custom product endpoints                       |
 | Inspection or maintenance with no report, table query, row command, or endpoint           | SQL fallback                                   |
 
-Report routes and custom product endpoints are app-owned HTTP routes. The CLI
-can inspect them with `describe`, but it does not directly invoke arbitrary
-user-defined endpoints. Call those routes with `curl`, a typed client, or
-another HTTP client.
+Report routes and custom product endpoints are app-owned HTTP routes. Inspect
+them with `endpoints show`, then call them with `api get/post/put/delete` or a
+typed client.
 
 ## Row safety model
 
@@ -125,23 +125,17 @@ Reports are normal app routes. Discover the route first, then call it with the
 documented query or body shape:
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/trial-balance"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/reports/trial-balance?asOfDate=2026-06-30"
+pnpm exec sapporta endpoints show "GET /api/reports/trial-balance"
+pnpm exec sapporta api get /api/reports/trial-balance \
+  --query '{"asOfDate":"2026-06-30"}'
 ```
 
 Custom product endpoints follow the same pattern:
 
 ```bash
-pnpm exec sapporta describe "POST /api/invoices/123/void"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/invoices/123/void"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
 ## Use SQL as a fallback
@@ -150,8 +144,9 @@ Use SQL only when no report route, table query, row command, or custom endpoint
 fits. Read-only inspection is the normal case:
 
 ```bash
-pnpm exec sapporta db exec-sql \
-  "SELECT id, name FROM customers ORDER BY id DESC LIMIT 10"
+pnpm exec sapporta sql query \
+  "SELECT id, name FROM customers ORDER BY id DESC" \
+  --limit 10
 ```
 
 SQL writes bypass table save behavior, validation hooks, default handling,

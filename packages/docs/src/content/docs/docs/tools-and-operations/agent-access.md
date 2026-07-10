@@ -33,14 +33,14 @@ Set `SAPPORTA_API_URL` for remote apps or non-default local ports:
 
 ```bash
 export SAPPORTA_API_URL="https://app.example.com"
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 ```
 
 For a single command, pass `--api-url`; command flags override environment
 variables:
 
 ```bash
-pnpm exec sapporta describe --api-url "https://app.example.com"
+pnpm exec sapporta --api-url "https://app.example.com" endpoints list
 ```
 
 If a command fails with `APP_SERVER_UNREACHABLE`, fix the selected URL, server
@@ -63,14 +63,14 @@ The raw token is shown once. Store it outside the repository and pass it as
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 ```
 
 For a one-off command, use `--api-token`:
 
 ```bash
-pnpm exec sapporta tables --api-token "spat_..."
+pnpm exec sapporta --api-token "spat_..." tables list
 ```
 
 Do not commit, print, or store agent tokens in the project repository. If a

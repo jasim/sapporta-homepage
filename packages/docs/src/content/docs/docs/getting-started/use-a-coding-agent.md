@@ -37,15 +37,15 @@ Run the project-local CLI from the `task-app` project root while the API is
 running:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show tasks
 pnpm exec sapporta tables sample tasks
 ```
 
-`describe` reads the live OpenAPI surface. `tables` reads registered Sapporta
-table metadata. `tables sample` uses the running app boundary, not a private
-database shortcut.
+`endpoints list` reads the live OpenAPI surface. `tables list` reads registered
+Sapporta table metadata. `tables sample` uses the running app boundary, not a
+private database shortcut.
 
 At this point, the browser app, API metadata, and CLI should all see the same
 task app.
@@ -69,17 +69,17 @@ Give the coding agent a natural-language task from the project root:
   </p>
 </div>
 
-The agent should inspect table schemas, insert rows through the `pnpm exec sapporta rows insert` command, read returned IDs, and use those IDs when it creates related tasks, labels, and comments.
+The agent should inspect table schemas, insert rows through the `pnpm exec sapporta rows create` command, read returned IDs, and use those IDs when it creates related tasks, labels, and comments.
 
 ## Verify the sample data
 
 Use the CLI to inspect the rows created by the agent:
 
 ```bash
-pnpm exec sapporta tables sample people --fields id,name,email
-pnpm exec sapporta tables sample projects --fields id,name,status
-pnpm exec sapporta tables sample tasks --fields id,title,status,priority,assignee_id,project_id
-pnpm exec sapporta tables sample comments --fields id,task_id,author_id,body
+pnpm exec sapporta tables sample people --columns id,name,email
+pnpm exec sapporta tables sample projects --columns id,name,status
+pnpm exec sapporta tables sample tasks --columns id,title,status,priority,assignee_id,project_id
+pnpm exec sapporta tables sample comments --columns id,task_id,author_id,body
 ```
 
 Open the browser app after the rows are inserted. The generated table screens

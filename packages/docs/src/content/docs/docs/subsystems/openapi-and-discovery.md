@@ -1,13 +1,13 @@
 ---
 title: "OpenAPI And Discovery"
 description:
-  "Inspect the live Sapporta API with OpenAPI, sapporta describe, protected
+  "Inspect the live Sapporta API with OpenAPI, endpoint discovery, protected
   credentials, and missing-route debugging."
 ---
 
 Sapporta exposes the running app's API contract at `/api/openapi.json`.
-`pnpm exec sapporta describe` reads that document and prints the parts builders
-usually need while developing or debugging integrations.
+`pnpm exec sapporta endpoints list` reads that document and prints the route
+inventory builders usually need while developing or debugging integrations.
 
 ## The live API contract
 
@@ -26,27 +26,27 @@ curl -fsS \
 In protected apps, `/api/openapi.json` is protected like table, SQL, report, and
 custom routes. Use the same token you use for data commands.
 
-## Using `sapporta describe`
+## Using `sapporta endpoints`
 
 Run the project-local CLI from your app:
 
 ```bash
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 ```
 
-Describe one endpoint by passing `METHOD /path`. Quote the selector so the shell
+Show one endpoint by passing `METHOD /path`. Quote the selector so the shell
 keeps it as one argument:
 
 ```bash
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta describe "POST /api/invoices/{id}/void"
-pnpm exec sapporta describe "GET /api/reports/trial-balance"
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
+pnpm exec sapporta endpoints show "GET /api/reports/trial-balance"
 ```
 
 The selector matches the OpenAPI path. Use the path shape printed by
-`pnpm exec sapporta describe`; path parameters usually appear with braces, such
-as `{id}`. The CLI also accepts a path-only target when only one method exists
-for that path, but `METHOD /path` avoids ambiguity.
+`pnpm exec sapporta endpoints list`; path parameters usually appear with braces,
+such as `{id}`. The CLI also accepts a path-only target when only one method
+exists for that path, but `METHOD /path` avoids ambiguity.
 
 ## Target local and deployed apps
 
@@ -58,15 +58,16 @@ Use environment variables for a shell session:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 ```
 
 Use flags for one command:
 
 ```bash
-pnpm exec sapporta describe \
+pnpm exec sapporta \
   --api-url "https://app.example.com" \
-  --api-token "spat_..."
+  --api-token "spat_..." \
+  endpoints list
 ```
 
 Flags override environment variables.
@@ -96,24 +97,23 @@ the integration does not yet know the deployed contract.
 
 ## Debug missing routes
 
-If a custom endpoint is absent from `describe`, check the files that make the
-route available:
+If a custom endpoint is absent from endpoint discovery, check the files that
+make the route available:
 
 | Symptom                                            | Check                                                                                                                     |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `describe` does not list the endpoint              | The contract file is imported by the backend route and registered with `api.register(...)`.                               |
+| `endpoints list` does not list the endpoint        | The contract file is imported by the backend route and registered with `api.register(...)`.                               |
 | Frontend cannot import the contract                | The contract is re-exported from `packages/shared/src/contracts/index.ts`.                                                |
 | Route file exists but endpoint is absent           | The route is connected from `loadApp()` in `packages/api/app.ts`.                                                         |
-| Endpoint works but is absent from `describe`       | The handler may need a shared contract registered with `api.register(...)`.                                               |
+| Endpoint works but is absent from `endpoints list` | The handler may need a shared contract registered with `api.register(...)`.                                               |
 | Path appears as `/api/api/...` or cannot be called | Remove `/api` from the contract path; app contract paths should start at the product route, such as `/invoices/:id/void`. |
 
 After changing a route, run:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "METHOD /api/path"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "METHOD /api/path"
 ```
 
-The CLI cannot invoke custom app-owned endpoints directly. Use `describe` to
-inspect them, then call the route with `curl`, a typed frontend client, or
-another HTTP client.
+Use `api get/post/put/delete` to invoke app-owned endpoints from the CLI, or a
+typed frontend client when calling the route from browser code.

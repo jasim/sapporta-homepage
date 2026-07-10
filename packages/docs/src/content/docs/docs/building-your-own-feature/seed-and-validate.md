@@ -24,10 +24,10 @@ pnpm --filter ./packages/api db:migrate
 pnpm --filter ./packages/api db:check
 pnpm build
 pnpm dev
-pnpm exec sapporta tables
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show task_events
-pnpm exec sapporta describe "POST /api/tasks/{id}/triage"
-pnpm exec sapporta describe "GET /api/reports/triage-aging"
+pnpm exec sapporta endpoints show "POST /api/tasks/{id}/triage"
+pnpm exec sapporta endpoints show "GET /api/reports/triage-aging"
 ```
 
 Browser checklist:

@@ -58,7 +58,7 @@ as `SAPPORTA_API_TOKEN` in the caller's secret store:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 ```
 
 Each token belongs to one user and one workspace. Rotate or revoke tokens from

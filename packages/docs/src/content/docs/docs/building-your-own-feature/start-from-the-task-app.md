@@ -10,9 +10,9 @@ Start with the task app from
 starter tables before adding code:
 
 ```bash
-pnpm exec sapporta tables
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show tasks
-pnpm exec sapporta describe "GET /api/tables/tasks"
+pnpm exec sapporta endpoints show "GET /api/tables/tasks"
 ```
 
 The tutorial assumes these business tables:

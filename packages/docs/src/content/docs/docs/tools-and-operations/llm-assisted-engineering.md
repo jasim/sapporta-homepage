@@ -27,7 +27,7 @@ Most product changes land in predictable places:
 - `packages/api/modules/<domain>/` for larger workflow services and stores
 - `packages/frontend/src/api.ts` for typed browser clients
 - `packages/frontend/src/` for custom screens and report screens
-- `/api/openapi.json` and `pnpm exec sapporta describe` for live discovery
+- `/api/openapi.json` and `pnpm exec sapporta endpoints list` for live discovery
 
 Those locations reduce ambiguity. An agent can inspect the relevant table,
 contract, route, client, or screen before editing. Reviewers can then check the
@@ -148,7 +148,7 @@ Custom app-owned features should start from a shared ts-rest contract:
 3. Register it with `TsRestApi` in `packages/api/app/<feature>.ts`.
 4. Mount it from `packages/api/app.ts`.
 5. Add a typed frontend client in `packages/frontend/src/api.ts`.
-6. Confirm the live route with `pnpm exec sapporta describe "METHOD /api/path"`.
+6. Confirm the live route with `pnpm exec sapporta endpoints show "METHOD /api/path"`.
 
 ```ts
 // packages/shared/src/contracts/invoices.ts
@@ -180,7 +180,7 @@ export const invoicesContract = c.router({
 ```
 
 The same declaration gives the backend parsed inputs, response typing, OpenAPI
-output, `sapporta describe` discovery, and typed frontend calls:
+output, `sapporta endpoints show` discovery, and typed frontend calls:
 
 ```ts
 // packages/frontend/src/api.ts
@@ -328,7 +328,7 @@ Use this checklist when reviewing an LLM-assisted change:
 [ ] table definitions use explicit rowScope and required scope columns
 [ ] generated SQL migration was reviewed before db:migrate
 [ ] shared contract declares every request and response status shape
-[ ] custom route is mounted and appears in sapporta describe
+[ ] custom route is mounted and appears in sapporta endpoints list
 [ ] route resolves auth at the edge with the narrowest data authority
 [ ] ordinary row work uses scopedRows()
 [ ] custom joins/transactions/aggregates use rowSecurity.forTable()
@@ -368,7 +368,7 @@ The guardrails are visible in code:
 - The route does not update by primary key alone.
 - The status invariant is tested outside React.
 - The contract makes client/server drift visible at build time.
-- `sapporta describe` proves the route is mounted.
+- `sapporta endpoints show` proves the route is mounted.
 
 That example still needs product judgment. A human should decide what "approval"
 means, which roles can run it, which statuses are allowed, whether approval is

@@ -132,8 +132,8 @@ parsing. Handler inputs are typed, so `request.params.id` is a number when the
 contract uses `z.coerce.number()`.
 
 Return `{ status, body }` and declare every returned status in the contract.
-Return the shape declared in `responses`; `describe` and typed clients rely on
-that contract.
+Return the shape declared in `responses`; endpoint discovery and typed clients
+rely on that contract.
 
 ## Make the route reachable
 
@@ -152,7 +152,7 @@ Write contract paths without `/api`. A contract path `/invoices/:id/void` is
 served at `/api/invoices/:id/void`.
 
 Creating `packages/api/app/invoices.ts` is not enough by itself. If a route does
-not appear in `pnpm exec sapporta describe`, confirm it is connected from
+not appear in `pnpm exec sapporta endpoints list`, confirm it is connected from
 `loadApp()`.
 
 Only add entries to `publicApiRoutes` when anonymous visitors should be able to
@@ -325,18 +325,15 @@ After adding the contract, handler, and `loadApp()` entry, inspect the live
 route:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "POST /api/invoices/{id}/void"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 ```
 
 Then call the route directly:
 
 ```bash
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/invoices/123/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
 If the frontend import does not type-check, confirm the contract is re-exported

@@ -216,8 +216,8 @@ caller's secret store as `SAPPORTA_API_TOKEN`, not in the repository:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 ```
 
 An agent token belongs to one user and one workspace. Ordinary CLI data commands
@@ -236,20 +236,17 @@ interactive browser-session workflow.
 For one-off commands, you can pass the token directly:
 
 ```bash
-pnpm exec sapporta tables --api-url "https://app.example.com" --api-token "spat_..."
+pnpm exec sapporta --api-url "https://app.example.com" --api-token "spat_..." tables list
 ```
 
-For custom endpoints and reports, use `sapporta describe` to inspect the route,
-then call it with an HTTP client:
+For custom endpoints and reports, use `sapporta endpoints show` to inspect the
+route, then call it with `sapporta api` or an HTTP client:
 
 ```bash
-pnpm exec sapporta describe "POST /api/invoices/{id}/void"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL}/api/invoices/123/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
 Treat auth errors as operational signals:

@@ -87,8 +87,8 @@ need repeatable data setup, bulk inserts, scripted validation, or records
 created from another system.
 
 ```bash
-pnpm exec sapporta rows insert customers \
-  --data '{"name":"Acme Co","email":"ops@example.com"}'
+pnpm exec sapporta rows create customers \
+  --values '{"name":"Acme Co","email":"ops@example.com"}'
 ```
 
 When a record references another table, resolve the foreign key first instead of
@@ -96,8 +96,8 @@ guessing an id:
 
 ```bash
 pnpm exec sapporta tables sample customers
-pnpm exec sapporta rows insert orders \
-  --data '{"customer_id":7,"status":"draft"}'
+pnpm exec sapporta rows create orders \
+  --values '{"customer_id":7,"status":"draft"}'
 ```
 
 ## Create parent and child records together
@@ -108,7 +108,7 @@ through the row insert path. Put the parent fields at the top level and add a
 the child rows.
 
 ```bash
-pnpm exec sapporta rows insert orders --data '{
+pnpm exec sapporta rows create orders --values '{
   "customer_id": 7,
   "status": "draft",
   "$details": {
@@ -200,13 +200,13 @@ Sapporta directly.
 For inspection, start with discovery:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show invoices
 pnpm exec sapporta tables sample invoices
 ```
 
-`sapporta describe` reads the running app's OpenAPI document.
+`sapporta endpoints list` reads the running app's OpenAPI document.
 `sapporta tables show` shows table metadata, columns, relationships, and
 constraints. `sapporta tables sample` gives you a quick look at real rows before
 you insert related data or write a filter.
@@ -228,7 +228,7 @@ token determines which workspace and rows are visible.
 For import or seed data, prefer row commands over raw SQL:
 
 ```bash
-pnpm exec sapporta rows insert products --data '[
+pnpm exec sapporta rows create products --values '[
   { "sku": "WIDGET", "name": "Widget", "price": 29.99 },
   { "sku": "GADGET", "name": "Gadget", "price": 49.99 }
 ]'
@@ -254,4 +254,4 @@ Use this rule of thumb:
 | Seed or import repeatable data                      | CLI row insert or a custom import endpoint                             |
 | Integrate another system                            | Table API or app-specific API                                          |
 | Answer a business question                          | Report route first, table API second, read-only SQL only as a fallback |
-| Debug schema, columns, lookups, and sample rows     | `sapporta describe`, `sapporta tables show`, `sapporta tables sample`  |
+| Debug schema, columns, lookups, and sample rows     | `sapporta endpoints list/show`, `sapporta tables show`, `sapporta tables sample` |

@@ -27,21 +27,21 @@ export SAPPORTA_API_TOKEN="spat_..."
 Core discovery loop:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/customers"
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/customers"
+pnpm exec sapporta tables list
 pnpm exec sapporta tables show customers
-pnpm exec sapporta tables sample customers --limit 10 --fields id,name,email
+pnpm exec sapporta tables sample customers --limit 10 --columns id,name,email
 ```
 
 Ordinary row changes:
 
 ```bash
-pnpm exec sapporta rows insert customers --data '{"name":"Acme Co"}'
-pnpm exec sapporta rows update customers 7 --data '{"name":"Acme Ltd"}'
+pnpm exec sapporta rows create customers --values '{"name":"Acme Co"}'
+pnpm exec sapporta rows update customers 7 --values '{"name":"Acme Ltd"}'
 pnpm exec sapporta rows delete customers 7
 ```
 
-Use the CLI to inspect custom routes with `describe`, but call arbitrary
-app-owned endpoints with `curl`, a typed client, or another HTTP client. Exact
-options and command inventory live in [CLI Reference](/docs/reference/cli/).
+Use `endpoints show` to inspect custom routes, and use `api get/post/put/delete`
+or a typed client to call app-owned endpoints. Exact options and command
+inventory live in [CLI Reference](/docs/reference/cli/).

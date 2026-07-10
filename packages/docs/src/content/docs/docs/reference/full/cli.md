@@ -46,10 +46,10 @@ packages.
 These commands call the selected Sapporta API server:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta tables
-pnpm exec sapporta rows insert <table> --data '[{...}]'
-pnpm exec sapporta db exec-sql "SELECT ..."
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
+pnpm exec sapporta rows create <table> --values '[{...}]'
+pnpm exec sapporta sql query "SELECT ..."
 ```
 
 By default, the CLI calls `http://localhost:3000`. Set `SAPPORTA_API_URL` when
@@ -57,13 +57,13 @@ the app runs somewhere else:
 
 ```bash
 export SAPPORTA_API_URL="https://app.example.com"
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 ```
 
 For a one-off command, pass the URL directly:
 
 ```bash
-pnpm exec sapporta describe --api-url "https://app.example.com"
+pnpm exec sapporta --api-url "https://app.example.com" endpoints list
 ```
 
 Command flags override environment variables.
@@ -79,14 +79,14 @@ agent secret store:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
+pnpm exec sapporta endpoints list
 pnpm exec sapporta tables sample customers
 ```
 
 You can also pass a token for one command:
 
 ```bash
-pnpm exec sapporta tables --api-token "spat_..."
+pnpm exec sapporta --api-token "spat_..." tables list
 ```
 
 Do not commit tokens to source control. Revoke tokens you no longer use from the
@@ -101,28 +101,25 @@ token for it.
 
 ## Custom Endpoints
 
-Use `sapporta describe` to inspect custom endpoints:
+Use `sapporta endpoints show` to inspect custom endpoints:
 
 ```bash
-pnpm exec sapporta describe "POST /api/invoices/void"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
 ```
 
-The CLI can call built-in table, row, SQL, and metadata commands. Reports are
-app-owned routes, so use `sapporta describe` to inspect them and call the route
-with `curl` or another HTTP client:
+The CLI can call built-in table, row, SQL, metadata, report, and custom app
+routes. Use `sapporta api post` for JSON workflow calls:
 
 ```bash
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL}/api/invoices/123/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
+Use `sapporta api get` for query-driven report routes:
+
 ```bash
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  "${SAPPORTA_API_URL}/api/reports/trial-balance?asOfDate=2026-06-12"
+pnpm exec sapporta api get /api/reports/trial-balance \
+  --query '{"asOfDate":"2026-06-12"}'
 ```
 
 ## Auth Errors
@@ -136,6 +133,6 @@ Protected apps return structured auth errors:
   membership.
 - `forbidden`: the user or token cannot perform that action.
 
-`sapporta describe` uses the same API URL and token as data commands. If
+`sapporta endpoints list` uses the same API URL and token as data commands. If
 discovery fails with an auth error, fix the token before composing table, SQL,
 report, or custom endpoint requests.

@@ -825,8 +825,8 @@ response shows the raw token once. Copy it into the caller's secret store as
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 ```
 
 A token belongs to the signed-in user and the active workspace. Ordinary CLI data

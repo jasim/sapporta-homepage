@@ -17,7 +17,7 @@ an external service.
 schema table + meta
         |
         v
-table routes -> OpenAPI -> CLI describe / frontend screens / curl
+table routes -> OpenAPI -> CLI endpoint discovery / frontend screens / curl
         |
         v
 row-scoped reads and writes

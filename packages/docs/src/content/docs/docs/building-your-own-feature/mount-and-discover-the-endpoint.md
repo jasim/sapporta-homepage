@@ -30,7 +30,7 @@ Verify discovery:
 ```bash
 pnpm build
 pnpm dev
-pnpm exec sapporta describe "POST /api/tasks/{id}/triage"
+pnpm exec sapporta endpoints show "POST /api/tasks/{id}/triage"
 ```
 
 Next:

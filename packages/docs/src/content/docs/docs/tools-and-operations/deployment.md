@@ -55,8 +55,8 @@ token from the account profile screen and store it outside source control:
 export SAPPORTA_API_URL="https://app.example.com"
 export SAPPORTA_API_TOKEN="spat_..."
 
-pnpm exec sapporta describe
-pnpm exec sapporta tables
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables list
 ```
 
 Each token belongs to one user and one workspace. Revoke and replace tokens when
@@ -287,5 +287,5 @@ Keep operations boring:
 - Run migrations as a release step, not from request handlers.
 - Keep the SQLite file and backups off ephemeral storage.
 - Use exact browser origins for credentialed requests.
-- Verify the deployed API with `pnpm exec sapporta describe` using an agent
+- Verify the deployed API with `pnpm exec sapporta endpoints list` using an agent
   token when the app is protected.

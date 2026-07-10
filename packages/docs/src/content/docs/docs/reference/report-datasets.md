@@ -161,7 +161,7 @@ navigation metadata into the report result.
 Validate report routes with:
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/trial-balance"
+pnpm exec sapporta endpoints show "GET /api/reports/trial-balance"
 curl -fsS \
   -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
   "${SAPPORTA_API_URL:-http://localhost:3000}/api/reports/trial-balance?asOfDate=2026-06-12"

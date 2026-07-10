@@ -21,8 +21,8 @@ The running app also publishes a live OpenAPI document. The CLI reads that
 document:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/tables/tasks"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/tables/tasks"
 pnpm exec sapporta tables show tasks
 ```
 

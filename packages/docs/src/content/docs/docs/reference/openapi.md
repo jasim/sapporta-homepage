@@ -20,9 +20,9 @@ server will accept.
 Use the CLI for human-readable discovery:
 
 ```bash
-pnpm exec sapporta describe
-pnpm exec sapporta describe "GET /api/meta/tables"
-pnpm exec sapporta describe "POST /api/tables/customers"
+pnpm exec sapporta endpoints list
+pnpm exec sapporta endpoints show "GET /api/meta/tables"
+pnpm exec sapporta endpoints show "POST /api/tables/customers"
 ```
 
 Fetch the raw document for client generation or integration debugging:

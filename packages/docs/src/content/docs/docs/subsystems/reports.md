@@ -544,7 +544,7 @@ it("returns a grid dataset", async () => {
 Then inspect the mounted route from a running app:
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/account-ledger"
+pnpm exec sapporta endpoints show "GET /api/reports/account-ledger"
 curl -fsS \
   "${SAPPORTA_API_URL:-http://localhost:3000}/api/reports/account-ledger?account_id=acct_1&period_relative=30d"
 ```

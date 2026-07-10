@@ -14,7 +14,7 @@ model, see [Agent Data Console](/docs/tools-and-operations/agent-data-console/).
 
 ```bash
 pnpm exec sapporta tables show products
-pnpm exec sapporta tables sample products --limit 10 --fields id,sku,name,price
+pnpm exec sapporta tables sample products --limit 10 --columns id,sku,name,price
 ```
 
 `tables show` gives schema, metadata, relationships, and column behavior.
@@ -24,8 +24,8 @@ instead of guessing them.
 ## Create one row
 
 ```bash
-pnpm exec sapporta rows insert customers \
-  --data '{"name":"Acme Co","email":"ops@example.com"}'
+pnpm exec sapporta rows create customers \
+  --values '{"name":"Acme Co","email":"ops@example.com"}'
 ```
 
 Omit generated columns such as `id`, `created_at`, and `updated_at`. In
@@ -35,7 +35,7 @@ auth-enabled apps, also omit trusted scope columns such as `workspace_id`,
 ## Create parent and child rows in one transaction
 
 ```bash
-pnpm exec sapporta rows insert orders --data '{
+pnpm exec sapporta rows create orders --values '{
   "customer_id": 7,
   "status": "draft",
   "$details": {
@@ -57,7 +57,7 @@ foreign-key column in the detail rows.
 
 ```bash
 pnpm exec sapporta rows update customers 7 \
-  --data '{"email":"billing@example.com"}'
+  --values '{"email":"billing@example.com"}'
 
 pnpm exec sapporta rows delete customers 7
 ```
@@ -85,37 +85,30 @@ value before retrying; do not drop the filter to make the request succeed. See
 ## Call a report route
 
 ```bash
-pnpm exec sapporta describe "GET /api/reports/trial-balance"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  "${SAPPORTA_API_URL:-http://localhost:3000}/api/reports/trial-balance?asOfDate=2026-06-30"
+pnpm exec sapporta endpoints show "GET /api/reports/trial-balance"
+pnpm exec sapporta api get /api/reports/trial-balance \
+  --query '{"asOfDate":"2026-06-30"}'
 ```
 
-Reports are app-owned routes. Use `describe` to inspect the route shape, then
-call the endpoint with the documented query or JSON body.
+Reports are app-owned routes. Use `endpoints show` to inspect the route shape,
+then call the endpoint with the documented query or JSON body.
 
 ## Call a custom product endpoint
 
 ```bash
-pnpm exec sapporta describe "POST /api/invoices/123/void"
-
-curl -fsS \
-  -H "Authorization: Bearer ${SAPPORTA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"reason":"duplicate"}' \
-  "${SAPPORTA_API_URL}/api/invoices/123/void"
+pnpm exec sapporta endpoints show "POST /api/invoices/{id}/void"
+pnpm exec sapporta api post /api/invoices/123/void \
+  --body '{"reason":"duplicate"}'
 ```
 
-The CLI does not directly invoke arbitrary user-defined endpoints. It can
-discover them through OpenAPI; use `curl`, a typed client, or another HTTP
-client to run the route.
+The CLI discovers these routes through OpenAPI and calls them through the
+generic `api` command group.
 
 ## Use structured output in scripts
 
 ```bash
-pnpm exec sapporta tables --output-format json
-pnpm exec sapporta rows get customers 7 --output-format json
+pnpm exec sapporta --output json tables list
+pnpm exec sapporta --output json rows get customers 7
 ```
 
 You can also set `SAPPORTA_OUTPUT_FORMAT=json` for a script that runs multiple
@@ -124,18 +117,21 @@ commands.
 ## Use SQL as a fallback
 
 ```bash
-pnpm exec sapporta db exec-sql \
-  "SELECT id, name FROM customers ORDER BY id DESC LIMIT 10"
+pnpm exec sapporta sql query \
+  "SELECT id, name FROM customers ORDER BY id DESC" \
+  --limit 10
 
-pnpm exec sapporta db exec-sql \
-  --input-body-json '{"sql":"SELECT id, name FROM customers","limit":50}'
+pnpm exec sapporta sql query \
+  "SELECT id, name FROM customers" \
+  --limit 50
 ```
 
 For risky maintenance SQL, check the statement first:
 
 ```bash
-pnpm exec sapporta db exec-sql \
-  --input-body-json '{"sql":"DELETE FROM customers WHERE id = 7","dryRun":true}'
+pnpm exec sapporta sql execute \
+  "DELETE FROM customers WHERE id = 7" \
+  --dry-run
 ```
 
 SQL writes bypass normal table save hooks, default handling, ownership stamping,
