@@ -46,12 +46,6 @@ const NewRecordRoute = lazy(() =>
   })),
 );
 
-const tableGridOptions = {
-  books: {
-    rootRows: { pageSize: 15 },
-  },
-} satisfies TableGridOptionsByTable;
-
 function RouteFallback() {
   return (
     <div className="p-[18px] text-sap-data text-sap-muted">Loading...</div>
@@ -129,7 +123,7 @@ export const sapportaProtectedRoutes = (
       path="tables/:tableName"
       element={
         <Suspense fallback={<RouteFallback />}>
-          <TableRoute gridOptionsByTable={tableGridOptions} />
+          <TableRoute />
         </Suspense>
       }
     />
