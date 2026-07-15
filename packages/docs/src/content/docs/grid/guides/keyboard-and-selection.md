@@ -31,15 +31,22 @@ const schema = {
   levels: {
     tasks: {
       name: "tasks",
-      interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+      rowHeaderColumn: { column: "__row_selection" },
       childLevels: [],
       columns: [
         rowSelectionColumn(),
         text({ id: "title", name: "Title", edit: "default" }),
       ],
+      options: {},
     },
   },
 };
+
+const runtime = createGridRuntime({
+  schema,
+  dataSource,
+  interaction: CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION,
+});
 ```
 
 Let the preset own focus, active row, and selection rules. Custom cells should

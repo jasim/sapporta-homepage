@@ -29,7 +29,7 @@
       "@sapporta/shared": "link:///Users/jasim/m/a/code/sapporta/packages/shared",
       "@sapporta/ui": "link:///Users/jasim/m/a/code/sapporta/packages/ui",
       "@sapporta/grid": "link:///Users/jasim/m/a/code/sapporta/packages/grid",
-      "hono": "4.12.27",
+      "hono": "4.12.29",
       "drizzle-orm": "0.45.2",
       "better-sqlite3": "12.11.1",
       "zod": "4.4.3",

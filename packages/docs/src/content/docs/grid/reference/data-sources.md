@@ -1,49 +1,39 @@
 ---
 title: "Data sources"
-description: "Look up source snapshots, states, load/write results, reconciliation, and lifecycle."
+description: "Look up grid and level source contracts, runtime read facades, query capabilities, writes, and lifecycle."
 ---
 
-## Identity
-Data-source exports from `@sapporta/grid/grid`.
-## Data Source API
+Data-source types and factories are exported from `@sapporta/grid`.
 
-The runtime talks to `GridDataSource`, which creates one `LevelDataSource` per
-path.
+## GridDataSource
+
+A `GridDataSource` acquires the root source and resolves one source for each
+materialized child path.
 
 ```ts
 type GridDataSource = {
-  rootSource: () => LevelDataSource;
-  resolveChild: (
+  rootSource(): LevelDataSource;
+  resolveChild(
     parentPath: GridPath,
     parentRowKey: RowKey,
     childLevelName: string,
-  ) => LevelDataSource;
-  dispose: () => void;
+  ): LevelDataSource;
+  dispose(): void;
 };
 ```
 
-### Level Snapshots
+The runtime calls `rootSource()` during construction. It calls
+`resolveChild()` the first time a row expands. Collapse retains the resolved
+source for reuse. `runtime.dispose()` disposes every level source and then the
+grid source.
+
+## Source state
 
 ```ts
 type LevelSnapshot = {
-  nodes: readonly TreeNode[];
-  footerRows?: readonly FooterRow[];
+  readonly nodes: readonly TreeNode[];
+  readonly footerRows?: readonly FooterRow[];
 };
-```
-
-Snapshots contain display-ready rows and optional footer rows. The runtime
-renders `nodes` as published. It does not read sort, filter, page, or lifecycle
-status from the snapshot.
-
-### Source State
-
-```ts
-type LevelStatus =
-  | "initialLoading"
-  | "ready"
-  | "refreshing"
-  | "initialError"
-  | "refreshError";
 
 type LevelSourceState =
   | { status: "initialLoading"; snapshot: LevelSnapshot }
@@ -53,11 +43,7 @@ type LevelSourceState =
       snapshot: LevelSnapshot;
       previous: LevelSnapshot;
     }
-  | {
-      status: "initialError";
-      snapshot: LevelSnapshot;
-      error: Error;
-    }
+  | { status: "initialError"; snapshot: LevelSnapshot; error: Error }
   | {
       status: "refreshError";
       snapshot: LevelSnapshot;
@@ -66,13 +52,38 @@ type LevelSourceState =
     };
 ```
 
-Use `useLevelSourceState(path)` or `runtime.sourceStateFor(path)` when host UI
-needs loading, refresh, or error state. Use `useLevelSnapshot(path)` when it only
-needs the current display rows.
+Snapshots contain display-ready rows. Every `TreeNode` includes its own stable
+`rowKey`. The runtime renders source order and does not apply a second sort,
+filter, or page stage.
 
-### Load Results
+## LevelDataSource
 
 ```ts
+type LevelDataSource = {
+  state(): LevelSourceState;
+  subscribe(listener: () => void): () => void;
+  dispose(): void;
+  query?: LevelQueryCapabilities;
+  write?: WriteCapability;
+};
+```
+
+A source without `write` is readonly. Query capabilities are optional and
+awaitable:
+
+```ts
+type LevelQueryCapabilities = {
+  sort?: {
+    current(): readonly SortDescriptor[] | undefined;
+    set(sort: readonly SortDescriptor[] | undefined): Promise<SourceLoadResult>;
+  };
+  filter?: {
+    current(): unknown;
+    set(filter: unknown): Promise<SourceLoadResult>;
+  };
+  refetch?: () => Promise<SourceLoadResult>;
+};
+
 type SourceLoadResult =
   | { kind: "ready"; state: Extract<LevelSourceState, { status: "ready" }> }
   | {
@@ -87,88 +98,81 @@ type SourceLoadResult =
   | { kind: "disposed" };
 ```
 
-Query and refetch commands are awaitable. Their promises resolve after the
-source publishes the state visible through `state()` and subscriptions. The
-result describes the source load only. It does not describe React rendering,
-focus, scroll, URL state, or host workflows that run after the load.
+The promise resolves after the source publishes its resulting state.
+Pagination remains a source or host concern.
 
-### Level Sources
+## RuntimeLevelDataSource
+
+`GridLevelRuntime.data` exposes source reads, queries, and reconcile events. It
+does not expose raw writes.
 
 ```ts
-type SortQueryCapability = {
-  current(): readonly SortDescriptor[] | undefined;
-  set(sort: readonly SortDescriptor[] | undefined): Promise<SourceLoadResult>;
+type RuntimeLevelDataSource = {
+  state(): LevelSourceState;
+  subscribe(listener: () => void): () => void;
+  readonly query?: LevelQueryCapabilities;
+  readonly canWrite: boolean;
+  onReconcile(listener: (event: ReconcileEvent) => void): () => void;
 };
 
-type FilterQueryCapability<TFilter = unknown> = {
-  current(): TFilter | undefined;
-  set(filter: TFilter | undefined): Promise<SourceLoadResult>;
-};
+const level = runtime.root;
+const state = level.data.state();
 
-type LevelQueryCapabilities = {
-  sort?: SortQueryCapability;
-  filter?: FilterQueryCapability<unknown>;
-  refetch?: () => Promise<SourceLoadResult>;
-};
+await level.data.query?.sort?.set([{ colId: "dueDate", direction: "asc" }]);
+await level.data.query?.filter?.set({ status: "open" });
+await level.data.query?.refetch?.();
+```
 
-type CellChange = { rowKey: RowKey; colId: ColId; value: unknown };
+React components can adapt the facade with `useSyncExternalStore()`:
 
-type CreateNodeResult = {
-  node: TreeNode;
-  atIndex: number;
-};
+```tsx
+const level = useGridRuntime().level(path);
+const state = useSyncExternalStore(
+  level.data.subscribe,
+  level.data.state,
+  level.data.state,
+);
+```
 
+Use `level.data.subscribe()` directly in non-React hosts.
+
+## Writes through GridLevelRuntime
+
+`WriteCapability` is implemented by the source and consumed by the runtime:
+
+```ts
 type WriteCapability = {
   setCell(rowKey: RowKey, colId: ColId, value: unknown): void;
   applyChanges(changes: readonly CellChange[]): void;
   createNode(node: TreeNode, atIndex?: number): Promise<CreateNodeResult>;
   removeNode(rowKey: RowKey): void | Promise<void>;
-  onReconcile(fn: (event: ReconcileEvent) => void): () => void;
+  onReconcile(listener: (event: ReconcileEvent) => void): () => void;
   canAppendRow?: () => boolean;
 };
-
-type LevelDataSource = {
-  state(): LevelSourceState;
-  subscribe(fn: () => void): () => void;
-  dispose(): void;
-  query?: LevelQueryCapabilities;
-  write?: WriteCapability;
-};
 ```
 
-Sources expose capabilities instead of readonly/writable subtypes. A source with
-no `write` capability is readonly. The runtime hides write verbs behind runtime
-methods, so app code normally calls `runtime.writeCell`,
-`runtime.applyChanges`, `runtime.createRow`, and `runtime.removeRow`. Query
-capabilities stay visible on `runtime.sourceFor(path)`:
+Application code writes through the level runtime:
 
 ```ts
-const source = runtime.sourceFor(rootPath("projects"));
+const level = runtime.root;
+const rowId = makeRowId(level.path, "project-1");
 
-await source.query?.sort?.set([{ colId: "dueDate", direction: "asc" }]);
-await source.query?.filter?.set({ status: "open" });
-await source.query?.refetch?.();
+level.writeCell({ rowId, colId: "status" }, "done");
+level.applyChanges([
+  { rowKey: "project-1", colId: "status", value: "done" },
+]);
+await level.createRow({
+  rowKey: "project-2",
+  levelName: level.schema.name,
+  columns: { name: "Migration" },
+});
+await level.removeRow("project-2");
 ```
 
-Pagination is not a core runtime command. A source or host can keep page state
-inside its query capability and publish a new display-ready snapshot when that
-state changes.
+These commands validate the current level registration, require a writable
+source, and emit runtime mutation events.
 
-### REST Source Helpers
-
-`restLevelSource` and `restGridDataSource` use four query concepts:
-
-- `rowQuery` stores mutable page, page-size, sort, and filter values.
-- `buildRowsRequest` adds fixed constraints before a fetch runs.
-- `sourceOwnedRowQuery(initial)` stores query state inside a source.
-- `hostBackedRowQuery(state)` adapts application-owned query state to the same
-  source command contract.
-
-Use `sourceOwnedRowQuery` for embedded levels and child levels without visible
-controls. Use `hostBackedRowQuery` when toolbar controls, URL state, exports,
-and row loading must read the same query store.
-
-### Reconcile Events
+## Reconciliation
 
 ```ts
 type ReconcileEvent =
@@ -191,48 +195,26 @@ type ReconcileEvent =
     };
 ```
 
-Use reconcile events to report save conflicts, authoritative corrections, or
-rejected optimistic writes.
-
-## In-Memory Data Source
-
 ```ts
-function inMemoryGridDataSource<F = unknown>(
-  opts: InMemoryGridDataSourceOpts<F>,
-): GridDataSource;
-
-type InMemoryGridDataSourceOpts<F = unknown> = {
-  schema: GridSchema;
-  tree: TreeNode[];
-  levels: { [levelName: string]: InMemoryLevelOpts<F> };
-};
-
-type InMemoryLevelOpts<F = unknown> = {
-  sortMode: "client" | "none";
-  filterMode: "client" | "none";
-  paginationMode: "client" | "none";
-  initialSort?: SortDescriptor[];
-  initialFilter?: F;
-  initialPage?: number;
-  initialPageSize?: number;
-  aggregator?: InMemoryAggregator;
-  compileFilter?: (filter: F | undefined) => RowPredicate | undefined;
-};
+const unsubscribe = runtime.root.data.onReconcile((event) => {
+  if (event.kind === "rejected") showSaveError(event.reason);
+});
 ```
 
-Example:
+## In-memory source
 
 ```ts
 const dataSource = inMemoryGridDataSource({
   schema,
-  tree,
+  tree: [
+    {
+      rowKey: "project-1",
+      levelName: "projects",
+      columns: { name: "Migration" },
+    },
+  ],
   levels: {
     projects: {
-      sortMode: "client",
-      filterMode: "none",
-      paginationMode: "none",
-    },
-    tasks: {
       sortMode: "client",
       filterMode: "none",
       paginationMode: "none",
@@ -241,7 +223,23 @@ const dataSource = inMemoryGridDataSource({
 });
 ```
 
-Use this source for local data, tests, demos, or as a reference implementation
-for custom sources.
+Use the in-memory source for local data, examples, and tests. It is not an
+authorization boundary.
+
+## REST helpers
+
+`restGridDataSource()` creates a grid source for remote data. Its level-source
+configuration uses:
+
+- `rowQuery` for mutable page, page-size, sort, and filter state.
+- `buildRowsRequest` for fixed constraints and parent-row context.
+- `sourceOwnedRowQuery(initial)` for source-local query state.
+- `hostBackedRowQuery(state)` for application-owned query state.
+
+Remote endpoints remain responsible for authorization, validation,
+persistence, and conflict handling.
+
 ## Related documentation
-[Grid reference overview](/grid/reference/)
+
+- [BaseGrid](/grid/reference/base-grid/)
+- [REST helpers](/grid/reference/rest-helpers/)

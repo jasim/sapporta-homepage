@@ -27,12 +27,14 @@ display.
 ```ts
 const tree: TreeNode[] = [
   {
+    rowKey: "cash",
     levelName: "accounts",
     columns: { id: "cash", name: "Cash" },
     rollup: { amount: 1200 },
     children: {
       entries: [
         {
+          rowKey: "entry-1",
           levelName: "entries",
           columns: { id: "entry-1", memo: "Deposit", amount: 1200 },
         },
@@ -48,6 +50,7 @@ const tree: TreeNode[] = [
     },
   },
   {
+    rowKey: "assets-total",
     levelName: "accounts",
     kind: "subtotal",
     columns: { id: "assets-total", name: "Assets total", amount: 1200 },
@@ -67,8 +70,8 @@ workflow has a specific editing rule for them.
 ## Phantom rows
 
 Phantom rows represent local insert state. They are separate from source data,
-so the data source does not see them until the runtime commits a nonblank
-phantom into a real source row.
+so the data source does not see them until a level runtime commits a nonblank
+draft into a real source row.
 
 A phantom can be:
 
@@ -79,6 +82,16 @@ A phantom can be:
 Keep phantom validation and persistence in the source or save path. The grid
 keeps the draft row visible and stable; your host code decides when a draft is
 blank, how to create the authoritative row, and how to show failure text.
+
+Use the path-local draft API for imperative workflows:
+
+```ts
+const level = runtime.root;
+
+level.drafts.add("new-account", { name: "New account" });
+level.drafts.setCell("new-account", "name", "Travel");
+await level.drafts.commit("new-account");
+```
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
 Continue with [Grid Reference](/grid/reference/).

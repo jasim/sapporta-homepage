@@ -12,15 +12,17 @@ const schema = {
   levels: {
     projects: {
       name: "projects",
+      rowHeaderColumn: "none",
       childLevels: ["tasks"],
       columns: [text({ id: "name", name: "Project", edit: "default" })],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
     tasks: {
       name: "tasks",
+      rowHeaderColumn: "none",
       childLevels: [],
       columns: [text({ id: "title", name: "Task", edit: "default" })],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
   },
 } satisfies GridSchema;
@@ -34,19 +36,32 @@ rootPath("projects");
 childPath(rootPath("projects"), "project-1", "tasks");
 ```
 
-Row keys come from your data. They must be stable for the life of the row. If a
-row is saved by a server, use the server id. If a row is local only, generate a
-temporary key and replace it after save only when your data source reconciles
-the row.
+Every `TreeNode` carries a required `rowKey`. The key must be unique within its
+level path and stable for the life of the row. A server-backed row normally uses
+its record id. The runtime combines a path, row kind, and row key into a tagged
+`RowId`; call `makeRowId(path, rowKey)` when host code needs that identity.
 
 ## Runtime
 
-`createGridRuntime()` combines the schema and a data source. The runtime owns
-focus, editing state, selection state, displayed row snapshots, child expansion,
-and data reconciliation.
+`createGridRuntime()` combines the schema and a data source. `GridRuntime` owns
+the immutable schema, interaction configuration, host events, registered
+levels, and cross-path row operations. `GridLevelRuntime` owns rows,
+subscriptions, selection, expansion, writes, and drafts for one `GridPath`.
 
 ```ts
 const runtimeForScript = createGridRuntime({ schema, dataSource });
+const projects = runtimeForScript.root;
+const project = projects.displayedRows().rows[0];
+
+if (project?.kind === "data") {
+  projects.expand(project.id);
+  const tasks = runtimeForScript.level(
+    childPath(projects.path, project.source.rowKey, "tasks"),
+  );
+  tasks.subscribeDisplayedRowSequence(() => {
+    console.log(tasks.displayedRowSequence());
+  });
+}
 ```
 
 React components consume that runtime through `GridRuntimeProvider`:
@@ -61,7 +76,7 @@ if (!runtime) return null;
 
 return (
   <GridRuntimeProvider runtime={runtime}>
-    <GridLevel path={rootPath(schema.rootLevel)} />
+    <GridLevel path={runtime.root.path} />
   </GridRuntimeProvider>
 );
 ```
@@ -77,9 +92,10 @@ grid runtime should be owned by `useGridRuntimeEffect` or by a non-React owner
 with an explicit `dispose()` call.
 
 The runtime is the boundary between the host app and the rendered grid. The host
-provides schema, columns, data sources, and save behavior. The runtime owns row
-identity, focus, editing state, selection state, expansion, displayed row
-snapshots, and reconciliation events.
+provides schema, columns, data sources, and persistence. Use `runtime.root` or
+`runtime.level(path)` before reading or changing path-local state. Use
+`runtime.registeredLevels()` only when a command intentionally spans the
+expanded hierarchy.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
 Continue with [Grid Reference](/grid/reference/).

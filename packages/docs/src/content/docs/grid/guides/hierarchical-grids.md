@@ -12,15 +12,17 @@ const schema: GridSchema = {
   levels: {
     projects: {
       name: "projects",
+      rowHeaderColumn: "none",
       childLevels: ["tasks"],
       columns: [text({ id: "name", name: "Project", edit: "default" })],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
     tasks: {
       name: "tasks",
+      rowHeaderColumn: "none",
       childLevels: [],
       columns: [text({ id: "title", name: "Task", edit: "default" })],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
   },
 };
@@ -31,13 +33,15 @@ In memory, nested rows live under `children`:
 ```ts
 const tree: TreeNode[] = [
   {
+    rowKey: "p1",
     levelName: "projects",
-    columns: { id: "p1", name: "Launch" },
+    columns: { name: "Launch" },
     children: {
       tasks: [
         {
+          rowKey: "t1",
           levelName: "tasks",
-          columns: { id: "t1", title: "Draft checklist" },
+          columns: { title: "Draft checklist" },
         },
       ],
     },
@@ -63,7 +67,6 @@ import {
   GridRuntimeProvider,
   createGridRuntime,
   inMemoryGridDataSource,
-  rootPath,
   useGridRuntimeEffect,
   type GridSchema,
   type TreeNode,
@@ -75,28 +78,32 @@ const schema: GridSchema = {
   levels: {
     projects: {
       name: "projects",
+      rowHeaderColumn: "none",
       columns: [text({ id: "name", name: "Project", edit: "default" })],
       childLevels: ["tasks"],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
     tasks: {
       name: "tasks",
+      rowHeaderColumn: "none",
       columns: [text({ id: "title", name: "Task", edit: "default" })],
       childLevels: [],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
   },
 };
 
 const tree: TreeNode[] = [
   {
+    rowKey: "project-1",
     levelName: "projects",
-    columns: { id: "project-1", name: "Launch" },
+    columns: { name: "Launch" },
     children: {
       tasks: [
         {
+          rowKey: "task-1",
           levelName: "tasks",
-          columns: { id: "task-1", title: "Review plan" },
+          columns: { title: "Review plan" },
         },
       ],
     },
@@ -132,7 +139,7 @@ export function ProjectGrid() {
 
   return (
     <GridRuntimeProvider runtime={runtime}>
-      <GridLevel path={rootPath(schema.rootLevel)} />
+      <GridLevel path={runtime.root.path} />
     </GridRuntimeProvider>
   );
 }

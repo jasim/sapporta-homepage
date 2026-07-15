@@ -10,7 +10,7 @@ In a React application, install @sapporta/grid and build a small local task grid
 ```
 ## Review the agent's work
 - The package and CSS import use public export paths.
-- The schema has one stable root level and a stable row-key function.
+- The schema has one stable root level and every source row has a stable `rowKey`.
 - The runtime is disposed with the React lifecycle.
 - The copy menu returns stored values and labels in deterministic column order.
 ## Code approach
@@ -35,7 +35,6 @@ import {
   GridRuntimeProvider,
   createGridRuntime,
   inMemoryGridDataSource,
-  rootPath,
   useGridRuntimeEffect,
   type GridSchema,
   type TreeNode,
@@ -47,6 +46,7 @@ const schema: GridSchema = {
   levels: {
     tasks: {
       name: "tasks",
+      rowHeaderColumn: "none",
       childLevels: [],
       columns: [
         text({ id: "title", name: "Task", edit: "default", width: "fill" }),
@@ -61,19 +61,21 @@ const schema: GridSchema = {
           ],
         }),
       ],
-      options: { rowKey: (node) => String(node.columns.id) },
+      options: {},
     },
   },
 };
 
 const tree: TreeNode[] = [
   {
+    rowKey: "1",
     levelName: "tasks",
-    columns: { id: "1", title: "Review import workflow", status: "doing" },
+    columns: { title: "Review import workflow", status: "doing" },
   },
   {
+    rowKey: "2",
     levelName: "tasks",
-    columns: { id: "2", title: "Ship keyboard polish", status: "todo" },
+    columns: { title: "Ship keyboard polish", status: "todo" },
   },
 ];
 
@@ -102,7 +104,7 @@ export function TaskGrid() {
   return (
     <GridRuntimeProvider runtime={runtime}>
       <GridCopyContextMenu>
-        <GridLevel path={rootPath(schema.rootLevel)} />
+        <GridLevel path={runtime.root.path} />
       </GridCopyContextMenu>
     </GridRuntimeProvider>
   );

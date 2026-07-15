@@ -16,6 +16,9 @@ For the application user, users keep lookup labels, navigation, copy behavior, a
 - Use `TGrid` for Sapporta table metadata and table-route integration.
 - Use standalone `BaseGrid` only when the screen owns its row and data-source model.
 - Dispose custom sessions with the component lifecycle.
+- Use `context.level` inside TGrid cell and save callbacks. It is the
+  `GridLevelRuntime` for the rendered path. Use `context.runtime` only for
+  grid-wide events, level enumeration, and cross-path row operations.
 
 ## Task-app example
 

@@ -72,10 +72,22 @@ page state in its own query storage and publish a new snapshot after a page
 turn.
 
 Write behavior is also optional. A source with no `write` capability is
-readonly. A writable source implements cell updates, batch changes, row creation,
-row removal, and reconcile events. Hosts should usually call runtime write
-methods such as `runtime.writeCell`, `runtime.applyChanges`,
-`runtime.createRow`, and `runtime.removeRow` so mutation events stay centralized.
+readonly. A writable source implements cell updates, batch changes, row
+creation, row removal, and reconcile events. Hosts call path-local methods such
+as `level.writeCell()`, `level.applyChanges()`, `level.createRow()`, and
+`level.removeRow()`. These methods validate the current registration and keep
+mutation events centralized.
+
+The source read facade is available as `level.data`. Query capabilities remain
+source-owned:
+
+```ts
+const level = runtime.root;
+
+await level.data.query?.sort?.set([{ colId: "dueDate", direction: "asc" }]);
+await level.data.query?.filter?.set({ status: "open" });
+await level.data.query?.refetch?.();
+```
 
 ## REST helper concepts
 

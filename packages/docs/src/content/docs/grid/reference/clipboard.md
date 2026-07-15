@@ -153,7 +153,7 @@ Standalone BaseGrid screens also need the context menu wrapper:
 ```tsx
 <GridRuntimeProvider runtime={runtime}>
   <GridCopyContextMenu>
-    <GridLevel path={rootPath(schema.rootLevel)} />
+    <GridLevel path={runtime.root.path} />
   </GridCopyContextMenu>
 </GridRuntimeProvider>
 ```

@@ -27,9 +27,8 @@ createGridRuntime({
 });
 ```
 
-For React-owned BaseGrid runtimes, follow
-[Build a Custom Grid Screen](./basegrid-guide/#build-a-custom-grid-screen)
-and create the runtime with `useGridRuntimeEffect`.
+For React-owned BaseGrid runtimes, create the runtime with
+`useGridRuntimeEffect` as shown in the [BaseGrid reference](/grid/reference/base-grid/#construction-and-react-lifecycle).
 
 Common choices:
 
@@ -41,8 +40,8 @@ Common choices:
 | Bulk actions on checked rows                | Active cell or row cursor + row selection |
 | Master-detail panel that follows navigation | Active row + selected rows that follow it |
 
-See [BASEGRID-INTERACTIONS.md](./basegrid-interactions/) for the interaction
-presets and keyboard behavior.
+See the [Interactions reference](/grid/reference/interactions/) for the
+interaction presets and keyboard behavior.
 
 ## Put a Class on the Grid
 

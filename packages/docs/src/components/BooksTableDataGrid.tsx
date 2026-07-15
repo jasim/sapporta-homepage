@@ -17,6 +17,7 @@ import {
   trailingEdge,
   type GridPath,
 } from "@sapporta/grid";
+import { controllerFor } from "@sapporta/grid/advanced";
 import type { TableSchema } from "@sapporta/shared/contracts";
 import {
   Button,
@@ -34,8 +35,8 @@ import {
   loadSchema,
   type SchemaTableRootRowsOptions,
   type SchemaTableRowsByLevel,
-  type TGridCellContext,
-  type TGridCellEditorContext,
+  useTGridCell,
+  useTGridCellEditor,
   useSchemaStore,
 } from "@sapporta/frontend";
 import { Check, Copy, Maximize2 } from "lucide-react";
@@ -243,7 +244,8 @@ function BooksGrid({
           activation: {
             startsOn: ["enter"],
             describe: "Expand quote or edit quote",
-            run: ({ path, rowKey, runtime }) => {
+            run: ({ level, rowKey, runtime }) => {
+              const path = level.path;
               const identity = quoteDetailsIdentity({ path, rowKey });
               const clipped = clippedQuotesRef.current.get(quoteIdentityKey(identity)) ?? true;
 
@@ -254,7 +256,7 @@ function BooksGrid({
                 if (!quoteIdentityMatches(expandedQuoteRef.current, identity)) {
                   expandInlineQuote(null);
                 }
-                runtime.controllerFor(path).startEdit(
+                controllerFor(runtime, path).startEdit(
                   {
                     rowId: makeRowId(path, rowKey),
                     colId: "quote_text",
@@ -275,8 +277,10 @@ function BooksGrid({
           activation: {
             startsOn: ["enter", "space", "click"],
             describe: "Expand quote details",
-            run: ({ path, rowKey }) => {
-              openQuoteDialog(quoteDetailsIdentity({ path, rowKey }));
+            run: ({ level, rowKey }) => {
+              openQuoteDialog(
+                quoteDetailsIdentity({ path: level.path, rowKey }),
+              );
             },
           },
           renderCell: QuoteDetailsCell,
@@ -308,33 +312,33 @@ function BooksGrid({
   );
 }
 
-function QuoteDeepLinkBookCell({
-  path,
-  rowKey,
-  runtime,
-}: TGridCellContext<SchemaTableRowsByLevel, unknown, typeof booksTableName>) {
+function QuoteDeepLinkBookCell() {
+  const { level, rowKey, runtime } = useTGridCell<
+    SchemaTableRowsByLevel,
+    unknown,
+    typeof booksTableName
+  >(booksTableName);
+  const path = level.path;
   const { linkedBookRowKey } = useQuoteExpansion();
 
   useEffect(() => {
     if (linkedBookRowKey !== String(rowKey)) return;
 
     const rowId = makeRowId(path, rowKey);
-    const expanded =
-      runtime.coordinator.getState().expansion.get(path)?.has(rowId) ?? false;
-    if (!expanded) {
-      runtime.coordinator.toggleExpand(path, rowId);
-    }
-    runtime.controllerFor(path).revealRow(rowId);
-  }, [linkedBookRowKey, path, rowKey, runtime]);
+    if (!level.isExpanded(rowId)) level.expand(rowId);
+    controllerFor(runtime, path).revealRow(rowId);
+  }, [level, linkedBookRowKey, path, rowKey, runtime]);
 
   return null;
 }
 
-function QuoteTextCell({
-  path,
-  rowKey,
-  value,
-}: TGridCellContext<SchemaTableRowsByLevel, unknown, typeof quotesLevelName>) {
+function QuoteTextCell() {
+  const { level, rowKey, value } = useTGridCell<
+    SchemaTableRowsByLevel,
+    unknown,
+    typeof quotesLevelName
+  >(quotesLevelName);
+  const path = level.path;
   const ref = useRef<HTMLDivElement | null>(null);
   const { expandedQuote, reportQuoteClipping } = useQuoteExpansion();
   const identity = useMemo(() => quoteDetailsIdentity({ path, rowKey }), [path, rowKey]);
@@ -377,11 +381,13 @@ function QuoteTextCell({
   );
 }
 
-function QuoteTextEditor({
-  value,
-  commit,
-  cancel,
-}: TGridCellEditorContext<SchemaTableRowsByLevel, unknown, typeof quotesLevelName, "quote_text">) {
+function QuoteTextEditor() {
+  const { value, commit, cancel } = useTGridCellEditor<
+    SchemaTableRowsByLevel,
+    unknown,
+    typeof quotesLevelName,
+    "quote_text"
+  >(quotesLevelName, "quote_text");
   const [draft, setDraft] = useState(() => String(value ?? ""));
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const draftRef = useRef(draft);
@@ -441,20 +447,22 @@ function QuoteTextEditor({
   );
 }
 
-function QuoteDetailsCell({
-  path,
-  row,
-  rowKey,
-  runtime,
-  activation,
-}: TGridCellContext<SchemaTableRowsByLevel, unknown, typeof quotesLevelName>) {
+function QuoteDetailsCell() {
+  const { level, row, rowKey, runtime, activation } = useTGridCell<
+    SchemaTableRowsByLevel,
+    unknown,
+    typeof quotesLevelName
+  >(quotesLevelName);
+  const path = level.path;
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const { activeQuoteDialog, closeQuoteDialog } = useQuoteExpansion();
   const identity = useMemo(() => quoteDetailsIdentity({ path, rowKey }), [path, rowKey]);
   const open = quoteIdentityMatches(activeQuoteDialog, identity);
   const edge = trailingEdge(path);
   const parentRow = edge
-    ? runtime.displayedRowFor(edge.parentPath, makeRowId(edge.parentPath, edge.parentRowKey))
+    ? runtime
+        .level(edge.parentPath)
+        .displayedRow(makeRowId(edge.parentPath, edge.parentRowKey))
     : undefined;
   const book = textValue(parentRow?.columns.title, "Unknown book");
   const author = textValue(parentRow?.columns.author, "Unknown author");
@@ -464,7 +472,7 @@ function QuoteDetailsCell({
 
   useEffect(() => {
     if (!open) return;
-    runtime.controllerFor(path).revealRow(makeRowId(path, rowKey));
+    controllerFor(runtime, path).revealRow(makeRowId(path, rowKey));
   }, [open, path, rowKey, runtime]);
 
   useEffect(() => {
@@ -491,26 +499,28 @@ function QuoteDetailsCell({
         }
       }}
     >
-      <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="mx-auto h-8 w-8 text-sap-soft hover:text-sap-fg"
-          aria-label={activation?.label ?? "Expand quote details"}
-          title={activation?.label ?? "Expand quote details"}
-          disabled={activation?.availability.kind === "disabled"}
-          onClick={(event) => {
-            event.stopPropagation();
-            activation?.run();
-          }}
-          onMouseDown={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-        >
-          <Maximize2 className="h-4 w-4" aria-hidden="true" />
-        </Button>
+      <DialogTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="mx-auto h-8 w-8 text-sap-soft hover:text-sap-fg"
+            aria-label={activation?.label ?? "Expand quote details"}
+            title={activation?.label ?? "Expand quote details"}
+            disabled={activation?.availability.kind === "disabled"}
+            onClick={(event) => {
+              event.stopPropagation();
+              activation?.run();
+            }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+          />
+        }
+      >
+        <Maximize2 className="h-4 w-4" aria-hidden="true" />
       </DialogTrigger>
       <DialogContent className="max-h-[88vh] w-[min(94vw,64rem)] max-w-[94vw] overflow-y-auto p-0">
         <DialogHeader className="sr-only">

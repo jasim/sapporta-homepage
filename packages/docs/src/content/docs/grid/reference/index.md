@@ -9,7 +9,7 @@ description: "Look up the standalone @sapporta/grid public surface."
 
 ## Reference groups
 
-- [BaseGrid](/grid/reference/base-grid/) — identity, schema, runtime, React, expansion, and phantom rows.
+- [BaseGrid](/grid/reference/base-grid/) — identity, schema, grid and level runtimes, React, row operations, and drafts.
 - [ColumnPreset](/grid/reference/column-preset/) — typed column constructors, editors, formatting, copy, and sizing.
 - [Data sources](/grid/reference/data-sources/) and [REST helpers](/grid/reference/rest-helpers/).
 - [Clipboard](/grid/reference/clipboard/) and [Interactions](/grid/reference/interactions/).
