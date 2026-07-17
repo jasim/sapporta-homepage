@@ -17,6 +17,71 @@ For the application user, users never observe a completed task without its compl
 - Return a small domain result and translate expected errors at the HTTP edge.
 - Test success, repeat calls, invisible rows, and injected write failure.
 
+## Scoped parent-detail insert
+
+Create one row-security guard for every table touched by the workflow. Use the
+guard's visibility predicate for reads and its insert-value helper for writes.
+Pass parent keys and other server-authored references through `serverValues`;
+never copy ownership or parent keys from client input.
+
+The default Sapporta SQLite driver uses synchronous `better-sqlite3`
+transactions. Keep the transaction callback synchronous and use
+`insertValuesSync()` inside it. Do not mark the callback `async` or await work
+inside it.
+
+```ts
+import { eq } from "drizzle-orm";
+
+const parentAccess = auth.rowSecurity.forTable(parents);
+const detailAccess = auth.rowSecurity.forTable(details);
+const referencedAccess = auth.rowSecurity.forTable(referencedRows);
+
+const result = db.transaction((tx) => {
+  // Scope reads in SQL. A missing result also covers an invisible row.
+  const referenced = tx
+    .select({ id: referencedRowsTable.id })
+    .from(referencedRowsTable)
+    .where(
+      referencedAccess.ownedRows(
+        eq(referencedRowsTable.id, input.referenced_id),
+      ),
+    )
+    .get();
+
+  if (!referenced) throw new ReferencedRowNotFoundError();
+
+  const parentValues = parentAccess.insertValuesSync(tx, input.parent);
+  const parent = tx
+    .insert(parentsTable)
+    .values(parentValues as typeof parentsTable.$inferInsert)
+    .returning({ id: parentsTable.id })
+    .get();
+
+  const insertedDetails = input.details.map((detail) => {
+    const detailValues = detailAccess.insertValuesSync(tx, detail, {
+      serverValues: { parent_id: parent.id },
+    });
+
+    return tx
+      .insert(detailsTable)
+      .values(detailValues as typeof detailsTable.$inferInsert)
+      .returning()
+      .get();
+  });
+
+  return { parent, details: insertedDetails };
+});
+```
+
+`insertValuesSync()` rejects client ownership fields and server-managed
+references, merges trusted `serverValues`, validates final foreign-key
+visibility, and stamps request ownership. It prepares values for Drizzle; the
+workflow remains responsible for the insert and its returned row.
+
+If asynchronous network or file work is required, complete it before entering
+the SQLite transaction or redesign the boundary. Keep the database transaction
+short and synchronous.
+
 ## Task-app example
 
 `completeTask` rejects an already completed task with 409, updates status, and inserts one `completed` event. A failed event insert rolls back the task update.
@@ -31,4 +96,5 @@ For the application user, users never observe a completed task without its compl
 ## Related reference
 
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
