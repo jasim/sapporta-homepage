@@ -24,3 +24,4 @@ import { gridDatasetSchema, type GridDataset } from "@sapporta/shared/grid-datas
 ## Related documentation
 
 - [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
+- [Column sizing](/docs/reference/column-sizing/)

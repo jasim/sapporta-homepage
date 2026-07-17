@@ -293,6 +293,9 @@ export default [
         "label": "Frontend APIs",
         "items": [
           {
+            "slug": "docs/reference/column-sizing"
+          },
+          {
             "slug": "docs/reference/frontend/app-shell-routes-and-navigation"
           },
           {

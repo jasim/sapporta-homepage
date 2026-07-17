@@ -18,3 +18,4 @@ description: "Look up table, child, column, select, search, and visibility metad
 ## Related documentation
 
 - [Search, indexes, and display metadata](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Column sizing](/docs/reference/column-sizing/)
