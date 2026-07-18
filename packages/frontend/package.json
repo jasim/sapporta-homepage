@@ -8,11 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@sapporta/frontend": "link:///Users/jasim/m/a/code/sapporta/packages/frontend",
-    "@sapporta/grid": "link:///Users/jasim/m/a/code/sapporta/packages/grid",
+    "@sapporta/frontend": "0.2.7",
+    "@sapporta/grid": "0.2.7",
     "@sapporta/rest-core": "3.52.2",
-    "@sapporta/shared": "link:///Users/jasim/m/a/code/sapporta/packages/shared",
-    "@sapporta/ui": "link:///Users/jasim/m/a/code/sapporta/packages/ui",
+    "@sapporta/shared": "0.1.7",
+    "@sapporta/ui": "0.2.7",
     "sapporta-homepage-app-shared": "workspace:*",
     "better-auth": "^1.6.13",
     "@js-temporal/polyfill": "0.5.1",
