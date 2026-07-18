@@ -1,0 +1,27 @@
+---
+import DefaultPageTitle from "@astrojs/starlight/components/PageTitle.astro";
+import AgentPageActions from "./AgentPageActions.astro";
+---
+
+<div class="agent-page-title">
+  <DefaultPageTitle />
+  <AgentPageActions />
+</div>
+
+<style>
+  @layer starlight.components {
+    .agent-page-title {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 30rem) {
+      .agent-page-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  }
+</style>

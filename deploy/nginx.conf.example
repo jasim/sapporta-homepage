@@ -1,0 +1,196 @@
+# This file is a complete nginx `http` configuration example. Replace the two
+# build-root paths and the server name before enabling it.
+
+events {}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    # Conservative static content negotiation: rewrite only a request whose
+    # complete Accept value is text/markdown. Explicit .md URLs remain the
+    # primary contract; compound/q-weighted Accept values fall back to HTML.
+    map $http_accept $docs_markdown_request {
+        default                       0;
+        "~*^\s*text/markdown\s*$"    1;
+    }
+
+    map $docs_markdown_request $docs_vary_accept {
+        0    "";
+        1    "Accept";
+    }
+
+    map $uri $docs_link_header {
+        default
+            '</llms.txt>; rel="llms-txt"';
+        "~^/(?:docs|grid)/(?:llms|llms-full)\.txt$"
+            '</llms.txt>; rel="llms-txt"';
+        "~^(?<markdown_page>/(?:docs|grid)/.+)\.md$"
+            '</llms.txt>; rel="llms-txt", <$markdown_page.md>; rel="alternate"; type="text/markdown"';
+        "~^(?<html_page>/(?:docs|grid)/.+?)/?$"
+            '</llms.txt>; rel="llms-txt", <$html_page.md>; rel="alternate"; type="text/markdown"';
+    }
+
+    upstream sapporta_api {
+        server 127.0.0.1:3000;
+    }
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        # Hono owns stateful and runtime-derived behavior only.
+        location /api/ {
+            proxy_pass http://sapporta_api;
+            proxy_http_version 1.1;
+            proxy_set_header Host              $host;
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location = /health {
+            proxy_pass http://sapporta_api;
+            proxy_http_version 1.1;
+            proxy_set_header Host              $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # Astro's pre-rendered homepage and documentation.
+        location = / {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /index.html =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location = /index.html {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /index.html =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location = /grid {
+            return 308 /grid/;
+        }
+
+        # There is no standalone /docs landing page in the Astro build.
+        # Keep the path in the documentation namespace instead of returning
+        # the React application shell.
+        location = /docs {
+            return 404;
+        }
+
+        location = /grid/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /grid/index.html =404;
+            add_header Cache-Control "no-cache" always;
+            add_header Link $docs_link_header always;
+            add_header X-Llms-Txt "/llms.txt" always;
+        }
+
+        location ~ ^/(?:docs|grid)/.*\.md$ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            default_type text/markdown;
+            add_header Cache-Control "no-cache" always;
+            add_header Link $docs_link_header always;
+            add_header X-Llms-Txt "/llms.txt" always;
+            add_header Vary $docs_vary_accept always;
+        }
+
+        location ~ ^/(?:docs|grid)/(?:llms|llms-full)\.txt$ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            default_type text/plain;
+            add_header Cache-Control "no-cache" always;
+            add_header Link $docs_link_header always;
+            add_header X-Llms-Txt "/llms.txt" always;
+        }
+
+        location /docs/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            if ($docs_markdown_request) {
+                rewrite ^(.+?)/?$ $1.md last;
+            }
+            try_files $uri $uri/index.html =404;
+            add_header Cache-Control "no-cache" always;
+            add_header Link $docs_link_header always;
+            add_header X-Llms-Txt "/llms.txt" always;
+            add_header Vary "Accept" always;
+        }
+
+        location /grid/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            if ($docs_markdown_request) {
+                rewrite ^(.+?)/?$ $1.md last;
+            }
+            try_files $uri $uri/index.html =404;
+            add_header Cache-Control "no-cache" always;
+            add_header Link $docs_link_header always;
+            add_header X-Llms-Txt "/llms.txt" always;
+            add_header Vary "Accept" always;
+        }
+
+        location = /llms.txt {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /llms.txt =404;
+            default_type text/plain;
+            add_header Cache-Control "no-cache" always;
+            add_header Link '</llms.txt>; rel="llms-txt"' always;
+            add_header X-Llms-Txt "/llms.txt" always;
+        }
+
+        location = /.well-known/llms.txt {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /.well-known/llms.txt =404;
+            default_type text/plain;
+            add_header Cache-Control "no-cache" always;
+            add_header Link '</llms.txt>; rel="llms-txt"' always;
+            add_header X-Llms-Txt "/llms.txt" always;
+        }
+
+        location /_astro/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            add_header Cache-Control "public, max-age=31536000, immutable" always;
+        }
+
+        location /assets/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location /pagefind/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location ~ ^/(?:favicon\.svg|sitemap(?:-index|-0)?\.xml|LICENSE\.txt)$ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        # Vite's prebuilt React application. Its hashed assets are immutable;
+        # all other non-documentation routes use the SPA fallback.
+        location /app-assets/ {
+            root /var/www/sapporta-homepage-app/packages/frontend/dist;
+            try_files $uri =404;
+            add_header Cache-Control "public, max-age=31536000, immutable" always;
+        }
+
+        location / {
+            root /var/www/sapporta-homepage-app/packages/frontend/dist;
+            try_files $uri @frontend_spa;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location @frontend_spa {
+            root /var/www/sapporta-homepage-app/packages/frontend/dist;
+            try_files /index.html =404;
+            add_header Cache-Control "no-cache" always;
+        }
+    }
+}

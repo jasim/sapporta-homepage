@@ -9,6 +9,7 @@ import docsSidebar from "./sidebar.mjs";
 export default defineConfig({
   site: "https://sapporta.com",
   base: "/",
+  output: "static",
   trailingSlash: "ignore",
   vite: {
     plugins: [tailwindcss()],
@@ -18,6 +19,10 @@ export default defineConfig({
     starlight({
       title: "Sapporta",
       customCss: ["./src/styles/sapporta.css"],
+      components: {
+        Head: "./src/components/AgentHead.astro",
+        PageTitle: "./src/components/AgentPageTitle.astro",
+      },
       expressiveCode: {
         themes: ["github-dark-default", "github-light-default"],
         useStarlightUiThemeColors: false,

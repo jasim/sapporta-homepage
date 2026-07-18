@@ -115,6 +115,9 @@ importers:
       lucide-react:
         specifier: ^0.513.0
         version: 0.513.0(react@19.2.6)
+      mdast-util-from-markdown:
+        specifier: ^2.0.3
+        version: 2.0.3
       react:
         specifier: 19.2.6
         version: 19.2.6
@@ -127,6 +130,9 @@ importers:
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
+      unist-util-visit:
+        specifier: ^5.1.0
+        version: 5.1.0
       zustand:
         specifier: 5.0.13
         version: 5.0.13(@types/react@19.2.17)(react@19.2.6)

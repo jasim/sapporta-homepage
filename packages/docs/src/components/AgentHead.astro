@@ -1,0 +1,21 @@
+---
+import DefaultHead from "@astrojs/starlight/components/Head.astro";
+import { markdownPathForSlug } from "../lib/agent-docs";
+
+const { id } = Astro.locals.starlightRoute;
+const markdownHref =
+  id.startsWith("docs/") || id.startsWith("grid/")
+    ? markdownPathForSlug(id)
+    : undefined;
+---
+
+<DefaultHead />
+{
+  markdownHref && (
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href={markdownHref}
+    />
+  )
+}

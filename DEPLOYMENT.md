@@ -2,24 +2,32 @@
 
 ## Overview
 
-Three production-valid deployment shapes. The code is identical; only SPA/API location and the browser's path to the API differ, so promotion needs no rewrite.
+Three production-valid deployment shapes. The code is identical; only static
+site/API location and the browser's path to the API differ, so promotion needs
+no rewrite.
 
-- **(a) Single process** — one Hono process serves SPA and API on one port, via `pnpm start` by default.
-- **(b) Reverse proxy** — nginx/Caddy serves the SPA and proxies `/api/` to Hono, appearing same-origin to the browser.
-- **(c) Split topology** — SPA on a CDN, API on a separate host, cross-origin.
+- **(a) Single process** — one Hono process serves prebuilt Astro/Vite files and
+  the API on one port, via `pnpm start` by default.
+- **(b) Reverse proxy** — nginx/Caddy serves the Astro/Vite files and proxies
+  `/api/` to Hono, appearing same-origin to the browser.
+- **(c) Split topology** — the static site runs on a CDN and the API runs on a
+  separate host, cross-origin.
 
 Start with (a) unless you have a reason not to.
 
-The generated `Dockerfile` implements shape (a): the image contains both
-`packages/api/dist/` and `packages/frontend/dist/`. At startup it applies
-Drizzle migrations with the API package's local `drizzle-kit` binary, then runs
-`node dist/boot.js` from `packages/api/`. Hono serves `/api/*` and the built
-SPA from the same container port. There is no nginx/Caddy proxy inside the
-image; any proxy is outside the container for TLS, routing, or load balancing.
+The generated `Dockerfile` implements shape (a): the image contains
+`packages/api/dist/`, `packages/docs/dist/`, and `packages/frontend/dist/`. At
+startup it applies Drizzle migrations with the API package's local
+`drizzle-kit` binary, then runs `node dist/boot.js` from `packages/api/`. Hono
+serves `/api/*` and reads the same prebuilt Astro/Vite files that nginx or a CDN
+would serve in another topology. Hono does not server-render documentation or
+application pages. There is no nginx/Caddy proxy inside the image; any proxy is
+outside the container for TLS, routing, or load balancing.
 
 ## Same-origin vs. cross-origin
 
-The shapes split on one question: does the browser see the SPA and API on the same origin?
+The shapes split on one question: does the browser see the static site and API
+on the same origin?
 
 - (a) and (b) are same-origin; they differ only in who serves the static assets (Hono or a proxy), which the browser can't see.
 - (c) is cross-origin.
@@ -68,39 +76,69 @@ automation. Set it in the client process, or pass `--api-url` for one command.
 The running application does not read it to choose its own port; that is the
 role of `SAPPORTA_API_PORT` or its hosting-compatible `PORT` fallback.
 
-## The `serveStatic` block
+## The static compatibility host
 
-`packages/api/boot.ts` serves `packages/frontend/dist/` with an SPA fallback for deep links. Its role shifts by shape:
+`packages/api/static-site.ts` is the single-process compatibility host for the
+prebuilt Astro and Vite output. Its role shifts by shape:
 
 - **(a):** active — the mechanism that lets one Hono process answer both HTML and API.
 - **(b):** inert (the proxy intercepts static requests first), but **keep it** so `pnpm start` alone still works for prod smoke tests, proxy-less Docker images, etc.
-- **(c):** dead code — **delete it**; leaving it obscures what the API process does.
+- **(c):** dead code — remove the `mountStaticSite(...)` call from `boot.ts`;
+  leaving it obscures what the API process does.
+
+## Runtime route ownership
+
+The API process keeps only surfaces that depend on runtime state, request
+identity, or the live Sapporta catalog. A reverse proxy should not replace
+these with static files:
+
+| Surface                                                          | Why it remains dynamic                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `/api/auth/*`                                                    | Better Auth sessions, sign-in, callbacks, verification, and password workflows. |
+| `/api/auth-bootstrap`                                            | Reads whether the application database already contains auth setup.             |
+| `/api/auth-context*` and `/api/auth-tokens*`                     | Resolve the current principal/workspace or mutate scoped access tokens.         |
+| `/api/meta/*`, `/api/tables/books/*`, and `/api/tables/quotes/*` | Expose the live Sapporta catalog and read/write the Books/Quotes database.      |
+| `/api/openapi.json` and privileged framework tools               | Describe or operate the routes mounted by the running application.              |
+| `/health`                                                        | Reports process/database readiness under the configured health policy.          |
+| `/api/hello`                                                     | Intentional authenticated sample that proves the request ability boundary.      |
+| `/api/public-api-sample`                                         | Intentional live public-API sample used by the React `/public` screen.          |
+
+The last two responses contain constant text, but their purpose is to exercise
+the API/auth integration. Remove their route, shared contract, browser client,
+and sample screen together when that demonstration is no longer useful; do not
+silently shadow an `/api/*` contract with a static file.
+
+Everything else delivered by `mountStaticSite(...)` is already a build
+artifact. The homepage HTML is static even though its client-only Books grid
+loads live table metadata and rows after hydration.
 
 ## Shape (a) — Single process (default)
 
-One Hono process serves `/api/*` and the built SPA on a single
+One Hono process serves `/api/*` and the prebuilt Astro/Vite site on a single
 `SAPPORTA_API_PORT`; no proxy in front.
 
 ```bash
-pnpm build                 # tsc → packages/api/dist/, vite build → packages/frontend/dist/
+pnpm build                 # Astro/Vite static output plus compiled API
 pnpm --filter ./packages/api db:migrate
 SAPPORTA_API_PORT=3000 pnpm start  # node packages/api/dist/boot.js
 ```
 
-The browser loads the SPA from `http://your-host:3000/`, and its relative `fetch("/api/foo")` calls hit the same process.
+The browser loads the static site from `http://your-host:3000/`, and its
+relative `fetch("/api/foo")` calls hit the same process.
 
 - **Good for:** personal projects, small/medium deployments, Fly.io, Railway, a VPS, a single Docker container.
-- **Trade-off:** SPA and API tiers scale together. Rarely an issue; if it becomes one, promote to (b) or (c).
+- **Trade-off:** static and API tiers scale together. Rarely an issue; if it
+  becomes one, promote to (b) or (c).
 
 ### Docker image
 
 Scaffolded projects include a production `Dockerfile` for this same-origin
-shape. It builds the shared package, API, and frontend, installs production
-dependencies, copies the built SPA into `packages/frontend/dist/`, exposes
-port `3000`, runs migrations with Drizzle Kit, starts the API, and health-checks
-`/`. At runtime the image accepts either `SAPPORTA_API_PORT` or the conventional
-`PORT` assigned by a host. The runtime image does not run `pnpm`; the container
-starts with:
+shape. It builds the shared package, Astro docs, API, and frontend, installs
+production dependencies, copies both static builds into the runtime image,
+exposes port `3000`, runs migrations with Drizzle Kit, starts the API, and
+health-checks `/`. At runtime the image accepts either `SAPPORTA_API_PORT` or
+the conventional `PORT` assigned by a host. The runtime image does not run
+`pnpm`; the container starts with:
 
 ```bash
 cd packages/api && ./node_modules/.bin/drizzle-kit migrate && node dist/boot.js
@@ -118,7 +156,7 @@ docker run --rm \
   sapporta-homepage-app
 ```
 
-Then open `http://localhost:3000/`. The SPA and API are same-origin: browser
+Then open `http://localhost:3000/`. The static site and API are same-origin: browser
 requests to `/api/*` go to the Hono process in the same container. `VITE_API_URL`
 is not needed for this Docker shape.
 
@@ -133,50 +171,43 @@ origin, so frontend API calls remain relative.
 
 ## Shape (b) — Reverse proxy (nginx, Caddy, etc.)
 
-A reverse proxy serves `packages/frontend/dist/` directly and proxies `/api/`
-to Hono (still run via `SAPPORTA_API_PORT=3000 pnpm start`).
+A reverse proxy serves `packages/docs/dist/` and `packages/frontend/dist/`
+directly and proxies `/api/` and `/health` to Hono (still run via
+`SAPPORTA_API_PORT=3000 pnpm start`).
 
 ```nginx
 server {
     listen 80;
     server_name example.com;
-    root /var/www/sapporta-homepage-app/packages/frontend/dist;
-
-    location /api/ {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host              $host;
-        proxy_set_header X-Real-IP         $remote_addr;
-        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    location /assets/ {
-        try_files $uri =404;
-        add_header Cache-Control "public, max-age=31536000, immutable";
-    }
-
-    location = /index.html {
-        add_header Cache-Control "no-cache";
-    }
-
-    location / {
-        try_files $uri /index.html;   # SPA fallback for deep links
-        add_header Cache-Control "no-cache";
-    }
+    # See deploy/nginx.conf.example for the complete location map.
 }
 ```
 
-`/assets/*` is safe to cache immutably because Vite writes content hashes into
-asset filenames. `index.html` must revalidate because it points at the latest
-hashed JS and CSS files for the current deployment.
+Use [`deploy/nginx.conf.example`](./deploy/nginx.conf.example) as the actual
+starting configuration. This project has two static roots with different
+fallback rules:
+
+- `packages/docs/dist/` owns `/`, `/docs/*`, `/grid/*`, `/_astro/*`,
+  `/assets/*`, `/pagefind/*`, sitemaps, and the LLM indexes.
+- `packages/frontend/dist/` owns `/app-assets/*` and the React Router fallback
+  for application routes such as `/welcome`, `/tables/*`, and `/reports/*`.
+- Hono owns `/api/*` and `/health`.
+
+The example also supplies Markdown content types, documentation discovery
+headers, a conservative `Accept: text/markdown` rewrite, and the correct cache
+policy. Only `/_astro/*` and `/app-assets/*` are content-hashed and immutable.
+Astro public `/assets/*`, Pagefind files with stable names, HTML, Markdown, and
+index files revalidate.
 
 - **Good for:** multi-site hosts, TLS via Let's Encrypt, HTTP/2, asset cache headers, gzip/brotli, standard ops hygiene.
 - **Trade-off:** extra config surface, but stock nginx carries over to any project.
 
-## Shape (c) — Split topology: SPA on a CDN, API on its own host
+## Shape (c) — Split topology: static site on a CDN, API on its own host
 
-The SPA ships to a CDN (Cloudflare Pages, Netlify, Vercel, S3 + CloudFront, …) and the Hono API runs on a separate host — e.g. `https://app.example.com` for the SPA and `https://api.example.com` for the API.
+The Astro/Vite builds ship to a CDN (Cloudflare Pages, Netlify, Vercel, S3 +
+CloudFront, …) and the Hono API runs on a separate host — e.g.
+`https://app.example.com` for the static site and `https://api.example.com` for
+the API.
 
 ### 1. Public app origin and trusted origins
 
@@ -217,18 +248,24 @@ the CDN or frontend host to proxy `/api/auth/*` to the API host. This keeps
 email links and post-verification redirects on the app's public origin while the
 SPA can still call the full API at `VITE_API_URL`.
 
-### 4. Delete the `serveStatic` block
+### 4. Remove the static compatibility mount
 
-Dead code in this shape (see the `serveStatic` section).
+Remove the `mountStaticSite(...)` call from `packages/api/boot.ts`. The API
+process then exposes only dynamic runtime surfaces.
 
 ### 5. Deploy in two halves
 
-- **SPA:** `vite build` → `packages/frontend/dist/`. Upload to the CDN and configure an SPA fallback (`/* → /index.html`) so React Router handles deep links on hard reload.
+- **Static site:** upload both `packages/docs/dist/` and
+  `packages/frontend/dist/` with the same route ownership described in shape
+  (b). A single unconditional `/* → /index.html` fallback is incorrect because
+  it would shadow the Astro homepage and documentation.
 - **API:** `tsc` → `packages/api/dist/`. Run `node packages/api/dist/boot.js` with `SAPPORTA_API_PORT`, `BETTER_AUTH_SECRET`, `SAPPORTA_PUBLIC_APP_URL`, and any extra `SAPPORTA_FRONTEND_ORIGINS` set.
 
 Fit:
 
-- **Good for:** global CDN delivery of the SPA, independent scaling of the static and API tiers, edge caching, separate frontend and backend deploy cadences.
+- **Good for:** global CDN delivery of the static site, independent scaling of
+  the static and API tiers, edge caching, separate frontend and backend deploy
+  cadences.
 - **Trade-offs:** the most moving parts, and CORS misconfiguration is the single most common failure mode. Cookie-based auth gets awkward — `SameSite=None`, `Secure`, and matching origin lists are mandatory and strictly enforced. If you're not sure you need this shape, don't start here.
 
 ## Environment variables, by shape
