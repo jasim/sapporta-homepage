@@ -60,15 +60,24 @@ Its response is an object with rows and pagination metadata:
 ```
 
 Single-row reads and writes return `{ "data": row }`. Create and update bodies
-contain client-editable domain values only. They omit `workspace_id`,
-`scoped_to_user_id`, and other trusted values because the server derives row
-scope from the authenticated request.
+contain API-writable domain values only. They omit generated primary keys,
+`workspace_id`, `scoped_to_user_id`, `apiWritable: false` columns, and
+server-authored references because the server derives or supplies those values.
+Generated OpenAPI and clients expose the same caller-controlled field set, and
+request-time policy rejects prohibited fields when a caller bypasses them.
 
 Generated request bodies preserve each column's semantic JSON value.
 Select-backed text stays a string, numbers and booleans stay JSON primitives,
 foreign keys retain the target primary-key type, and dates and timestamps use
 canonical strings. Parse Temporal values only at a declared application
 boundary.
+
+The request schema is not the final insert shape. Row security first merges
+trusted workspace, user-scope, and server-authored values and verifies reference
+visibility. The save pipeline then performs authoritative structural parsing,
+canonicalizes date and timestamp values, runs the table's top-level `validate()`
+callback, and writes the parsed output. This order lets a required scope field
+remain absent from the public body without weakening write validation.
 
 Lookup, count, and CSV export apply the same row-access predicates as the list
 route. A project lookup therefore returns only visible projects:

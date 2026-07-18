@@ -7,99 +7,155 @@ description:
 
 ## Identity
 
-Sapporta semantic column kinds define the generated editor, JSON value,
-application value, and Drizzle storage conversion for each table column.
+A Sapporta `TableDef` is the shared source for column value semantics. Drizzle
+owns SQL names, storage types, nullability, defaults, keys, and enum values.
+Sapporta column metadata and semantic kinds own generated presentation and value
+behavior.
 
-## Supported flow
+## Supported write flow
 
-Generated table values follow one directional model:
+Generated writes keep editor drafts separate from API values:
 
 ```text
-form input -> parsed application value -> JSON request value -> Drizzle value
-Drizzle value -> JSON response value -> parsed domain value -> editor value
+raw form or Grid draft
+-> submit-time or commit-time draft decoding
+-> caller-controlled JSON value
+-> API write policy and trusted server values
+-> authoritative structural parsing and application issues
+-> SQL-name to Drizzle-property translation
+-> SQLite storage
 ```
 
-Generated record forms and ColumnPreset parse editor text before a write.
-Generated table routes validate JSON primitives. Drizzle semantic column
-factories own SQLite conversion. App-owned contracts parse domain values at the
-shared Zod boundary.
+`zodForColumnValue()` defines the structural schema for one present, non-null
+column value. Public API schemas and trusted write schemas compose those leaf
+rules with their own field-ownership and presence rules. The save pipeline
+persists the successful structural parser output.
 
 ## Value matrix
 
-| Semantic value            | Form or Grid value                             | JSON wire value               | Application and Drizzle value                                                            | SQLite value                                | Parser and serializer                        | Empty or null behavior                                                                                                        |
-| ------------------------- | ---------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Text                      | `string`                                       | `string`                      | `string`                                                                                 | `TEXT`                                      | identity; JSON string                        | `null` is distinct from `""`. An untouched new-record field is omitted; a cleared text input submits `""`.                    |
-| Select-backed text        | one declared option string                     | the same string               | the same string                                                                          | `TEXT`                                      | select option identity; JSON string          | An untouched new-record field is omitted. Use `null` only for a nullable column.                                              |
-| Number, money, percentage | finite `number` after editor parsing           | JSON number                   | `number`                                                                                 | `REAL`                                      | numeric editor parser; JSON number           | A cleared new-record input is omitted. Grid or direct updates can send `null` to a nullable column.                           |
-| Boolean                   | `boolean`                                      | JSON boolean                  | `boolean`                                                                                | SQLite integer through Drizzle boolean mode | checkbox state; JSON boolean                 | An untouched new-record checkbox is omitted. After interaction, `false` is submitted as a value.                              |
-| Date                      | `YYYY-MM-DD` editor string                     | canonical `YYYY-MM-DD` string | `Temporal.PlainDate` after domain parsing; generated table clients may retain the string | canonical `TEXT`                            | shared date input and Temporal helpers       | A cleared new-record input is omitted. Grid or direct updates can send `null` to a nullable column.                           |
-| Timestamp                 | `datetime-local` input converted to an instant | canonical ISO instant string  | `Temporal.Instant` after domain parsing; generated table clients may retain the string   | canonical UTC `TEXT`                        | shared datetime input and Temporal helpers   | A cleared new-record input is omitted. Grid or direct updates can send `null` to a nullable column.                           |
-| Foreign key               | target primary-key `string` or `number`        | the same JSON primitive       | the same primary-key type                                                                | target-compatible `TEXT` or `INTEGER`       | lookup value identity; JSON string or number | Preserve the target type through lookup state. An untouched or cleared new-record picker is omitted; updates can send `null`. |
+| Semantic value            | Form or Grid draft                                    | Generated JSON value         | Direct Drizzle and database read value          | Empty create behavior                                 | Cleared patch behavior       |
+| ------------------------- | ----------------------------------------------------- | ---------------------------- | ----------------------------------------------- | ----------------------------------------------------- | ---------------------------- |
+| Text                      | raw `string`                                          | the same `string`            | `string`                                        | optional `""` is submitted; untouched is omitted      | `""` is an explicit value    |
+| Select-backed text        | one declared option string plus transient search text | selected option string       | selected option string                          | optional clear is omitted                             | `null` for a nullable column |
+| Number, money, percentage | raw editor `string` until submit or commit            | finite JSON `number`         | `number`                                        | optional empty input is omitted                       | `null` for a nullable column |
+| Boolean                   | untouched `null`, then `boolean` after interaction    | JSON `boolean`               | Drizzle boolean; SQLite integer                 | untouched is omitted; interacted `false` is submitted | submitted `true` or `false`  |
+| Date                      | raw `YYYY-MM-DD` input string                         | canonical `YYYY-MM-DD`       | `Temporal.PlainDate`; canonical SQLite `TEXT`   | optional empty input is omitted                       | `null` for a nullable column |
+| Timestamp                 | raw `datetime-local` input string                     | canonical ISO instant string | `Temporal.Instant`; canonical UTC SQLite `TEXT` | optional empty input is omitted                       | `null` for a nullable column |
+| Foreign key               | target primary-key `string` or `number`               | the same JSON primitive      | target-compatible Drizzle and SQLite value      | optional clear or untouched picker is omitted         | `null` for a nullable column |
+
+A required empty create control produces a field issue. An omitted optional or
+defaulted create field preserves normal insert rules. Text `""`, explicit
+`null`, and an absent field remain three distinct states.
 
 The generic generated-table client accepts rows as `Record<string, unknown>`
-because the table name is selected at runtime. Per-table OpenAPI schemas still
-describe the concrete columns. App-owned domain code should use a shared ts-rest
-contract and Zod schema when it needs a statically typed row or workflow value.
+because the table name is chosen at runtime. Per-table OpenAPI schemas still
+describe concrete column types. App-owned workflows should use shared ts-rest
+and Zod contracts when they need a statically typed domain value.
 
 ## Select-backed text
 
-Select metadata adds a controlled editor and, when inferred validation is used,
-generated enum validation to a text column. A custom `meta.validation` schema
-replaces that inferred rule. Select metadata does not change the stored value
-type.
+Declare allowed text values once on the Drizzle column:
 
 ```ts
+import { select } from "@sapporta/server/table";
+
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
 
-const mealTypeSchema = z.enum(MEAL_TYPES);
-
-const meals = sapportaTable({
-  drizzle: mealsTable,
-  meta: {
-    rowLabelColumns: ["name"],
-    selects: [
-      { type: "select", column: "meal_type", options: [...MEAL_TYPES] },
-    ],
-  },
+export const mealsTable = sqliteTable("meals", {
+  // Other columns omitted for focus.
+  meal_type: select("meal_type", MEAL_TYPES).notNull(),
 });
 ```
 
-The form value, generated table request, database value, generated response, and
-ColumnPreset select value are all one of the declared strings. App-owned
-contracts can reuse `mealTypeSchema` when they need literal-union inference.
+`select()` is a typed Drizzle text column. Its enum tuple drives TypeScript
+inference, structural Zod validation, generated OpenAPI, serialized table
+metadata, form controls, TGrid columns, and filters. Raw Drizzle
+`text("meal_type", { enum: MEAL_TYPES })` uses the same runtime derivation when
+a Sapporta semantic factory is not needed.
 
-## Unset and cleared generated forms
+Generated record forms render select-backed text as a searchable, clearable
+single-value combobox. The input query filters the declared options and never
+becomes the draft value. Generated enum `in` and `nin` filters use a searchable
+multi-value combobox with removable chips.
 
-The generated New Record form initializes every editable field to `null` and
-omits nullish values before create. This preserves database defaults and lets
-the server distinguish an absent field from a submitted value.
+Standalone ColumnPreset select columns accept strings or `{ value, label }`
+options. Their inline combobox editor compares option values with exact
+`Object.is` identity. A numeric `1` and string `"1"` can therefore coexist, and
+the search query cannot be committed as a cell value.
 
-- An untouched checkbox looks unchecked but remains absent. Once the user
-  interacts with it, `false` is a submitted value.
-- Cleared numeric, date, timestamp, lookup, and select controls become `null` in
-  form state and are omitted from the create body.
-- Text inputs preserve `""`; empty text and `null` are distinct values.
-- Grid writes and direct generated-table updates do not run new-record
-  compaction. They can send explicit `null` for nullable columns.
+## Draft decoding
 
-An omitted create field uses a database default when one exists. Otherwise the
-column must be nullable or validation/database constraints reject the row.
+Generated create forms store raw numeric, currency, percentage, date, and
+timestamp text while the user types. Intermediate input such as `-`, `12.`, or
+invalid text stays visible. `parseCreateDraft()` decodes the complete draft once
+in the submit handler:
 
-## Public conversion helpers
+- commas and surrounding whitespace are accepted as numeric editor syntax;
+- finite numeric text becomes a number;
+- date and timestamp text becomes a canonical wire string;
+- select, lookup, and boolean controls retain their already-typed values;
+- optional empty non-text controls are omitted;
+- optional empty text remains `""`;
+- required empty values and invalid drafts produce issues keyed by public SQL
+  column name.
+
+A failed decode returns issues separately and does not mutate the form draft.
+Editing one field clears only that field's stale issue.
+
+TGrid composes the same leaf decoder with patch rules at cell commit. Clearing a
+non-text cell is an explicit `null`; leaving a field out of the surrounding
+patch leaves it unchanged. Invalid raw text is preserved and reaches the
+authoritative server validation boundary because the generic Grid codec does not
+return local field issues.
+
+## Server write boundary
+
+Frontend decoding provides immediate feedback and produces JSON-compatible
+values. It is not an authorization or persistence boundary. Generated table
+writes apply the following server sequence:
+
+```text
+API field-ownership policy
+-> trusted scope and server-value merge
+-> visible-reference checks
+-> tableWriteZod structural parsing
+-> top-level validate() application issues
+-> Drizzle write
+```
+
+This order allows a required workspace, user-scope, or server-authored reference
+field to be absent from the public request and present in the prepared insert.
+Generated routes therefore use public API schemas for OpenAPI and client typing,
+then perform authoritative parsing at the save boundary after auth preparation.
+Generated routes, direct `scopedRows()` operations, and master-detail writes
+converge on the same parser.
+
+Dates and timestamps emerge from structural parsing as canonical strings. Those
+parsed values are passed to the Drizzle custom types, which accept canonical
+strings for Sapporta writes and Temporal values for direct Drizzle application
+code. Database reads return Temporal values. Generated response schemas convert
+them back to canonical JSON strings.
+
+## Public conversion and schema helpers
 
 - `parsePlainDate`, `formatPlainDate`, `parseCanonicalInstant`, and
   `formatCanonicalInstant` from `@sapporta/shared/temporal` convert domain
-  Temporal values at an app-owned contract boundary.
+  Temporal values at app-owned boundaries.
 - `formatPlainDateForDateInput`, `parseDateInputToPlainDateString`,
   `formatInstantForDateTimeLocalInput`, and
   `parseDateTimeLocalInputToCanonicalInstantString` connect browser inputs to
   canonical wire strings.
-- ColumnPreset constructors from `@sapporta/grid/column-preset` provide the
-  standard text, number, date, boolean, select, lookup, and foreign-key editor
-  codecs. A custom column can supply `parse`, `format`, and `compare` when its
-  value model differs.
-- `parseFiltersForTable()` and `encodeTypedFilters()` from
-  `@sapporta/shared/filter` preserve typed filter values until the URL boundary.
+- `parseNumericInput()` from `@sapporta/grid/column-preset` decodes generic
+  numeric editor grammar as a finite number, empty candidate, or invalid input.
+- ColumnPreset constructors provide standard text, number, date, boolean,
+  select, lookup, and foreign-key editor codecs. A custom column can supply
+  `parse`, `format`, and `compare` when its value model differs.
+- `tableApiZod.forInsert()`, `forPatch()`, and `forRow()` describe one public
+  table API value. `tableWriteZod` describes trusted save-boundary values.
+- `zodForColumnValue(table, column)` returns the shared leaf schema, and
+  `getColumnEnumValues(column)` reads the Drizzle enum declaration.
+- `parseFiltersForTable()` and `encodeTypedFilters()` preserve typed filter
+  values until the URL boundary.
 - `LookupPicker` and table lookup helpers preserve string or number primary-key
   values through selection and lookup caches.
 
@@ -107,9 +163,12 @@ column must be nullable or validation/database constraints reject the row.
 
 An app-owned endpoint defines its domain value at the shared contract. Parse a
 date or timestamp there when service code should receive Temporal values. Keep
-the wire schema and database schema distinct when their runtime types differ.
+the route wire schema and database schema distinct when their runtime types
+differ.
 
 ```ts
+const mealTypeSchema = z.enum(MEAL_TYPES);
+
 const createPlanBody = z.object({
   name: z.string().min(1),
   starts_on: z.string().transform(parsePlainDate),
@@ -118,33 +177,28 @@ const createPlanBody = z.object({
 });
 ```
 
-The ts-rest adapter consumes the transformed request value, so the route handler
-receives `Temporal.PlainDate`. Table `meta.validation` does not consume
-transform output and should only validate the record presented to the save
-pipeline.
+The ts-rest adapter consumes the transformed app-owned request schema, so its
+route handler receives `Temporal.PlainDate`. This is separate from generated
+table validation, whose top-level `validate()` callback receives canonical
+prepared write values and adds issues without transforming them.
 
-## Direct generated-table calls
+## Public names
 
-Inspect the mounted endpoint before constructing a raw request:
+Generated payloads, metadata, filters, validation issues, and returned row
+objects use SQL column names. A Drizzle table may expose `workspace_id` through
+the TypeScript property `workspaceId`. Sapporta translates that public SQL name
+to the Drizzle property immediately around the database call and projects
+returned rows back to SQL names.
+
+Inspect a mounted endpoint before constructing a raw generated-table request:
 
 ```bash
 pnpm exec sapporta endpoints show "PUT /api/tables/meals/{id}"
 ```
 
 Generated row updates use `PUT`. Send JSON primitives from the matrix and omit
-server-owned workspace or user-scope fields.
-
-## Framework assessment
-
-The generated surface already has semantic metadata, Temporal helpers,
-ColumnPreset codecs, typed filter helpers, and per-table OpenAPI schemas. These
-APIs cover generated forms, generated Grid writes, filters, and app-owned
-contract parsing.
-
-A schema-derived domain row codec is not part of the generic table client. The
-generic client cannot infer a compile-time row type from a runtime table name.
-App-owned workflows should declare a shared Zod contract instead of casting a
-generic generated row into a domain type.
+server-owned workspace, user-scope, generated-primary-key, and server-authored
+reference fields.
 
 ## Related documentation
 

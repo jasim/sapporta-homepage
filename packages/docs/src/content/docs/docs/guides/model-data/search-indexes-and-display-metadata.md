@@ -23,6 +23,18 @@ because the toolbar can search them. In the task app, title and description
 match what a person remembers:
 
 ```ts
+import { sqliteTable } from "drizzle-orm/sqlite-core";
+import { sapportaTable, select } from "@sapporta/server/table";
+
+const TASK_STATUSES = ["open", "in_progress", "completed"] as const;
+const TASK_PRIORITIES = ["low", "medium", "high"] as const;
+
+export const tasksTable = sqliteTable("tasks", {
+  // Other columns omitted for focus.
+  status: select("status", TASK_STATUSES).notNull().default("open"),
+  priority: select("priority", TASK_PRIORITIES).notNull().default("medium"),
+});
+
 export const tasks = sapportaTable({
   drizzle: tasksTable,
   meta: {
@@ -30,18 +42,6 @@ export const tasks = sapportaTable({
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
     search: { columns: ["title", "description"] },
-    selects: [
-      {
-        type: "select",
-        column: "status",
-        options: ["open", "in_progress", "completed"],
-      },
-      {
-        type: "select",
-        column: "priority",
-        options: ["low", "medium", "high"],
-      },
-    ],
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -51,8 +51,11 @@ export const tasks = sapportaTable({
 ```
 
 `rowLabelColumns` supplies a short, stable label for record links and lookups.
-Select metadata constrains controlled text to known values. Column metadata
-changes labels and presentation; it does not change row authorization.
+The `select()` factories declare the controlled strings once on their Drizzle
+columns. The same options feed structural validation and the generated
+searchable comboboxes used by forms, inline Grid editing, and enum filters.
+Column metadata changes labels and presentation; it does not change row
+authorization.
 
 The database index should follow a demonstrated query path. The task list and
 project child surface commonly filter by project and status, then sort by due

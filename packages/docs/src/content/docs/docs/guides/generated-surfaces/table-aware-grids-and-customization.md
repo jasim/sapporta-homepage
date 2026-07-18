@@ -81,6 +81,13 @@ Table column builders retain the schema's select options, semantic codecs,
 lookup behavior, formatting, copy behavior, and save client. A custom renderer
 or editor can replace one behavior without replacing the table boundary.
 
+Select-backed columns use the searchable ColumnPreset combobox and commit only
+the chosen option. Numeric columns keep raw editor text until commit, then the
+table adapter decodes it with the column's required semantic `kind`. Clearing a
+non-text cell becomes an explicit `null`; omitting a field leaves it unchanged.
+Invalid text is preserved for authoritative server validation rather than being
+silently rewritten.
+
 Inside TGrid cell and save callbacks, use `context.level` for the path-bound
 `GridLevelRuntime`. It owns the current path's rows, selection, expansion,
 query, and writes. Use `context.runtime` for grid-wide events, level
@@ -91,7 +98,7 @@ Screenshot brief
 Suggested asset: custom-task-tgrid-workbench.png
 Setup: Mount TaskWorkbench on a protected frontend route, load at least five tasks, then edit one status and apply one URL-synced filter.
 Frame: Capture the complete workbench, its reordered columns, active edited cell, query toolbar, and browser URL.
-Visible proof: Title, status, priority, and due date appear in the chosen order; select editing still works; the URL contains the active query; no workspace field is exposed.
+Visible proof: Title, status, priority, and due date appear in the chosen order; the status combobox searches and commits a declared option; the URL contains the active query; no workspace field is exposed.
 Alt text: Customized table-aware task Grid retaining generated editing and URL query behavior.
 -->
 

@@ -1,10 +1,14 @@
 ---
 title: "ColumnPreset"
-description: "Look up ColumnPreset constructors, options, formatting, editing, copy, and sizing APIs."
+description:
+  "Look up ColumnPreset constructors, options, formatting, editing, copy, and
+  sizing APIs."
 ---
 
 ## Identity
+
 `@sapporta/grid/column-preset`.
+
 ## ColumnPreset API
 
 ColumnPreset helpers return ordinary `ColumnSchema` values. They are the
@@ -104,6 +108,24 @@ const status = select({
 });
 ```
 
+```ts
+type SelectOption = {
+  value: unknown;
+  label: string;
+};
+
+type SelectColumnOptions<TMeta = unknown> = ColumnPresetOptions<TMeta> & {
+  options: readonly (SelectOption | string)[];
+};
+```
+
+The default select editor is a searchable inline combobox. String options use
+the same string for their value and label. Object options preserve the exact
+`value`; selection uses `Object.is`, so numeric `1` and string `"1"` remain
+different options. Search text filters labels and is never committed as the cell
+value. Changing or clearing the query does not change the current cell; moving
+focus without choosing an option cancels the edit.
+
 ### Number Columns
 
 ```ts
@@ -121,6 +143,22 @@ const variance = currency({
   colorRule: "signed",
 });
 ```
+
+Number, currency, and percentage editors retain raw text until commit. Their
+default parser accepts commas and surrounding whitespace, returns `null` for
+empty text, converts finite numeric text to a number, and preserves invalid text
+for the host save boundary.
+
+```ts
+type NumericInputParseResult =
+  { ok: true; value: number | null } | { ok: false };
+
+function parseNumericInput(value: string): NumericInputParseResult;
+```
+
+Use `parseNumericInput()` when a schema-aware host must assign its own meaning
+to empty or invalid text. The built-in numeric preset parser returns the parsed
+number or `null`, and preserves the original string when parsing fails.
 
 ### Custom Formatting
 
@@ -182,5 +220,7 @@ const style = {
   gridTemplateColumns: templateColumns(schema.levels.tasks.columns),
 };
 ```
+
 ## Related documentation
+
 [Grid reference overview](/grid/reference/)

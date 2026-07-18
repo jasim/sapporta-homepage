@@ -1,6 +1,8 @@
 ---
 title: "Table definitions"
-description: "Look up Sapporta table wrappers, semantic column factories, and inferred row types."
+description:
+  "Look up Sapporta table wrappers, semantic column factories, and inferred row
+  types."
 ---
 
 ## Identity
@@ -9,16 +11,32 @@ description: "Look up Sapporta table wrappers, semantic column factories, and in
 
 ## Contract
 
-- `sapportaTable({ drizzle, meta })` wraps one raw Drizzle table with Sapporta metadata.
-- Semantic factories are `text`, `number`, `money`, `percentage`, `bool`, `date`, and `timestamp`.
+- `sapportaTable({ drizzle, meta, validate })` joins one raw Drizzle table with
+  Sapporta metadata and application validation as a `TableDef`.
+- Semantic factories are `text`, `select`, `number`, `money`, `percentage`,
+  `bool`, `date`, and `timestamp`.
+- `select(name, options)` stores its allowed string values on the Drizzle text
+  column. The same tuple drives TypeScript inference, structural validation,
+  OpenAPI, metadata, forms, grids, and filters.
 - Primary and foreign keys use Drizzle integer columns.
-- Date and timestamp runtime values use `Temporal.PlainDate` and `Temporal.Instant`.
-- Select and insert types come from `$inferSelect` and `$inferInsert` on the raw table.
+- Generated API writes use canonical date and timestamp strings. Direct Drizzle
+  code uses `Temporal.PlainDate` and `Temporal.Instant`, and database reads
+  return those Temporal values.
+- Select and insert types come from `$inferSelect` and `$inferInsert` on the raw
+  table.
+- Sapporta's public table boundaries use SQL column names. Drizzle property
+  names are translated immediately around database calls.
 
 ## Minimal lookup
 
 ```ts
-import { sapportaTable, text, date, timestamp } from "@sapporta/server/table";
+import {
+  sapportaTable,
+  text,
+  select,
+  date,
+  timestamp,
+} from "@sapporta/server/table";
 ```
 
 ## Related documentation

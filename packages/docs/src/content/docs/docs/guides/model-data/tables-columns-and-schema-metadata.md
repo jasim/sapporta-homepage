@@ -18,16 +18,24 @@ Use the Sapporta skill to add a workspace-scoped tasks table. Give it useful lab
 ## One definition, two responsibilities
 
 The raw Drizzle table is the database contract. It defines SQL names,
-nullability, defaults, keys, references, and indexes. `sapportaTable()` adds the
-product contract: labels, row scope, search fields, controlled values, column
-presentation, children, and generated validation.
+nullability, defaults, keys, references, indexes, and enum values.
+`sapportaTable()` joins that storage contract with labels, row scope, search
+fields, column presentation, children, API write policy, and application
+validation. Generated APIs, auth, runtime validation, metadata, forms, and grids
+all start from the resulting `TableDef`.
 
 Keep both exports in the same schema module. Other schema files import the raw
 table when they need a foreign key. Sapporta registers the wrapped table.
 
 ```ts
 import { index, integer, sqliteTable } from "drizzle-orm/sqlite-core";
-import { date, sapportaTable, text, timestamp } from "@sapporta/server/table";
+import {
+  date,
+  sapportaTable,
+  select,
+  text,
+  timestamp,
+} from "@sapporta/server/table";
 import { Temporal } from "@sapporta/shared/temporal";
 import { projectsTable } from "./projects.js";
 
@@ -41,8 +49,12 @@ export const tasksTable = sqliteTable(
       .references(() => projectsTable.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     description: text("description"),
-    status: text("status").notNull().default("open"),
-    priority: text("priority").notNull().default("medium"),
+    status: select("status", ["open", "in_progress", "completed"] as const)
+      .notNull()
+      .default("open"),
+    priority: select("priority", ["low", "medium", "high"] as const)
+      .notNull()
+      .default("medium"),
     due_date: date("due_date"),
     created_at: timestamp("created_at")
       .$defaultFn(() => Temporal.Now.instant())
@@ -67,18 +79,6 @@ export const tasks = sapportaTable({
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
     search: { columns: ["title", "description"] },
-    selects: [
-      {
-        type: "select",
-        column: "status",
-        options: ["open", "in_progress", "completed"],
-      },
-      {
-        type: "select",
-        column: "priority",
-        options: ["low", "medium", "high"],
-      },
-    ],
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -92,11 +92,15 @@ export type NewTask = typeof tasksTable.$inferInsert;
 export default tasks;
 ```
 
-Sapporta semantic factories such as `text`, `date`, and `timestamp` attach the
-standard editors, parsers, and validation behavior. Primary and foreign keys
-remain raw Drizzle integers in this example. Derive TypeScript row types with
-`$inferSelect` and `$inferInsert`; a separate handwritten interface can drift
-from the database schema.
+Sapporta semantic factories attach storage and value semantics in one column
+declaration. `select()` also stores its option tuple on the Drizzle text column.
+That tuple drives TypeScript inference, structural Zod validation, OpenAPI,
+metadata, searchable choice controls, and enum filters. Primary and foreign keys
+remain raw Drizzle integers in this example. Schema extraction derives a
+semantic kind for those raw columns, so every browser `ColumnSchema` still has a
+required `kind`. Derive TypeScript row types with `$inferSelect` and
+`$inferInsert`; a separate handwritten interface can drift from the database
+schema.
 
 `workspace_id` is required by `workspaceGlobal`, but it is a server-managed
 value. Generated clients and forms must not submit it. A `workspaceUserScoped`
@@ -105,17 +109,18 @@ workspace column.
 
 ## Values and domain validation
 
-Generated forms, table routes, Drizzle columns, and Grid editors use the same
-semantic value boundary. Select-backed text remains a string. Numbers and
-booleans remain JSON primitives. Dates and timestamps use canonical strings on
-the wire, and application domain code parses them into Temporal values where it
-needs date arithmetic.
+Generated forms, table routes, Drizzle columns, and Grid editors derive their
+value rules from the same `TableDef`. Select-backed text remains a string.
+Numbers and booleans remain JSON primitives. Dates and timestamps use canonical
+strings at generated write boundaries. Direct Drizzle application code uses
+Temporal values, and database reads return Temporal values.
 
-Semantic kinds provide the standard generated constraints. Add `meta.validation`
-when generated CRUD needs a domain rule beyond the column kind. Define the full
-create shape and the partial update shape described by the validation reference.
-Conversion and normalization belong in the save path unless that path explicitly
-consumes the validator's transformed value.
+Semantic kinds provide structural constraints. Add the top-level `validate()`
+callback when generated CRUD needs a cross-field or domain rule. The callback
+receives the already-parsed prepared insert or submitted patch and adds issues;
+it cannot replace structural validation or transform the value written to
+Drizzle. Public payloads, validation fields, metadata, and row objects use SQL
+column names even when the Drizzle property name differs.
 
 Start the app, then inspect the registered definition:
 
@@ -125,7 +130,8 @@ pnpm exec sapporta tables show tasks
 ```
 
 The output should identify `tasks`, `workspaceGlobal`, the `title` row label,
-both search columns, and the select metadata.
+both search columns, and the select options derived from the status and priority
+columns.
 
 <!--
 Screenshot brief

@@ -19,6 +19,19 @@ Set up generated project and task screens. I want named project lookups, status 
 Registered table metadata drives the ordinary CRUD experience:
 
 ```ts
+import { sqliteTable } from "drizzle-orm/sqlite-core";
+import { sapportaTable, select } from "@sapporta/server/table";
+
+export const tasksTable = sqliteTable("tasks", {
+  // Other columns omitted for focus.
+  status: select("status", ["open", "in_progress", "completed"] as const)
+    .notNull()
+    .default("open"),
+  priority: select("priority", ["low", "medium", "high"] as const)
+    .notNull()
+    .default("medium"),
+});
+
 export const tasks = sapportaTable({
   drizzle: tasksTable,
   meta: {
@@ -26,18 +39,6 @@ export const tasks = sapportaTable({
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
     search: { columns: ["title", "description"] },
-    selects: [
-      {
-        type: "select",
-        column: "status",
-        options: ["open", "in_progress", "completed"],
-      },
-      {
-        type: "select",
-        column: "priority",
-        options: ["low", "medium", "high"],
-      },
-    ],
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -46,10 +47,13 @@ export const tasks = sapportaTable({
 });
 ```
 
-Column kinds choose default inputs and formatting. Select metadata constrains
-controlled values. A Drizzle foreign key plus the project `rowLabelColumns`
-turns `project_id` into a lookup that stores an ID and displays a name.
-System-managed scope and timestamp fields stay out of ordinary forms.
+Column kinds choose default inputs and formatting. Each `select()` option tuple
+constrains the stored string and supplies a searchable, clearable combobox. The
+text typed into that combobox filters its declared options; it is not stored as
+the field value. A Drizzle foreign key plus the project `rowLabelColumns` turns
+`project_id` into a scoped lookup that stores an ID and displays a name.
+System-managed scope fields, generated primary keys, and columns with
+`apiWritable: false` stay out of ordinary forms.
 
 The project definition supplies the reverse navigation:
 
@@ -79,13 +83,28 @@ Lookup results contain only rows visible to the current user. Generated form
 validation and generated HTTP validation use the same table definition. A hidden
 field or a fixed client filter is presentation, not an authorization rule.
 
+## Keep draft text until submit
+
+Numeric, money, percentage, date, and timestamp inputs keep raw strings while a
+record is being edited. Intermediate numeric text such as `-` or `12.` therefore
+stays visible. The form decodes the full draft once on submit. Finite numeric
+text becomes a JSON number, dates and timestamps become canonical strings, and
+invalid input produces an issue beside its field without rewriting the draft.
+
+Create presence rules are applied during that decode. Empty optional non-text
+controls are omitted so database defaults and nullable insert rules still apply.
+Empty text remains `""`, which is distinct from `null`. Required empty controls
+produce local issues. The server then applies API write policy, adds trusted
+scope values, checks reference visibility, and performs authoritative structural
+and application validation immediately before the Drizzle write.
+
 <!--
 Screenshot brief
 Suggested asset: generated-task-create-form.png
 Setup: Create the Website Relaunch project first, then open `/tables/tasks/new`. Fill the task title, open the Project lookup, and set status and priority.
-Frame: Capture the full generated form with the project-name lookup and both select controls visible. Exclude browser developer tools.
-Visible proof: The form displays Project rather than project_id, shows Website Relaunch rather than its numeric ID, constrains status and priority, and omits workspace_id.
-Alt text: Generated task creation form with a named project lookup and controlled status and priority fields.
+Frame: Capture the full generated form with the project-name lookup and both select comboboxes visible. Open one combobox with a search query. Exclude browser developer tools.
+Visible proof: The form displays Project rather than project_id, shows Website Relaunch rather than its numeric ID, filters the declared status or priority options, and omits workspace_id.
+Alt text: Generated task creation form with a named project lookup and searchable status and priority comboboxes.
 -->
 
 <!--

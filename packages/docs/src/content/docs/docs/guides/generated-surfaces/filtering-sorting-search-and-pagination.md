@@ -20,10 +20,11 @@ Show open launch tasks for one project, sorted by due date and split into small 
 Generated list and export routes use one strict grammar:
 
 ```http
-GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][eq]=open&q=launch&sort=due_date,-id&page=1&limit=25
+GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][in]=open&q=launch&sort=due_date,-id&page=1&limit=25
 ```
 
 - Every filter includes a column and operator: `filter[column][operator]=value`.
+- Select-backed columns use `in` and `nin` with a comma-separated option list.
 - `q` searches only columns declared in `meta.search` and combines with filters
   using AND.
 - `sort=due_date,-id` orders due date ascending, then ID descending.
@@ -36,7 +37,7 @@ keeps the query readable while encoding it correctly:
 ```bash
 curl --get "http://localhost:3000/api/tables/tasks" \
   --data-urlencode "filter[project_id][eq]=1" \
-  --data-urlencode "filter[status][eq]=open" \
+  --data-urlencode "filter[status][in]=open" \
   --data-urlencode "q=launch" \
   --data-urlencode "sort=due_date,-id" \
   --data-urlencode "page=1" \
@@ -67,6 +68,12 @@ Generated table screens serialize the same query state in the URL. Open
 due-date sort, and refresh. The controls and result should survive because the
 URL owns the current query state. CSV export uses the active filter, search, and
 sort rather than silently exporting all visible rows.
+
+Status is select-backed text, so its `in` and `nin` value editor is a searchable
+multi-value combobox. The input query filters the options derived from the
+Drizzle enum declaration. Chosen values appear as removable chips, and only
+those chosen values enter the filter draft. Search text itself never becomes a
+filter value.
 
 <!--
 Screenshot brief

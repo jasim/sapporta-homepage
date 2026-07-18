@@ -105,6 +105,12 @@ Call the returned cleanup when the non-React owner is disposed.
 ColumnPreset supplies standard editors and codecs. A custom column can replace
 one behavior while retaining Grid editing and activation mechanics.
 
+Built-in numeric presets retain raw text while editing and parse once at commit.
+Their shared grammar accepts commas and surrounding whitespace, returns a finite
+number for valid text, and preserves invalid text for the host save boundary.
+Built-in select presets use a searchable combobox and commit the exact chosen
+option value; the search query remains editor state.
+
 ```tsx
 import type { CellEditorProps } from "@sapporta/grid";
 import { parse, text } from "@sapporta/grid/column-preset";

@@ -154,7 +154,7 @@ export default tasks;
 ```
 
 The semantic factories define more than SQLite storage. `select()` declares the
-allowed string values once and supplies the generated select editor and
+allowed string values once and supplies the generated searchable combobox and
 structural enum validation. `date()` and `timestamp()` own canonical storage
 conversion. Application code uses Temporal for date and time work; it does not
 introduce a second `Date`, dayjs, or date-fns conversion path.

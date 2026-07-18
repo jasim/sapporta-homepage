@@ -1,27 +1,41 @@
 ---
 title: "TGrid"
-description: "Look up Sapporta table-aware grid definitions, sessions, routes, hooks, and services."
+description:
+  "Look up Sapporta table-aware grid definitions, sessions, routes, hooks, and
+  services."
 ---
 
 ## Identity
 
-`TGrid` and table-grid exports from `@sapporta/frontend`; standalone runtime primitives come from `@sapporta/grid`.
+`TGrid` and table-grid exports from `@sapporta/frontend`; standalone runtime
+primitives come from `@sapporta/grid`.
 
 ## Contract
 
 - `defineTGrid()` declares schema-table levels and column builders.
-- `useTGridSession()` or session helpers own runtime construction, query state, services, and disposal.
-- `TGrid` renders a configured session; `TableRoute` and `SchemaTableGridView` connect standard table routes.
-- Table-aware clients preserve Sapporta queries, lookups, row saves, auth, and record navigation.
-- Cell renderers, activations, editors, copy handlers, and write handlers receive
-  a path-bound `GridLevelRuntime` as `context.level`. Read its path from
+- `useTGridSession()` or session helpers own runtime construction, query state,
+  services, and disposal.
+- `TGrid` renders a configured session; `TableRoute` and `SchemaTableGridView`
+  connect standard table routes.
+- Table-aware clients preserve Sapporta queries, lookups, row saves, auth, and
+  record navigation.
+- The table adapter composes `ColumnSchema.kind` with ColumnPreset draft parsers
+  at cell commit. Numeric drafts become finite numbers; clearing a non-text cell
+  becomes an explicit `null`; an untouched field remains absent from the patch;
+  and empty text remains `""`.
+- Invalid editor text remains available to the editor and reaches the
+  authoritative server validation boundary instead of being rewritten as `null`.
+- Select-backed columns use the ColumnPreset combobox editor and preserve exact
+  option identity.
+- Cell renderers, activations, editors, copy handlers, and write handlers
+  receive a path-bound `GridLevelRuntime` as `context.level`. Read its path from
   `context.level.path` and use its row, selection, expansion, query, and write
   APIs directly.
 - `context.runtime` contains grid-wide schema, events, registered levels, and
   cross-path row operations. Advanced cursor or editor composition comes from
   `@sapporta/grid/advanced`.
-- Direct `BaseGrid` and `ColumnPreset` contracts live in standalone Grid Reference.
-
+- Direct `BaseGrid` and `ColumnPreset` contracts live in standalone Grid
+  Reference.
 
 ## Related documentation
 

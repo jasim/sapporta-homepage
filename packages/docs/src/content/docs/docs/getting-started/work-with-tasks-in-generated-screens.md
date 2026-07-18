@@ -22,7 +22,8 @@ The generated experience follows the types, Drizzle foreign key, and Sapporta
 metadata defined on the previous page:
 
 - `rowLabelColumns: ["name"]` displays project names in task lookups.
-- `select()` options render status and priority as controlled inputs.
+- `select()` options render status and priority as searchable, clearable
+  comboboxes.
 - `date()` renders a date editor and preserves the canonical `YYYY-MM-DD` wire
   value.
 - `search.columns` activates search across task title and description.
@@ -78,13 +79,17 @@ GET /api/tables/projects/_lookup?q=Website
 Lookup values preserve the referenced primary-key type. This project uses an
 integer key, so the task request sends `project_id` as a JSON number.
 
+Status and priority use local option lists from their `select()` column
+declarations. Text entered in either combobox filters those options and does not
+become the saved value. The chosen option remains the exact declared string.
+
 <!--
 Screenshot brief
 Suggested asset: getting-started-generated-task-create.png
 Setup: Create the Website Relaunch project, open `/tables/tasks/new`, fill the walkthrough values, and open the Project lookup so Website Relaunch is visible.
-Frame: Capture the full generated form with the project-name lookup, status and priority selects, date input, and multiline description. Exclude browser developer tools.
-Visible proof: Project displays a name instead of a numeric ID, status and priority are constrained controls, due date has a date editor, and server-managed scope fields are absent.
-Alt text: Generated task creation form with a named project lookup and controlled task fields.
+Frame: Capture the full generated form with the project-name lookup, one open status or priority combobox, date input, and multiline description. Exclude browser developer tools.
+Visible proof: Project displays a name instead of a numeric ID, the combobox filters declared options, due date has a date editor, and server-managed scope fields are absent.
+Alt text: Generated task creation form with a named project lookup and searchable controlled task fields.
 -->
 
 Open the browser Network panel before saving. The generated form sends this
@@ -104,9 +109,12 @@ Content-Type: application/json
 }
 ```
 
-The server adds trusted scope values, runs visible-reference checks and table
-validation, writes the row, and returns HTTP 201. The relevant response fields
-are:
+The form decodes its draft on submit. It preserves invalid field text when local
+decoding fails and sends finite numbers or canonical date values only after a
+successful decode. The server then adds trusted scope values, runs
+visible-reference checks, performs authoritative structural and application
+validation, writes the parsed row, and returns HTTP 201. The relevant response
+fields are:
 
 ```json
 {
@@ -165,9 +173,11 @@ Generated row updates use `PUT`, not `PATCH`. The server applies the update to
 the requested ID and the active row-visibility predicate in the same write.
 
 Return to `/tables/tasks` and search for **launch**. Filter status to **open**
-and confirm the saved task remains. Then open **Website Relaunch** and find the
-task in its **Tasks** child collection. The lookup, task list, task detail, and
-child list all use generated routes with the same row boundary.
+with the searchable multi-value combobox and confirm the saved task remains. The
+chosen value appears as a removable chip; the combobox query itself is not part
+of the filter. Then open **Website Relaunch** and find the task in its **Tasks**
+child collection. The lookup, task list, task detail, and child list all use
+generated routes with the same row boundary.
 
 <!--
 Screenshot brief
