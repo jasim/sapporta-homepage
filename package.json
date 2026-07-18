@@ -15,7 +15,9 @@
     "package-sources:update-npm": "node scripts/package-source-switch.mjs update-npm",
     "package-sources:use-npm": "node scripts/package-source-switch.mjs use:npm",
     "package-sources:use-local": "node scripts/package-source-switch.mjs use:local",
-    "prebuild": "pnpm run clean-dist",
+    "generate:sapporta-cli-version": "node scripts/generate-sapporta-cli-version.mjs",
+    "test:build-scripts": "node --test scripts/generate-sapporta-cli-version.test.mjs",
+    "prebuild": "pnpm run clean-dist && pnpm run generate:sapporta-cli-version",
     "build": "pnpm --filter ./packages/shared build && pnpm --filter ./packages/docs build && pnpm --filter ./packages/api build && pnpm --filter ./packages/frontend build",
     "start": "pnpm --filter ./packages/api start"
   },

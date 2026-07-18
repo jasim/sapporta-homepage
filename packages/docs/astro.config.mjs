@@ -1,9 +1,26 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import docsSidebar from "./sidebar.mjs";
+import { sapportaInitCommand } from "./src/generated/sapporta-cli.mjs";
+
+const SAPPORTA_INIT_COMMAND_TOKEN = "{{SAPPORTA_INIT_COMMAND}}";
+
+function injectSapportaInitCommand() {
+  return (tree) => {
+    const visit = (node) => {
+      if (typeof node.value === "string" && node.value.includes(SAPPORTA_INIT_COMMAND_TOKEN)) {
+        node.value = node.value.replaceAll(SAPPORTA_INIT_COMMAND_TOKEN, sapportaInitCommand);
+      }
+      if (Array.isArray(node.children)) node.children.forEach(visit);
+    };
+
+    visit(tree);
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +28,9 @@ export default defineConfig({
   base: "/",
   output: "static",
   trailingSlash: "ignore",
+  markdown: {
+    processor: unified({ remarkPlugins: [injectSapportaInitCommand] }),
+  },
   vite: {
     plugins: [tailwindcss()],
   },

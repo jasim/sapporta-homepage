@@ -2,9 +2,11 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { visit } from "unist-util-visit";
 import docsSidebar from "../../sidebar.mjs";
+import { sapportaInitCommand } from "../generated/sapporta-cli.mjs";
 
 const SITE_ORIGIN = "https://sapporta.com";
 const ROOT_INDEX_URL = `${SITE_ORIGIN}/llms.txt`;
+const SAPPORTA_INIT_COMMAND_TOKEN = "{{SAPPORTA_INIT_COMMAND}}";
 
 type DocsEntry = CollectionEntry<"docs">;
 type DocScope = "docs" | "grid";
@@ -220,7 +222,7 @@ async function buildAgentDocCatalog(): Promise<AgentDocCatalog> {
 function agentDocFromEntry(entry: DocsEntry, errors: string[]) {
   const title = entry.data.title?.trim();
   const description = entry.data.description?.trim();
-  const body = entry.body;
+  const body = entry.body?.replaceAll(SAPPORTA_INIT_COMMAND_TOKEN, sapportaInitCommand);
 
   if (!title) errors.push(`Documentation page has no title: ${entry.id}`);
   if (!description) errors.push(`Documentation page has no description: ${entry.id}`);
