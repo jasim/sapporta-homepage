@@ -1,36 +1,190 @@
 ---
 title: "Work with tasks in generated screens"
-description: "Create, edit, search, filter, and relate task records through generated screens."
+description:
+  "Create, edit, search, filter, and relate task records through generated
+  screens and their generated API requests."
 ---
 
-Registered table metadata produces list, create, detail, and edit behavior without a project-owned React screen.
-
-> Checkpoint: C03 → C04
-
-## Agent approach
+The project and task schemas from the previous page already describe an ordinary
+record workflow. This page traces that metadata into generated list, create,
+detail, and edit screens, then follows the matching requests in the browser. You
+will create related records, edit and find a task, and navigate from a project
+to its tasks without adding a project-owned React route. The same pattern
+supplies the first usable workflow for other table-shaped application data.
 
 ```text
-Read the local project instructions and use the Sapporta skill. Starting at C03, implement this outcome: Registered table metadata produces list, create, detail, and edit behavior without a project-owned React screen. Reach C04, run the validation described on this page, and report changed files and checks. Preserve server-controlled scope fields and use generated APIs for ordinary CRUD.
+Use the generated project and task screens with me. I want to create related records, edit a task, search it, and confirm the browser uses the generated table API.
 ```
 
-## Review the agent's work
+## Read the screen from the schema
 
-- Project lookups display `projects.name` because it is the row label.
-- Task status and priority render as controlled selects.
-- Workspace fields and timestamps remain server-managed or visually hidden.
+The generated experience follows the types, Drizzle foreign key, and Sapporta
+metadata defined on the previous page:
 
-## Code approach
+- `rowLabelColumns: ["name"]` displays project names in task lookups.
+- `select()` options render status and priority as controlled inputs.
+- `date()` renders a date editor and preserves the canonical `YYYY-MM-DD` wire
+  value.
+- `search.columns` activates search across task title and description.
+- the project's `children` entry adds a Tasks collection to project detail.
+- row-scope columns and managed timestamps stay out of ordinary forms and grids.
 
-Open `/tables/projects` and create a project named Website Relaunch. Open `/tables/tasks/new` and create a related task. Edit its status and priority from the generated record surface.
+Presentation metadata does not authorize data. Generated lookups, lists, gets,
+and writes still run through the current request's abilities and row-visibility
+policy on the server.
 
-Use the table search field to search task title and description. Open the project record and confirm that its Tasks child surface contains the new row.
+## Create a project and task
 
-## Observe and verify
+Start the app and inspect the generated create operations before using the
+screens:
 
-One project and one related task can be created, edited, searched, and reached in both relationship directions.
+```bash
+pnpm dev
+pnpm exec sapporta endpoints show "POST /api/tables/projects"
+pnpm exec sapporta endpoints show "POST /api/tables/tasks"
+```
 
-## What you built
+Open `/tables/projects` in an authenticated browser and create a project named
+**Website Relaunch**. Then open `/tables/tasks/new` and enter:
 
-The application user now has generated CRUD surfaces. The next page uses the matching generated HTTP routes.
+| Field       | Value                    |
+| ----------- | ------------------------ |
+| Title       | Publish launch checklist |
+| Project     | Website Relaunch         |
+| Status      | in_progress              |
+| Priority    | medium                   |
+| Due date    | 2026-08-01               |
+| Description | Prepare the release list |
 
-Continue with [the related guide](/docs/guides/generated-surfaces/record-screens-and-forms/) or use [the exact reference](/docs/reference/frontend/generated-record-surfaces/).
+The Project field stores the numeric project ID and displays the project name.
+Its picker reads the generated lookup route:
+
+```http
+GET /api/tables/projects/_lookup?q=Website
+```
+
+```json
+{
+  "entries": [
+    {
+      "value": 1,
+      "label": "Website Relaunch",
+      "meta": { "id": 1, "name": "Website Relaunch" }
+    }
+  ]
+}
+```
+
+Lookup values preserve the referenced primary-key type. This project uses an
+integer key, so the task request sends `project_id` as a JSON number.
+
+<!--
+Screenshot brief
+Suggested asset: getting-started-generated-task-create.png
+Setup: Create the Website Relaunch project, open `/tables/tasks/new`, fill the walkthrough values, and open the Project lookup so Website Relaunch is visible.
+Frame: Capture the full generated form with the project-name lookup, status and priority selects, date input, and multiline description. Exclude browser developer tools.
+Visible proof: Project displays a name instead of a numeric ID, status and priority are constrained controls, due date has a date editor, and server-managed scope fields are absent.
+Alt text: Generated task creation form with a named project lookup and controlled task fields.
+-->
+
+Open the browser Network panel before saving. The generated form sends this
+request under the framework `/api` prefix:
+
+```http
+POST /api/tables/tasks
+Content-Type: application/json
+
+{
+  "project_id": 1,
+  "title": "Publish launch checklist",
+  "description": "Prepare the release list",
+  "status": "in_progress",
+  "priority": "medium",
+  "due_date": "2026-08-01"
+}
+```
+
+The server adds trusted scope values, runs visible-reference checks and table
+validation, writes the row, and returns HTTP 201. The relevant response fields
+are:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "project_id": 1,
+    "title": "Publish launch checklist",
+    "description": "Prepare the release list",
+    "status": "in_progress",
+    "priority": "medium",
+    "due_date": "2026-08-01"
+  }
+}
+```
+
+The request body omits IDs, timestamps, and scope columns. Clients do not choose
+workspace, owner, role, or scope values. The API derives them from request
+authority.
+
+<!--
+Screenshot brief
+Suggested asset: getting-started-generated-task-network.png
+Setup: Open browser developer tools before saving the task. Preserve the selected POST `/api/tables/tasks` request after the server returns 201.
+Frame: Capture the Network request name, method, status, JSON request payload, and the created-row response. Redact cookies, tokens, and workspace identifiers.
+Visible proof: The generated form uses POST under `/api`, submits typed task fields and a numeric project_id, omits scope fields, and receives a `{ data }` response.
+Alt text: Browser Network panel showing the generated task form POST request and created-row response.
+-->
+
+## Edit, search, and follow the relationship
+
+Open the saved task and change its status to **open**. The browser sends a
+generated update request with a patch-shaped body even though the HTTP method is
+`PUT`:
+
+```http
+PUT /api/tables/tasks/1
+Content-Type: application/json
+
+{ "status": "open" }
+```
+
+```json
+{
+  "data": {
+    "id": 1,
+    "project_id": 1,
+    "title": "Publish launch checklist",
+    "status": "open",
+    "priority": "medium",
+    "due_date": "2026-08-01"
+  }
+}
+```
+
+Generated row updates use `PUT`, not `PATCH`. The server applies the update to
+the requested ID and the active row-visibility predicate in the same write.
+
+Return to `/tables/tasks` and search for **launch**. Filter status to **open**
+and confirm the saved task remains. Then open **Website Relaunch** and find the
+task in its **Tasks** child collection. The lookup, task list, task detail, and
+child list all use generated routes with the same row boundary.
+
+<!--
+Screenshot brief
+Suggested asset: getting-started-project-task-child.png
+Setup: Save the task with open status, search for it in the tasks grid, then open the Website Relaunch project detail route.
+Frame: Capture the project heading and Tasks child collection with title, status, priority, and due date visible. Keep the child result count in frame if available.
+Visible proof: The related task is reachable from its project and displays the same values saved through the generated task form.
+Alt text: Generated project detail screen with the related open task in its Tasks collection.
+-->
+
+The task app now has a complete generated record loop: create, validate, edit,
+search, lookup, detail, and parent-child navigation. The browser requests show
+that these screens are clients of the same generated CRUD API, and hidden fields
+remain presentation rather than authorization. Continue to
+[Query tasks through the generated API](/docs/getting-started/query-tasks-through-the-generated-api/)
+to call those routes directly. The
+[record screens and forms guide](/docs/guides/generated-surfaces/record-screens-and-forms/)
+and
+[generated record surfaces reference](/docs/reference/frontend/generated-record-surfaces/)
+describe the available generated behavior in more depth.

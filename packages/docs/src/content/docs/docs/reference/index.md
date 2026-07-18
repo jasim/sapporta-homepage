@@ -15,3 +15,8 @@ Reference covers the public Sapporta 0.2.6 package surface, generated project co
 ## Package boundaries
 
 `@sapporta/server` owns server schema, auth, row helpers, and route registration. `@sapporta/shared` owns browser-safe contracts and wire values. `@sapporta/frontend` owns the app shell, generated record surfaces, TGrid, and report rendering. Standalone `@sapporta/grid` has its own [Grid Reference](/grid/reference/).
+
+## Schema and value boundaries
+
+- [Table validation](/docs/reference/schema/table-validation/)
+- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

@@ -1,32 +1,217 @@
 ---
 title: "Report datasets and formatting"
-description: "Map domain rows into flat or hierarchical report data with totals and display semantics."
+description:
+  "Map domain rows into flat or hierarchical report data with totals and display
+  semantics."
 ---
 
-Map domain rows into flat or hierarchical report data with totals and display semantics.
+`GridDataset` is the stable wire shape consumed by Sapporta's report renderer.
+This page maps the task app's already-scoped rows into a flat project-progress
+dataset. You will learn how levels, columns, nodes, hidden values, formatting,
+and footers work, and how to test the mapper without a database. The same
+primitives can describe flat summaries, nested ledgers, subtotals, and
+expandable hierarchies.
 
-`GridDataset` is a renderer wire shape. It owns columns, nodes, hierarchy, rollups, footers, statistics, formatting, hidden values, and non-fatal report errors.
+```text
+Create a pure GridDataset mapper for this report. Use stable row and column identities, keep link IDs visually hidden, calculate rollups and footers deterministically, use Temporal for date comparisons, and parse the result with gridDatasetSchema in a focused test.
+```
 
-For the programmer, the project maps already scoped domain rows through a pure deterministic function.
-For the application user, users see legible totals and formatting while hidden identifiers remain available for navigation.
+## Map scoped domain rows
 
-## System boundary
+The report read owns authentication and database scope. The mapper receives
+ordinary visible rows plus an explicit date baseline:
 
-- Give datasets, levels, rows, and columns stable identities.
-- Store source values in node columns and computed parent values in rollups.
-- Use footer rows for totals and stats for compact answers.
-- Parse the mapper result with `gridDatasetSchema` in tests.
+```ts
+import { Temporal } from "@sapporta/shared/temporal";
+import type { GridDataset } from "@sapporta/shared/grid-dataset";
 
-## Task-app example
+type ProjectRow = { id: number; name: string };
+type TaskRow = {
+  id: number;
+  project_id: number;
+  status: "open" | "in_progress" | "completed";
+  due_date: Temporal.PlainDate | null;
+};
 
-The project-progress dataset has one row per project, hidden `project_id`, status totals, overdue work, completion percentage, a grand-total footer, and summary stats.
+type ProjectProgressInput = {
+  projects: readonly ProjectRow[];
+  tasks: readonly TaskRow[];
+  today: Temporal.PlainDate;
+};
 
+export function projectProgressDataset(
+  input: ProjectProgressInput,
+): GridDataset {
+  const rows = input.projects.map((project) => {
+    const tasks = input.tasks.filter((task) => task.project_id === project.id);
+    const completed = tasks.filter(
+      (task) => task.status === "completed",
+    ).length;
+    const open = tasks.filter((task) => task.status === "open").length;
+    const inProgress = tasks.filter(
+      (task) => task.status === "in_progress",
+    ).length;
+    const overdue = tasks.filter(
+      (task) =>
+        task.status !== "completed" &&
+        task.due_date !== null &&
+        Temporal.PlainDate.compare(task.due_date, input.today) < 0,
+    ).length;
 
-## Verify
+    return {
+      project,
+      total: tasks.length,
+      open,
+      inProgress,
+      completed,
+      overdue,
+      completion: tasks.length === 0 ? 0 : completed / tasks.length,
+    };
+  });
 
-1. Run the smallest build, route, table, or browser check that exercises this boundary.
-2. Compare the result with the generated record or API surface under the same authenticated workspace.
-3. Test one invalid or cross-boundary input when the page changes data or authority.
+  const totals = rows.reduce(
+    (sum, row) => ({
+      total: sum.total + row.total,
+      open: sum.open + row.open,
+      inProgress: sum.inProgress + row.inProgress,
+      completed: sum.completed + row.completed,
+      overdue: sum.overdue + row.overdue,
+    }),
+    { total: 0, open: 0, inProgress: 0, completed: 0, overdue: 0 },
+  );
+
+  return {
+    name: "project-progress",
+    label: "Project progress",
+    rootLevel: "project",
+    levels: {
+      project: {
+        label: "Projects",
+        columns: [
+          {
+            id: "project_id",
+            label: "Project ID",
+            kind: "number",
+            visuallyHidden: true,
+          },
+          { id: "project", label: "Project", kind: "text", minWidth: 220 },
+          { id: "total", label: "Tasks", kind: "number" },
+          { id: "open", label: "Open", kind: "number", zeroDisplay: "dot" },
+          {
+            id: "in_progress",
+            label: "In progress",
+            kind: "number",
+            zeroDisplay: "dot",
+          },
+          {
+            id: "completed",
+            label: "Completed",
+            kind: "number",
+            zeroDisplay: "dot",
+          },
+          {
+            id: "overdue",
+            label: "Overdue",
+            kind: "number",
+            colorRule: "negative",
+            zeroDisplay: "dot",
+          },
+          {
+            id: "completion",
+            label: "Completion",
+            kind: "number",
+            displayFormat: "percentage",
+          },
+        ],
+        childLevels: [],
+      },
+    },
+    nodes: rows.map((row) => ({
+      rowKey: `project:${row.project.id}`,
+      levelName: "project",
+      columns: {
+        project_id: row.project.id,
+        project: row.project.name,
+        total: row.total,
+        open: row.open,
+        in_progress: row.inProgress,
+        completed: row.completed,
+        overdue: row.overdue,
+        completion: row.completion,
+      },
+    })),
+    footerRows: [
+      {
+        rowKey: "grand-total",
+        columns: {
+          project: "Grand total",
+          total: totals.total,
+          open: totals.open,
+          in_progress: totals.inProgress,
+          completed: totals.completed,
+          overdue: totals.overdue,
+          completion: totals.total === 0 ? 0 : totals.completed / totals.total,
+        },
+      },
+    ],
+  };
+}
+```
+
+Percentage values are ratios, so `0.4` renders as 40%. `visuallyHidden` keeps
+`project_id` in the node for link resolvers without displaying it.
+`zeroDisplay`, `colorRule`, width hints, and text display settings describe
+presentation without converting source numbers into formatted strings.
+
+For hierarchical reports, add named child levels, put source values in each
+node's `columns`, put computed parent values in `rollup`, and attach child
+arrays through `children`. Root totals belong in `footerRows`; totals inside a
+child collection belong in `childFooterRows`.
+
+## Test the contract, not the pixels
+
+```ts
+import { gridDatasetSchema } from "@sapporta/shared/grid-dataset";
+import { Temporal } from "@sapporta/shared/temporal";
+
+it("maps the canonical project progress totals", () => {
+  const result = projectProgressDataset({
+    projects: canonicalProjects,
+    tasks: canonicalTasks,
+    today: Temporal.PlainDate.from("2026-07-10"),
+  });
+
+  expect(() => gridDatasetSchema.parse(result)).not.toThrow();
+  expect(result.nodes).toHaveLength(2);
+  expect(result.footerRows?.[0]?.columns).toMatchObject({
+    total: 5,
+    completed: 2,
+    overdue: 1,
+    completion: 0.4,
+  });
+});
+```
+
+Run the focused mapper test and then inspect the route output:
+
+```bash
+pnpm --filter ./packages/api exec vitest run project-progress
+pnpm exec sapporta api get /api/reports/project-progress
+```
+
+<!--
+Screenshot brief
+Suggested asset: /images/docs/reports/project-progress-formatting.png
+Setup: Render the canonical project-progress dataset with one project containing a zero count and the overall 40% completion result.
+Frame: Crop tightly to the report grid header, two project rows, and grand-total footer. Keep the hidden project ID out of view and include the completion and overdue columns.
+Visible proof: Percentages are formatted, zero values use the configured dot, overdue values use negative emphasis, and the footer totals five tasks with 40% completion.
+Alt text: A formatted project-progress grid shows hidden identifiers omitted from view, percentage formatting, zero dots, overdue emphasis, and a grand-total footer.
+-->
+
+The mapper now produces a deterministic renderer contract from visible domain
+rows. It can be tested independently of Hono, Drizzle, and React. Keep
+navigation out of this object, keep date arithmetic in Temporal, and add
+hierarchy only when expanding a row reveals a meaningful lower level.
 
 ## Related reference
 

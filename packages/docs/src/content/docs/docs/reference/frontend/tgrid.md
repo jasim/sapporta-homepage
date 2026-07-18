@@ -25,4 +25,5 @@ description: "Look up Sapporta table-aware grid definitions, sessions, routes, h
 
 ## Related documentation
 
+- [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [Table-aware grids and customization](/docs/guides/generated-surfaces/table-aware-grids-and-customization/)

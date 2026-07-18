@@ -16,7 +16,19 @@ Generated HTTP routes under `/api/tables/<table>`.
 - `GET .../_lookup`, `GET .../_count`, and `GET .../export.csv` expose lookup, child-count, and CSV surfaces.
 - Generated handlers apply current abilities, row visibility, trusted values, references, validation, and immutable-table policy.
 
+## Direct endpoint discovery
+
+Inspect the mounted operation before composing a raw request:
+
+```bash
+pnpm exec sapporta endpoints show "GET /api/tables/tasks"
+pnpm exec sapporta endpoints show "PUT /api/tables/tasks/{id}"
+```
+
+Use the discovered method, path, request shape, auth boundary, and response
+schema. Generated row updates use `PUT /api/tables/<table>/<id>`, not `PATCH`.
 
 ## Related documentation
 
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
+- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

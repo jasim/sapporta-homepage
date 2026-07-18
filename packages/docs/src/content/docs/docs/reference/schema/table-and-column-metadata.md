@@ -19,3 +19,5 @@ description: "Look up table, child, column, select, search, and visibility metad
 
 - [Search, indexes, and display metadata](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Column sizing](/docs/reference/column-sizing/)
+- [Table validation](/docs/reference/schema/table-validation/)
+- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

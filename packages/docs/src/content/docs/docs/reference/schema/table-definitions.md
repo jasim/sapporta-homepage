@@ -24,3 +24,5 @@ import { sapportaTable, text, date, timestamp } from "@sapporta/server/table";
 ## Related documentation
 
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
+- [Table validation](/docs/reference/schema/table-validation/)
+- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

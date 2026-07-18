@@ -89,6 +89,9 @@ export default [
             "slug": "docs/guides/generated-surfaces/record-screens-and-forms"
           },
           {
+            "slug": "docs/guides/generated-surfaces/grid-first-record-workflows"
+          },
+          {
             "slug": "docs/guides/generated-surfaces/generated-table-apis"
           },
           {
@@ -229,6 +232,12 @@ export default [
           },
           {
             "slug": "docs/reference/schema/table-and-column-metadata"
+          },
+          {
+            "slug": "docs/reference/schema/table-validation"
+          },
+          {
+            "slug": "docs/reference/schema/semantic-value-boundaries"
           },
           {
             "slug": "docs/reference/schema/schema-metadata-types"

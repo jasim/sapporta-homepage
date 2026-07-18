@@ -18,4 +18,8 @@ Standalone Grid exposes two layers. Sapporta applications add a third table-awar
 - Use TGrid when a generated Sapporta table owns schema metadata, query state, row security, and record navigation.
 - Do not import TGrid from `@sapporta/grid`; its public contract belongs to `@sapporta/frontend`.
 
-Continue with [Columns and editors](/grid/guides/columns-and-editors/), [BaseGrid Reference](/grid/reference/base-grid/), or the main [TGrid guide](/docs/guides/generated-surfaces/table-aware-grids-and-customization/).
+For application record workflows, start with
+[Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/).
+Then continue with [Columns and editors](/grid/guides/columns-and-editors/),
+[BaseGrid Reference](/grid/reference/base-grid/), or the main
+[TGrid guide](/docs/guides/generated-surfaces/table-aware-grids-and-customization/).

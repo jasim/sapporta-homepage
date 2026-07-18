@@ -4,42 +4,104 @@ description:
   "Configure local, same-origin, and split-origin application environments."
 ---
 
-Configure local, same-origin, and split-origin application environments.
+Sapporta configuration is divided between the API process, the frontend build,
+and API clients such as the CLI. This guide explains which process reads each
+value and how the values change across local, same-origin, and split-origin
+deployments.
 
-Generated environment parsers, Vite configuration, auth options, mailer
-construction, Drizzle config, and `loadApp()` options divide build-time and
-runtime settings.
+You will learn to configure listener ports, browser origins, auth links, API
+base URLs, and mail without exposing server secrets to the browser bundle. The
+result supports local development, a single production process, or a frontend
+and API on separate origins.
 
-For the programmer, the project keeps server secrets in API process variables
-and exposes only deliberate public values through `VITE_*`. For the application
-user, browser auth, API calls, email links, and origins agree on one deployed
-topology.
+```text
+Configure this Sapporta app for <local, same-origin, or split-origin> use.
+Inspect the generated env parser and deployment docs, set each value in the
+process that reads it, and verify one browser API request and auth URL.
+```
 
-## System boundary
+## Give each process its own values
 
-- Use `SAPPORTA_API_PORT` for an explicit API listener port. Managed hosts may
-  provide `PORT` instead; if both are set, they must match.
-- Use `SAPPORTA_FRONTEND_PORT` for the Vite development server port.
-- Use `SAPPORTA_PUBLIC_APP_URL` for the public browser-facing app origin.
-- Use `SAPPORTA_FRONTEND_ORIGINS` only for additional credentialed browser
-  origins.
-- Use `VITE_API_URL` only when the built SPA calls a separate API origin.
-- Use `SAPPORTA_API_URL` only in CLI and automation client processes.
-- Keep mail and auth secrets out of frontend build variables.
+| Value                       | Read by             | Purpose                                                        |
+| --------------------------- | ------------------- | -------------------------------------------------------------- |
+| `SAPPORTA_API_PORT`         | API process         | Hono listener; falls back to `PORT`, then 3000                 |
+| `SAPPORTA_FRONTEND_PORT`    | Development command | Vite listener                                                  |
+| `SAPPORTA_PUBLIC_APP_URL`   | API process         | Public browser origin for auth links and default trust         |
+| `SAPPORTA_FRONTEND_ORIGINS` | API process         | Additional exact origins allowed to send credentialed requests |
+| `VITE_API_URL`              | Frontend build      | Absolute API origin for a split deployment                     |
+| `SAPPORTA_API_URL`          | CLI or automation   | Target running API; it does not configure the server listener  |
 
-## Task-app example
+Only values prefixed with `VITE_` can enter the built browser bundle. Treat
+every such value as public. `BETTER_AUTH_SECRET`, SMTP credentials, agent
+tokens, and database settings belong to the API or client process that uses
+them.
 
-Development uses the Vite proxy and stream mail. A split deployment sets the
-public app URL on the API and an absolute `VITE_API_URL` at frontend build time.
+## Configure the common topologies
 
-## Verify
+Local development uses the Vite origin as the public app URL. Vite proxies
+relative `/api/*` requests to Hono.
 
-1. Run the smallest build, route, table, or browser check that exercises this
-   boundary.
-2. Compare the result with the generated record or API surface under the same
-   authenticated workspace.
-3. Test one invalid or cross-boundary input when the page changes data or
-   authority.
+```ini
+SAPPORTA_API_PORT=3000
+SAPPORTA_FRONTEND_PORT=5173
+SAPPORTA_PUBLIC_APP_URL=http://localhost:5173
+SAPPORTA_MAIL_TRANSPORT=stream
+SAPPORTA_MAIL_FROM=Task App <no-reply@example.com>
+```
+
+Same-origin production serves the built SPA and API from one public origin. It
+does not need `VITE_API_URL`.
+
+```ini
+SAPPORTA_API_PORT=3000
+SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
+SAPPORTA_MAIL_TRANSPORT=smtp
+SAPPORTA_MAIL_FROM=Task App <no-reply@tasks.example.com>
+```
+
+A split deployment builds the SPA with an absolute API origin. The API still
+uses the browser-facing app origin for auth links and adds any other deliberate
+credentialed origins explicitly.
+
+```ini
+# API process
+SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
+SAPPORTA_FRONTEND_ORIGINS=https://preview.tasks.example.com
+
+# Frontend build process
+VITE_API_URL=https://api.tasks.example.com
+```
+
+`SAPPORTA_PUBLIC_APP_URL` accepts an origin only. Do not include a path, query,
+or trailing slash. If both `SAPPORTA_API_PORT` and hosting-platform `PORT` are
+set, they must contain the same number.
+
+## Observe the resolved topology
+
+Start the chosen configuration, open the app, and inspect one request in the
+browser Network panel. Local and same-origin requests use `/api/...`; split
+deployments resolve to the absolute API host through `getApiBase()`.
+
+```bash
+pnpm dev
+pnpm exec sapporta --api-url http://localhost:3000 endpoints list
+```
+
+<!--
+Screenshot brief
+Suggested asset: /assets/guides/operations/application-configuration.png
+Setup: Run the task app in local development with the Vite proxy and sign in.
+Frame: Show the browser Network details for one authenticated /api request, including the Vite request origin and successful response status. Keep cookies and authorization values hidden.
+Visible proof: The browser stays on the configured public app origin while the relative API request succeeds through the development proxy.
+Alt text: Browser network panel showing a successful Sapporta API request through the local Vite proxy.
+-->
+
+Configuration works when all public URLs describe one topology. The subtle
+distinction is that `VITE_API_URL` configures built browser code while
+`SAPPORTA_API_URL` configures a CLI caller; neither controls the API listener.
+Continue with
+[production deployment](/docs/guides/operations/production-builds-and-deployment/)
+or [email services](/docs/guides/operations/email-and-runtime-services/).
 
 ## Related reference
 
