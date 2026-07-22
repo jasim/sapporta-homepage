@@ -138,6 +138,9 @@ export default [
             "slug": "docs/guides/app-owned-features/custom-frontend-routes-and-screens"
           },
           {
+            "slug": "docs/guides/app-owned-features/custom-forms-and-table-queries"
+          },
+          {
             "slug": "docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns"
           }
         ]
@@ -309,6 +312,9 @@ export default [
           },
           {
             "slug": "docs/reference/frontend/generated-record-surfaces"
+          },
+          {
+            "slug": "docs/reference/frontend/table-query-options"
           },
           {
             "slug": "docs/reference/frontend/tgrid"

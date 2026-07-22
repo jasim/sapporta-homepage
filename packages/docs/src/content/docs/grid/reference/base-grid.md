@@ -22,6 +22,8 @@ type GridRuntime = {
   level(path: GridPath): GridLevelRuntime;
   registeredLevels(): readonly GridLevelRuntime[];
   subscribeLevels(listener: () => void): () => void;
+  activeRow(): GridActiveRow | null;
+  subscribeActiveRow(listener: () => void): () => void;
   schemaAt(path: GridPath): LevelSchema;
 
   readonly rowOperations: GridRowOperations;
@@ -41,6 +43,26 @@ collapsed levels.
 
 Schema and interaction values are immutable snapshots. Create a new runtime
 when either configuration changes.
+
+`activeRow()` resolves the one global cursor to its current live level and
+displayed row. `GridActiveRow` contains `{ row, level }`. Its snapshot identity
+remains stable across unchanged reads. `subscribeActiveRow()` wakes when the
+cursor changes, the active row disappears, or its displayed values change.
+
+Row activation is a runtime event rather than a state snapshot:
+
+```ts
+runtime.on("rowActivated", ({ activeRow, trigger }) => {
+  if (activeRow.row.kind === "data") {
+    openRecord(activeRow.row.columns.id, trigger);
+  }
+});
+```
+
+The interaction configuration chooses the Enter, click, or double-click
+gestures that can emit this event. See
+[Interactions](/grid/reference/interactions/) for precedence and validation
+rules.
 
 ## Identity
 
@@ -334,6 +356,7 @@ Common hooks include:
 
 ```ts
 useGridRuntime();
+useGridActiveRow(runtime?);
 useLevelSnapshot(path);
 useDisplayedRowSequence(path);
 useDisplayedRow(path, rowId);
@@ -348,6 +371,11 @@ useRowInteractionSnapshot(path);
 
 Use hooks in React components. Use `GridLevelRuntime` subscriptions in
 non-React hosts and custom stores.
+
+`useGridActiveRow()` reads the provider runtime. Passing a runtime argument
+allows a component outside that provider to observe it. The hook returns
+`GridActiveRow | null` and updates for both active identity and displayed-value
+changes.
 
 ## Related documentation
 

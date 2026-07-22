@@ -9,6 +9,13 @@ workflow. The generated table routes remain the standard create, edit, filter,
 and export surfaces; the custom route adds only the interaction the application
 needs.
 
+Generated projects also provide TanStack Query and public query options for
+generated table records and pages. Use
+[Custom forms and cached table reads](/docs/guides/app-owned-features/custom-forms-and-table-queries/)
+when the screen needs reusable cache keys, cancellation, domain-row decoding,
+or TanStack Form composition. This page uses the same query APIs for its table
+reads and refresh transitions.
+
 This page builds a protected project-progress screen, loads row-scoped table
 data, invokes the typed completion endpoint, and connects the screen to
 application navigation. The same structure supports dashboards, review queues,
@@ -20,15 +27,22 @@ Add a protected project-progress screen. Load visible projects and tasks through
 
 ## Build the workflow screen
 
-Create `packages/frontend/src/ProjectProgress.tsx`. `fetchTableRows()` calls the
-generated `/api/tables/:tableName` routes, so server-side row visibility still
-applies. The custom endpoint owns completion because it changes both task status
-and history.
+Create `packages/frontend/src/ProjectProgress.tsx`. The generated application
+already mounts a TanStack Query provider. The table query option builders call
+the generated `/api/tables/:tableName` routes, so server-side row visibility
+still applies. The custom endpoint owns completion because it changes both task
+status and history.
 
 ```tsx
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchTableRows } from "@sapporta/frontend";
+import { useMemo } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { reloadTGridRows } from "@sapporta/frontend";
+import {
+  tableQueryKeys,
+  tableRecordsPageQueryOptions,
+} from "@sapporta/frontend/table/query";
 import { ApiError } from "@sapporta/shared/client";
+import { apiProblemFromBody } from "@sapporta/shared/validation";
 import { Button } from "@sapporta/ui";
 import { Link } from "react-router-dom";
 import { taskActionsApi } from "./api";
@@ -41,73 +55,90 @@ type Task = {
   status: string;
 };
 
-type ErrorBody = { error: string; code: string };
-
-function isErrorBody(value: unknown): value is ErrorBody {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "error" in value &&
-    typeof value.error === "string" &&
-    "code" in value &&
-    typeof value.code === "string"
-  );
+function decodeProject(row: Record<string, unknown>): Project {
+  if (typeof row.id === "number" && typeof row.name === "string") {
+    return { id: row.id, name: row.name };
+  }
+  throw new Error("Unexpected project row");
 }
 
-function projectsFrom(rows: Record<string, unknown>[]): Project[] {
-  return rows.flatMap((row) =>
-    typeof row.id === "number" && typeof row.name === "string"
-      ? [{ id: row.id, name: row.name }]
-      : [],
-  );
-}
-
-function tasksFrom(rows: Record<string, unknown>[]): Task[] {
-  return rows.flatMap((row) =>
+function decodeTask(row: Record<string, unknown>): Task {
+  if (
     typeof row.id === "number" &&
     typeof row.project_id === "number" &&
     typeof row.title === "string" &&
     typeof row.status === "string"
-      ? [
-          {
-            id: row.id,
-            project_id: row.project_id,
-            title: row.title,
-            status: row.status,
-          },
-        ]
-      : [],
-  );
+  ) {
+    return {
+      id: row.id,
+      project_id: row.project_id,
+      title: row.title,
+      status: row.status,
+    };
+  }
+  throw new Error("Unexpected task row");
+}
+
+function actionErrorMessage(error: unknown): string | undefined {
+  if (error === null) return undefined;
+  if (error instanceof ApiError) {
+    return (
+      apiProblemFromBody(error.body)?.summary ??
+      "The task could not be completed."
+    );
+  }
+  return "The task could not be completed.";
 }
 
 export function ProjectProgress() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [pendingTaskId, setPendingTaskId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+  const projectsQuery = useQuery(
+    tableRecordsPageQueryOptions({
+      tableName: "projects",
+      page: 1,
+      limit: 100,
+      decodeRow: decodeProject,
+    }),
+  );
+  const tasksQuery = useQuery(
+    tableRecordsPageQueryOptions({
+      tableName: "tasks",
+      page: 1,
+      limit: 100,
+      decodeRow: decodeTask,
+    }),
+  );
 
-  const refresh = useCallback(async () => {
-    setLoadError(null);
-    try {
-      const [projectResult, taskResult] = await Promise.all([
-        fetchTableRows({ tableName: "projects", limit: 100 }),
-        fetchTableRows({ tableName: "tasks", limit: 100 }),
+  const completeTask = useMutation({
+    mutationFn: async (task: Task) => {
+      await taskActionsApi.completeTask({
+        params: { id: task.id },
+        body: {},
+      });
+      return task;
+    },
+    onSuccess: async () => {
+      reloadTGridRows("tasks");
+      reloadTGridRows("task_events");
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: tableQueryKeys.table("tasks"),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: tableQueryKeys.table("task_events"),
+        }),
       ]);
-      setProjects(projectsFrom(projectResult.data));
-      setTasks(tasksFrom(taskResult.data));
-    } catch {
-      setLoadError("Project progress could not be loaded.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+  });
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  const projects = projectsQuery.data?.data ?? [];
+  const tasks = tasksQuery.data?.data ?? [];
+  const loading = projectsQuery.isPending || tasksQuery.isPending;
+  const loadError = projectsQuery.error ?? tasksQuery.error;
+  const actionError = actionErrorMessage(completeTask.error);
+  const pendingTaskId = completeTask.isPending
+    ? completeTask.variables?.id
+    : undefined;
 
   const tasksByProject = useMemo(() => {
     const grouped = new Map<number, Task[]>();
@@ -120,28 +151,6 @@ export function ProjectProgress() {
     return grouped;
   }, [tasks]);
 
-  async function handleComplete(task: Task) {
-    setPendingTaskId(task.id);
-    setActionError(null);
-    setNotice(null);
-    try {
-      await taskActionsApi.completeTask({
-        params: { id: task.id },
-        body: {},
-      });
-      await refresh();
-      setNotice(`${task.title} is complete.`);
-    } catch (error) {
-      if (error instanceof ApiError && isErrorBody(error.body)) {
-        setActionError(error.body.error);
-      } else {
-        setActionError("The task could not be completed.");
-      }
-    } finally {
-      setPendingTaskId(null);
-    }
-  }
-
   if (loading) {
     return <p className="p-6 text-sm text-sap-muted">Loading progress…</p>;
   }
@@ -150,9 +159,17 @@ export function ProjectProgress() {
     return (
       <div className="p-6">
         <p role="alert" className="text-sm text-red-700">
-          {loadError}
+          Project progress could not be loaded.
         </p>
-        <Button className="mt-3" onClick={() => void refresh()}>
+        <Button
+          className="mt-3"
+          onClick={() =>
+            void Promise.all([
+              projectsQuery.refetch(),
+              tasksQuery.refetch(),
+            ])
+          }
+        >
           Retry
         </Button>
       </div>
@@ -185,9 +202,9 @@ export function ProjectProgress() {
         </Link>
       </div>
 
-      {notice && (
+      {completeTask.isSuccess && (
         <p role="status" className="text-sm text-green-700">
-          {notice}
+          {completeTask.data.title} is complete.
         </p>
       )}
       {actionError && (
@@ -219,8 +236,8 @@ export function ProjectProgress() {
                   {task.status !== "completed" && (
                     <Button
                       size="sm"
-                      disabled={pendingTaskId === task.id}
-                      onClick={() => void handleComplete(task)}
+                      disabled={completeTask.isPending}
+                      onClick={() => completeTask.mutate(task)}
                     >
                       {pendingTaskId === task.id ? "Completing…" : "Complete"}
                     </Button>
@@ -239,6 +256,18 @@ export function ProjectProgress() {
 The screen intentionally loads at most 100 records for an introductory
 dashboard. A larger dataset should move aggregation and pagination into a report
 or custom endpoint instead of downloading every row.
+
+`tableRecordsPageQueryOptions()` supplies stable table cache keys, passes query
+cancellation to the generated HTTP request, and decodes each row at the browser
+boundary. `apiProblemFromBody()` recognizes Sapporta error bodies for the typed
+action. The component does not maintain a second loader or error-envelope
+parser.
+
+The completion transaction changes both `tasks` and `task_events`. Its success
+handler invalidates both table cache prefixes before the mutation becomes
+successful. It also reloads mounted TGrid sessions for both tables. TanStack
+Query and TGrid are separate server-state consumers, so a workflow that serves
+both surfaces performs both effects.
 
 Client filters, hidden fields, and route parameters are product constraints, not
 authorization. Do not add `workspace_id` or `scoped_to_user_id` to this
@@ -335,3 +364,4 @@ worklist when selection and bulk commands become central to the workflow.
 
 - [App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)
+- [Table query options](/docs/reference/frontend/table-query-options/)

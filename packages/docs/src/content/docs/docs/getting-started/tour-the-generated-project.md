@@ -13,6 +13,8 @@ task-app/
   sapporta.json
   package.json
   pnpm-workspace.yaml
+  CODING-PRINCIPLES.md
+  VISUAL-DESIGN-GUIDELINES.md
   .env.development
   data/
   packages/
@@ -24,6 +26,7 @@ task-app/
       schema/
     frontend/
       src/
+        query-client.ts
     shared/
       src/
         contracts/
@@ -42,6 +45,13 @@ The main extension points are:
 - `packages/api/app.ts` for mounting project routes
 - `packages/api/authz/` for abilities and request authority
 - `packages/frontend/src/App.tsx` for navigation and public or protected routes
+- `packages/frontend/src/query-client.ts` for application-wide TanStack Query
+  defaults
+
+The frontend already mounts TanStack Query and includes TanStack Form. Public
+Sapporta query options and form helpers connect app-owned screens to generated
+table routes. `CODING-PRINCIPLES.md` and `VISUAL-DESIGN-GUIDELINES.md` guide
+coding-agent changes to the generated workspace.
 
 ## The welcome screen
 

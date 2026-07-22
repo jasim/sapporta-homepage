@@ -1,0 +1,156 @@
+---
+title: "Table query options"
+description:
+  "Look up generated table read functions, TanStack Query option builders,
+  cache keys, decoding, cancellation, and invalidation boundaries."
+---
+
+## Identity
+
+Table query builders are exported from `@sapporta/frontend/table/query` and
+from the main `@sapporta/frontend` entry point. They compose the generated
+table HTTP client with TanStack Query.
+
+New Sapporta projects install `@tanstack/react-query`. The workspace-owned
+`packages/frontend/src/query-client.ts` exports one application `QueryClient`,
+and the framework entry point mounts it with `QueryClientProvider`. A feature
+should reuse that provider and the public table query builders.
+
+## Read functions
+
+```ts
+fetchTableRow(tableName, recordId, { signal? });
+fetchTableRows({ tableName, page?, limit?, sort?, filters?, search? }, {
+  signal?,
+});
+```
+
+`fetchTableRow()` returns `SingleRow`. `fetchTableRows()` returns
+`PaginatedRows`. Both functions call the generated, auth-aware table routes.
+Their optional `AbortSignal` reaches the underlying `fetch` request.
+
+`buildTableRowsQuery()` is the shared serializer for page, limit, sort, typed
+filters, and search. Page query keys use this serialized request shape, so UI-
+only filter IDs do not create distinct cache entries for the same HTTP query.
+
+## Query option builders
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import {
+  tableRecordQueryOptions,
+  tableRecordsPageQueryOptions,
+} from "@sapporta/frontend/table/query";
+
+const record = useQuery(
+  tableRecordQueryOptions({
+    tableName: "tasks",
+    recordId: String(taskId),
+    decodeRow: decodeTask,
+  }),
+);
+
+const page = useQuery(
+  tableRecordsPageQueryOptions({
+    tableName: "tasks",
+    page: 1,
+    limit: 50,
+    filters,
+    sort,
+    search,
+    decodeRow: decodeTask,
+  }),
+);
+```
+
+`tableRecordQueryOptions()` returns query options for one generated table
+record. `tableRecordsPageQueryOptions()` returns options for one serialized
+table query and preserves the response pagination metadata.
+
+Without `decodeRow`, both builders return generic `Row` values. Supplying
+`decodeRow(row)` changes the inferred query data to the application row type.
+Each page row is decoded independently. Decoder failures reject the query.
+Sapporta does not infer an application domain type from a generic table
+response.
+
+Both query functions consume TanStack Query's request signal. Cancelling or
+superseding the query aborts the generated table request.
+
+## Exported types
+
+- `TableRecordQueryArgs` contains `tableName` and string `recordId`.
+- `DecodedTableRecordQueryArgs<TRow>` adds `decodeRow`.
+- `DecodedTableRecordsPageQueryArgs<TRow>` adds `decodeRow` to
+  `FetchTableRowsParams`.
+- `TableRowDecoder<TRow>` is `(row: Row) => TRow`.
+- `TableRecordsPage<TRow>` preserves `PaginatedRows.meta` and replaces `data`
+  with `TRow[]`.
+- `TableRecordQueryKey` and `TableRecordsPageQueryKey` are the inferred key
+  tuple types returned by the matching `tableQueryKeys` functions.
+- `TableFetchOptions` is the public `{ signal?: AbortSignal }` option accepted
+  by `fetchTableRow()` and `fetchTableRows()`.
+
+The decoded overloads require `decodeRow`. Supplying a domain row generic
+without a decoder is a type error.
+
+## Cache-key hierarchy
+
+```ts
+tableQueryKeys.all;
+tableQueryKeys.table(tableName);
+tableQueryKeys.records(tableName);
+tableQueryKeys.record(tableName, recordId);
+tableQueryKeys.pages(tableName);
+tableQueryKeys.page(fetchParams);
+```
+
+The hierarchy is:
+
+```text
+["sapporta", "tables"]
+  -> table name
+     -> "records" -> record id
+     -> "pages"   -> serialized request
+```
+
+TanStack Query prefix matching makes the intended invalidation scope explicit:
+
+```ts
+await queryClient.invalidateQueries({
+  queryKey: tableQueryKeys.table("tasks"),
+});
+
+await queryClient.invalidateQueries({
+  queryKey: tableQueryKeys.pages("tasks"),
+});
+```
+
+Invalidate the table prefix when a mutation may affect records and paginated
+lists. Invalidate `pages(tableName)` when only list membership, ordering, or
+aggregated page state is stale. Invalidate or update one `record()` entry only
+when the mutation's effect is confined to that record.
+
+TGrid sessions do not read TanStack Query's cache. Call
+`reloadTGridRows(tableName)` when a mutation must refresh mounted TGrid rows,
+and invalidate the relevant TanStack Query prefix when the same mutation
+affects app-owned cached screens. These are separate server-state consumers.
+
+## Query ownership invariants
+
+- The generated project owns one `QueryClient`. Feature modules compose query
+  options; they do not mount nested providers or create parallel clients.
+- Query keys describe generated table reads. App-owned endpoint results use an
+  application-owned key namespace.
+- The server remains the authorization boundary. Query keys, decoders, fixed
+  filters, and hidden columns do not enforce row access.
+- A decoder validates the browser wire value. It does not replace server
+  validation or authorize fields for mutation.
+- Form draft state belongs to TanStack Form. Server records and lists belong to
+  TanStack Query. Copying query results into form state after initialization
+  can overwrite dirty input.
+
+## Related documentation
+
+- [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
+- [Custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
+- [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)

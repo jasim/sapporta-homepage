@@ -37,9 +37,12 @@ working change I can run and inspect.
   [authentication and abilities](/docs/guides/security/authentication-and-abilities/).
 
 - **App-owned features** covers shared ts-rest contracts, custom Hono routes,
-  transactions, typed clients, React screens, uploads, and declared errors.
+  transactions, typed clients, React screens, custom forms, cached table reads,
+  uploads, and declared errors.
   Start with
-  [custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/).
+  [custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
+  or
+  [custom forms and cached table reads](/docs/guides/app-owned-features/custom-forms-and-table-queries/).
 
 - **Reports** covers route-based `GridDataset` results, formatting,
   drill-through links, and scoped aggregation. Start with

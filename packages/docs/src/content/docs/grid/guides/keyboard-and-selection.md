@@ -18,6 +18,7 @@ Common presets include:
 | `CELL_PRIMARY_WITH_SIDE_PANEL_ROW`          | Editable cells with a detail panel following the cursor row.               |
 | `CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW` | Editable cells with an independently pinned detail row.                    |
 | `ROW_PRIMARY_MASTER_DETAIL`                 | Row-first master/detail lists.                                             |
+| `ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` | Row-first master/detail lists where Enter and double-click run one action.  |
 | `ROW_MULTISELECT_LIST`                      | Multi-select row lists.                                                    |
 
 Add a selection column when row selection is part of the workflow:
@@ -58,6 +59,16 @@ rectangular selection inside one rendered level. Row selection identifies rows
 for commands such as delete, export, bulk edit, or opening a side panel. Choose
 the preset first, then add columns or toolbar actions that use the selected row
 state.
+
+Active-row state is separate from both selection types. It identifies one
+current row for a preview or related-record surface. Read the grid-wide value
+with `useGridActiveRow()` or `runtime.activeRow()`. Use a configured
+`rowActivated` event for repeatable actions such as opening an edit route.
+
+`ROW_PRIMARY_MASTER_DETAIL` keeps Enter for hierarchy expansion.
+`ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` reserves Enter for activation and
+uses left and right for hierarchy expansion. Custom interaction values cannot
+assign Enter to both behaviors.
 
 Grid copy uses the active cell or cell range. It does not read row selection.
 Keep row selection for row operations such as delete, export, bulk edit, or

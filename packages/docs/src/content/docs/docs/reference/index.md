@@ -3,7 +3,11 @@ title: "Reference"
 description: "Look up the canonical Sapporta package, HTTP, CLI, configuration, and runtime contracts."
 ---
 
-Reference covers the public Sapporta 0.2.6 package surface, generated project contract, HTTP routes, CLI, configuration, runtime behavior, and diagnostics audited from framework source revision `98b33341d3aa63a4dd02e7a6e5edc2f6dbe54413`.
+Reference covers the public Sapporta 0.2.7 package surface, generated project
+contract, HTTP routes, CLI, configuration, runtime behavior, and diagnostics.
+The frontend form, table-query, and Grid interaction contracts include changes
+through framework source revision
+`f579ef770f0857bab888a3f81c9df8e6928d6ed5`.
 
 ## Lookup indexes
 
@@ -20,3 +24,10 @@ Reference covers the public Sapporta 0.2.6 package surface, generated project co
 
 - [Table validation](/docs/reference/schema/table-validation/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
+
+## Frontend state and interaction
+
+- [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
+- [Table query options](/docs/reference/frontend/table-query-options/)
+- [TGrid](/docs/reference/frontend/tgrid/)
+- [Standalone Grid interactions](/grid/reference/interactions/)

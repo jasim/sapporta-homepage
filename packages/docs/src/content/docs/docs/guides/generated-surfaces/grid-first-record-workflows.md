@@ -22,7 +22,7 @@ Help me choose the right Sapporta Grid for this workflow. Tell me who owns the r
 | ----------------------------------- | ---------------------------------------- | ------------------------------------------------- |
 | Ordinary editable table             | Generated table surface                  | Generated default                                 |
 | Tailored persisted record grid      | TGrid                                    | Cell-grid or row-list based on the workflow       |
-| Persisted parent-child hierarchy    | TGrid                                    | `ROW_PRIMARY_MASTER_DETAIL` or a cell-grid preset |
+| Persisted parent-child hierarchy    | TGrid                                    | Row-primary preset or a cell-grid preset           |
 | Editable grid with a detail panel   | TGrid first; BaseGrid for app-owned rows | Side-panel preset                                 |
 | Bulk action worklist                | TGrid or BaseGrid                        | Independent multi-row selection                   |
 | Temporary multi-line workflow draft | BaseGrid with ColumnPreset               | Cell editing or row-first selection               |
@@ -56,13 +56,16 @@ Choose the interaction before custom cells, side panels, and toolbar actions.
 | `CELL_PRIMARY_WITH_SIDE_PANEL_ROW`          | A detail panel that follows the cell cursor row        |
 | `CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW` | A detail panel pinned to an independently selected row |
 | `ROW_PRIMARY_MASTER_DETAIL`                 | Row-first hierarchy and master-detail navigation       |
+| `ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` | Row-first navigation plus an Enter/double-click action  |
 | `ROW_MULTISELECT_LIST`                      | Command-oriented worklists and bulk row operations     |
 
 Cell selection controls focus, rectangular ranges, copy, and spreadsheet
 editing. Row selection identifies records for panels, delete commands, bulk
-actions, and cross-level operations. `GridLevelRuntime` exposes active-row and
-selected-row reads for one path. `GridRuntime.rowOperations` coordinates
-selected data rows across expanded paths.
+actions, and cross-level operations. The active row identifies one current
+record for application context. `GridRuntime.activeRow()` resolves that value
+across expanded paths, while `GridLevelRuntime` exposes path-local active-row
+and selected-row reads. `GridRuntime.rowOperations` coordinates selected data
+rows across expanded paths.
 
 React components use runtime-backed row hooks. Non-React hosts use the matching
 level reads and subscriptions.
@@ -99,6 +102,11 @@ function observeRowState(level: GridLevelRuntime) {
 ```
 
 Call the returned cleanup when the non-React owner is disposed.
+
+Use `useGridActiveRow()` or `runtime.subscribeActiveRow()` for a detail region
+that follows the single global cursor across paths. Use the `rowActivated`
+event for repeatable commands. Active-row state may stay unchanged while Enter
+activates the same row again.
 
 ## Column behavior
 

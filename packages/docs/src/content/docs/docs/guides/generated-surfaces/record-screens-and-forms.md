@@ -85,6 +85,11 @@ field or a fixed client filter is presentation, not an authorization rule.
 
 ## Keep draft text until submit
 
+Generated create screens use TanStack Form for draft state, submit validation,
+field errors, form errors, and pending state. Sapporta supplies the
+metadata-derived fields and the table request boundary. Application-owned forms
+can compose the same public pieces without creating a second form store.
+
 Numeric, money, percentage, date, and timestamp inputs keep raw strings while a
 record is being edited. Intermediate numeric text such as `-` or `12.` therefore
 stays visible. The form decodes the full draft once on submit. Finite numeric
@@ -97,6 +102,20 @@ Empty text remains `""`, which is distinct from `null`. Required empty controls
 produce local issues. The server then applies API write policy, adds trusted
 scope values, checks reference visibility, and performs authoritative structural
 and application validation immediately before the Drizzle write.
+
+The generated submit path converts recognized `422` response details into
+field errors. Direct field details use the public SQL column name. Nested issue
+paths use dot notation such as `lines.0.quantity`. The response summary remains
+available as a form-level error, and unrecognized failures use a generic save
+message.
+
+For a custom form, derive field models with `buildRecordFormFields()`, connect
+each model to a TanStack `form.Field`, and decode one-table creates with
+`parseCreateDraft()` immediately before `createTableRow()`. Use
+`fieldIssuesForSubmissionError()` to map local or generated API issues and
+`firstFormErrorMessage()` to render TanStack field errors. The complete API and
+its create-versus-patch invariants are in
+[Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/).
 
 <!--
 Screenshot brief
@@ -124,5 +143,6 @@ interaction model. The next guide compares those Grid layers.
 
 ## Related reference
 
-- [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)
+- [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
+- [Table query options](/docs/reference/frontend/table-query-options/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)

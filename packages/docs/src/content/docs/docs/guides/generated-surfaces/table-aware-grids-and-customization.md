@@ -93,6 +93,104 @@ Inside TGrid cell and save callbacks, use `context.level` for the path-bound
 query, and writes. Use `context.runtime` for grid-wide events, level
 enumeration, and cross-path row operations.
 
+## Build a master-detail view
+
+A master-detail screen uses active-row state for the current preview and row
+activation for the next workflow action. These are separate channels. Arrow
+movement changes the preview. Enter or double-click can open an edit route even
+when the row did not change.
+
+```tsx
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION } from "@sapporta/grid";
+import {
+  TGrid,
+  defineTGrid,
+  useTGridActiveRow,
+  useTGridSession,
+} from "@sapporta/frontend";
+import type { TableSchema } from "@sapporta/shared/contracts";
+
+type TaskRow = {
+  id: number;
+  title: string;
+  status: "open" | "in_progress" | "completed";
+  description: string | null;
+};
+
+type RowsByLevel = { tasks: TaskRow };
+
+export function TaskBrowser({ table }: { table: TableSchema }) {
+  const navigate = useNavigate();
+  const definition = useMemo(
+    () =>
+      defineTGrid<RowsByLevel>({
+        rootLevel: "tasks",
+        interaction: ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION,
+        levels: {
+          tasks: {
+            table,
+            childLevels: [],
+            rowHeaderColumn: "none",
+            query: { owner: "host", pageSize: 50, urlSync: true },
+            columns: (columns) => [
+              columns.table("title", { edit: "none" }),
+              columns.table("status", { edit: "none" }),
+            ],
+          },
+        },
+      }),
+    [table],
+  );
+
+  const session = useTGridSession(definition);
+  const activeRow = useTGridActiveRow(session);
+  if (!session) return null;
+
+  const task =
+    activeRow?.kind === "data" && activeRow.levelId === "tasks"
+      ? activeRow.values
+      : null;
+
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_22rem] gap-4">
+      <TGrid
+        session={session}
+        onRowActivate={({ activeRow: activated }) => {
+          if (activated.kind === "data" && activated.levelId === "tasks") {
+            navigate(`/tasks/${activated.values.id}/edit`);
+          }
+        }}
+      />
+      <aside aria-live="polite">
+        {task ? (
+          <>
+            <h2>{task.title}</h2>
+            <p>{task.description ?? "No description."}</p>
+          </>
+        ) : (
+          <p>Select a task.</p>
+        )}
+      </aside>
+    </div>
+  );
+}
+```
+
+`useTGridActiveRow()` updates for cursor movement and displayed-value changes.
+It already represents React state and should not be mirrored into local state.
+The active row may be a structural or draft row, so the example narrows both
+`kind` and `levelId` before using the typed record values.
+
+The activation callback runs only for gestures enabled by the interaction.
+`ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` uses Enter and double-click for row
+activation and left/right for hierarchy expansion. The callback remains an
+event handler because activating the same row twice must run the action twice.
+
+Row selection remains independent. Use selected-row APIs for bulk actions and
+operation targets. Use the active row for one current preview.
+
 <!--
 Screenshot brief
 Suggested asset: custom-task-tgrid-workbench.png
@@ -113,4 +211,5 @@ workflow guide.
 
 - [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [TGrid](/docs/reference/frontend/tgrid/)
+- [Grid interactions](/grid/reference/interactions/)
 - [Choose a Grid layer](/grid/start/choose-a-grid-layer/)

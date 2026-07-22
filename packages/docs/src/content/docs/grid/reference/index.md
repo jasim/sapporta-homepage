@@ -5,7 +5,8 @@ description: "Look up the standalone @sapporta/grid public surface."
 
 ## Identity
 
-`@sapporta/grid` 0.2.6 supports the root export, `./grid`, `./column-preset`, `./lookup`, `./lookup/react`, and `./index.css`.
+`@sapporta/grid` 0.2.7 supports the root export, `./grid`, `./advanced`,
+`./column-preset`, `./lookup`, `./lookup/react`, and `./index.css`.
 
 ## Reference groups
 
