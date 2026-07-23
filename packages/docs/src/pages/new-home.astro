@@ -1,0 +1,401 @@
+---
+import { Code } from "astro:components";
+import {
+  Content as HeroContent,
+  frontmatter,
+} from "../home-content/hero.md";
+import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.md";
+import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
+import { Content as RegularApplication } from "../home-content/03-regular-application.md";
+import { Content as LlmOneShot } from "../home-content/04-llm-one-shot.md";
+import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
+import BooksTableDataGrid from "../components/BooksTableDataGrid";
+import SapportaMark from "../components/SapportaMark.astro";
+import { Code2, Copy, Table2 } from "lucide-react";
+import "../styles/sapporta.css";
+import "../styles/homepage-essay.css";
+
+const { page, brand, navigation } = frontmatter;
+const codeTheme = "github-light-default";
+const booksSchemaCode = `export const booksTable = sqliteTable("books", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  author: text("author").notNull(),
+});
+
+export const books = sapportaTable({
+  drizzle: booksTable,
+  meta: {
+    label: "Books",
+    rowScope: "systemGlobal",
+    rowLabelColumns: ["title"],
+    search: { columns: ["author", "title"] },
+    children: [
+      {
+        table: "quotes",
+        foreignKey: "book_id",
+        label: "Quotes",
+        columns: ["quote_text"],
+        defaultSort: "-created_at",
+      },
+    ],
+    columns: {
+      title: { width: 64 },
+      author: { width: 36 },
+    },
+  },
+});`;
+---
+
+<!doctype html>
+<html lang={page.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <meta
+      name="description"
+      content={page.description}
+    />
+    <link
+      rel="icon"
+      href="/favicon.svg"
+      type="image/svg+xml"
+    />
+    <title>{page.title}</title>
+  </head>
+  <body class="essay-page">
+    <a
+      class="essay-skip-link"
+      href="#main-content">{page.skipLabel}</a
+    >
+
+    <main id="main-content" class="essay-main">
+      <div class="essay-shell essay-shell--hero">
+        <header class="essay-masthead">
+          <h1 class="essay-brand-title">
+            <a
+              class="essay-wordmark"
+              href={brand.href}
+            >
+              <SapportaMark
+                class="essay-wordmark-mark"
+                title=""
+              />
+              <span>{brand.label}</span>
+            </a>
+          </h1>
+
+          <nav
+            class="essay-nav"
+            aria-label={navigation.label}
+          >
+            {
+              navigation.links.map((link) => (
+                <a href={link.href}>
+                  {link.label}
+                </a>
+              ))
+            }
+          </nav>
+        </header>
+
+        <article class="essay-prose essay-hero">
+          <HeroContent />
+
+          <section
+            class="essay-get-started"
+            aria-labelledby="essay-get-started-title"
+          >
+            <div class="essay-get-started-header">
+              <div>
+                <h2
+                  class="essay-get-started-title"
+                  id="essay-get-started-title"
+                >
+                  Get Started
+                </h2>
+                <p
+                  class="essay-get-started-caption"
+                >
+                  Copy to your coding agent
+                </p>
+              </div>
+              <div
+                class="essay-get-started-actions"
+              >
+                <span
+                  class="essay-get-started-status"
+                  data-copy-agent-status
+                  aria-live="polite"
+                ></span>
+                <button
+                  class="essay-get-started-copy"
+                  type="button"
+                  data-copy-agent-prompt
+                  aria-label="Copy prompt to clipboard"
+                  title="Copy prompt to clipboard"
+                >
+                  <Copy
+                    aria-hidden="true"
+                    size={15}
+                    strokeWidth={2}
+                  />
+                </button>
+              </div>
+            </div>
+            <pre
+              class="essay-get-started-prompt"
+              data-agent-prompt
+            >Create a Todo management application using Sapporta
+https://sapporta.com/docs/getting-started/create-a-project.md</pre
+            >
+          </section>
+        </article>
+      </div>
+
+      <div class="essay-shell essay-shell--grid">
+        <section
+          class="essay-grid"
+          aria-label="Books and Quotes grid demo"
+        >
+          <div class="essay-demo" data-demo-tabs>
+            <div
+              class="essay-demo-tabs"
+              role="tablist"
+              aria-label="Data grid example views"
+            >
+              <button
+                class="essay-demo-tab"
+                id="essay-demo-grid-tab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="essay-demo-grid-panel"
+              >
+                <Table2
+                  className="essay-demo-tab-icon"
+                  aria-hidden="true"
+                  size={17}
+                  strokeWidth={2}
+                />
+                <span>Demo: sample data grid</span
+                >
+              </button>
+              <button
+                class="essay-demo-tab"
+                id="essay-demo-code-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="essay-demo-code-panel"
+                tabindex="-1"
+              >
+                <Code2
+                  className="essay-demo-tab-icon"
+                  aria-hidden="true"
+                  size={17}
+                  strokeWidth={2}
+                />
+                <span
+                  >Code: schema definition</span
+                >
+              </button>
+            </div>
+
+            <div
+              class="essay-demo-panel"
+              id="essay-demo-grid-panel"
+              role="tabpanel"
+              aria-labelledby="essay-demo-grid-tab"
+            >
+              <BooksTableDataGrid
+                client:only="react"
+              />
+            </div>
+
+            <div
+              class="essay-demo-panel essay-demo-code-panel"
+              id="essay-demo-code-panel"
+              role="tabpanel"
+              aria-labelledby="essay-demo-code-tab"
+              hidden
+            >
+              <figure class="essay-schema-panel">
+                <figcaption
+                  class="essay-schema-header"
+                >
+                  <span class="essay-schema-path">
+                    packages/api/schema/books.ts
+                  </span>
+                </figcaption>
+                <div class="essay-schema-code">
+                  <Code
+                    code={booksSchemaCode}
+                    lang="ts"
+                    theme={codeTheme}
+                  />
+                </div>
+              </figure>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div
+        class="essay-shell essay-shell--content"
+      >
+        <article
+          class="essay-prose essay-content"
+        >
+          <section class="essay-section">
+            <DataGridExperience />
+          </section>
+          <section class="essay-section">
+            <FeaturesInBrief />
+          </section>
+          <section class="essay-section">
+            <RegularApplication />
+          </section>
+          <section class="essay-section">
+            <LlmOneShot />
+          </section>
+          <section class="essay-section">
+            <BuiltForAgents />
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <script>
+      const copyAgentPromptButton =
+        document.querySelector<HTMLButtonElement>(
+          "[data-copy-agent-prompt]",
+        );
+      const agentPrompt =
+        document.querySelector<HTMLElement>(
+          "[data-agent-prompt]",
+        );
+      const copyAgentStatus =
+        document.querySelector<HTMLElement>(
+          "[data-copy-agent-status]",
+        );
+      let copyAgentStatusTimeout:
+        | ReturnType<typeof setTimeout>
+        | undefined;
+
+      copyAgentPromptButton?.addEventListener(
+        "click",
+        async () => {
+          const prompt = agentPrompt?.textContent;
+          if (!prompt) return;
+
+          try {
+            await navigator.clipboard.writeText(
+              prompt,
+            );
+            copyAgentPromptButton.dataset.copied =
+              "true";
+            copyAgentPromptButton.title = "Copied";
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent = "Copied";
+            }
+
+            clearTimeout(copyAgentStatusTimeout);
+            copyAgentStatusTimeout = setTimeout(() => {
+              delete copyAgentPromptButton.dataset
+                .copied;
+              copyAgentPromptButton.title =
+                "Copy prompt to clipboard";
+              if (copyAgentStatus) {
+                copyAgentStatus.textContent = "";
+              }
+            }, 2000);
+          } catch {
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent =
+                "Copy failed";
+            }
+          }
+        },
+      );
+
+      const demos =
+        document.querySelectorAll<HTMLElement>(
+          "[data-demo-tabs]",
+        );
+
+      for (const demo of demos) {
+        const tabs = Array.from(
+          demo.querySelectorAll<HTMLButtonElement>(
+            '[role="tab"]',
+          ),
+        );
+        const panels = Array.from(
+          demo.querySelectorAll<HTMLElement>(
+            '[role="tabpanel"]',
+          ),
+        );
+
+        const selectTab = (
+          selectedTab: HTMLButtonElement,
+          moveFocus = false,
+        ) => {
+          for (const tab of tabs) {
+            const isSelected =
+              tab === selectedTab;
+            tab.setAttribute(
+              "aria-selected",
+              String(isSelected),
+            );
+            tab.tabIndex = isSelected ? 0 : -1;
+          }
+
+          for (const panel of panels) {
+            panel.hidden =
+              panel.id !==
+              selectedTab.getAttribute(
+                "aria-controls",
+              );
+          }
+
+          if (moveFocus) selectedTab.focus();
+        };
+
+        tabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => {
+            selectTab(tab);
+          });
+
+          tab.addEventListener(
+            "keydown",
+            (event) => {
+              let nextIndex: number | undefined;
+
+              if (event.key === "ArrowRight") {
+                nextIndex =
+                  (index + 1) % tabs.length;
+              } else if (
+                event.key === "ArrowLeft"
+              ) {
+                nextIndex =
+                  (index - 1 + tabs.length) %
+                  tabs.length;
+              } else if (event.key === "Home") {
+                nextIndex = 0;
+              } else if (event.key === "End") {
+                nextIndex = tabs.length - 1;
+              }
+
+              if (nextIndex === undefined) return;
+              event.preventDefault();
+              selectTab(tabs[nextIndex], true);
+            },
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

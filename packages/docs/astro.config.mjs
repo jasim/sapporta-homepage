@@ -6,6 +6,7 @@ import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import docsSidebar from "./sidebar.mjs";
 import { sapportaInitCommand } from "./src/generated/sapporta-cli.mjs";
+import { rehypeHomepageScreenshots } from "./src/markdown/rehype-homepage-screenshots.mjs";
 
 const SAPPORTA_INIT_COMMAND_TOKEN = "{{SAPPORTA_INIT_COMMAND}}";
 
@@ -29,7 +30,10 @@ export default defineConfig({
   output: "static",
   trailingSlash: "ignore",
   markdown: {
-    processor: unified({ remarkPlugins: [injectSapportaInitCommand] }),
+    processor: unified({
+      remarkPlugins: [injectSapportaInitCommand],
+      rehypePlugins: [rehypeHomepageScreenshots],
+    }),
   },
   vite: {
     plugins: [tailwindcss()],
