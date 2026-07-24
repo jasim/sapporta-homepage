@@ -3,8 +3,10 @@
  *
  * Start here when you need to change how the app is hosted. This file chooses
  * the database, loads your table/report definitions, installs auth, mounts
- * `/api/...` routes, exposes `/api/openapi.json` for CLI discovery, and mounts
- * a removable static-build compatibility host for single-process deployments.
+ * `/api/...` routes, exposes `/api/openapi.json` for CLI discovery, and finally
+ * mounts the prebuilt Astro site and Vite application for single-process
+ * deployments. Route registration order matters: the static host is last so it
+ * cannot take a request away from an API or health route.
  */
 import { join } from "node:path";
 import { serve } from "@hono/node-server";
@@ -45,6 +47,19 @@ setProjectRoot(projectRoot);
 const { apiDistDir, frontendDistDir, databasePath } =
   fromProjectRoot(projectRoot);
 const docsDistDir = join(projectRoot, "packages/docs/dist");
+
+// Astro renders files in packages/docs/src/pages at build time, not while this
+// server is handling a request. Keep the small set of top-level marketing pages
+// explicit here: each URL points at the HTML file emitted by `astro build`.
+// Documentation routes such as /docs/* and /grid/* are mounted as groups by
+// mountStaticSite(), while every remaining non-API GET becomes a Vite SPA route.
+const astroPageRoutes = [
+  { path: "/", file: "index.html" },
+  { path: "/index.html", file: "index.html" },
+  { path: "/new-home", file: "new-home/index.html" },
+  { path: "/new-home/", file: "new-home/index.html" },
+] as const;
+
 const conn = connectProject(databasePath);
 const sapporta = await loadSapportaProject({
   name: "sapporta-homepage-app",
@@ -115,10 +130,14 @@ app.route("/api", projectAuth.routes);
 // discovery that they require for data commands.
 mountOpenApi(app, sapporta, sapportaApi, apiApp, projectAuth.routes);
 
-// Single-process deployments serve only prebuilt Astro/Vite artifacts here.
-// nginx/CDN deployments replace this one call and continue proxying the
-// dynamic /api/* and /health surfaces mounted above.
-mountStaticSite(app, { docsDistDir, frontendDistDir });
+// This is the final HTTP layer:
+//   1. Serve the explicit Astro pages above from packages/docs/dist.
+//   2. Serve the /docs/* and /grid/* Astro documentation trees.
+//   3. Serve real Vite assets, then use its index.html as the React Router
+//      fallback for every other GET.
+// nginx/CDN deployments can replace this call while continuing to proxy the
+// dynamic /api/* and /health routes mounted above.
+mountStaticSite(app, { docsDistDir, frontendDistDir, astroPageRoutes });
 
 // Start the API server.
 const port = projectEnv.apiPort;

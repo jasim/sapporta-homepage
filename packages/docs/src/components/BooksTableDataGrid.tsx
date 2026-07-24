@@ -244,8 +244,9 @@ function BooksGrid({
           activation: {
             startsOn: ["enter"],
             describe: "Expand quote or edit quote",
-            run: ({ level, rowKey, runtime }) => {
+            run: ({ level, row, runtime }) => {
               const path = level.path;
+              const rowKey = String(row.id);
               const identity = quoteDetailsIdentity({ path, rowKey });
               const clipped = clippedQuotesRef.current.get(quoteIdentityKey(identity)) ?? true;
 
@@ -277,9 +278,9 @@ function BooksGrid({
           activation: {
             startsOn: ["enter", "space", "click"],
             describe: "Expand quote details",
-            run: ({ level, rowKey }) => {
+            run: ({ level, row }) => {
               openQuoteDialog(
-                quoteDetailsIdentity({ path: level.path, rowKey }),
+                quoteDetailsIdentity({ path: level.path, rowKey: row.id }),
               );
             },
           },
@@ -313,16 +314,17 @@ function BooksGrid({
 }
 
 function QuoteDeepLinkBookCell() {
-  const { level, rowKey, runtime } = useTGridCell<
+  const { level, row, runtime } = useTGridCell<
     SchemaTableRowsByLevel,
     unknown,
     typeof booksTableName
   >(booksTableName);
   const path = level.path;
+  const rowKey = String(row.id);
   const { linkedBookRowKey } = useQuoteExpansion();
 
   useEffect(() => {
-    if (linkedBookRowKey !== String(rowKey)) return;
+    if (linkedBookRowKey !== rowKey) return;
 
     const rowId = makeRowId(path, rowKey);
     if (!level.isExpanded(rowId)) level.expand(rowId);
@@ -333,12 +335,13 @@ function QuoteDeepLinkBookCell() {
 }
 
 function QuoteTextCell() {
-  const { level, rowKey, value } = useTGridCell<
+  const { level, row, value } = useTGridCell<
     SchemaTableRowsByLevel,
     unknown,
     typeof quotesLevelName
   >(quotesLevelName);
   const path = level.path;
+  const rowKey = String(row.id);
   const ref = useRef<HTMLDivElement | null>(null);
   const { expandedQuote, reportQuoteClipping } = useQuoteExpansion();
   const identity = useMemo(() => quoteDetailsIdentity({ path, rowKey }), [path, rowKey]);
@@ -448,12 +451,13 @@ function QuoteTextEditor() {
 }
 
 function QuoteDetailsCell() {
-  const { level, row, rowKey, runtime, activation } = useTGridCell<
+  const { level, row, runtime, activation } = useTGridCell<
     SchemaTableRowsByLevel,
     unknown,
     typeof quotesLevelName
   >(quotesLevelName);
   const path = level.path;
+  const rowKey = String(row.id);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const { activeQuoteDialog, closeQuoteDialog } = useQuoteExpansion();
   const identity = useMemo(() => quoteDetailsIdentity({ path, rowKey }), [path, rowKey]);

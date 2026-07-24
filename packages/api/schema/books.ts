@@ -20,7 +20,7 @@ export const books = sapportaTable({
     label: "Books",
     rowScope: "systemGlobal",
     rowLabelColumns: ["title"],
-    search: { columns: ["author", "title"] },
+    search: { self: "allColumns", children: { quotes: "allColumns" } },
     children: [
       {
         table: "quotes",

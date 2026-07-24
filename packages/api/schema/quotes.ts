@@ -27,7 +27,6 @@ export const quotes = sapportaTable({
     label: "Quotes",
     rowScope: "systemGlobal",
     rowLabelColumns: ["quote_text"],
-    search: { columns: ["quote_text"] },
     columns: {
       book_id: { label: "Book", width: 18 },
       quote_text: {

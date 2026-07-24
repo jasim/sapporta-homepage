@@ -15,7 +15,7 @@ every table you define in a Sapporta project immediately gets two things:
 
 - **Table APIs.** List, get, create, update, delete, lookup, count, and CSV
   export for every registered table. These APIs are secured with row-level
-  security and role-based permissions.
+  security and role-based permissions defined with CASL.
 - **A table grid.** An editable grid for your tables, with filtering, sorting,
   searching, exporting, nesting, and keyboard navigation. The grid uses the
   table APIs and therefore inherits their authorization and permissions.

@@ -22,6 +22,10 @@ type AppServer = Hono<SapportaEnv>;
 export interface StaticSiteOptions {
   docsDistDir: string;
   frontendDistDir: string;
+  astroPageRoutes: ReadonlyArray<{
+    path: string;
+    file: string;
+  }>;
 }
 
 const markdownContentType = "text/markdown; charset=utf-8";
@@ -37,7 +41,7 @@ const noCache = cacheControl("no-cache");
 const immutableCache = cacheControl("public, max-age=31536000, immutable");
 
 export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
-  const { docsDistDir, frontendDistDir } = options;
+  const { astroPageRoutes, docsDistDir, frontendDistDir } = options;
   const docsDist = relative(process.cwd(), docsDistDir) || ".";
   const frontendDist = relative(process.cwd(), frontendDistDir) || ".";
 
@@ -128,11 +132,12 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   serveStaticGet(app, "/sitemap-0.xml", docsDist);
   serveStaticGet(app, "/llms.txt", docsDist);
   serveStaticGet(app, "/.well-known/llms.txt", docsDist);
-  serveStaticGet(app, "/", docsDist, { file: "index.html", cache: noCache });
-  serveStaticGet(app, "/index.html", docsDist, {
-    file: "index.html",
-    cache: noCache,
-  });
+  for (const route of astroPageRoutes) {
+    serveStaticGet(app, route.path, docsDist, {
+      file: route.file,
+      cache: noCache,
+    });
+  }
   serveStaticGet(app, "/docs", docsDist, {
     file: "docs/index.html",
     cache: noCache,
@@ -152,8 +157,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   // before the React fallback so a typo in a documentation or asset URL cannot
   // return the unrelated application shell with a misleading 200 response.
   for (const pattern of [
-    "/",
-    "/index.html",
+    ...astroPageRoutes.map((route) => route.path),
     "/favicon.svg",
     "/LICENSE.txt",
     "/sitemap-index.xml",
