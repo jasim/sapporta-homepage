@@ -4,16 +4,9 @@ description:
   "Make report values explorable without placing navigation in the wire dataset."
 ---
 
-Report values become useful navigation when a user can open the record or
-filtered rows behind them. This page adds links to the project-progress screen
-without adding hrefs to its API response. You will learn how hidden IDs, cell
-link resolvers, ancestors, and report input create record, table, and
-cross-report destinations. The same approach works for ledgers, subtotals,
-exception queues, and dashboard summaries.
-
-```text
-Add drill-through links to this Sapporta report. Keep stable IDs hidden in the GridDataset, resolve hrefs in the React screen, preserve current report filters where needed, guard optional IDs, and confirm every destination enforces its own authorization.
-```
+Report values become navigation when a resolver can turn stable data identity
+into a route. The dataset carries IDs and values. The React screen carries URL
+knowledge.
 
 ## Keep IDs in data and routes in the screen
 
@@ -41,8 +34,8 @@ export const projectProgressLinks = {
         return [
           {
             label: "Open project",
-            href: `/tables/projects/${projectId}`,
-            kind: "record",
+            href: `/tables/projects?filter[id][eq]=${projectId}`,
+            kind: "drill-down",
             icon: "drill-up",
           },
         ];
@@ -81,6 +74,9 @@ context also contains the current value, column, ancestors, dataset, and
 optional report input. A hierarchical report can therefore link a child cell
 using its own hidden ID plus an ancestor account or project ID.
 
+A resolver may return a list, but the current renderer uses only the first
+entry. Put one canonical action first rather than treating a cell as a menu.
+
 Pass the resolvers and current query to the renderer:
 
 ```tsx
@@ -118,9 +114,10 @@ report and generated-table navigation should keep the normal app-shell behavior.
 ## Exercise the links
 
 Open `/reports/project-progress` and use each linked value. For the Website
-Relaunch row, the project name should open `/tables/projects/1`. Its open count
-should open a task grid whose strict filters include both `project_id` and
-`status`.
+Relaunch row, the project name should open `/tables/projects` filtered by its
+primary key. Its open count should open a task grid whose strict filters include
+both `project_id` and `status`. A dedicated record page requires an app-owned
+route; Sapporta does not generate `/tables/:table/:id`.
 
 The filter URL follows generated query syntax:
 
@@ -132,20 +129,10 @@ Compare the number of returned rows with the linked count. Repeat for completed
 tasks and for a synthetic or identifier-less row. Resolvers return an empty link
 list when no safe destination exists.
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/reports/project-progress-drill-through.png
-Setup: Open the canonical project-progress report, click the Website Relaunch open-task count, and let the generated Tasks table load with project and status filters.
-Frame: Capture the report in one browser tab and the filtered generated Tasks table in another, or use a side-by-side composite. Keep the report count, destination URL, filter chips, and returned rows visible.
-Visible proof: The task table's row count matches the clicked report value and the URL contains strict project_id and status filters.
-Alt text: A project-progress count links to the generated Tasks table filtered to the same project and open status, with matching row counts.
--->
 
 Links are navigation, not authorization. Hidden IDs remain visible to anyone who
 can read the report response, URL filters are user-controlled, and every target
-route must apply its own ability and row-security checks. The report now
-supports exploration without coupling backend datasets to React Router or
-generated table URLs.
+route applies its own ability and row-security checks.
 
 ## Related reference
 

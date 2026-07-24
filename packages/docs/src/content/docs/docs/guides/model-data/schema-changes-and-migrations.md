@@ -1,18 +1,12 @@
 ---
 title: "Schema changes and migrations"
 description:
-  "Change schema code and carry the reviewed change into a running database."
+  "Generate, review, apply, and preserve migration history for a schema change."
 ---
 
-This page follows a schema edit from TypeScript into a running database. You
-will generate a named SQL migration, review it, apply it, and confirm that
-schema code and database state agree. This loop supports additive columns and
-tables, index changes, backfills, renames, and deliberately reviewed destructive
-changes.
-
-```text
-Add immutable task completion events to my Sapporta app. Generate a named migration, stop so I can review the SQL, then apply it and run the schema check.
-```
+A schema edit is intent. A migration is the reviewed procedure that carries
+that intent into an existing database. Sapporta keeps those two artifacts
+separate.
 
 ## Make the schema change first
 
@@ -41,7 +35,24 @@ export const taskEventsTable = sqliteTable(
     ),
   ],
 );
+
+export const taskEvents = sapportaTable({
+  drizzle: taskEventsTable,
+  meta: {
+    label: "Task events",
+    rowScope: "workspaceGlobal",
+    rowLabelColumns: ["event_type"],
+    immutable: true,
+  },
+});
+
+export default taskEvents;
 ```
+
+`immutable: true` keeps generated CRUD append-only: callers may create events
+but cannot update or delete them. Exporting the wrapped table registers its
+metadata; exporting only the raw Drizzle table would create storage with no
+Sapporta surface.
 
 Generate a migration with a name that describes the release change:
 
@@ -75,31 +86,25 @@ the SQL touches any database.
 
 ## Apply and check
 
-After review, apply the migration once and compare the database with the current
-schema:
+After review, check the migration history and apply the migration:
 
 ```bash
-pnpm --filter ./packages/api db:migrate
 pnpm --filter ./packages/api db:check
+pnpm --filter ./packages/api db:migrate
 ```
 
-Sapporta checks migration readiness at startup and does not apply migrations
-automatically. Production releases must run the migration step before starting
-application code that expects the new shape.
+`db:check` runs Drizzle Kit's migration-history check. It does not compare the
+live database with the TypeScript schema. At startup, Sapporta separately
+rejects pending migrations, applied files missing from disk, and applied files
+whose contents changed. Never edit an applied migration; add a new migration.
 
-<!--
-Screenshot brief
-Suggested asset: add-task-events-migration-review.png
-Setup: Generate the add_task_events migration but pause before db:migrate. Open the generated SQL beside a terminal showing the generation command.
-Frame: Capture the migration filename, CREATE TABLE statement, foreign key, and CREATE INDEX statement. Exclude unrelated migrations.
-Visible proof: The named migration adds only task_events and its index, and the terminal shows that it has been generated but not silently applied.
-Alt text: Generated add_task_events SQL under review before the migration is applied.
--->
+Sapporta does not apply migrations automatically during ordinary startup.
+Production releases run the committed migration before code that expects the
+new shape.
 
-The application schema and database now move through an explicit, reviewable
-artifact. Committing schema code and generated SQL together preserves the reason
-and mechanism for the change. Next, inspect the generated table APIs and record
-surfaces produced by the migrated definition.
+
+Commit the schema edit and generated SQL together. The schema records the target
+state; the migration records how deployed data reaches it.
 
 ## Related reference
 

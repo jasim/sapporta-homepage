@@ -4,23 +4,17 @@ description:
   "Choose a row scope and keep trusted ownership values under server control."
 ---
 
-Row scope determines which records a request may see and which ownership values
-the server writes. This page compares Sapporta's workspace scopes and applies
-`workspaceGlobal` to the task app. You will learn how table metadata activates
-row security, why scope columns stay out of client payloads, and how invisible
-records behave. These concepts support shared workspace data, personal queues,
-private drafts, and other multi-tenant records.
-
-```text
-Review this Sapporta app's tables and choose the narrowest row scope for each one. Keep workspace and user ownership fields server-controlled, use generated APIs to exercise the result, and include a cross-workspace check.
-```
+Row scope answers a product question: does this row belong to the application,
+the workspace, or one person inside the workspace? The answer determines both
+read predicates and server-authored ownership values.
 
 ## Choose the scope from the product rule
 
 `workspaceGlobal` makes a row visible to authorized members of its workspace.
 `workspaceUserScoped` narrows that boundary to the active workspace and current
-user. Sapporta also has a system-global scope for intentionally application-wide
-data, but normal product records usually belong to one of the workspace scopes.
+user. It is the default when `rowScope` is omitted. `systemGlobal` is for
+deliberately application-wide rows; for an authorized request, its ownership
+predicate is unrestricted SQL `TRUE`.
 
 Projects and tasks are shared work, so both use `workspaceGlobal` and contain a
 `workspace_id` column:
@@ -101,24 +95,14 @@ Content-Type: application/json
 The request is rejected. Scope values are server-authored data, not filters or
 form fields.
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/security/workspace-row-visibility.png
-Setup: Seed the canonical tasks in Workspace A, create one member token for Workspace A and one for Workspace B, then run the same JSON task-list command with each token.
-Frame: Use a split terminal view with the command and compact JSON result for each workspace. Replace token values with descriptive shell variable names.
-Visible proof: Workspace A returns the seeded task rows and Workspace B returns an empty data array; neither request sends a workspace field.
-Alt text: The same task-list command returns Workspace A rows and no Workspace B rows because the bearer token selects the row boundary.
--->
 
 Missing and invisible rows intentionally share not-found behavior for get,
 update, and delete. That prevents a caller from using response differences to
 discover another workspace's primary keys.
 
-The task app now expresses sharing rules in table metadata. `workspaceGlobal`
-supports collaboration inside one workspace, while `workspaceUserScoped`
-supports records private to one member of that workspace. Generated routes and
-custom row helpers derive ownership from request authority. The next useful step
-is to apply the same predicates inside app-owned transactions and reports.
+Generated routes and custom row helpers derive ownership from request authority.
+Scope metadata states the sharing rule; it does not delegate that rule to a
+form or filter.
 
 ## Related reference
 

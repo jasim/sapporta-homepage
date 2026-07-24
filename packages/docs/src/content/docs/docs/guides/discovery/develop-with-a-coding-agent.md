@@ -5,21 +5,9 @@ description:
   artifacts."
 ---
 
-Sapporta projects give coding agents predictable places for schemas, migrations,
-contracts, route handlers, row access, typed clients, and React screens. This
-guide shows how to describe one outcome and review the complete vertical slice
-the agent changes.
-
-You will learn to write a short prompt with useful constraints, choose checks
-that prove live behavior, and review generated artifacts that an agent summary
-can miss. This works for tables, custom workflows, reports, and frontend pages.
-
-```text
-Add <one concrete outcome> to this Sapporta app. Read the project instructions
-and use the Sapporta skill. Preserve server-owned scope, inspect existing
-patterns first, run the focused checks, and report the files and behavior that
-changed.
-```
+Sapporta projects give a coding agent stable ownership boundaries: schema,
+migration, contract, route, authorization, client, and screen. A useful request
+names the observable outcome and the invariant that must survive the change.
 
 ## Bound the outcome, not every edit
 
@@ -66,27 +54,16 @@ For schema work, generate a named migration and review its SQL before applying
 it. For a transaction, test both the success and a declared conflict, and prove
 that a failed second write does not leave the first write committed.
 
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/discovery/coding-agent-review.png
-Setup: Ask a coding agent to implement the complete-task workflow in the tutorial task app and run its focused validation.
-Frame: Capture the final agent summary beside the source-control diff or changed-files panel.
-Visible proof: The summary names the shared contract, route handler, explicit mount, tests, and endpoint-discovery result; no secrets or token values appear.
-Alt text: Coding-agent result for a Sapporta complete-task workflow with the changed vertical-slice files visible.
--->
 
 An agent can make a correct local edit that still fails at runtime because a
 route was never mounted or a migration was never applied. Live discovery and
-database readiness checks close that gap. Security also needs a negative case:
-an invisible row and a missing row should not leak different information.
+the startup migration guard close that gap. Security also needs a negative
+case: an invisible row and a missing row should not leak different information.
 
-The prompt remains small because the project and Sapporta skill carry the
-workflow. The review remains concrete because it follows source, generated
-artifacts, and live behavior. From here, use the specialized guide for the
-feature being built, such as
-[tables](/docs/guides/model-data/tables-columns-and-schema-metadata/),
-[custom endpoints](/docs/guides/app-owned-features/custom-api-endpoints/), or
-[reports](/docs/guides/reports/route-based-reports/).
+Project instructions carry local workflow. When the Sapporta skill is
+installed, it adds framework-specific checks and conventions. Review still
+follows source, generated artifacts, and live behavior rather than the agent's
+summary.
 
 ## Related reference
 

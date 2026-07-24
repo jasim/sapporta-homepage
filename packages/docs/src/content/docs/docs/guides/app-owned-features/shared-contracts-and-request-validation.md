@@ -5,19 +5,9 @@ description:
   clients."
 ---
 
-A shared contract describes one HTTP operation as data: its method, path,
-inputs, responses, and documentation metadata. Sapporta uses that same value to
-validate requests, type the route handler, generate OpenAPI, and create the
-browser client.
-
-This page shows where contracts belong, how request validation behaves, and how
-to model success and expected failures. These concepts support command
-endpoints, report parameters, imports, webhooks, and any other app-owned API
-that needs a stable wire format.
-
-```text
-Add a shared contract for completing a task. Coerce the numeric path ID, accept an empty body, declare 200, 404, and 409 responses, export it from the shared package, and build the workspace.
-```
+A shared contract describes one HTTP operation as data: method, path, input,
+responses, and documentation. The server uses it to parse requests and type the
+handler. OpenAPI and the browser client use the same value.
 
 ## Keep the wire boundary in the shared package
 
@@ -56,6 +46,7 @@ export const completeTaskContract = c.router({
         event_id: z.number().int(),
         status: z.literal("completed"),
       }),
+      400: errorSchema,
       404: errorSchema,
       409: errorSchema,
     },
@@ -112,19 +103,15 @@ registration, the invalid path is rejected before the handler runs:
 }
 ```
 
-<!--
-Screenshot brief
-Suggested asset: shared-contract-openapi.png
-Setup: Implement and mount the complete-task endpoint, start `pnpm dev`, sign in, and open the OpenAPI viewer or `/api/openapi.json`. Search for `completeTask`.
-Frame: Show the POST `/api/tasks/{id}/complete` operation expanded, including the numeric `id` parameter and the 200, 404, and 409 responses. Exclude unrelated operations.
-Visible proof: The mounted URL contains `/api`, the contract path parameter is numeric, and every expected response is documented.
-Alt text: OpenAPI entry for the complete-task endpoint with its path parameter and declared responses.
--->
 
-Request schemas define the runtime input boundary. Response schemas provide
-TypeScript and OpenAPI shapes; the route handler remains responsible for
-returning a body that matches the declared response. Declare every expected
-non-2xx status so the route and client can preserve its stable payload.
+Request schemas define the runtime input boundary. Malformed JSON or a failed
+path, query, header, or body parse returns an adapter-generated `400` before the
+handler runs, so declare that response when it belongs in OpenAPI.
+
+Response schemas provide server types and OpenAPI shapes; the server adapter
+does not parse a handler's response body. The generated browser client validates
+responses by default. A malformed server response can therefore fail at the
+client boundary even though the handler returned it.
 
 ## Check the shared boundary
 
@@ -140,13 +127,8 @@ A successful endpoint inspection should report the method, mounted path, request
 body, and declared responses. If it reports no route, check the route mount
 before changing the contract.
 
-The task app now has one browser-safe definition for validation, handler
-inference, OpenAPI, and client inference. The important separation is that the
-contract owns wire data while the API owns authorization and persistence. From
-here, register the contract in a custom endpoint, then import the same value
-into a typed browser client. Query schemas, multipart bodies, and non-JSON
-responses use the same boundary and add only the fields their transport
-requires.
+The contract owns wire data. The API owns authorization, row visibility,
+persistence, and effects.
 
 ## Related reference
 

@@ -5,20 +5,9 @@ description:
   or SQL for one task."
 ---
 
-One Sapporta application can be used through generated screens, HTTP routes,
-typed clients, CLI commands, and privileged SQL. This guide explains what each
-interface preserves and how to choose the smallest one that expresses the
-operation.
-
-You will learn why ordinary record edits, domain transactions, and aggregate
-questions belong on different surfaces. The same decision applies when you add a
-browser workflow, an integration, an operator command, or an agent task.
-
-```text
-I need to add <outcome> to this Sapporta app. Inspect its existing screens,
-tables, endpoints, and reports, then recommend the highest-level interface that
-fits. Explain what validation and row scope that choice preserves.
-```
+Choose the application operation before choosing its caller. A generated table
+route, domain endpoint, report, and SQL query preserve different rules. The
+browser, typed client, CLI, and agent are callers of those operations.
 
 ## Start with the operation
 
@@ -31,7 +20,7 @@ model. SQL operates below those application boundaries.
 | -------------------------- | ------------------------------------ | -------------------------------------------------- |
 | Interactive record work    | Generated record screen              | Edit a task priority                               |
 | Programmatic CRUD          | Table API or `rows` command          | Create or update one task                          |
-| Multi-table transition     | App-owned endpoint                   | Complete a task and insert history                 |
+| Named domain transition    | App-owned endpoint                   | Complete a task and insert history                 |
 | Reusable aggregate         | Report route and screen              | Show progress by project                           |
 | Repository change          | Coding agent with the Sapporta skill | Add the completion workflow                        |
 | Exceptional administration | Privileged SQL                       | Inspect a value unavailable through an app surface |
@@ -69,26 +58,15 @@ pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
 pnpm exec sapporta api get /api/reports/project-progress
 ```
 
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/discovery/choose-an-application-interface.png
-Setup: Seed two projects and several tasks, complete one task through the app endpoint, and open the project-progress report.
-Frame: Show the report beside the generated Tasks table with the completed task visible in both surfaces.
-Visible proof: The report total and generated row status agree, while each surface presents the operation differently.
-Alt text: Project progress report beside the generated Tasks table after completing one task.
--->
 
 Use `sql query` only when no generated route, domain endpoint, or report answers
 the question. SQL access is privileged and bypasses the generated row helpers,
 so it is an administrative interface rather than a substitute for application
 behavior.
 
-The important result is not the command syntax. The task now runs through the
-surface that owns its rules: CRUD through generated tables, transitions through
-domain endpoints, and summaries through reports. From here, continue with the
-[CLI guide](/docs/guides/discovery/use-the-sapporta-cli/) for operation or
-[custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
-when the application needs a new business action.
+Use the surface that owns the rule: CRUD through generated tables, transitions
+through domain endpoints, summaries through reports, and unrestricted SQL only
+for deliberate administration.
 
 ## Related reference
 

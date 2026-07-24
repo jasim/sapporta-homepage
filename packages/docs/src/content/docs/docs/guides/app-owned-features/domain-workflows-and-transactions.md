@@ -4,19 +4,9 @@ description:
   "Keep business invariants testable and commit multi-table changes atomically."
 ---
 
-A domain workflow owns a business transition that spans more than one database
-statement. The HTTP handler supplies the authenticated context and input; the
-workflow reads current state, enforces invariants, and commits the complete
-state change.
-
-This page builds a synchronous SQLite transaction for task completion and a
-reusable parent-detail pattern. These techniques support approvals plus audit
-entries, orders plus line items, stock movements, ledger postings, and any
-operation where a partial write would create an invalid application state.
-
-```text
-Move task completion into a domain module. In one short synchronous transaction, scope the task read, reject missing or completed tasks, update its status, and insert a server-authored completion event. Add focused tests for success, conflict, row visibility, and rollback.
-```
+A domain workflow gives one name to a state transition. It reads current state,
+enforces invariants, and commits every required write or none of them. HTTP is
+one caller of that transition, not part of its meaning.
 
 ## Keep the HTTP adapter outside the workflow
 
@@ -42,16 +32,10 @@ type TaskWorkflowContext = {
 };
 
 export abstract class TaskCompletionError extends Error {
-  abstract readonly status: 404 | 409;
   abstract readonly code: string;
-
-  toResponseBody() {
-    return { error: this.message, code: this.code };
-  }
 }
 
 export class TaskNotFoundError extends TaskCompletionError {
-  readonly status = 404 as const;
   readonly code = "TASK_NOT_FOUND";
 
   constructor() {
@@ -61,7 +45,6 @@ export class TaskNotFoundError extends TaskCompletionError {
 }
 
 export class TaskAlreadyCompletedError extends TaskCompletionError {
-  readonly status = 409 as const;
   readonly code = "TASK_ALREADY_COMPLETED";
 
   constructor() {
@@ -218,22 +201,11 @@ pnpm exec sapporta rows list task_events --where '{"task_id":{"eq":1}}'
 The task response should contain `"status": "completed"`, and the event list
 should contain exactly one `"event_type": "completed"` row for that task.
 
-<!--
-Screenshot brief
-Suggested asset: task-completion-atomic-result.png
-Setup: Seed one open task, complete it once through the endpoint, then open the generated Tasks grid and expand that task's Task history child relationship.
-Frame: Include the completed status on the parent row and the single completion event in the expanded Task history rows. Keep the task identity visible and exclude unrelated navigation.
-Visible proof: The parent status and immutable history event are visible together after one workflow call.
-Alt text: Completed task record with one completed event in its Task history child table.
--->
 
-The workflow now protects the invariant that completion status and completion
-history change together. Row visibility is enforced in SQL, trusted fields are
-authored by the server, and a failed event insert rolls back the status update.
-The same structure scales to more tables, but each additional table needs its
-own guard and focused failure test. The next step is to keep the route adapter
-thin, map the typed error family once at that edge, and expose the successful
-operation through the shared client.
+Each additional table needs its own guard and failure test. The HTTP adapter
+maps `TaskNotFoundError` and `TaskAlreadyCompletedError` to declared responses;
+the workflow remains usable from a job or test without importing HTTP status
+codes.
 
 ## Related reference
 

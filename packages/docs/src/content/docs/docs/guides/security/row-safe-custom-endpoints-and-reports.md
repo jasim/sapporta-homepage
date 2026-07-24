@@ -3,16 +3,9 @@ title: "Row-safe custom endpoints and reports"
 description: "Apply abilities and row visibility to app-owned reads and writes."
 ---
 
-Generated table routes apply row visibility for you. App-owned endpoints and
-reports must make that boundary explicit. This page shows the two supported
-levels: `scopedRows()` for ordinary table operations and
-`auth.rowSecurity.forTable()` for custom Drizzle work. You will learn how to
-scope reads, writes, joins, aggregates, and transactions. The result is custom
-behavior that exposes the same records as Sapporta's generated surfaces.
-
-```text
-Make this custom Sapporta endpoint and report row-safe. Check the narrow feature ability at the route edge, create a scoped helper or guard for every table, apply scope before joins or totals, reject client scope fields, and add cross-workspace tests.
-```
+Generated table routes apply row visibility for you. App-owned code chooses
+between two levels: `scopedRows()` for ordinary table operations and
+`auth.rowSecurity.forTable()` for custom Drizzle shapes.
 
 ## Use `scopedRows()` for ordinary table work
 
@@ -119,7 +112,7 @@ const visibleTasks = await db
 return projectProgressDataset({
   projects: visibleProjects,
   tasks: visibleTasks,
-  today: Temporal.PlainDate.from("2026-07-10"),
+  today: Temporal.Now.plainDateISO(),
 });
 ```
 
@@ -140,20 +133,9 @@ Exercise success, repeated completion, and cross-workspace task IDs. A
 cross-workspace ID returns the same not-found response as an absent ID. For the
 report, compare its totals with generated task queries under the same token.
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/security/scoped-endpoint-and-report-output.png
-Setup: Seed the canonical five-task dataset in Workspace A and one additional completed task in Workspace B. Run the complete-task endpoint and project-progress report with a Workspace A token.
-Frame: Show two terminal panes: the endpoint success body and the report JSON footer or visible report grid. Keep the commands and API path visible; hide the raw token.
-Visible proof: The completion creates one event, and the report total remains five tasks before that action or reflects only Workspace A after it. The Workspace B task never appears.
-Alt text: A scoped task-completion response and project-progress result contain only records from the active workspace.
--->
-
-The custom workflow now preserves generated-route semantics across multiple
-tables, and the report scopes data before it computes anything. The non-obvious
-rule is that a primary key is never a security boundary: updates and deletes
-need both the key and `ownedRows(...)`. Use `scopedRows()` until the workflow
-requires a custom query shape, then move to explicit per-table guards.
+A primary key is a filter, not an authority boundary. Updates and deletes need
+both the key and `ownedRows(...)`. Use `scopedRows()` until the workflow
+requires a custom query shape, then create an explicit guard for every table.
 
 ## Related reference
 

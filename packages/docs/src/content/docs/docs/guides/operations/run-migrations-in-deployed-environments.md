@@ -10,15 +10,8 @@ stages. Development generates and reviews SQL. Deployment applies those
 committed artifacts to durable storage before compatible application code serves
 requests.
 
-This guide explains the ordering, backup boundary, readiness check, and recovery
-decision. You can use it for a one-process release, a container startup job, or
-a deployment with several application replicas.
-
-```text
-Plan the release for this Sapporta schema change. Confirm the migration SQL is
-committed, name the durable database and backup checkpoint, apply migrations
-once before app startup, and stop the release if readiness fails.
-```
+The release gives one process ownership of the exact durable SQLite file during
+migration. Other writers remain stopped until the new application is ready.
 
 ## Prepare the artifact in development
 
@@ -38,44 +31,31 @@ same artifact reviewed with the application change.
 
 For the task-events release, use this sequence:
 
-1. Stop new application replicas from receiving traffic.
+1. Quiesce every process that can write the database.
 2. Create and identify a restorable backup of the durable SQLite database.
 3. Run one migration job against that database.
-4. Run the schema readiness check.
-5. Start the new application code and run smoke tests.
+4. Start the new application code; its startup guard checks migration
+   readiness.
+5. Run smoke tests and resume traffic.
 
 ```bash
 pnpm --filter ./packages/api db:migrate
-pnpm --filter ./packages/api db:check
 pnpm start
 ```
 
 The generated container follows the same ordering: its entrypoint runs the API
 package's local Drizzle migration command and starts `dist/boot.js` only after
-migration succeeds. With several replicas, keep migration execution in one
-release job rather than every request handler or concurrently starting replica.
+migration succeeds.
 
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/operations/deployed-migration.png
-Setup: Use a staging copy of the tutorial database before and after applying the committed add_task_events migration.
-Frame: Capture the release log showing the backup identifier, successful migration, db:check result, and server-ready line in chronological order.
-Visible proof: One migration job completes before the new API process announces readiness.
-Alt text: Sapporta deployment log showing backup, migration, schema check, and application startup in release order.
--->
 
 If migration or readiness fails, do not start the new code. Restore or roll
 forward according to the reviewed SQL and backup plan. Restarting the same
 release does not make a destructive migration reversible, and rolling back
 JavaScript alone does not restore removed columns or transformed data.
 
-The task app can now introduce `task_events` without serving code against the
-old schema. The key value is an explicit checkpoint between durable data and
-application startup. Continue with
-[schema changes](/docs/guides/model-data/schema-changes-and-migrations/) for
-development authoring or
-[production deployment](/docs/guides/operations/production-builds-and-deployment/)
-for the surrounding release.
+`db:check` may still be used during development to check Drizzle migration
+history. It is not the live database readiness check. The startup guard is the
+authority for pending, missing, or modified migration artifacts.
 
 ## Related reference
 

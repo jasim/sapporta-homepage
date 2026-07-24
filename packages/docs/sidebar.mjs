@@ -123,13 +123,13 @@ export default [
         "label": "Build app-owned features",
         "items": [
           {
-            "slug": "docs/guides/app-owned-features/custom-api-endpoints"
-          },
-          {
             "slug": "docs/guides/app-owned-features/shared-contracts-and-request-validation"
           },
           {
             "slug": "docs/guides/app-owned-features/domain-workflows-and-transactions"
+          },
+          {
+            "slug": "docs/guides/app-owned-features/custom-api-endpoints"
           },
           {
             "slug": "docs/guides/app-owned-features/typed-api-clients"

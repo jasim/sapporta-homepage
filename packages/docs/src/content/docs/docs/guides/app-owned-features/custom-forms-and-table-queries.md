@@ -5,10 +5,9 @@ description:
   generated clients, validation issues, and Grid refresh boundaries."
 ---
 
-Generated projects provide one TanStack Query client and the dependencies for
-TanStack Form. Sapporta provides metadata-derived form fields, generated table
-clients, cache-key builders, query options, and submission-error normalization.
-An app-owned screen composes these pieces around its route and workflow.
+A custom form composes four existing boundaries: live `TableSchema` metadata,
+TanStack Query server state, TanStack Form draft state, and the server write
+path. It should not create a second schema or a second query cache.
 
 ## Keep state ownership explicit
 
@@ -35,6 +34,7 @@ component can then call its query hook unconditionally.
 
 ```tsx
 import { useQuery } from "@tanstack/react-query";
+import { useSchemaStore } from "@sapporta/frontend";
 import { tableRecordQueryOptions } from "@sapporta/frontend/table/query";
 import type { Row, TableSchema } from "@sapporta/shared/contracts";
 
@@ -81,10 +81,21 @@ function EditTask({
   if (task.isError) return <p role="alert">The task could not be loaded.</p>;
   return <TaskEditor key={task.data.id} task={task.data} table={table} />;
 }
+
+export function EditTaskRoute({ taskId }: { taskId: number }) {
+  const table = useSchemaStore((state) =>
+    state.tables.find((candidate) => candidate.name === "tasks"),
+  );
+
+  if (!table) return <p role="alert">The tasks schema is unavailable.</p>;
+  return <EditTask taskId={taskId} table={table} />;
+}
 ```
 
 `decodeRow` establishes the browser row type at the query boundary. TanStack
 Query passes its cancellation signal through Sapporta's generated table client.
+`useSchemaStore()` reads the same metadata catalog loaded by the application
+shell; the screen does not hard-code a second `TableSchema`.
 The `key` creates a new editor when the route selects a different record.
 Background query results do not automatically replace dirty form values.
 
@@ -184,44 +195,16 @@ transaction.
 
 ## Map local and remote issues
 
-```ts
-try {
-  await mutation();
-} catch (error) {
-  const issues = fieldIssuesForSubmissionError(error);
-  const fields = Object.fromEntries(
-    issues
-      .filter((issue) => issue.field !== "form")
-      .map((issue) => [issue.field, issue.message]),
-  );
-  const problem = error instanceof ApiError
-    ? apiProblemFromBody(error.body)
-    : undefined;
-
-  formApi.setErrorMap({
-    onSubmit: {
-      form:
-        issues.find((issue) => issue.field === "form")?.message ??
-        problem?.summary ??
-        (error instanceof FormSubmissionError
-          ? "Review the highlighted fields."
-          : "The record could not be saved."),
-      fields,
-    },
-  });
-  throw error;
-}
-```
-
 `fieldIssuesForSubmissionError()` handles local `FormSubmissionError` values
 and recognized Sapporta API validation details. Nested paths remain names such
 as `lines.0.quantity`. Application code maps server fields when its form uses a
 different field vocabulary.
 
-After rendering a submit failure, prevent the rejected promise from becoming
-an unhandled browser rejection. Clear stale submit errors when the user starts
-a new attempt. Keep a form-level fallback for transport failures and server
-details that do not map to one field.
+Inside `onSubmit`, convert those issues into TanStack Form's
+`{ form, fields }` error map. Keep a form-level fallback for transport failures
+and details that do not name one field. Clear stale submit errors at the next
+attempt, and catch the promise returned by `form.handleSubmit()` after the
+errors have been rendered.
 
 ## Apply both cache effects when necessary
 

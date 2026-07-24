@@ -4,26 +4,9 @@ description:
   "Add a protected workflow screen inside the generated application shell."
 ---
 
-A custom screen combines generated records and app-owned actions into one domain
-workflow. The generated table routes remain the standard create, edit, filter,
-and export surfaces; the custom route adds only the interaction the application
-needs.
-
-Generated projects also provide TanStack Query and public query options for
-generated table records and pages. Use
-[Custom forms and cached table reads](/docs/guides/app-owned-features/custom-forms-and-table-queries/)
-when the screen needs reusable cache keys, cancellation, domain-row decoding,
-or TanStack Form composition. This page uses the same query APIs for its table
-reads and refresh transitions.
-
-This page builds a protected project-progress screen, loads row-scoped table
-data, invokes the typed completion endpoint, and connects the screen to
-application navigation. The same structure supports dashboards, review queues,
-import wizards, master-detail workspaces, and other multi-record workflows.
-
-```text
-Add a protected project-progress screen. Load visible projects and tasks through Sapporta's table client, show explicit loading, empty, ready, pending, success, and error states, complete tasks through the typed client, and link back to generated tables.
-```
+A custom screen composes generated reads and app-owned actions around one human
+workflow. It does not replace the generated tables that still own ordinary
+record work.
 
 ## Build the workflow screen
 
@@ -181,7 +164,7 @@ export function ProjectProgress() {
       <div className="p-6">
         <h1 className="text-xl font-semibold">Project progress</h1>
         <p className="mt-2 text-sm text-sap-muted">No projects are visible.</p>
-        <Link className="mt-4 inline-block underline" to="/tables/projects">
+        <Link className="mt-4 inline-block underline" to="/tables/projects/new">
           Create a project
         </Link>
       </div>
@@ -236,7 +219,7 @@ export function ProjectProgress() {
                   {task.status !== "completed" && (
                     <Button
                       size="sm"
-                      disabled={completeTask.isPending}
+                      disabled={pendingTaskId === task.id}
                       onClick={() => completeTask.mutate(task)}
                     >
                       {pendingTaskId === task.id ? "Completing…" : "Complete"}
@@ -253,10 +236,6 @@ export function ProjectProgress() {
 }
 ```
 
-The screen intentionally loads at most 100 records for an introductory
-dashboard. A larger dataset should move aggregation and pagination into a report
-or custom endpoint instead of downloading every row.
-
 `tableRecordsPageQueryOptions()` supplies stable table cache keys, passes query
 cancellation to the generated HTTP request, and decodes each row at the browser
 boundary. `apiProblemFromBody()` recognizes Sapporta error bodies for the typed
@@ -264,10 +243,9 @@ action. The component does not maintain a second loader or error-envelope
 parser.
 
 The completion transaction changes both `tasks` and `task_events`. Its success
-handler invalidates both table cache prefixes before the mutation becomes
-successful. It also reloads mounted TGrid sessions for both tables. TanStack
-Query and TGrid are separate server-state consumers, so a workflow that serves
-both surfaces performs both effects.
+handler invalidates both TanStack Query table prefixes. `reloadTGridRows()`
+refreshes an affected table only when a mounted TGrid uses that table as its
+root. TanStack Query and TGrid are separate server-state consumers.
 
 Client filters, hidden fields, and route parameters are product constraints, not
 authorization. Do not add `workspace_id` or `scoped_to_user_id` to this
@@ -332,33 +310,10 @@ Use the canonical task dataset. Open `/projects/progress`, complete
 project count should increase, the task status should read `completed`, and the
 generated Task history should contain the completion event.
 
-<!--
-Screenshot brief
-Suggested asset: project-progress-screen.png
-Setup: Seed the canonical two projects and five tasks, sign in as a workspace owner, complete one open task from `/projects/progress`, and wait for the refresh and success notice.
-Frame: Capture the application shell, selected Project progress navigation item, both project cards, completion totals, task statuses, and the success notice. Use a desktop viewport wide enough to avoid truncating task names.
-Visible proof: The custom route is integrated into protected navigation, displays generated records, exposes the domain action, and refreshes the aggregate after success.
-Alt text: Protected project progress screen with task lists, completion totals, and a successful completion notice.
--->
 
-Capture the empty state separately only if that state needs documentation:
-
-<!--
-Screenshot brief
-Suggested asset: project-progress-empty-state.png
-Setup: Use a fresh authenticated workspace with no project rows and open `/projects/progress`.
-Frame: Show the page heading, `No projects are visible` message, and Create a project link inside the app shell.
-Visible proof: The empty state explains why no cards render and provides a route back to the generated Projects surface.
-Alt text: Empty project progress screen with a link to create the first project.
--->
-
-The application now has one protected workflow screen without replacing the
-generated record system. Table reads remain row-scoped, completion remains a
-server transaction, and ordinary editing stays on generated routes. The less
-obvious design boundary is scale: client-side aggregation is suitable for a
-bounded tutorial dataset, while larger workloads belong in report routes. From
-here, add report-backed summaries, role-aware action visibility, or a Grid-based
-worklist when selection and bulk commands become central to the workflow.
+The screen downloads at most 100 records and aggregates them in the browser.
+That bound is part of the example's meaning. Larger or reusable summaries belong
+in a scoped report route.
 
 ## Related reference
 

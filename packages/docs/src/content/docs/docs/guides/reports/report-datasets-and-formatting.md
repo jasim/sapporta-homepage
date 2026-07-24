@@ -5,16 +5,9 @@ description:
   semantics."
 ---
 
-`GridDataset` is the stable wire shape consumed by Sapporta's report renderer.
-This page maps the task app's already-scoped rows into a flat project-progress
-dataset. You will learn how levels, columns, nodes, hidden values, formatting,
-and footers work, and how to test the mapper without a database. The same
-primitives can describe flat summaries, nested ledgers, subtotals, and
-expandable hierarchies.
-
-```text
-Create a pure GridDataset mapper for this report. Use stable row and column identities, keep link IDs visually hidden, calculate rollups and footers deterministically, use Temporal for date comparisons, and parse the result with gridDatasetSchema in a focused test.
-```
+`GridDataset` is the wire shape consumed by Sapporta's report renderer. It
+describes level topology, columns, nodes, rollups, and footers without importing
+React or a database handle.
 
 ## Map scoped domain rows
 
@@ -159,7 +152,8 @@ export function projectProgressDataset(
 ```
 
 Percentage values are ratios, so `0.4` renders as 40%. `visuallyHidden` keeps
-`project_id` in the node for link resolvers without displaying it.
+`project_id` in the node for link resolvers without displaying it; hidden data
+is still present in the response.
 `zeroDisplay`, `colorRule`, width hints, and text display settings describe
 presentation without converting source numbers into formatted strings.
 
@@ -192,26 +186,20 @@ it("maps the canonical project progress totals", () => {
 });
 ```
 
-Run the focused mapper test and then inspect the route output:
+The schema check validates the wire shape. It does not prove that level names,
+child placement, or row identities form a coherent hierarchy; focused
+assertions and renderer tests cover those semantics.
+
+Run the mapper test and then inspect the route output:
 
 ```bash
 pnpm --filter ./packages/api exec vitest run project-progress
 pnpm exec sapporta api get /api/reports/project-progress
 ```
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/reports/project-progress-formatting.png
-Setup: Render the canonical project-progress dataset with one project containing a zero count and the overall 40% completion result.
-Frame: Crop tightly to the report grid header, two project rows, and grand-total footer. Keep the hidden project ID out of view and include the completion and overdue columns.
-Visible proof: Percentages are formatted, zero values use the configured dot, overdue values use negative emphasis, and the footer totals five tasks with 40% completion.
-Alt text: A formatted project-progress grid shows hidden identifiers omitted from view, percentage formatting, zero dots, overdue emphasis, and a grand-total footer.
--->
 
-The mapper now produces a deterministic renderer contract from visible domain
-rows. It can be tested independently of Hono, Drizzle, and React. Keep
-navigation out of this object, keep date arithmetic in Temporal, and add
-hierarchy only when expanding a row reveals a meaningful lower level.
+Keep navigation out of the dataset, keep date arithmetic in Temporal, and add a
+child level only when expanding a row reveals a meaningful lower level.
 
 ## Related reference
 

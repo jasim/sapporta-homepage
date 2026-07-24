@@ -4,21 +4,9 @@ description:
   "Configure local, same-origin, and split-origin application environments."
 ---
 
-Sapporta configuration is divided between the API process, the frontend build,
-and API clients such as the CLI. This guide explains which process reads each
-value and how the values change across local, same-origin, and split-origin
-deployments.
-
-You will learn to configure listener ports, browser origins, auth links, API
-base URLs, and mail without exposing server secrets to the browser bundle. The
-result supports local development, a single production process, or a frontend
-and API on separate origins.
-
-```text
-Configure this Sapporta app for <local, same-origin, or split-origin> use.
-Inspect the generated env parser and deployment docs, set each value in the
-process that reads it, and verify one browser API request and auth URL.
-```
+Configuration belongs to the process that consumes it: API runtime, frontend
+build, or API client. Two variables may both contain URLs and still describe
+different edges of the system.
 
 ## Give each process its own values
 
@@ -28,7 +16,7 @@ process that reads it, and verify one browser API request and auth URL.
 | `SAPPORTA_FRONTEND_PORT`    | Development command | Vite listener                                                  |
 | `SAPPORTA_PUBLIC_APP_URL`   | API process         | Public browser origin for auth links and default trust         |
 | `SAPPORTA_FRONTEND_ORIGINS` | API process         | Additional exact origins allowed to send credentialed requests |
-| `VITE_API_URL`              | Frontend build      | Absolute API origin for a split deployment                     |
+| `VITE_API_URL`              | Frontend build      | API origin for a split deployment; `getApiBase()` adds `/api`  |
 | `SAPPORTA_API_URL`          | CLI or automation   | Target running API; it does not configure the server listener  |
 
 Only values prefixed with `VITE_` can enter the built browser bundle. Treat
@@ -72,9 +60,9 @@ SAPPORTA_FRONTEND_ORIGINS=https://preview.tasks.example.com
 VITE_API_URL=https://api.tasks.example.com
 ```
 
-`SAPPORTA_PUBLIC_APP_URL` accepts an origin only. Do not include a path, query,
-or trailing slash. If both `SAPPORTA_API_PORT` and hosting-platform `PORT` are
-set, they must contain the same number.
+`SAPPORTA_PUBLIC_APP_URL` and `VITE_API_URL` are origins. Do not include a path,
+query, trailing slash, or `/api`. If both `SAPPORTA_API_PORT` and a
+hosting-platform `PORT` are set, they must contain the same number.
 
 ## Observe the resolved topology
 
@@ -87,21 +75,10 @@ pnpm dev
 pnpm exec sapporta --api-url http://localhost:3000 endpoints list
 ```
 
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/operations/application-configuration.png
-Setup: Run the task app in local development with the Vite proxy and sign in.
-Frame: Show the browser Network details for one authenticated /api request, including the Vite request origin and successful response status. Keep cookies and authorization values hidden.
-Visible proof: The browser stays on the configured public app origin while the relative API request succeeds through the development proxy.
-Alt text: Browser network panel showing a successful Sapporta API request through the local Vite proxy.
--->
 
-Configuration works when all public URLs describe one topology. The subtle
-distinction is that `VITE_API_URL` configures built browser code while
-`SAPPORTA_API_URL` configures a CLI caller; neither controls the API listener.
-Continue with
-[production deployment](/docs/guides/operations/production-builds-and-deployment/)
-or [email services](/docs/guides/operations/email-and-runtime-services/).
+`VITE_API_URL` is embedded in browser code at build time.
+`SAPPORTA_API_URL` selects a target for the CLI process. Neither controls the
+API listener.
 
 ## Related reference
 

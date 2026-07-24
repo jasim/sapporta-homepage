@@ -4,19 +4,9 @@ description:
   "Call app-owned endpoints from the browser using the shared contract."
 ---
 
-A typed API client turns the shared contract into browser methods. Each method
-accepts the contract's inferred request and returns its successful response body
-directly. Declared non-2xx responses become `ApiError` values with the HTTP
-status and parsed body intact.
-
-This page adds the task action client, calls it from React, and handles a
-declared conflict without duplicating the endpoint shape. The same pattern
-supports report runners, command buttons, import flows, and any custom screen
-that calls an app-owned API.
-
-```text
-Create a frontend client from the shared complete-task contract with `getApiBase`. Call it from a task action, preserve declared `ApiError` bodies, refresh after success, and build the frontend.
-```
+A typed client turns a shared contract into browser methods. Each method accepts
+the inferred request, validates the response by default, returns the success
+body, and throws `ApiError` for a non-2xx response.
 
 ## Create one application client module
 
@@ -98,6 +88,11 @@ values affect the next action. A `409` may prompt a refresh because another
 caller already completed the task. A `404` may remove an item that is no longer
 visible.
 
+`ApiError.body` is `unknown` because a proxy or unexpected server failure may
+not return a declared body. Narrow it before reading fields. Response validation
+can be disabled with `validateResponse: false`, but doing so removes the
+client-side proof that a successful body matches the shared contract.
+
 ## Call the client from a React action
 
 Keep pending and error state close to the button that owns the operation.
@@ -156,26 +151,13 @@ The response body is the declared success value:
 }
 ```
 
-<!--
-Screenshot brief
-Suggested asset: typed-client-network-call.png
-Setup: Start `pnpm dev`, sign in as a workspace owner, open the task progress screen, open browser developer tools to Network, and complete one open task.
-Frame: Select the POST request and show its request URL, 200 status, `{}` payload, and JSON response. Keep the application row visible beside or behind developer tools if the viewport allows it.
-Visible proof: The typed method reaches `/api/tasks/{id}/complete` and receives the contract's task ID, event ID, and completed status.
-Alt text: Browser Network panel showing a successful typed complete-task API request and response.
--->
 
-For production, `VITE_API_URL` is public build configuration. It may contain the
-deployed API origin, but never a token or secret. Cookie-authenticated
-cross-origin deployments also need the matching server CORS configuration and
-client credentials policy.
+For production, `VITE_API_URL` is a public origin, without `/api`. It never
+contains a token or secret. Cookie-authenticated cross-origin deployments also
+need matching server CORS configuration and a client `credentials` policy.
 
-The browser now derives its request and success type from the same contract used
-by the server and OpenAPI. Expected failures retain their status and body, and
-the screen refreshes from committed server state after the command. The client
-does not make an endpoint authorization-safe; the route still owns its ability
-check and row-scoped workflow. Next, place this action in a protected route with
-explicit loading, empty, ready, pending, and error states.
+The client preserves wire meaning. The server route still owns abilities, row
+scope, and the transaction.
 
 ## Related reference
 

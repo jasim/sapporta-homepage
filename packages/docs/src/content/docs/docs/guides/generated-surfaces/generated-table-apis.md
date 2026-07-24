@@ -4,15 +4,9 @@ description:
   "Use generated row routes and identify when an app-owned endpoint is required."
 ---
 
-This page uses the generated HTTP and CLI surfaces for ordinary record work. You
-will inspect a mounted route, list and update tasks, read the response
-envelopes, and identify the point where a custom endpoint becomes appropriate.
-These routes can power generated screens, scripts, integrations, and
-agent-driven data work without a second CRUD implementation.
-
-```text
-Use the generated tasks API to list open tasks and raise one task's priority. Inspect the mounted routes first, and keep workspace fields server-controlled.
-```
+Every registered table receives one HTTP surface for ordinary record work. The
+generated screens, CLI, scripts, and integrations can all use that same
+surface.
 
 ## Inspect before calling
 
@@ -60,9 +54,11 @@ Its response is an object with rows and pagination metadata:
 ```
 
 Single-row reads and writes return `{ "data": row }`. Create and update bodies
-contain API-writable domain values only. They omit generated primary keys,
-`workspace_id`, `scoped_to_user_id`, `apiWritable: false` columns, and
+contain API-writable domain values only. They omit default-generated primary
+keys, `workspace_id`, `scoped_to_user_id`, `apiWritable: false` columns, and
 server-authored references because the server derives or supplies those values.
+Client-assigned primary keys remain writable when the table definition permits
+them.
 Generated OpenAPI and clients expose the same caller-controlled field set, and
 request-time policy rejects prohibited fields when a caller bypasses them.
 
@@ -84,18 +80,12 @@ route. A project lookup therefore returns only visible projects:
 
 ```json
 {
-  "entries": [{ "value": 1, "label": "Website Relaunch" }]
+  "entries": [
+    { "value": 1, "label": "Website Relaunch", "meta": {} }
+  ]
 }
 ```
 
-<!--
-Screenshot brief
-Suggested asset: generated-table-api-cli-round-trip.png
-Setup: Run the migrated task app with one open task. Execute endpoints show for the task update route, then the rows list and rows update commands above.
-Frame: Capture the mounted PUT route plus the list and successful priority update output in one terminal. Hide tokens and unrelated environment values.
-Visible proof: The route uses PUT, the list returns only open tasks, and the updated row has priority high without a submitted workspace field.
-Alt text: Terminal showing generated task endpoint discovery followed by a scoped list and update.
--->
 
 ## Know when CRUD is no longer the operation
 
@@ -104,11 +94,9 @@ update `tasks`, insert an immutable `task_events` row, and return a
 domain-specific result in one transaction. That is one app-owned endpoint with a
 shared ts-rest contract, not two client-coordinated CRUD calls.
 
-The task app now has a programmatic surface that matches its generated UI and
-row boundary. Use it for ordinary record reads and writes. Move to an app-owned
-endpoint when the operation spans tables, coordinates external effects, or needs
-a domain response shape. The next guide makes generated queries bookmarkable and
-deterministic.
+Use generated routes while the operation still means “read or change this
+table.” Use an app-owned endpoint when the operation has its own name,
+transaction, external effect, or response.
 
 ## Related reference
 

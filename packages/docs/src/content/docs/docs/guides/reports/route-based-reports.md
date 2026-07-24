@@ -4,16 +4,9 @@ description:
   "Create a protected typed report route and screen with shareable filters."
 ---
 
-A Sapporta report is an app-owned API route plus a React screen. This page
-builds the project-progress report from its shared contract through its
-protected UI. You will learn how the route, scoped read, pure dataset mapper,
-typed client, URL filters, and renderer fit together. The same structure
-supports ledgers, aging reports, operational summaries, and other read-only
-projections.
-
-```text
-Build a protected project-progress report in this Sapporta app. Use a shared GET contract, scope projects and tasks on the server, map a GridDataset in a pure function, add a typed client and protected screen, keep filters in the URL, and prove the mounted route and dataset shape.
-```
+A Sapporta report is an app-owned read model. A shared contract names its input
+and `GridDataset` output. The API applies authority before computing it. A React
+route owns filters, execution state, rendering, and navigation.
 
 ## Start with the wire contract
 
@@ -110,7 +103,7 @@ api.register(
       body: projectProgressDataset({
         projects: visibleProjects,
         tasks: visibleTasks,
-        today: Temporal.PlainDate.from("2026-07-10"),
+        today: Temporal.Now.plainDateISO(),
       }),
     };
   },
@@ -183,23 +176,17 @@ pnpm exec sapporta api get /api/reports/project-progress --query '{"project_id":
 ```
 
 The unfiltered canonical dataset contains two projects, five tasks, two
-completed tasks, one overdue task, and 40% completion. The filtered call
-contains only the selected project's visible rows. Parse route-test responses
-with `gridDatasetSchema` so the API cannot drift from the renderer contract.
+completed tasks, and 40% completion. Overdue counts depend on the date at the
+route boundary. Mapper tests inject a fixed `Temporal.PlainDate`; production
+routes use the current date or an application clock.
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/reports/project-progress-screen.png
-Setup: Seed the canonical two projects and five tasks, sign in to Workspace A, open /reports/project-progress, and run the report without a project filter.
-Frame: Capture the protected app shell with the report title, project filter, summary area, full two-row grid, grand-total footer, and navigation item. Use a desktop viewport wide enough to show every column.
-Visible proof: The grid shows five total tasks, two completed, one overdue, and 40% completion across Website Relaunch and Operations.
-Alt text: The project-progress report shows task counts, overdue work, completion percentages, and a grand-total footer for two projects.
--->
+Parse route-test responses with `gridDatasetSchema` so the wire shape cannot
+drift from the renderer contract.
 
-The report is now a normal typed application slice: OpenAPI describes its
-mounted route, auth protects its data, a pure mapper owns its wire result, and
-React owns filter state and navigation. Keep each additional report in its own
-vertical slice unless two reports genuinely share domain query logic.
+
+Keep each report as a vertical slice unless two reports genuinely share domain
+query logic. Sharing the renderer contract is not enough reason to couple their
+queries.
 
 ## Related reference
 

@@ -4,17 +4,9 @@ description:
   "Keep hidden rows out of report details, counts, totals, and statistics."
 ---
 
-A report can leak hidden data without displaying a hidden row. Counts,
-percentages, zero-versus-nonzero results, and drill-through links all reveal
-facts. This page applies request row security before the task app joins or
-aggregates anything. You will learn how to scope every base table, reject
-client-selected authority, and compare report totals with generated table
-queries. The pattern applies to dashboards, exports, forecasts, and every other
-aggregate surface.
-
-```text
-Audit this report for row-scope leaks. Resolve its ability and data authority at the route edge, apply one row-security guard per base table before joins or aggregation, remove workspace and user scope inputs, and prove totals with two workspace tokens.
-```
+A count can reveal a hidden row without displaying it. Percentages, empty
+groups, totals, and links reveal the same kind of fact. A report must remove
+invisible base rows before it joins or aggregates them.
 
 ## Scope base rows before the report sees them
 
@@ -44,7 +36,7 @@ const visibleTasks = await db
 return projectProgressDataset({
   projects: visibleProjects,
   tasks: visibleTasks,
-  today: Temporal.PlainDate.from("2026-07-10"),
+  today: Temporal.Now.plainDateISO(),
 });
 ```
 
@@ -107,20 +99,11 @@ The response contains no hidden project or task information. If the app chooses
 a not-found response for this filter, that behavior should match its declared
 contract and should not distinguish absent from invisible IDs.
 
-<!--
-Screenshot brief
-Suggested asset: /images/docs/reports/scoped-report-workspace-comparison.png
-Setup: Seed five tasks in Workspace A and one differently named completed task in Workspace B. Run the project-progress report and the JSON task-list command under each workspace token.
-Frame: Use a four-pane terminal composite labeled by workspace and surface: Workspace A report/tasks and Workspace B report/tasks. Show only compact totals and row labels; redact tokens and user data.
-Visible proof: Each report total matches its own generated task query, and neither output contains the other workspace's project or task names.
-Alt text: Project-progress and generated task totals agree independently in two workspaces, with no cross-workspace rows or counts.
--->
 
-The report now receives only rows visible to the request, so its details and
-derived values share one authority boundary. A pure mapper is useful for
-correctness, but purity alone is not security; the route or store must remove
-hidden rows first. Apply the same check to exports and summary cards, especially
-when they return only a number.
+A pure mapper makes aggregation easier to test, but purity is not security. The
+route or store must remove hidden rows before the mapper receives them. Apply
+the same rule to exports and summary cards, especially when they return only a
+number.
 
 ## Related reference
 

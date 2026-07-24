@@ -1,35 +1,45 @@
 ---
 title: "Table-aware grids and customization"
 description:
-  "Choose the highest-level Sapporta table grid and customize it without losing
-  table behavior."
+  "Customize a persisted table workflow while retaining schema, query, lookup, and save behavior."
 ---
 
-This page moves from the generated table route to a tailored persisted-record
-Grid. You will reorder task columns and keep schema metadata, lookups, row-safe
-generated clients, URL query state, and record navigation. This layer fits
-workbenches, triage queues, and master-detail screens that still operate on
-registered Sapporta tables.
+The generated table page is already a table-aware Grid. Customize that layer
+when registered Sapporta tables still own the rows but the page needs a
+different column set, hierarchy, toolbar, or interaction.
 
-```text
-Turn my tasks table into a focused workbench. Keep Sapporta lookups, scoped saves, and URL query state, but show title, status, priority, and due date in my order.
-```
+## Choose the full page before the raw session
 
-## Choose the highest useful layer
+Sapporta exposes three table-aware entry points:
 
-Use the generated table surface while its standard presentation fits. Use
-`SchemaTableGridView` or `TGrid` when persisted Sapporta tables still own the
-records but the page needs different columns, query defaults, saves, hierarchy,
-or interaction. Use `BaseGrid` when the application owns temporary rows, a
-composite draft, a projection, or a custom data source.
+| Entry point | Use |
+| --- | --- |
+| `SchemaTableGridView` | Standard schema-derived table page |
+| `TableGridView` or `useTableGrid` | Custom definition with page chrome, URL state, lifecycle, and lookups |
+| `TGrid` with `useTGridSession` | Low-level session rendering inside custom chrome |
 
-The following TGrid keeps the task table contract while choosing a focused set
-of columns:
+`TableGridView` is the usual custom-page boundary. It binds query state to the
+route, loads lookup labels, owns session disposal, renders loading and error
+states, and supplies the standard toolbar and pager. A raw TGrid session needs
+those pieces composed explicitly.
+
+## Define the table projection
+
+This workbench retains the `tasks` table contract while selecting and ordering
+four columns:
 
 ```tsx
 import { useMemo } from "react";
+import {
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { CELL_EDITING_GRID } from "@sapporta/grid";
-import { TGrid, defineTGrid, useTGridSession } from "@sapporta/frontend";
+import {
+  TableGridView,
+  defineTGrid,
+} from "@sapporta/frontend";
 import type { TableSchema } from "@sapporta/shared/contracts";
 
 type TaskRow = {
@@ -43,6 +53,10 @@ type TaskRow = {
 type RowsByLevel = { tasks: TaskRow };
 
 export function TaskWorkbench({ table }: { table: TableSchema }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const definition = useMemo(
     () =>
       defineTGrid<RowsByLevel>({
@@ -65,151 +79,68 @@ export function TaskWorkbench({ table }: { table: TableSchema }) {
     [table],
   );
 
-  const session = useTGridSession(definition);
-  if (!session) return null;
-
-  return <TGrid session={session} />;
-}
-```
-
-`useTGridSession()` owns runtime construction, table queries, services, and
-disposal with the React lifecycle. `owner: "host"` makes this screen own the
-root query. `urlSync: true` keeps supported search, filters, sort, and
-pagination shareable.
-
-Table column builders retain the schema's select options, semantic codecs,
-lookup behavior, formatting, copy behavior, and save client. A custom renderer
-or editor can replace one behavior without replacing the table boundary.
-
-Select-backed columns use the searchable ColumnPreset combobox and commit only
-the chosen option. Numeric columns keep raw editor text until commit, then the
-table adapter decodes it with the column's required semantic `kind`. Clearing a
-non-text cell becomes an explicit `null`; omitting a field leaves it unchanged.
-Invalid text is preserved for authoritative server validation rather than being
-silently rewritten.
-
-Inside TGrid cell and save callbacks, use `context.level` for the path-bound
-`GridLevelRuntime`. It owns the current path's rows, selection, expansion,
-query, and writes. Use `context.runtime` for grid-wide events, level
-enumeration, and cross-path row operations.
-
-## Build a master-detail view
-
-A master-detail screen uses active-row state for the current preview and row
-activation for the next workflow action. These are separate channels. Arrow
-movement changes the preview. Enter or double-click can open an edit route even
-when the row did not change.
-
-```tsx
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION } from "@sapporta/grid";
-import {
-  TGrid,
-  defineTGrid,
-  useTGridActiveRow,
-  useTGridSession,
-} from "@sapporta/frontend";
-import type { TableSchema } from "@sapporta/shared/contracts";
-
-type TaskRow = {
-  id: number;
-  title: string;
-  status: "open" | "in_progress" | "completed";
-  description: string | null;
-};
-
-type RowsByLevel = { tasks: TaskRow };
-
-export function TaskBrowser({ table }: { table: TableSchema }) {
-  const navigate = useNavigate();
-  const definition = useMemo(
-    () =>
-      defineTGrid<RowsByLevel>({
-        rootLevel: "tasks",
-        interaction: ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION,
-        levels: {
-          tasks: {
-            table,
-            childLevels: [],
-            rowHeaderColumn: "none",
-            query: { owner: "host", pageSize: 50, urlSync: true },
-            columns: (columns) => [
-              columns.table("title", { edit: "none" }),
-              columns.table("status", { edit: "none" }),
-            ],
-          },
-        },
-      }),
-    [table],
-  );
-
-  const session = useTGridSession(definition);
-  const activeRow = useTGridActiveRow(session);
-  if (!session) return null;
-
-  const task =
-    activeRow?.kind === "data" && activeRow.levelId === "tasks"
-      ? activeRow.values
-      : null;
-
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_22rem] gap-4">
-      <TGrid
-        session={session}
-        onRowActivate={({ activeRow: activated }) => {
-          if (activated.kind === "data" && activated.levelId === "tasks") {
-            navigate(`/tasks/${activated.values.id}/edit`);
-          }
-        }}
-      />
-      <aside aria-live="polite">
-        {task ? (
-          <>
-            <h2>{task.title}</h2>
-            <p>{task.description ?? "No description."}</p>
-          </>
-        ) : (
-          <p>Select a task.</p>
-        )}
-      </aside>
-    </div>
+    <TableGridView
+      definition={definition}
+      table={table}
+      route={{
+        path: location.pathname,
+        searchParams,
+        navigate,
+      }}
+      registerAs="tasks"
+      onNewRecord={() => navigate("/tables/tasks/new")}
+    />
   );
 }
 ```
 
-`useTGridActiveRow()` updates for cursor movement and displayed-value changes.
-It already represents React state and should not be mirrored into local state.
-The active row may be a structural or draft row, so the example narrows both
-`kind` and `levelId` before using the typed record values.
+`urlSync: true` declares that the root query participates in URL state.
+`TableGridView` performs the actual binding by passing route seeds and a query
+change handler into the session. Search, filters, sort, and pagination therefore
+survive reload and browser navigation.
 
-The activation callback runs only for gestures enabled by the interaction.
-`ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` uses Enter and double-click for row
-activation and left/right for hierarchy expansion. The callback remains an
-event handler because activating the same row twice must run the action twice.
+Table column builders retain semantic codecs, select options, foreign-key
+lookups, formatting, copy behavior, and the generated save client. The
+application can replace one behavior without rebuilding the table boundary:
 
-Row selection remains independent. Use selected-row APIs for bulk actions and
-operation targets. Use the active row for one current preview.
+```ts
+columns.table("status", {
+  edit: "default",
+  saveCellValue: async (context) => {
+    const patch = await context.appServices.setStatus({
+      id: context.row.id,
+      status: context.value,
+    });
 
-<!--
-Screenshot brief
-Suggested asset: custom-task-tgrid-workbench.png
-Setup: Mount TaskWorkbench on a protected frontend route, load at least five tasks, then edit one status and apply one URL-synced filter.
-Frame: Capture the complete workbench, its reordered columns, active edited cell, query toolbar, and browser URL.
-Visible proof: Title, status, priority, and due date appear in the chosen order; the status combobox searches and commits a declared option; the URL contains the active query; no workspace field is exposed.
-Alt text: Customized table-aware task Grid retaining generated editing and URL query behavior.
--->
+    return { kind: "patch", patch };
+  },
+});
+```
 
-The specialized workbench now changes presentation and interaction without
-rebuilding table loading, saves, lookups, query state, or authorization in
-React. Fixed filters and hidden columns remain product constraints; generated
-routes still enforce row access on the server. For hierarchy, side panels, bulk
-selection, and temporary multi-line drafts, continue with the Grid-first
-workflow guide.
+A custom writer may return a value, patch, row, or reload instruction. The
+returned result reconciles the visible row with the authoritative server
+result. The server operation still owns its ability check, row scope,
+validation, and transaction.
+
+Column definitions may also use `columns.client()` for application-computed
+values and `columns.remainingTable()` for the schema columns not named
+explicitly.
+
+## Drop lower only for custom chrome
+
+Use `useTableGrid()` when the page needs the same bound session with a different
+layout. Use `useTGridSession()` and `useTGridLifecycle()` directly only when the
+application must own the entire page composition. Raw `TGrid` does not bind
+React Router or load lookup labels by itself.
+
+Active-row state, row activation, side panels, and parent-child levels are Grid
+interaction concerns. They do not change the persistence boundary. Hidden
+columns and fixed filters are presentation, not authorization.
 
 ## Related reference
 
-- [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [TGrid](/docs/reference/frontend/tgrid/)
+- [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [Grid interactions](/grid/reference/interactions/)
 - [Choose a Grid layer](/grid/start/choose-a-grid-layer/)
