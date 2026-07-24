@@ -1,7 +1,8 @@
 ---
 title: "Table-aware grids and customization"
 description:
-  "Customize a persisted table workflow while retaining schema, query, lookup, and save behavior."
+  "Customize a persisted table workflow while retaining schema, query, lookup,
+  and save behavior."
 ---
 
 The generated table page is already a table-aware Grid. Customize that layer
@@ -12,11 +13,11 @@ different column set, hierarchy, toolbar, or interaction.
 
 Sapporta exposes three table-aware entry points:
 
-| Entry point | Use |
-| --- | --- |
-| `SchemaTableGridView` | Standard schema-derived table page |
+| Entry point                       | Use                                                                   |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `SchemaTableGridView`             | Standard schema-derived table page                                    |
 | `TableGridView` or `useTableGrid` | Custom definition with page chrome, URL state, lifecycle, and lookups |
-| `TGrid` with `useTGridSession` | Low-level session rendering inside custom chrome |
+| `TGrid` with `useTGridSession`    | Low-level session rendering inside custom chrome                      |
 
 `TableGridView` is the usual custom-page boundary. It binds query state to the
 route, loads lookup labels, owns session disposal, renders loading and error
@@ -30,16 +31,9 @@ four columns:
 
 ```tsx
 import { useMemo } from "react";
-import {
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { CELL_EDITING_GRID } from "@sapporta/grid";
-import {
-  TableGridView,
-  defineTGrid,
-} from "@sapporta/frontend";
+import { TableGridView, defineTGrid } from "@sapporta/frontend";
 import type { TableSchema } from "@sapporta/shared/contracts";
 
 type TaskRow = {
@@ -119,13 +113,31 @@ columns.table("status", {
 ```
 
 A custom writer may return a value, patch, row, or reload instruction. The
-returned result reconciles the visible row with the authoritative server
-result. The server operation still owns its ability check, row scope,
-validation, and transaction.
+returned result reconciles the visible row with the authoritative server result.
+The server operation still owns its ability check, row scope, validation, and
+transaction.
 
 Column definitions may also use `columns.client()` for application-computed
 values and `columns.remainingTable()` for the schema columns not named
 explicitly.
+
+## Access the live session without replacing the table page
+
+Pass `sessionRef` when the surrounding component needs to inspect or control the
+live `TGridSession` while retaining the standard `TableGridView` UI. This covers
+custom controls and observers, coordinating selection or expansion, and cases
+such as revealing a deep-linked row after it loads.
+
+```tsx
+const sessionRef = useRef<TGridSession<RowsByLevel> | null>(null);
+<TableGridView {...props} sessionRef={sessionRef} />; // Later: sessionRef.current?.reloadRows()
+```
+
+The view owns and disposes the session, so consumers must treat it as borrowed.
+Use a stable callback ref when attaching subscriptions and release them when the
+callback receives `null`. `SchemaTableGridView`, `TablePageGridOptions`, and
+`TableGridOptionsByTable` expose the same parameter. The corresponding hooks do
+not need it because their returned binding already contains `session`.
 
 ## Drop lower only for custom chrome
 

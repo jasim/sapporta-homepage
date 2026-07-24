@@ -18,8 +18,8 @@ runtime primitives come from `@sapporta/grid`.
   unmount. It returns `null` until the session exists.
 - `createTGridSession()` creates a session for tests and non-React hosts. Its
   owner must call `dispose()`.
-- `TGrid` renders a configured session. `TableRoute` and
-  `SchemaTableGridView` connect standard table routes.
+- `TGrid` renders a configured session. `TableRoute` and `SchemaTableGridView`
+  connect standard table routes.
 - `useSchemaTableGrid()` exposes the session when an application-owned
   composition needs schema-derived defaults plus active-row or activation
   behavior.
@@ -27,11 +27,30 @@ runtime primitives come from `@sapporta/grid`.
 Table-aware clients preserve Sapporta query syntax, lookups, row saves, auth,
 record navigation, CSV export, and URL query state.
 
+## `sessionRef`
+
+`TableGridView` and `SchemaTableGridView` accept:
+
+```ts
+sessionRef?: React.Ref<TGridSession<RowsByLevel, AppServices>>
+```
+
+Use it when another component needs to inspect or control the live session
+without replacing the standard table UI—for example, to reload rows, observe
+session state, coordinate selection or expansion, or reveal a deep-linked row.
+
+The view owns and disposes the session. The ref is set after creation and
+cleared to `null` when the session is replaced or released, so callback-ref
+subscriptions must clean up on `null`. The parameter is also available through
+`TablePageGridOptions` and `TableGridOptionsByTable`. `useTableGrid()` and
+`useSchemaTableGrid()` omit it because their returned binding already contains
+`session`.
+
 ## Active row
 
-TGrid projects the standalone `GridActiveRow` into the session's
-`RowsByLevel` mapping. Each projection includes the row's identity and
-kind-specific properties plus `levelId`, `values`, `level`, and `runtime`.
+TGrid projects the standalone `GridActiveRow` into the session's `RowsByLevel`
+mapping. Each projection includes the row's identity and kind-specific
+properties plus `levelId`, `values`, `level`, and `runtime`.
 
 Data rows expose a complete typed `values` object for their level. Phantom,
 rollup, opening, closing, subtotal, and footer rows expose partial values.
@@ -51,12 +70,12 @@ const task =
 
 `useTGridActiveRow(session)` returns React state backed by the session
 subscription. The value changes when the cursor moves, the active row
-disappears, or its displayed values change. Render a detail region directly
-from it.
+disappears, or its displayed values change. Render a detail region directly from
+it.
 
 Non-React owners use `session.activeRow()` and
-`session.subscribeActiveRow(listener)`. Snapshots preserve identity until
-active identity or displayed values change.
+`session.subscribeActiveRow(listener)`. Snapshots preserve identity until active
+identity or displayed values change.
 
 `TGridActiveRow<RowsByLevel>` is the exported projection type.
 
@@ -94,8 +113,7 @@ row produces repeated events.
 The TGrid definition owns the interaction configuration. The callback does not
 enable gestures by itself. `ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` enables
 Enter and double-click, reserves Enter for activation, and retains left/right
-hierarchy expansion. Custom configurations use
-`activeRow.activation.startsOn`.
+hierarchy expansion. Custom configurations use `activeRow.activation.startsOn`.
 
 `SchemaTableGridView` accepts an interaction configuration but does not expose
 active-row state or activation callbacks as props. Use `useSchemaTableGrid()`,
@@ -127,8 +145,8 @@ not enforce authorization.
 
 ## Column and write behavior
 
-- The table adapter composes `ColumnSchema.kind` with ColumnPreset draft
-  parsers at cell commit.
+- The table adapter composes `ColumnSchema.kind` with ColumnPreset draft parsers
+  at cell commit.
 - Numeric drafts become finite numbers. Clearing a non-text cell becomes an
   explicit `null`. An untouched field remains absent from the patch. Empty text
   remains `""`.
