@@ -48,7 +48,7 @@
 }
 
 .essay-shell--hero {
-  padding-bottom: 1rem;
+  padding-bottom: 3rem;
   padding-top: 6.25rem;
 }
 
@@ -178,7 +178,6 @@
   display: flex;
   gap: 1.5rem;
   margin-bottom: 0.875rem;
-  overflow-x: auto;
 }
 
 .essay-demo-tab {
@@ -373,68 +372,50 @@
 .essay-get-started {
   --essay-get-started-accent: #20583a;
 
-  background: var(--bg);
-  border: 1px solid color-mix(in srgb, var(--essay-get-started-accent) 16%, var(--rule));
-  border-radius: 5px;
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 5%, transparent);
-  margin-top: 1.75rem;
-  max-width: 32rem;
-  overflow: hidden;
+  margin-top: 2.25rem;
+  max-width: 42rem;
 }
 
 .essay-get-started-header {
   align-items: center;
   display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  padding: 0.65rem 0.75rem 0.6rem 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.8rem;
 }
 
 .essay-prose .essay-get-started-title {
   color: var(--essay-get-started-accent);
-  font-size: 0.8125rem;
+  font-size: 0.95rem;
   font-weight: 740;
   line-height: 1.25;
   margin: 0;
 }
 
-.essay-get-started .essay-get-started-caption {
-  color: var(--dim);
-  font-size: 0.72rem;
-  font-weight: 450;
-  line-height: 1.35;
-  margin: 0.12rem 0 0;
-}
-
-.essay-get-started-actions {
-  align-items: center;
-  display: flex;
-  flex: 0 0 auto;
-  gap: 0.45rem;
-}
-
 .essay-get-started-copy {
   align-items: center;
   appearance: none;
-  background: color-mix(in srgb, var(--essay-get-started-accent) 5%, var(--bg));
-  border: 1px solid color-mix(in srgb, var(--essay-get-started-accent) 13%, var(--rule));
+  background: color-mix(in srgb, var(--essay-get-started-accent) 8%, var(--bg));
+  border: 0;
   border-radius: 4px;
-  color: color-mix(in srgb, var(--essay-get-started-accent) 72%, var(--dim));
+  color: var(--essay-get-started-accent);
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+  gap: 0.4rem;
   justify-content: center;
-  padding: 0.35rem;
+  line-height: 1.25;
+  padding: 0.38rem 0.58rem;
   transition:
     background-color 120ms ease,
-    border-color 120ms ease,
     color 120ms ease;
 }
 
 .essay-get-started-copy:hover,
 .essay-get-started-copy[data-copied="true"] {
-  background: color-mix(in srgb, var(--essay-get-started-accent) 10%, var(--bg));
-  border-color: color-mix(in srgb, var(--essay-get-started-accent) 28%, var(--rule));
+  background: color-mix(in srgb, var(--essay-get-started-accent) 14%, var(--bg));
   color: var(--essay-get-started-accent);
 }
 
@@ -444,25 +425,28 @@
 }
 
 .essay-get-started .essay-get-started-prompt {
-  background: color-mix(in srgb, var(--surface) 52%, var(--bg));
+  background: transparent;
   border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--essay-get-started-accent) 10%, var(--rule));
   border-radius: 0;
   color: var(--ink);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  margin: 0;
+  cursor: text;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0.9rem 0 0;
   overflow-x: auto;
-  padding: 0.7rem 0.85rem 0.75rem;
+  padding: 0;
+  user-select: text;
   white-space: pre-wrap;
 }
 
 .essay-get-started .essay-get-started-status {
-  color: var(--essay-get-started-accent);
-  font-size: 0.675rem;
-  font-weight: 600;
-  line-height: 1.2;
-  min-height: 0.8rem;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
 
 :root[data-theme="dark"] .essay-get-started {

@@ -13,7 +13,11 @@ import { Content as LlmOneShot } from "../home-content/04-llm-one-shot.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import SapportaMark from "../components/SapportaMark.astro";
-import { Code2, Copy, Table2 } from "lucide-react";
+import {
+  Code2,
+  Copy,
+  Table2,
+} from "lucide-react";
 import "../styles/sapporta.css";
 import "../styles/homepage-essay.css";
 
@@ -112,48 +116,37 @@ export const books = sapportaTable({
             aria-labelledby="essay-get-started-title"
           >
             <div class="essay-get-started-header">
-              <div>
-                <h2
-                  class="essay-get-started-title"
-                  id="essay-get-started-title"
-                >
-                  Get Started
-                </h2>
-                <p
-                  class="essay-get-started-caption"
-                >
-                  Copy to your coding agent
-                </p>
-              </div>
-              <div
-                class="essay-get-started-actions"
+              <h2
+                class="essay-get-started-title"
+                id="essay-get-started-title"
               >
-                <span
-                  class="essay-get-started-status"
-                  data-copy-agent-status
-                  aria-live="polite"
-                ></span>
-                <button
-                  class="essay-get-started-copy"
-                  type="button"
-                  data-copy-agent-prompt
-                  aria-label="Copy prompt to clipboard"
-                  title="Copy prompt to clipboard"
+                Get started with your coding agent
+              </h2>
+              <button
+                class="essay-get-started-copy"
+                type="button"
+                data-copy-agent-prompt
+                aria-label="Copy prompt to clipboard"
+                title="Copy prompt to clipboard"
+              >
+                <Copy
+                  aria-hidden="true"
+                  size={15}
+                  strokeWidth={2}
+                />
+                <span data-copy-agent-label
+                  >Copy</span
                 >
-                  <Copy
-                    aria-hidden="true"
-                    size={15}
-                    strokeWidth={2}
-                  />
-                </button>
-              </div>
+              </button>
+              <span
+                class="essay-get-started-status"
+                data-copy-agent-status
+                aria-live="polite"></span>
             </div>
             <pre
               class="essay-get-started-prompt"
-              data-agent-prompt
-            >Create a Todo management application using Sapporta
-https://sapporta.com/docs/getting-started/create-a-project.md</pre
-            >
+              data-agent-prompt>Create a Todo management application using Sapporta
+https://sapporta.com/docs/getting-started/create-a-project.md</pre>
           </section>
         </article>
       </div>
@@ -326,9 +319,12 @@ https://sapporta.com/docs/getting-started/create-a-project.md</pre
         document.querySelector<HTMLElement>(
           "[data-copy-agent-status]",
         );
+      const copyAgentLabel =
+        document.querySelector<HTMLElement>(
+          "[data-copy-agent-label]",
+        );
       let copyAgentStatusTimeout:
-        | ReturnType<typeof setTimeout>
-        | undefined;
+        ReturnType<typeof setTimeout> | undefined;
 
       copyAgentPromptButton?.addEventListener(
         "click",
@@ -342,25 +338,43 @@ https://sapporta.com/docs/getting-started/create-a-project.md</pre
             );
             copyAgentPromptButton.dataset.copied =
               "true";
-            copyAgentPromptButton.title = "Copied";
+            copyAgentPromptButton.title =
+              "Copied";
+            if (copyAgentLabel) {
+              copyAgentLabel.textContent =
+                "Copied";
+            }
             if (copyAgentStatus) {
-              copyAgentStatus.textContent = "Copied";
+              copyAgentStatus.textContent =
+                "Prompt copied to clipboard";
             }
 
             clearTimeout(copyAgentStatusTimeout);
-            copyAgentStatusTimeout = setTimeout(() => {
-              delete copyAgentPromptButton.dataset
-                .copied;
-              copyAgentPromptButton.title =
-                "Copy prompt to clipboard";
-              if (copyAgentStatus) {
-                copyAgentStatus.textContent = "";
-              }
-            }, 2000);
+            copyAgentStatusTimeout = setTimeout(
+              () => {
+                delete copyAgentPromptButton
+                  .dataset.copied;
+                copyAgentPromptButton.title =
+                  "Copy prompt to clipboard";
+                if (copyAgentLabel) {
+                  copyAgentLabel.textContent =
+                    "Copy";
+                }
+                if (copyAgentStatus) {
+                  copyAgentStatus.textContent =
+                    "";
+                }
+              },
+              2000,
+            );
           } catch {
+            if (copyAgentLabel) {
+              copyAgentLabel.textContent =
+                "Copy failed";
+            }
             if (copyAgentStatus) {
               copyAgentStatus.textContent =
-                "Copy failed";
+                "Could not copy prompt";
             }
           }
         },
