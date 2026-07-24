@@ -5,15 +5,9 @@ description:
   export."
 ---
 
-This page builds one deterministic task query from filters, search, sort, and
-pagination. You will call it through HTTP, reproduce it in the generated grid,
-and see why invalid query state fails instead of broadening the result. These
-mechanics support bookmarkable worklists, exports, saved views, and predictable
-integrations.
-
-```text
-Show open launch tasks for one project, sorted by due date and split into small pages. Make the browser view and generated API use the same query.
-```
+The generated grid, table API, and CSV export share one query language. A URL
+therefore names a stable view of a table: predicates, search term, order, and
+page.
 
 ## Compose the query
 
@@ -24,8 +18,11 @@ GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][in]=open&q=launch&
 ```
 
 - Every filter includes a column and operator: `filter[column][operator]=value`.
-- Select-backed columns use `in` and `nin` with a comma-separated option list.
-- `q` searches only columns declared in `meta.search` and combines with filters
+- `in` and `nin` accept comma-separated values. Select-backed text also supports
+  the other text operators, including `eq` and `neq`.
+- `q` uses the table's configured search plan. Search is enabled for visible
+  application columns by default; explicitly configured child paths can
+  contribute at any finite depth. The search predicate combines with filters
   using AND.
 - `sort=due_date,-id` orders due date ascending, then ID descending.
 - `page` is one-based. `limit` accepts values from 1 through 1000 and defaults
@@ -75,21 +72,12 @@ Drizzle enum declaration. Chosen values appear as removable chips, and only
 those chosen values enter the filter draft. Search text itself never becomes a
 filter value.
 
-<!--
-Screenshot brief
-Suggested asset: task-query-url-and-grid.png
-Setup: Seed tasks across at least two projects and statuses. Configure the generated tasks screen for project 1, open status, launch search, and due-date ascending sort.
-Frame: Capture the browser address bar and the full query toolbar above the matching task rows. Keep pagination or result count visible.
-Visible proof: URL parameters correspond to the active project/status filters, launch search, due-date sort, and bounded result set.
-Alt text: Generated tasks grid whose URL, filters, search, sort, and result count describe the same query.
--->
-
 ## Let invalid queries fail
 
-Unknown columns, unsupported operators, malformed semantic values, search on a
-table without search metadata, and invalid page or limit values return a
-structured 400 response. A caller must correct the query. Retrying after
-dropping a rejected filter can expose or export a much larger result set.
+Unknown columns, unsupported operators, malformed semantic values, `q` on a
+table with `search: false`, and invalid page or limit values return a structured
+400 response. A caller must correct the query. Retrying after dropping a
+rejected filter can expose or export a much larger result set.
 
 ```http
 GET /api/tables/tasks?filter[status]=open
@@ -101,12 +89,11 @@ the URL boundary, and use `parseFiltersForTable()` when restoring URL filters
 against table metadata. That keeps numbers, booleans, dates, timestamps, and
 lookup IDs typed until serialization.
 
-The task query now has one meaning in the URL, generated grid, HTTP route, and
-export. Its strict failure behavior prevents a typo from turning into an
-unfiltered read. Next, use the same metadata to create and edit records through
-generated forms.
+Strict failure preserves the meaning of the request. A malformed narrow query
+must not become a valid broad query.
 
 ## Related reference
 
+- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)

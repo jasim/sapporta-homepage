@@ -18,6 +18,9 @@ Generated HTTP routes under `/api/tables/<table>`.
 - `PUT` and `DELETE /api/tables/<table>/<id>` return `{ data: row }`.
 - `GET .../_lookup`, `GET .../_count`, and `GET .../export.csv` expose lookup,
   child-count, and CSV surfaces.
+- `q` on the list and CSV export routes runs the same table search plan. Lookup
+  `q` follows lookup display fields instead; grouped count does not use table
+  search.
 - Insert and patch schemas expose only caller-controlled fields. Generated
   primary keys, auth scope fields, `apiWritable: false` columns, and references
   with `apiSettable: false` are absent from OpenAPI and generated client types.
@@ -48,4 +51,5 @@ trusted write schema used after auth preparation.
 ## Related documentation
 
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
+- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

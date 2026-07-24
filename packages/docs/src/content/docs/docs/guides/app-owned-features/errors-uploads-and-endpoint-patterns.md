@@ -165,12 +165,19 @@ export const taskAttachmentContract = c.router({
 The matching route reads `files.file`, not `request.body.file`:
 
 ```ts
+import { scopedRows } from "@sapporta/server";
+import { tasks } from "../schema/tasks.js";
+
 api.register(
   "inspectTaskAttachment",
   taskAttachmentContract.inspectTaskAttachment,
   async ({ c, request, files }) => {
     const auth = c.get("auth");
     forbidUnless(c, auth.ability.can("update", "tasks"));
+    const taskRows = scopedRows(c.get("db"), auth, tasks, {
+      searchPlan: catalog.searchPlanFor(tasks.sqlName),
+    });
+    await taskRows.get(request.params.id);
 
     const file = files.file;
     if (!(file instanceof File)) {

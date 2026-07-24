@@ -4,25 +4,16 @@ description:
   "Define stored rows and the product behavior Sapporta derives from them."
 ---
 
-This page explains the two parts of a Sapporta table: the Drizzle table that
-owns storage and constraints, and the metadata that shapes generated APIs,
-forms, and grids. You will define a task table, choose semantic column types,
-and learn where validation and value conversion belong. The same pattern works
-for inventories, case trackers, approval queues, and other record-based
-applications.
-
-```text
-Use the Sapporta skill to add a workspace-scoped tasks table. Give it useful labels, search, status and priority selects, and generated CRUD. Show me the migration before applying it.
-```
+A Sapporta table has two sources of meaning. The Drizzle definition says what a
+row can be in SQLite. Sapporta metadata says how that row behaves in generated
+APIs, forms, grids, and row-security checks.
 
 ## One definition, two responsibilities
 
-The raw Drizzle table is the database contract. It defines SQL names,
-nullability, defaults, keys, references, indexes, and enum values.
-`sapportaTable()` joins that storage contract with labels, row scope, search
-fields, column presentation, children, API write policy, and application
-validation. Generated APIs, auth, runtime validation, metadata, forms, and grids
-all start from the resulting `TableDef`.
+The Drizzle table defines SQL names, nullability, defaults, keys, references,
+and indexes. `sapportaTable()` adds labels, row scope, search fields, column
+presentation, children, API write policy, and application validation. The
+resulting `TableDef` is the input to generated HTTP and frontend surfaces.
 
 Keep both exports in the same schema module. Other schema files import the raw
 table when they need a foreign key. Sapporta registers the wrapped table.
@@ -78,7 +69,7 @@ export const tasks = sapportaTable({
     label: "Tasks",
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
-    search: { columns: ["title", "description"] },
+    search: { self: ["title", "description"] },
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -92,15 +83,12 @@ export type NewTask = typeof tasksTable.$inferInsert;
 export default tasks;
 ```
 
-Sapporta semantic factories attach storage and value semantics in one column
-declaration. `select()` also stores its option tuple on the Drizzle text column.
-That tuple drives TypeScript inference, structural Zod validation, OpenAPI,
-metadata, searchable choice controls, and enum filters. Primary and foreign keys
-remain raw Drizzle integers in this example. Schema extraction derives a
-semantic kind for those raw columns, so every browser `ColumnSchema` still has a
-required `kind`. Derive TypeScript row types with `$inferSelect` and
-`$inferInsert`; a separate handwritten interface can drift from the database
-schema.
+Semantic column factories attach wire and value semantics to the Drizzle column.
+The tuple passed to `select()` drives TypeScript inference, structural
+validation, OpenAPI, choice controls, and enum filters. Raw primary and foreign
+keys still receive a semantic `kind` when Sapporta extracts browser metadata.
+Derive row types with `$inferSelect` and `$inferInsert`; a handwritten row
+interface can drift from the table.
 
 `workspace_id` is required by `workspaceGlobal`, but it is a server-managed
 value. Generated clients and forms must not submit it. A `workspaceUserScoped`
@@ -126,31 +114,21 @@ Start the app, then inspect the registered definition:
 
 ```bash
 pnpm dev
-pnpm exec sapporta tables show tasks
+pnpm exec sapporta api get /api/meta/tables/tasks
 ```
 
-The output should identify `tasks`, `workspaceGlobal`, the `title` row label,
-both search columns, and the select options derived from the status and priority
-columns.
+The metadata response identifies `tasks`, its row label, whether search is
+available, and the select options derived from status and priority. The
+server-side row scope and full search plan are not serialized to the browser.
 
-<!--
-Screenshot brief
-Suggested asset: tables-columns-task-metadata-terminal.png
-Setup: Run the task app with the projects and tasks schemas migrated, then run `pnpm exec sapporta tables show tasks` in a wide terminal.
-Frame: Capture the command and the complete task table summary; crop unrelated shell history.
-Visible proof: The table name, workspaceGlobal row scope, title row label, title/description search fields, and status/priority select metadata are readable.
-Alt text: Terminal output describing the registered tasks table and its generated metadata.
--->
-
-The task definition now owns storage, generated behavior, and shared value
-semantics in one reviewable module. Metadata changes can alter the generated
-experience without duplicating the database model. From here, add relationships
-and child collections, tune search and indexes, then generate a reviewed
-migration for every storage change.
+Change metadata when presentation or generated behavior changes. Change the
+Drizzle table when stored structure or constraints change, then generate a
+reviewed migration.
 
 ## Related reference
 
 - [Table definitions](/docs/reference/schema/table-definitions/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
+- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Table validation](/docs/reference/schema/table-validation/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

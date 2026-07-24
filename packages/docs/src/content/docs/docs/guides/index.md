@@ -1,71 +1,57 @@
 ---
 title: "Guides"
 description:
-  "Choose an independent guide by application subsystem or operating activity."
+  "Follow a Sapporta feature from stored data to its runtime and operating
+  boundary."
 ---
 
-The guides start where the task-app tutorial finishes. Each one explains a
-single Sapporta concept, shows the code or running surface that owns it, and
-connects the concept to features you can add to another application.
+The guides start where the task-app tutorial ends. Each guide answers one
+implementation question: which part of Sapporta owns this behavior, what is the
+smallest useful change, and where must the boundary remain explicit?
 
-Use them to deepen one part of an existing project: model data, customize a
-record workflow, secure a route, build a domain endpoint, add a report, operate
-the live API, or prepare a release. Exact type and command lookups remain in
-Reference.
+Reference pages catalogue types, options, commands, and response shapes. Guides
+explain how those pieces compose.
 
-```text
-I want to add <feature> to my Sapporta app. Help me choose the relevant guide,
-identify the generated or app-owned boundary involved, and give me the smallest
-working change I can run and inspect.
-```
+## Choose the owning boundary
 
-## Choose by the feature you are adding
+Start with
+[model data](/docs/guides/model-data/tables-columns-and-schema-metadata/) when
+the feature is still a property of a stored record. Drizzle owns SQL
+constraints. Sapporta metadata owns generated labels, search, forms, grids, and
+row scope. Continue to
+[table search](/docs/guides/model-data/search-indexes-and-display-metadata/)
+when a root row should also be found through foreign-key labels or nested child
+records.
 
-- **Model data** covers tables, relationships, semantic columns, validation,
-  migrations, search, indexes, and display metadata. Start with
-  [tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/).
+Continue with
+[generated record screens](/docs/guides/generated-surfaces/record-screens-and-forms/)
+when ordinary CRUD is the workflow. Move to
+[Grid-first workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
+when the page needs a different interaction or row model.
 
-- **Generated application surfaces** covers record screens, forms, table APIs,
-  queries, and Grid-based workflows. Start with
-  [generated record screens and forms](/docs/guides/generated-surfaces/record-screens-and-forms/)
-  or use
-  [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
-  when the interaction needs its own layout or editing model.
+Read
+[authentication and abilities](/docs/guides/security/authentication-and-abilities/)
+before adding a protected action. Authentication establishes the caller,
+abilities permit an operation, and row security limits the data that operation
+may observe.
 
-- **Security** covers authentication, abilities, workspace and user row scope,
-  custom data access, and scoped agent tokens. Start with
-  [authentication and abilities](/docs/guides/security/authentication-and-abilities/).
+Use
+[app-owned features](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+for a named domain action, multi-table transaction, integration, or screen that
+is not ordinary table CRUD. The shared contract defines the wire boundary; the
+API owns authorization and persistence; the frontend owns interaction state.
 
-- **App-owned features** covers shared ts-rest contracts, custom Hono routes,
-  transactions, typed clients, React screens, custom forms, cached table reads,
-  uploads, and declared errors.
-  Start with
-  [custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
-  or
-  [custom forms and cached table reads](/docs/guides/app-owned-features/custom-forms-and-table-queries/).
+Use [reports](/docs/guides/reports/route-based-reports/) for reusable read
+models. Reports scope base rows first, map them into `GridDataset`, and resolve
+navigation in the frontend.
 
-- **Reports** covers route-based `GridDataset` results, formatting,
-  drill-through links, and scoped aggregation. Start with
-  [route-based reports](/docs/guides/reports/route-based-reports/).
+Use
+[discovery and automation](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+to inspect and operate the live application. Use
+[deployment and operations](/docs/guides/operations/application-configuration/)
+when the question concerns process configuration, migration order, durable
+storage, mail, or failure diagnosis.
 
-- **Discovery and automation** covers OpenAPI, interface choice, the CLI, data
-  operations, and coding-agent workflows. Start with
-  [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/).
-
-- **Deployment and operations** covers environment ownership, production builds,
-  migration order, mail, runtime services, and diagnostics. Start with
-  [application configuration](/docs/guides/operations/application-configuration/).
-
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/guide-navigation.png
-Setup: Build the docs and open the Guides landing page with the full sidebar expanded.
-Frame: Capture the guide-group list and sidebar together at desktop width.
-Visible proof: The order moves from data modeling and generated surfaces through security, app features, reports, discovery, and operations.
-Alt text: Sapporta Guides landing page with the seven guide groups visible in the documentation sidebar.
--->
-
-Most features cross more than one group. A project-progress report, for example,
-uses a shared contract, a scoped backend read, a dataset mapper, a typed client,
-and a protected React route. Start with the guide for the user-visible outcome;
-its next steps and reference links will take you through the supporting layers.
+A feature may cross several groups. Begin with the user-visible operation, then
+follow its contract toward storage and authority. That order preserves the
+meaning of the feature while its implementation crosses packages.

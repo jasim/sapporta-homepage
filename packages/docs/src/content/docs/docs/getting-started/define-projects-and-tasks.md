@@ -53,7 +53,7 @@ export const projects = sapportaTable({
     label: "Projects",
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["name"],
-    search: { columns: ["name"] },
+    search: { self: ["name"] },
     children: [
       {
         table: "tasks",
@@ -134,7 +134,7 @@ export const tasks = sapportaTable({
     label: "Tasks",
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
-    search: { columns: ["title", "description"] },
+    search: { self: ["title", "description"] },
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -233,7 +233,7 @@ The relevant part of the response has this shape:
   "name": "tasks",
   "label": "Tasks",
   "rowLabelColumns": ["title"],
-  "search": { "columns": ["title", "description"] },
+  "searchable": true,
   "columns": [
     { "name": "project_id", "label": "Project", "kind": "number" },
     {
@@ -246,16 +246,18 @@ The relevant part of the response has this shape:
 }
 ```
 
-The metadata response is a presentation and schema catalog. It does not expose
-or replace request data authority. The `workspaceGlobal` boundary stays in the
-server-side table definition and applies to generated row operations.
+The metadata response is a presentation and schema catalog. It exposes the
+boolean search capability needed by the toolbar, not the server's selected
+columns or relationship plan. It does not expose or replace request data
+authority. The `workspaceGlobal` boundary stays in the server-side table
+definition and applies to generated row operations.
 
 <!--
 Screenshot brief
 Suggested asset: getting-started-task-schema-api.png
 Setup: Run the migrated app, execute `pnpm exec sapporta endpoints show "GET /api/meta/tables/tasks"`, and load the metadata route with valid authentication.
-Frame: Capture the discovered GET route and the formatted response in a terminal or browser JSON viewer. Keep the task label, search fields, project label, status options, and due_date kind visible.
-Visible proof: The running API exposes metadata derived from the schema, including task search, the project relationship field, controlled status values, and date semantics.
+Frame: Capture the discovered GET route and the formatted response in a terminal or browser JSON viewer. Keep the task label, searchable capability, project label, status options, and due_date kind visible.
+Visible proof: The running API exposes metadata derived from the schema, including the task search capability, project relationship field, controlled status values, and date semantics.
 Alt text: Live task table metadata returned by the discovered Sapporta API route.
 -->
 
@@ -265,6 +267,7 @@ feed the generated API and UI. Continue to
 [Work with tasks in generated screens](/docs/getting-started/work-with-tasks-in-generated-screens/)
 to create the first records. The
 [tables and schema metadata guide](/docs/guides/model-data/tables-columns-and-schema-metadata/),
+[table search guide](/docs/guides/model-data/search-indexes-and-display-metadata/),
 [table definitions reference](/docs/reference/schema/table-definitions/),
 [table validation reference](/docs/reference/schema/table-validation/), and
 [semantic value boundaries reference](/docs/reference/schema/semantic-value-boundaries/)

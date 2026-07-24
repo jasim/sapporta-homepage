@@ -4,15 +4,10 @@ description:
   "Use and predict the CRUD experience generated from table definitions."
 ---
 
-This page traces table metadata into generated list, create, detail, and edit
-screens. You will create a project and related task without adding React code,
-then identify which schema choices control each field. The same surfaces can
-provide the first usable record workflow for asset registers, team directories,
-cases, and approval queues.
-
-```text
-Set up generated project and task screens. I want named project lookups, status and priority selects, search, and a Tasks section on each project.
-```
+Registered table metadata produces a list route with inline editing and a
+separate create route. Expandable child rows expose declared relationships. The
+screen is not a second model of the table; it projects the same column kinds,
+labels, search fields, and write policy used by the generated API.
 
 ## Predict the screen from the schema
 
@@ -38,7 +33,7 @@ export const tasks = sapportaTable({
     label: "Tasks",
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["title"],
-    search: { columns: ["title", "description"] },
+    search: { self: ["title", "description"] },
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
@@ -71,13 +66,14 @@ children: [
 
 ## Run the record workflow
 
-1. Start the app with `pnpm dev` and open `/tables/projects`.
-2. Create a project named **Website Relaunch**.
+1. Start the app with `pnpm dev` and open `/tables/projects/new`.
+2. Create a project named **Website Relaunch**, then return to
+   `/tables/projects`.
 3. Open `/tables/tasks/new` and create **Publish launch checklist**.
 4. Choose **Website Relaunch** in the Project lookup. Set status to **open**,
    priority to **high**, and add a due date.
-5. Edit the saved task, then open its project record and find the task in the
-   **Tasks** child section.
+5. Edit the saved task inline in `/tables/tasks`, then expand the project row in
+   `/tables/projects` and find the task under **Tasks**.
 
 Lookup results contain only rows visible to the current user. Generated form
 validation and generated HTTP validation use the same table definition. A hidden
@@ -85,10 +81,8 @@ field or a fixed client filter is presentation, not an authorization rule.
 
 ## Keep draft text until submit
 
-Generated create screens use TanStack Form for draft state, submit validation,
-field errors, form errors, and pending state. Sapporta supplies the
-metadata-derived fields and the table request boundary. Application-owned forms
-can compose the same public pieces without creating a second form store.
+Generated create screens use TanStack Form for draft, error, and pending state.
+Sapporta supplies metadata-derived fields and the table request boundary.
 
 Numeric, money, percentage, date, and timestamp inputs keep raw strings while a
 record is being edited. Intermediate numeric text such as `-` or `12.` therefore
@@ -96,53 +90,20 @@ stays visible. The form decodes the full draft once on submit. Finite numeric
 text becomes a JSON number, dates and timestamps become canonical strings, and
 invalid input produces an issue beside its field without rewriting the draft.
 
-Create presence rules are applied during that decode. Empty optional non-text
-controls are omitted so database defaults and nullable insert rules still apply.
-Empty text remains `""`, which is distinct from `null`. Required empty controls
-produce local issues. The server then applies API write policy, adds trusted
-scope values, checks reference visibility, and performs authoritative structural
-and application validation immediately before the Drizzle write.
+During submit, empty optional non-text controls are omitted, empty text remains
+`""`, and required empty controls become local issues. The server then applies
+write policy, trusted scope values, reference visibility, and authoritative
+validation.
 
-The generated submit path converts recognized `422` response details into
-field errors. Direct field details use the public SQL column name. Nested issue
-paths use dot notation such as `lines.0.quantity`. The response summary remains
-available as a form-level error, and unrecognized failures use a generic save
-message.
-
-For a custom form, derive field models with `buildRecordFormFields()`, connect
-each model to a TanStack `form.Field`, and decode one-table creates with
-`parseCreateDraft()` immediately before `createTableRow()`. Use
-`fieldIssuesForSubmissionError()` to map local or generated API issues and
-`firstFormErrorMessage()` to render TanStack field errors. The complete API and
-its create-versus-patch invariants are in
-[Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/).
-
-<!--
-Screenshot brief
-Suggested asset: generated-task-create-form.png
-Setup: Create the Website Relaunch project first, then open `/tables/tasks/new`. Fill the task title, open the Project lookup, and set status and priority.
-Frame: Capture the full generated form with the project-name lookup and both select comboboxes visible. Open one combobox with a search query. Exclude browser developer tools.
-Visible proof: The form displays Project rather than project_id, shows Website Relaunch rather than its numeric ID, filters the declared status or priority options, and omits workspace_id.
-Alt text: Generated task creation form with a named project lookup and searchable status and priority comboboxes.
--->
-
-<!--
-Screenshot brief
-Suggested asset: generated-project-detail-children.png
-Setup: Save the task and open the Website Relaunch project detail route.
-Frame: Capture the project heading and Tasks child section with the newly created row.
-Visible proof: The related task is reachable from the parent record and carries the configured title, status, and due date columns.
-Alt text: Generated project detail screen with its related task in the Tasks child collection.
--->
-
-The project and task schemas now provide a complete ordinary record workflow:
-create, edit, search, lookup, detail, child navigation, copy, and export. Start
-with metadata when the behavior is still table-shaped. Add a custom React screen
-only when the workflow needs a different composition, temporary state, or domain
-interaction model. The next guide compares those Grid layers.
+Generated screens are the right boundary while the workflow is still
+table-shaped. Build a custom screen when the interaction needs a different
+composition, temporary state, or named domain action. The
+[form-helper reference](/docs/reference/frontend/generated-record-surfaces/)
+documents the public pieces available to that screen.
 
 ## Related reference
 
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
+- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)

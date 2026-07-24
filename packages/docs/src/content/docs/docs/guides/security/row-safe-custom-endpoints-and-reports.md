@@ -16,10 +16,12 @@ Make this custom Sapporta endpoint and report row-safe. Check the narrow feature
 
 ## Use `scopedRows()` for ordinary table work
 
-`scopedRows(db, auth, table)` binds one table to the current request authority.
-Its operations apply visible-row predicates, reject client ownership fields,
-stamp trusted insert ownership, validate references, and return not found for
-missing or invisible rows.
+`scopedRows(db, auth, table, { searchPlan })` binds one table and its
+catalog-compiled search plan to the current request authority. Its operations
+apply visible-row predicates, reject client ownership fields, stamp trusted
+insert ownership, validate references, and return not found for missing or
+invisible rows. Capture the catalog returned by `loadSapportaProject()` when
+assembling app-owned routes.
 
 ```ts
 import { scopedRows } from "@sapporta/server";
@@ -32,10 +34,12 @@ api.register(
     const auth = c.get("auth");
     forbidUnless(c, auth.ability.can("run", "task_reopening"));
 
-    const task = await scopedRows(c.get("db"), auth, tasks).update(
-      request.params.id,
-      { status: "open" },
-    );
+    const taskRows = scopedRows(c.get("db"), auth, tasks, {
+      searchPlan: catalog.searchPlanFor(tasks.sqlName),
+    });
+    const task = await taskRows.update(request.params.id, {
+      status: "open",
+    });
 
     return { status: 200, body: task };
   },

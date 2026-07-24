@@ -5,15 +5,9 @@ description:
   navigation."
 ---
 
-This page connects foreign-key integrity to the generated lookup and
-parent-child experience. You will make a task choose a project by name, then
-expose related tasks on the project record. These concepts support order lines,
-case comments, invoice payments, and any workflow that moves between related
-records.
-
-```text
-Connect tasks to projects in my Sapporta app. Show project names in task lookups and add a Tasks collection to each project record.
-```
+A relationship has three distinct meanings: the foreign key preserves stored
+integrity, `rowLabelColumns` names the referenced row, and `children` exposes
+the reverse path on a parent record.
 
 ## Define the forward relationship
 
@@ -33,11 +27,8 @@ export const tasksTable = sqliteTable("tasks", {
 });
 ```
 
-The reference gives the database and generated API a real source-to-target
-relationship. Generated create and edit forms can now present a lookup for
-`project_id`. The lookup still needs a human label, because the stored
-identifier is useful to the database and rarely useful to the person completing
-the form.
+The foreign key lets generated forms treat `project_id` as a lookup. The target
+table still needs a human label:
 
 ```ts
 export const projects = sapportaTable({
@@ -55,6 +46,11 @@ export const projects = sapportaTable({
         defaultSort: "due_date",
       },
     ],
+    search: {
+      children: {
+        tasks: "allColumns",
+      },
+    },
   },
 });
 ```
@@ -66,39 +62,39 @@ an ID-to-label map:
 
 ```json
 {
-  "entries": [{ "value": 1, "label": "Website Relaunch" }]
+  "entries": [{ "value": 1, "label": "Website Relaunch", "meta": {} }]
 }
 ```
 
-`children` describes the reverse path. The project detail route filters `tasks`
+`children` describes the reverse path. Expanding a project row filters `tasks`
 by `project_id`, shows the chosen columns, and applies the stable due-date sort.
-Declare only child collections that help a user inspect or create related
-records. Join tables can appear under both parents when both directions matter;
-self-references usually need a deliberately designed hierarchy rather than a
-recursive default child list.
+Declare child collections only when the reverse path is part of the record
+workflow. A join table may appear under both parents. A self-reference usually
+needs a purpose-built hierarchy.
+
+The `search.children.tasks` entry lets a visible task make its project appear in
+the parent result. Search configuration is separate from the child grid's
+display columns, and it can continue through further declared children when the
+domain needs it. Child matching uses the Tasks read ability and row scope; it
+cannot make an inaccessible task reveal its project.
+
+Expanding the matching project runs the child grid's own query and shows all
+visible tasks. The parent term is not inherited as a hidden child filter. Use an
+explicit task-table link or an app-owned result when the workflow needs to show
+only the matching children.
 
 ## Exercise both directions
 
 Run the app and create a project named **Website Relaunch** at
-`/tables/projects`. Create a task at `/tables/tasks/new` and choose that project
-from the lookup. Then open the project record and find the task under **Tasks**.
+`/tables/projects/new`. Create a task at `/tables/tasks/new` and choose that
+project from the lookup. Return to `/tables/projects` and expand the project row
+to find the task under **Tasks**.
 
-<!--
-Screenshot brief
-Suggested asset: relationships-project-task-round-trip.png
-Setup: Create a Website Relaunch project and one task named Publish launch checklist linked to it. Open the project detail route after saving both records.
-Frame: Capture the project heading and the Tasks child section, including the task title, status, and due date. If space permits, include the project lookup open in an inset capture.
-Visible proof: The UI uses Website Relaunch instead of a numeric project ID, and the related task appears on the project record.
-Alt text: Project detail screen showing a task child row and a project-name lookup rather than a numeric identifier.
--->
-
-The foreign key now enforces the stored relationship, while row labels and child
-metadata make it navigable in both directions. Lookup options and child rows are
-still evaluated inside the active row-security boundary, so metadata never
-widens access. Next, tune search and indexes for the paths users actually take
-through these related records.
+Lookup options, child rows, and child-assisted search all use the active read
+ability and row scope. Relationship metadata never widens access.
 
 ## Related reference
 
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
+- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)

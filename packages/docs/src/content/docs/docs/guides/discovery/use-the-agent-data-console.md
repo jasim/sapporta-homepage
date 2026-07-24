@@ -4,20 +4,9 @@ description:
   "Inspect, choose, execute, and confirm data operations against a running app."
 ---
 
-The agent data console is a workflow, not a separate database tool. An agent
-uses Sapporta discovery, row commands, report routes, and app-owned endpoints
-against the running application with one scoped token.
-
-This guide shows how the agent learns the live schema before it reads or writes,
-resolves foreign keys from visible records, and confirms every mutation. The
-same workflow supports data questions, controlled cleanup, and operator tasks
-without bypassing application authorization.
-
-```text
-Work with the running Sapporta app to <answer or change something>. Confirm the
-target and token, inspect the relevant tables and endpoints, use the highest-
-level supported operation, and show me the read-back result.
-```
+The agent data console is an operating discipline: discover live names, resolve
+identity from visible rows, choose the owning operation, execute it, and read
+the result back.
 
 ## Establish the boundary first
 
@@ -44,9 +33,12 @@ table, inspect sample values, and locate the task within visible rows:
 
 ```bash
 pnpm exec sapporta tables show tasks
-pnpm exec sapporta tables indexes tasks
 pnpm exec sapporta rows list tasks --q "launch" --limit 10
 ```
+
+`--q` uses the table search plan. Search is enabled for visible application
+columns by default and unavailable only when the table declares `search: false`.
+Index inspection is a separate, owner-only unrestricted operation.
 
 If the request names a project instead of an ID, resolve the project through
 visible data. Do not guess the foreign key.
@@ -73,26 +65,13 @@ pnpm exec sapporta api post /api/tasks/7/complete --body '{}'
 pnpm exec sapporta --output json rows get tasks 7
 ```
 
-<!--
-Screenshot brief
-Suggested asset: /assets/guides/discovery/agent-data-console.png
-Setup: Seed two projects with similarly named tasks, create a scoped token, and select one open task in the active workspace.
-Frame: Capture the agent transcript or terminal from table discovery through the final JSON read-back, with the token value hidden.
-Visible proof: The agent resolves the intended row from visible data, chooses rows update for priority, and reads back only the changed task.
-Alt text: Agent data-console workflow discovering a task, updating its priority, and confirming the scoped result.
--->
-
 For a read-only question, prefer an existing report, then a filtered table
 query, then an app-owned read endpoint. Privileged `sql query` is the fallback
 when none of those surfaces expresses the question. Any answer should state the
 route or table used, its filters, the active workspace, and the row limit.
 
-This workflow gives an agent operational access without changing Sapporta's
-authority model. The non-obvious rule is that discovery is part of the
-operation: schema names, foreign keys, and routes come from the live app, not
-from guesses. Continue with
-[scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/) or
-[choosing an interface](/docs/guides/discovery/choose-an-application-interface/).
+Discovery is part of the operation. Schema names, foreign keys, and routes come
+from the live app, not from guesses or direct database inspection.
 
 ## Related reference
 
