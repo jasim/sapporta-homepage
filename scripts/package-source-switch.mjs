@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-import { readdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { readdir, readFile, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const CONFIG_FILE = ".package-source-switch.json";
+const WORKSPACE_FILE = "pnpm-workspace.yaml";
+const SOURCE_LINK_RUNTIME = "@sapporta/server/source-link-runtime";
 const DEPENDENCY_KEYS = new Set([
   "dependencies",
   "devDependencies",
   "optionalDependencies",
   "peerDependencies",
-  "overrides",
-  "resolutions",
 ]);
 const IGNORED_DIRS = new Set([
   ".git",
@@ -20,14 +20,13 @@ const IGNORED_DIRS = new Set([
   "dist",
   "node_modules",
 ]);
-const TEXT_EXTENSIONS = new Set([
-  ".css",
-  ".js",
-  ".json",
-  ".md",
-  ".mjs",
-  ".ts",
-  ".tsx",
+const SAPPORTA_PACKAGE_DIRS = new Map([
+  ["@sapporta/server", "core"],
+  ["@sapporta/honest", "honest"],
+  ["@sapporta/shared", "shared"],
+  ["@sapporta/ui", "ui"],
+  ["@sapporta/grid", "grid"],
+  ["@sapporta/frontend", "frontend"],
 ]);
 
 const rootDir = process.cwd();
@@ -44,7 +43,10 @@ switch (command) {
     await switchSources("npm");
     break;
   case "use:local":
-    await switchSources("local");
+    await switchSources("local", process.argv[3]);
+    break;
+  case "verify":
+    await verifyCurrentMode();
     break;
   case "help":
   case "--help":
@@ -56,121 +58,291 @@ switch (command) {
 }
 
 async function showStatus() {
-  const manifests = await readManifestFiles();
   const config = await readConfigIfPresent();
-  const linkLocations = findLinkLocations(manifests);
-  const configuredLocations = config?.locations ?? [];
-  const packageNames = new Set([
-    ...linkLocations.map((location) => location.packageName),
-    ...Object.keys(config?.packages ?? {}),
-  ]);
+  const manifests = await readManifestFiles();
+  const locations = findSapportaLocations(manifests);
+  const workspaceOverrides = await readWorkspaceOverrides();
+  const counts = { local: 0, npm: 0, other: 0 };
+
+  for (const location of locations) {
+    const value = getPath(
+      manifests.find((manifest) => manifest.file === location.file)?.json,
+      location.path,
+    );
+    counts[classifySource(value)] += 1;
+  }
 
   console.log(`Config: ${CONFIG_FILE} ${config ? "present" : "missing"}`);
-  console.log(`Package manifests: ${manifests.length}`);
-  console.log(`Current link:// entries: ${linkLocations.length}`);
+  console.log(`Configured mode: ${config?.mode ?? "unknown"}`);
+  console.log(`Sapporta workspace: ${config?.sapportaRoot ?? "not configured"}`);
+  console.log(
+    `Direct entries: ${locations.length} ` +
+      `(local ${counts.local}, npm ${counts.npm}, other ${counts.other})`,
+  );
 
-  if (configuredLocations.length > 0) {
-    const counts = { local: 0, npm: 0, other: 0, missing: 0 };
-    for (const location of configuredLocations) {
-      const manifest = manifests.find((item) => item.file === location.file);
-      if (!manifest) {
-        counts.missing += 1;
-        continue;
-      }
-      const current = getPath(manifest.json, location.path);
-      const source = getConfiguredPackage(config, location.packageName);
-      if (current === source.local) counts.local += 1;
-      else if (current === source.npm) counts.npm += 1;
-      else if (current === undefined) counts.missing += 1;
-      else counts.other += 1;
-    }
-    console.log(
-      `Configured entries: ${configuredLocations.length} ` +
-        `(local ${counts.local}, npm ${counts.npm}, other ${counts.other}, missing ${counts.missing})`,
-    );
+  const overrideCounts = { local: 0, npm: 0, other: 0, missing: 0 };
+  for (const packageName of SAPPORTA_PACKAGE_DIRS.keys()) {
+    const value = workspaceOverrides.get(packageName);
+    if (value === undefined) overrideCounts.missing += 1;
+    else overrideCounts[classifySource(value)] += 1;
   }
-
-  if (packageNames.size > 0) {
-    const references = await findNonManifestReferences([...packageNames]);
-    console.log(`Non-manifest package references: ${references.length}`);
-    for (const reference of references.slice(0, 40)) {
-      console.log(`  ${reference.file}:${reference.line}: ${reference.match}`);
-    }
-    if (references.length > 40) {
-      console.log(`  ... ${references.length - 40} more`);
-    }
-  }
+  console.log(
+    `Workspace overrides: local ${overrideCounts.local}, ` +
+      `npm ${overrideCounts.npm}, other ${overrideCounts.other}, ` +
+      `missing ${overrideCounts.missing}`,
+  );
 }
 
 async function updateNpmVersions() {
+  const config = await readConfig();
   const manifests = await readManifestFiles();
-  const existingConfig = (await readConfigIfPresent()) ?? emptyConfig();
-  const linkLocations = findLinkLocations(manifests);
+  const packageNames = new Set([
+    ...findSapportaLocations(manifests).map((location) => location.packageName),
+    ...Object.keys(config.npm),
+  ]);
 
-  if (linkLocations.length > 0) {
-    existingConfig.locations = linkLocations.map(
-      ({ value: _value, ...rest }) => rest,
-    );
-    for (const location of linkLocations) {
-      existingConfig.packages[location.packageName] = {
-        local: location.value,
-        npm: existingConfig.packages[location.packageName]?.npm ?? "",
-      };
-    }
-  } else if (existingConfig.locations.length === 0) {
-    throw new Error(
-      `No link:// entries found and ${CONFIG_FILE} has no stored locations.`,
-    );
+  if (packageNames.size === 0) {
+    throw new Error("No Sapporta package dependencies were found.");
   }
 
-  const packageNames = Object.keys(existingConfig.packages).sort();
-  if (packageNames.length === 0) {
-    throw new Error("No packages to update.");
-  }
-
-  for (const packageName of packageNames) {
+  for (const packageName of [...packageNames].sort()) {
     const latest = await fetchLatestVersion(packageName);
-    existingConfig.packages[packageName].npm = latest;
+    config.npm[packageName] = latest;
     console.log(`${packageName}: ${latest}`);
   }
 
-  existingConfig.updatedAt = new Date().toISOString();
-  await writeConfig(existingConfig);
+  config.updatedAt = new Date().toISOString();
+  await writeConfig(config);
   console.log(`Wrote ${CONFIG_FILE}`);
 }
 
-async function switchSources(target) {
-  const config = await readRequiredConfig();
-  const manifests = await readManifestFiles();
-  const changedFiles = new Set();
+async function switchSources(target, requestedSapportaRoot) {
+  const config = await readConfig();
+  if (requestedSapportaRoot) {
+    config.sapportaRoot = path.resolve(rootDir, requestedSapportaRoot);
+  }
 
-  for (const location of config.locations) {
+  const manifests = await readManifestFiles();
+  const locations = findSapportaLocations(manifests);
+  if (locations.length === 0) {
+    throw new Error("No Sapporta package dependencies were found.");
+  }
+
+  const sourceByPackage =
+    target === "local"
+      ? await localSources(config)
+      : npmSources(config, locations);
+
+  const changedFiles = new Set();
+  for (const location of locations) {
     const manifest = manifests.find((item) => item.file === location.file);
     if (!manifest) {
       throw new Error(`Stored manifest no longer exists: ${location.file}`);
     }
-    const source = getConfiguredPackage(config, location.packageName);
-    const value = source[target];
+    const value = sourceByPackage.get(location.packageName);
     if (!value) {
-      throw new Error(
-        `Missing ${target} source for ${location.packageName}. Run update-npm first.`,
-      );
+      throw new Error(`No ${target} source for ${location.packageName}.`);
     }
     setPath(manifest.json, location.path, value);
     changedFiles.add(location.file);
   }
+
+  setApiSourceLinkRuntime(manifests, target === "local", changedFiles);
+  const migratedOverrides = migrateRootPnpmOverrides(manifests, changedFiles);
 
   for (const manifest of manifests) {
     if (!changedFiles.has(manifest.file)) continue;
     await writeJsonFile(path.join(rootDir, manifest.file), manifest.json);
   }
 
+  await updateWorkspaceOverrides({
+    migratedOverrides,
+    sapportaSources: target === "local" ? sourceByPackage : new Map(),
+  });
+
   config.mode = target;
   config.updatedAt = new Date().toISOString();
   await writeConfig(config);
+  await verifyManifestState(target, config);
+
   console.log(
     `Switched ${changedFiles.size} package.json file(s) to ${target}.`,
   );
+  console.log(`Run "pnpm install" and then "pnpm package-sources:verify".`);
+}
+
+async function verifyCurrentMode() {
+  const config = await readConfig();
+  await verifyManifestState(config.mode, config);
+  await verifyLockfile(config.mode);
+  console.log(`Verified ${config.mode} Sapporta dependency graph.`);
+}
+
+async function verifyManifestState(mode, config) {
+  if (mode !== "local" && mode !== "npm") {
+    throw new Error(`Unknown configured mode "${mode}".`);
+  }
+
+  const manifests = await readManifestFiles();
+  const locations = findSapportaLocations(manifests);
+  const expectedSources =
+    mode === "local"
+      ? await localSources(config)
+      : npmSources(config, locations);
+  const errors = [];
+
+  for (const location of locations) {
+    const manifest = manifests.find((item) => item.file === location.file);
+    const actual = getPath(manifest?.json, location.path);
+    const expected = expectedSources.get(location.packageName);
+    if (actual !== expected) {
+      errors.push(
+        `${location.file}:${location.path.join(".")} is ${JSON.stringify(actual)}; ` +
+          `expected ${JSON.stringify(expected)}`,
+      );
+    }
+  }
+
+  const workspaceOverrides = await readWorkspaceOverrides();
+  for (const packageName of SAPPORTA_PACKAGE_DIRS.keys()) {
+    const actual = workspaceOverrides.get(packageName);
+    if (mode === "local") {
+      const expected = expectedSources.get(packageName);
+      if (actual !== expected) {
+        errors.push(
+          `${WORKSPACE_FILE} override ${packageName} is ${JSON.stringify(actual)}; ` +
+            `expected ${JSON.stringify(expected)}`,
+        );
+      }
+    } else if (actual !== undefined) {
+      errors.push(
+        `${WORKSPACE_FILE} still overrides ${packageName} in npm mode`,
+      );
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Sapporta source verification failed:\n- ${errors.join("\n- ")}`);
+  }
+}
+
+async function verifyLockfile(mode) {
+  const lockfilePath = path.join(rootDir, "pnpm-lock.yaml");
+  if (!existsSync(lockfilePath)) {
+    throw new Error("pnpm-lock.yaml is missing. Run pnpm install first.");
+  }
+  const lockfile = await readFile(lockfilePath, "utf8");
+  const firstPartyNames = [...SAPPORTA_PACKAGE_DIRS.keys()];
+
+  if (mode === "local") {
+    const registryEntries = firstPartyNames.flatMap((packageName) => {
+      const escaped = escapeRegExp(packageName);
+      return (
+        lockfile.match(new RegExp(`^ {2}'?${escaped}@(?!link:)`, "gm")) ?? []
+      );
+    });
+    const packedEntries =
+      lockfile.match(/(?:file:)[^\n]*sapporta[^\n]*\.tgz/gi) ?? [];
+    if (registryEntries.length > 0 || packedEntries.length > 0) {
+      throw new Error(
+        [
+          "Local mode lockfile contains non-linked Sapporta packages.",
+          ...registryEntries,
+          ...packedEntries,
+        ].join("\n"),
+      );
+    }
+  } else if (/\blink:[^\n]*\/sapporta\/packages\//.test(lockfile)) {
+    throw new Error("npm mode lockfile still contains Sapporta workspace links.");
+  }
+}
+
+async function localSources(config) {
+  const sapportaRoot = config.sapportaRoot;
+  if (!sapportaRoot) {
+    throw new Error(
+      `No Sapporta workspace configured. Run ` +
+        `"pnpm package-sources use:local /absolute/path/to/sapporta".`,
+    );
+  }
+
+  const canonicalRoot = await realpath(sapportaRoot).catch(() => undefined);
+  if (!canonicalRoot) {
+    throw new Error(`Sapporta workspace does not exist: ${sapportaRoot}`);
+  }
+
+  const sources = new Map();
+  for (const [packageName, packageDir] of SAPPORTA_PACKAGE_DIRS) {
+    const packageRoot = path.join(canonicalRoot, "packages", packageDir);
+    const packageJsonPath = path.join(packageRoot, "package.json");
+    if (!existsSync(packageJsonPath)) {
+      throw new Error(`Missing ${packageJsonPath}`);
+    }
+    const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
+    if (packageJson.name !== packageName) {
+      throw new Error(
+        `${packageJsonPath} is ${JSON.stringify(packageJson.name)}, ` +
+          `expected ${JSON.stringify(packageName)}`,
+      );
+    }
+    sources.set(packageName, `link:${packageRoot}`);
+  }
+
+  config.sapportaRoot = canonicalRoot;
+  return sources;
+}
+
+function npmSources(config, locations) {
+  const sources = new Map();
+  for (const { packageName } of locations) {
+    const version = config.npm[packageName];
+    if (!version) {
+      throw new Error(
+        `Missing npm version for ${packageName}. Run ` +
+          `"pnpm package-sources:update-npm" first.`,
+      );
+    }
+    sources.set(packageName, version);
+  }
+  return sources;
+}
+
+function setApiSourceLinkRuntime(manifests, enabled, changedFiles) {
+  const apiManifest = manifests.find(
+    (manifest) => manifest.file === "packages/api/package.json",
+  );
+  if (!apiManifest) return;
+
+  for (const scriptName of ["dev", "start"]) {
+    const script = apiManifest.json.scripts?.[scriptName];
+    if (typeof script !== "string") continue;
+    const withoutRuntime = script.replace(
+      `node --import ${SOURCE_LINK_RUNTIME}`,
+      "node",
+    );
+    const next = enabled
+      ? withoutRuntime.replace("node", `node --import ${SOURCE_LINK_RUNTIME}`)
+      : withoutRuntime;
+    if (next !== script) {
+      apiManifest.json.scripts[scriptName] = next;
+      changedFiles.add(apiManifest.file);
+    }
+  }
+}
+
+function migrateRootPnpmOverrides(manifests, changedFiles) {
+  const rootManifest = manifests.find(
+    (manifest) => manifest.file === "package.json",
+  );
+  const overrides = rootManifest?.json.pnpm?.overrides;
+  if (!rootManifest || !isRecord(overrides)) return new Map();
+
+  delete rootManifest.json.pnpm.overrides;
+  if (Object.keys(rootManifest.json.pnpm).length === 0) {
+    delete rootManifest.json.pnpm;
+  }
+  changedFiles.add(rootManifest.file);
+  return new Map(Object.entries(overrides));
 }
 
 async function readManifestFiles() {
@@ -197,10 +369,10 @@ async function walk(dir, onFile) {
   }
 }
 
-function findLinkLocations(manifests) {
+function findSapportaLocations(manifests) {
   const locations = [];
   for (const manifest of manifests) {
-    collectLinkLocations(manifest.json, [], manifest.file, locations);
+    collectSapportaLocations(manifest.json, [], manifest.file, locations);
   }
   return locations.sort((a, b) =>
     `${a.file}:${a.path.join(".")}`.localeCompare(
@@ -209,84 +381,101 @@ function findLinkLocations(manifests) {
   );
 }
 
-function collectLinkLocations(value, segments, file, locations) {
-  if (typeof value === "string") {
-    if (value.startsWith("link://")) {
-      locations.push({
-        file,
-        path: segments,
-        packageName: inferPackageName(segments),
-        value,
-      });
-    }
-    return;
-  }
-  if (!value || typeof value !== "object" || Array.isArray(value)) return;
+function collectSapportaLocations(value, segments, file, locations) {
+  if (!isRecord(value)) return;
 
   for (const [key, child] of Object.entries(value)) {
     const parentKey = segments.at(-1);
-    const isDependencyMap = DEPENDENCY_KEYS.has(parentKey);
-    const isPnpmOverride =
-      parentKey === "overrides" && segments.at(-2) === "pnpm";
     if (
       typeof child === "string" &&
-      child.startsWith("link://") &&
-      (isDependencyMap || isPnpmOverride)
+      DEPENDENCY_KEYS.has(parentKey) &&
+      SAPPORTA_PACKAGE_DIRS.has(key)
     ) {
       locations.push({
         file,
         path: [...segments, key],
-        packageName: inferPackageName([...segments, key]),
-        value: child,
+        packageName: key,
       });
       continue;
     }
-    collectLinkLocations(child, [...segments, key], file, locations);
+    collectSapportaLocations(child, [...segments, key], file, locations);
   }
 }
 
-function inferPackageName(segments) {
-  const key = segments.at(-1);
-  if (!key)
-    throw new Error(
-      `Cannot infer package name from path ${segments.join(".")}`,
-    );
-  if (key.startsWith("@")) {
-    const [, scope, name] = key.match(/^@([^/]+)\/([^@>]+).*$/) ?? [];
-    if (scope && name) return `@${scope}/${name}`;
-  }
-  return key
-    .replace(/@[^@]*$/, "")
-    .split(">")
-    .at(-1);
+async function readWorkspaceOverrides() {
+  const workspacePath = path.join(rootDir, WORKSPACE_FILE);
+  const source = await readFile(workspacePath, "utf8");
+  return parseTopLevelStringMap(source, "overrides").values;
 }
 
-async function findNonManifestReferences(packageNames) {
-  const references = [];
-  const packagePattern = new RegExp(
-    packageNames.map((name) => escapeRegExp(name)).join("|"),
-  );
+async function updateWorkspaceOverrides({
+  migratedOverrides,
+  sapportaSources,
+}) {
+  const workspacePath = path.join(rootDir, WORKSPACE_FILE);
+  const source = await readFile(workspacePath, "utf8");
+  const parsed = parseTopLevelStringMap(source, "overrides");
+  const values = new Map(parsed.values);
 
-  await walk(rootDir, async (file) => {
-    const relativeFile = normalizePath(path.relative(rootDir, file));
-    if (relativeFile === CONFIG_FILE) return;
-    if (path.basename(file) === "package.json") return;
-    if (relativeFile === "pnpm-lock.yaml") return;
-    if (!TEXT_EXTENSIONS.has(path.extname(file))) return;
+  for (const [key, value] of migratedOverrides) {
+    if (!values.has(key)) values.set(key, String(value));
+  }
+  for (const packageName of SAPPORTA_PACKAGE_DIRS.keys()) {
+    values.delete(packageName);
+  }
+  for (const [packageName, spec] of sapportaSources) {
+    values.set(packageName, spec);
+  }
 
-    const lines = (await readFile(file, "utf8")).split(/\r?\n/);
-    for (const [index, line] of lines.entries()) {
-      const match = line.match(packagePattern);
-      if (!match) continue;
-      references.push({
-        file: relativeFile,
-        line: index + 1,
-        match: match[0],
-      });
+  const block = [
+    "overrides:",
+    ...[...values].map(
+      ([key, value]) => `  ${yamlString(key)}: ${yamlString(value)}`,
+    ),
+  ];
+  const lines = source.replace(/\n$/, "").split("\n");
+  lines.splice(parsed.start, parsed.end - parsed.start, ...block);
+  await writeFile(workspacePath, `${lines.join("\n")}\n`);
+}
+
+function parseTopLevelStringMap(source, key) {
+  const lines = source.replace(/\n$/, "").split("\n");
+  const start = lines.findIndex((line) => line === `${key}:`);
+  if (start === -1) {
+    return { start: lines.length, end: lines.length, values: new Map() };
+  }
+
+  let end = start + 1;
+  const values = new Map();
+  while (end < lines.length) {
+    const line = lines[end];
+    if (line !== "" && !line.startsWith(" ") && !line.startsWith("#")) break;
+    if (line.startsWith("  ") && !line.trimStart().startsWith("#")) {
+      const match = line.match(/^  ("(?:[^"\\]|\\.)*"|'[^']*'|[^:]+):\s*(.+)$/);
+      if (!match) {
+        throw new Error(
+          `Cannot safely update ${key} in ${WORKSPACE_FILE}: ${line}`,
+        );
+      }
+      values.set(parseYamlString(match[1].trim()), parseYamlString(match[2]));
     }
-  });
+    end += 1;
+  }
+  while (end > start + 1 && lines[end - 1] === "") end -= 1;
+  return { start, end, values };
+}
 
-  return references;
+function parseYamlString(value) {
+  const trimmed = value.trim();
+  if (trimmed.startsWith('"')) return JSON.parse(trimmed);
+  if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
+    return trimmed.slice(1, -1).replaceAll("''", "'");
+  }
+  return trimmed;
+}
+
+function yamlString(value) {
+  return JSON.stringify(String(value));
 }
 
 async function fetchLatestVersion(packageName) {
@@ -296,48 +485,68 @@ async function fetchLatestVersion(packageName) {
   });
   if (!response.ok) {
     throw new Error(
-      `Could not fetch ${packageName} from npm registry: ${response.status} ${response.statusText}`,
+      `Could not fetch ${packageName} from npm registry: ` +
+        `${response.status} ${response.statusText}`,
     );
   }
   const body = await response.json();
   const latest = body?.["dist-tags"]?.latest;
-  if (!latest)
+  if (!latest) {
     throw new Error(
       `npm registry response for ${packageName} had no latest tag.`,
     );
+  }
   return latest;
 }
 
 async function readConfigIfPresent() {
   const file = path.join(rootDir, CONFIG_FILE);
   if (!existsSync(file)) return undefined;
-  return JSON.parse(await readFile(file, "utf8"));
+  return normalizeConfig(JSON.parse(await readFile(file, "utf8")));
 }
 
-async function readRequiredConfig() {
+async function readConfig() {
   const config = await readConfigIfPresent();
-  if (!config) {
-    throw new Error(
-      `Missing ${CONFIG_FILE}. Run "pnpm package-sources:update-npm" first.`,
-    );
-  }
-  return config;
-}
-
-function emptyConfig() {
+  if (config) return config;
   return {
-    version: 1,
-    mode: "local",
-    packages: {},
-    locations: [],
+    version: 2,
+    mode: "npm",
+    sapportaRoot: undefined,
+    npm: {},
     updatedAt: null,
   };
 }
 
-function getConfiguredPackage(config, packageName) {
-  const source = config.packages?.[packageName];
-  if (!source) throw new Error(`Missing stored source for ${packageName}.`);
-  return source;
+function normalizeConfig(config) {
+  if (config.version === 2) return config;
+  if (config.version !== 1) {
+    throw new Error(`Unsupported ${CONFIG_FILE} version ${config.version}.`);
+  }
+
+  const sapportaRoot = Object.values(config.packages ?? {})
+    .map((source) => source?.local)
+    .filter((source) => typeof source === "string" && source.startsWith("link:"))
+    .map(sapportaRootFromLink)
+    .find(Boolean);
+
+  return {
+    version: 2,
+    mode: config.mode === "local" ? "local" : "npm",
+    sapportaRoot,
+    npm: Object.fromEntries(
+      Object.entries(config.packages ?? {}).flatMap(([packageName, source]) =>
+        typeof source?.npm === "string" ? [[packageName, source.npm]] : [],
+      ),
+    ),
+    updatedAt: config.updatedAt ?? null,
+  };
+}
+
+function sapportaRootFromLink(spec) {
+  const packagePath = spec.slice("link:".length);
+  const marker = `${path.sep}packages${path.sep}`;
+  const markerIndex = packagePath.lastIndexOf(marker);
+  return markerIndex === -1 ? undefined : packagePath.slice(0, markerIndex);
 }
 
 async function writeConfig(config) {
@@ -348,10 +557,17 @@ async function writeJsonFile(file, value) {
   await writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+function classifySource(value) {
+  if (typeof value !== "string") return "other";
+  if (value.startsWith("link:")) return "local";
+  if (/^\d+\.\d+\.\d+(?:[-+].*)?$/.test(value)) return "npm";
+  return "other";
+}
+
 function getPath(object, segments) {
   let current = object;
   for (const segment of segments) {
-    if (!current || typeof current !== "object") return undefined;
+    if (!isRecord(current)) return undefined;
     current = current[segment];
   }
   return current;
@@ -361,12 +577,16 @@ function setPath(object, segments, value) {
   const last = segments.at(-1);
   if (!last) throw new Error("Cannot set an empty path.");
   const parent = segments.slice(0, -1).reduce((current, segment) => {
-    if (!current?.[segment] || typeof current[segment] !== "object") {
+    if (!isRecord(current?.[segment])) {
       throw new Error(`Missing path segment ${segments.join(".")}`);
     }
     return current[segment];
   }, object);
   parent[last] = value;
+}
+
+function isRecord(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function normalizePath(file) {
@@ -381,21 +601,19 @@ function printHelp() {
   console.log(`Usage: pnpm package-sources <command>
 
 Commands:
-  status      Show stored sources, current package.json state, and code references.
-  update-npm  Capture current link:// sources and refresh stored npm latest versions.
-  use:npm     Rewrite stored package.json locations to stored npm versions.
-  use:local   Rewrite stored package.json locations to stored link:// versions.
+  status                  Show the configured workspace and current sources.
+  update-npm              Refresh stored npm release versions.
+  use:npm                 Switch all Sapporta dependencies to npm releases.
+  use:local [workspace]   Link all Sapporta dependencies to one checkout.
+  verify                  Verify manifests, overrides, and the lockfile.
 
-State file:
-  ${CONFIG_FILE} is gitignored and stores both local link paths and npm versions.
+Local mode:
+  The first use requires the Sapporta checkout path:
+    pnpm package-sources use:local /absolute/path/to/sapporta
 
-Notes:
-  The direct node command is the recovery path when pnpm refuses to run scripts
-  before install:
-    node scripts/package-source-switch.mjs use:local
+  The path is stored in the gitignored ${CONFIG_FILE}. Local mode writes
+  direct link: dependencies and transitive overrides in ${WORKSPACE_FILE}.
 
-  pnpm shortcuts can also be forced with:
-    pnpm_config_verify_deps_before_run=false pnpm package-sources:status
-
-  After switching sources, run pnpm install to refresh pnpm-lock.yaml and node_modules.`);
+After switching:
+  Run pnpm install, then pnpm package-sources:verify.`);
 }

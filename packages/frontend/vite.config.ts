@@ -25,6 +25,17 @@ const apiPort = parseIntegerEnv("SAPPORTA_API_PORT", 3000);
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
+    dedupe: [
+      "@sapporta/rest-core",
+      "@tanstack/react-form",
+      "@tanstack/react-query",
+      "@js-temporal/polyfill",
+      "zod",
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "zustand",
+    ],
     alias: {
       "sapporta-homepage-app-shared": path.resolve(
         __dirname,

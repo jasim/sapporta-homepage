@@ -17,6 +17,7 @@ rm -rf \
 
 printf '\nInstalling dependencies and building the application...\n'
 pnpm install
+pnpm package-sources verify
 pnpm build
 
 printf '\nThe package-related files are ready. Add and commit them to git now.\n'
