@@ -35,6 +35,7 @@ import {
   loadSchema,
   type SchemaTableRootRowsOptions,
   type SchemaTableRowsByLevel,
+  type TGridSession,
   useTGridCell,
   useTGridCellEditor,
   useSchemaStore,
@@ -66,7 +67,6 @@ type QuoteDeepLink = {
 type QuoteExpansionContextValue = {
   expandedQuote: QuoteDetailsOpenDetail | null;
   activeQuoteDialog: QuoteDetailsOpenDetail | null;
-  linkedBookRowKey: string | null;
   reportQuoteClipping: (identity: QuoteDetailsOpenDetail, clipped: boolean) => void;
   openQuoteDialog: (identity: QuoteDetailsOpenDetail) => void;
   closeQuoteDialog: () => void;
@@ -132,10 +132,12 @@ function BooksGrid({
   const searchParamsRef = useRef(searchParams);
   const [expandedQuote, setExpandedQuote] = useState<QuoteDetailsOpenDetail | null>(null);
   const deepLinkedQuote = useMemo(() => quoteDeepLinkFromSearchParams(searchParams), [searchParams]);
+  const linkedBookRowKey = deepLinkedQuote?.bookRowKey ?? null;
   // Activation callbacks live inside the stable TGrid definition, so they read
   // interaction state from refs instead of closing over render-time state.
   const expandedQuoteRef = useRef<QuoteDetailsOpenDetail | null>(null);
   const clippedQuotesRef = useRef(new Map<string, boolean>());
+  const deepLinkedBookWatcherRef = useRef<(() => void) | null>(null);
   const reportQuoteClipping = useCallback((identity: QuoteDetailsOpenDetail, clipped: boolean) => {
     clippedQuotesRef.current.set(quoteIdentityKey(identity), clipped);
   }, []);
@@ -162,18 +164,61 @@ function BooksGrid({
       { replace: true },
     );
   }, []);
+  const expandDeepLinkedBookWhenAvailable = useCallback(
+    (session: TGridSession<SchemaTableRowsByLevel> | null) => {
+      deepLinkedBookWatcherRef.current?.();
+      deepLinkedBookWatcherRef.current = null;
+
+      if (!session || linkedBookRowKey === null) return;
+
+      const runtime = session.runtime;
+      const root = runtime.root;
+      const path = root.path;
+      const rowId = makeRowId(path, linkedBookRowKey);
+      const expandAndRevealBook = () => {
+        if (root.displayedRow(rowId) === undefined) return false;
+        if (!root.isExpanded(rowId)) root.expand(rowId);
+        controllerFor(runtime, path).revealRow(rowId);
+        return true;
+      };
+
+      if (expandAndRevealBook()) return;
+
+      let watching = true;
+      let unsubscribe: (() => void) | undefined;
+      const releaseWatcher = () => {
+        if (!watching) return;
+        watching = false;
+        unsubscribe?.();
+        if (deepLinkedBookWatcherRef.current === releaseWatcher) {
+          deepLinkedBookWatcherRef.current = null;
+        }
+      };
+
+      unsubscribe = root.subscribeDisplayedRowSequence(() => {
+        if (expandAndRevealBook()) releaseWatcher();
+      });
+
+      if (!watching) {
+        unsubscribe();
+        return;
+      }
+
+      deepLinkedBookWatcherRef.current = releaseWatcher;
+      if (expandAndRevealBook()) releaseWatcher();
+    },
+    [linkedBookRowKey],
+  );
   const quoteExpansion = useMemo(
     () => ({
       expandedQuote,
       activeQuoteDialog: deepLinkedQuote?.identity ?? null,
-      linkedBookRowKey: deepLinkedQuote?.bookRowKey ?? null,
       reportQuoteClipping,
       openQuoteDialog,
       closeQuoteDialog,
     }),
     [
       closeQuoteDialog,
-      deepLinkedQuote?.bookRowKey,
       deepLinkedQuote?.identity,
       expandedQuote,
       openQuoteDialog,
@@ -218,12 +263,6 @@ function BooksGrid({
     if (booksLevel) {
       booksLevel.columns = (columns) => [
         columns.remainingTable({ exclude: ["id"] }),
-        columns.client("quote_deep_link", {
-          label: "",
-          width: 1,
-          edit: "none",
-          renderCell: QuoteDeepLinkBookCell,
-        }),
       ];
     }
 
@@ -302,6 +341,7 @@ function BooksGrid({
         table={tableSchema}
         route={route}
         registerAs={booksTableName}
+        sessionRef={expandDeepLinkedBookWhenAvailable}
         onNewRecord={() => {
           window.location.assign(toAppHref(`/tables/${booksTableName}/new`, appBaseUrl));
         }}
@@ -311,27 +351,6 @@ function BooksGrid({
       />
     </QuoteExpansionContext.Provider>
   );
-}
-
-function QuoteDeepLinkBookCell() {
-  const { level, row, runtime } = useTGridCell<
-    SchemaTableRowsByLevel,
-    unknown,
-    typeof booksTableName
-  >(booksTableName);
-  const path = level.path;
-  const rowKey = String(row.id);
-  const { linkedBookRowKey } = useQuoteExpansion();
-
-  useEffect(() => {
-    if (linkedBookRowKey !== rowKey) return;
-
-    const rowId = makeRowId(path, rowKey);
-    if (!level.isExpanded(rowId)) level.expand(rowId);
-    controllerFor(runtime, path).revealRow(rowId);
-  }, [level, linkedBookRowKey, path, rowKey, runtime]);
-
-  return null;
 }
 
 function QuoteTextCell() {
