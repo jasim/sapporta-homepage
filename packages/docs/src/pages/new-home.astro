@@ -277,6 +277,42 @@ https://sapporta.com/docs/getting-started/create-a-project.md</pre
       </div>
     </main>
 
+    <dialog
+      class="essay-lightbox"
+      data-image-lightbox
+      aria-labelledby="essay-lightbox-caption"
+    >
+      <div class="essay-lightbox-frame">
+        <button
+          class="essay-lightbox-close"
+          type="button"
+          data-image-lightbox-close
+          aria-label="Close expanded screenshot"
+          title="Close"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+          >
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+        <figure class="essay-lightbox-figure">
+          <img
+            class="essay-lightbox-image"
+            data-image-lightbox-image
+            alt=""
+          />
+          <figcaption
+            class="essay-lightbox-caption"
+            id="essay-lightbox-caption"
+            data-image-lightbox-caption
+          >
+          </figcaption>
+        </figure>
+      </div>
+    </dialog>
+
     <script>
       const copyAgentPromptButton =
         document.querySelector<HTMLButtonElement>(
@@ -404,6 +440,113 @@ https://sapporta.com/docs/getting-started/create-a-project.md</pre
           );
         });
       }
+
+      const imageLightbox =
+        document.querySelector<HTMLDialogElement>(
+          "[data-image-lightbox]",
+        );
+      const imageLightboxImage =
+        imageLightbox?.querySelector<HTMLImageElement>(
+          "[data-image-lightbox-image]",
+        );
+      const imageLightboxCaption =
+        imageLightbox?.querySelector<HTMLElement>(
+          "[data-image-lightbox-caption]",
+        );
+      const imageLightboxClose =
+        imageLightbox?.querySelector<HTMLButtonElement>(
+          "[data-image-lightbox-close]",
+        );
+      let imageLightboxTrigger:
+        HTMLAnchorElement | undefined;
+
+      const closeImageLightbox = () => {
+        imageLightbox?.close();
+      };
+
+      const openImageLightbox = (
+        trigger: HTMLAnchorElement,
+      ) => {
+        const image =
+          trigger.querySelector<HTMLImageElement>(
+            "img",
+          );
+        if (
+          !imageLightbox ||
+          !imageLightboxImage ||
+          !imageLightboxCaption ||
+          !image
+        ) {
+          return;
+        }
+
+        const caption =
+          trigger
+            .closest("figure")
+            ?.querySelector("figcaption")
+            ?.textContent?.trim() || image.alt;
+
+        imageLightboxTrigger = trigger;
+        imageLightboxImage.src = trigger.href;
+        imageLightboxImage.alt = image.alt;
+        imageLightboxCaption.textContent =
+          caption;
+        document.body.dataset.lightboxOpen =
+          "true";
+        imageLightbox.showModal();
+      };
+
+      const imageLinks =
+        document.querySelectorAll<HTMLAnchorElement>(
+          ".grid-shot-button",
+        );
+
+      for (const imageLink of imageLinks) {
+        imageLink.addEventListener(
+          "click",
+          (event) => {
+            if (
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+            openImageLightbox(imageLink);
+          },
+        );
+      }
+
+      imageLightboxClose?.addEventListener(
+        "click",
+        closeImageLightbox,
+      );
+
+      imageLightbox?.addEventListener(
+        "click",
+        (event) => {
+          if (event.target === imageLightbox) {
+            closeImageLightbox();
+          }
+        },
+      );
+
+      imageLightbox?.addEventListener(
+        "close",
+        () => {
+          delete document.body.dataset
+            .lightboxOpen;
+          imageLightboxImage?.removeAttribute(
+            "src",
+          );
+          imageLightboxTrigger?.focus();
+          imageLightboxTrigger = undefined;
+        },
+      );
     </script>
   </body>
 </html>

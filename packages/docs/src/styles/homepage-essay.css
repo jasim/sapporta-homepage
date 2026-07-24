@@ -689,6 +689,104 @@
   margin-top: 0.6rem;
 }
 
+.essay-page[data-lightbox-open="true"] {
+  overflow: hidden;
+}
+
+.essay-lightbox {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  inset: 0;
+  margin: auto;
+  max-height: 100dvh;
+  max-width: 100vw;
+  overflow: visible;
+  padding: 1.5rem;
+}
+
+.essay-lightbox::backdrop {
+  backdrop-filter: blur(2px);
+  background: rgb(9 12 16 / 88%);
+}
+
+.essay-lightbox-frame,
+.essay-lightbox-figure {
+  margin: 0;
+  max-height: calc(100dvh - 3rem);
+  max-width: calc(100vw - 3rem);
+}
+
+.essay-lightbox-frame {
+  position: relative;
+}
+
+.essay-lightbox-figure {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.essay-lightbox-image {
+  background: #fff;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 35%);
+  display: block;
+  height: auto;
+  margin: 0;
+  max-height: calc(100dvh - 6rem);
+  max-width: calc(100vw - 3rem);
+  object-fit: contain;
+  width: auto;
+}
+
+.essay-lightbox-caption {
+  color: rgb(255 255 255 / 78%);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  margin: 0;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.essay-lightbox-close {
+  align-items: center;
+  appearance: none;
+  background: rgb(20 24 29 / 82%);
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  height: 2.25rem;
+  justify-content: center;
+  padding: 0;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  width: 2.25rem;
+  z-index: 1;
+}
+
+.essay-lightbox-close:hover {
+  background: rgb(35 40 47 / 96%);
+  border-color: rgb(255 255 255 / 55%);
+}
+
+.essay-lightbox-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.essay-lightbox-close svg {
+  fill: none;
+  height: 1.125rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
+  width: 1.125rem;
+}
+
 @media (max-width: 78rem) {
   .essay-beat {
     display: flex;
