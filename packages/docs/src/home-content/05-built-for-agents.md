@@ -40,11 +40,3 @@ API requests are subject to tokens, abilities, workspace scope, and row
 visibility. Because all endpoints are secured by row security and authorization,
 agents only have access to the exact data that the user has. An agent and a
 person using the grid receive access according to the same server rules.
-
-Sapporta is an [open-source](https://github.com/jasim/sapporta) toolkit released
-under the MIT license. Read the
-[documentation](/docs/getting-started/introduction/) or learn more about the
-[Sapporta Grid](/grid/).
-
-Built and maintained by [Jasim A Basheer](https://x.com/jasim_ab),
-[Protoship](https://protoship.io).

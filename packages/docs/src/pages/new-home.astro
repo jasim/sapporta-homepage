@@ -7,10 +7,9 @@ import {
 import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.md";
 import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
 import { Content as RegularApplication } from "../home-content/03-regular-application.md";
-import { Content as TableMetadata } from "../home-content/03a-table-metadata.md";
-import { Content as ExplicitBoundaries } from "../home-content/03b-explicit-boundaries.md";
 import { Content as LlmOneShot } from "../home-content/04-llm-one-shot.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
+import { Content as CreditsFooter } from "../home-content/06-credits-footer.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
@@ -260,16 +259,13 @@ export const books = sapportaTable({
             <RegularApplication />
           </section>
           <section class="essay-section">
-            <TableMetadata />
-          </section>
-          <section class="essay-section">
-            <ExplicitBoundaries />
+            <BuiltForAgents />
           </section>
           <section class="essay-section">
             <LlmOneShot />
           </section>
           <section class="essay-section">
-            <BuiltForAgents />
+            <CreditsFooter />
           </section>
         </article>
       </div>

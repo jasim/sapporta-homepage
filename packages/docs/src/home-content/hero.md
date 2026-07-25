@@ -23,4 +23,4 @@ navigation:
 
 Build database applications in TypeScript
 
-With spreadsheet-like affordances for every table — and typed, documented APIs for every agent.
+Featuring a general-purpose data grid for every table, out-of-the-box agentic capabilities, and permission-aware APIs.
