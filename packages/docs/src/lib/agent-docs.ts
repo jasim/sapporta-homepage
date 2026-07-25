@@ -2,11 +2,11 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { visit } from "unist-util-visit";
 import docsSidebar from "../../sidebar.mjs";
-import { sapportaInitCommand } from "../generated/sapporta-cli.mjs";
+import { gettingStartedEnv, replaceGettingStartedEnvTokens } from "./getting-started-env.mjs";
 
-const SITE_ORIGIN = "https://sapporta.com";
-const ROOT_INDEX_URL = `${SITE_ORIGIN}/llms.txt`;
-const SAPPORTA_INIT_COMMAND_TOKEN = "{{SAPPORTA_INIT_COMMAND}}";
+const CANONICAL_SITE_ORIGIN = gettingStartedEnv.docsCanonicalOrigin;
+const RETRIEVAL_SITE_ORIGIN = gettingStartedEnv.docsOrigin;
+const ROOT_INDEX_URL = `${RETRIEVAL_SITE_ORIGIN}/llms.txt`;
 
 type DocsEntry = CollectionEntry<"docs">;
 type DocScope = "docs" | "grid";
@@ -58,11 +58,11 @@ export function markdownPathForSlug(slug: string) {
 }
 
 export function markdownUrlForSlug(slug: string) {
-  return `${SITE_ORIGIN}${markdownPathForSlug(slug)}`;
+  return `${RETRIEVAL_SITE_ORIGIN}${markdownPathForSlug(slug)}`;
 }
 
 export function canonicalUrlForSlug(slug: string) {
-  return `${SITE_ORIGIN}/${slug}/`;
+  return `${CANONICAL_SITE_ORIGIN}/${slug}/`;
 }
 
 export function renderAgentMarkdown(doc: AgentDoc, slugs: ReadonlySet<string>) {
@@ -86,7 +86,7 @@ export async function renderScopedIndex(scope: DocScope) {
   const summary = isDocs
     ? "Documentation for building database applications with Sapporta."
     : "Documentation for the standalone @sapporta/grid React data grid.";
-  const fullUrl = `${SITE_ORIGIN}/${scope}/llms-full.txt`;
+  const fullUrl = `${RETRIEVAL_SITE_ORIGIN}/${scope}/llms-full.txt`;
 
   const lines = [
     `# ${title}`,
@@ -127,8 +127,8 @@ export async function renderRootIndex() {
     "",
     "## Documentation sets",
     "",
-    `- [Sapporta application framework](${SITE_ORIGIN}/docs/llms.txt): Guides and reference for building and operating Sapporta applications.`,
-    `- [Sapporta Grid](${SITE_ORIGIN}/grid/llms.txt): Guides and reference for the standalone React data grid.`,
+    `- [Sapporta application framework](${RETRIEVAL_SITE_ORIGIN}/docs/llms.txt): Guides and reference for building and operating Sapporta applications.`,
+    `- [Sapporta Grid](${RETRIEVAL_SITE_ORIGIN}/grid/llms.txt): Guides and reference for the standalone React data grid.`,
     "",
     "## Start here",
     "",
@@ -142,8 +142,8 @@ export async function renderRootIndex() {
     "",
     "## Optional",
     "",
-    `- [Complete framework documentation](${SITE_ORIGIN}/docs/llms-full.txt): Concatenated framework Markdown for offline indexing and large-context retrieval.`,
-    `- [Complete Grid documentation](${SITE_ORIGIN}/grid/llms-full.txt): Concatenated Grid Markdown for offline indexing and large-context retrieval.`,
+    `- [Complete framework documentation](${RETRIEVAL_SITE_ORIGIN}/docs/llms-full.txt): Concatenated framework Markdown for offline indexing and large-context retrieval.`,
+    `- [Complete Grid documentation](${RETRIEVAL_SITE_ORIGIN}/grid/llms-full.txt): Concatenated Grid Markdown for offline indexing and large-context retrieval.`,
     "",
   );
 
@@ -154,7 +154,11 @@ export async function renderFullBundle(scope: DocScope) {
   const catalog = await getAgentDocCatalog();
   const docs = catalog.docs.filter((doc) => doc.slug.startsWith(`${scope}/`));
   const title = scope === "docs" ? "Sapporta application framework documentation" : "Sapporta Grid documentation";
-  const chunks = [`# ${title} — complete Markdown bundle`, "", `> Page index: ${SITE_ORIGIN}/${scope}/llms.txt`];
+  const chunks = [
+    `# ${title} — complete Markdown bundle`,
+    "",
+    `> Page index: ${RETRIEVAL_SITE_ORIGIN}/${scope}/llms.txt`,
+  ];
 
   for (const doc of docs) {
     chunks.push(
@@ -222,7 +226,8 @@ async function buildAgentDocCatalog(): Promise<AgentDocCatalog> {
 function agentDocFromEntry(entry: DocsEntry, errors: string[]) {
   const title = entry.data.title?.trim();
   const description = entry.data.description?.trim();
-  const body = entry.body?.replaceAll(SAPPORTA_INIT_COMMAND_TOKEN, sapportaInitCommand);
+  const body =
+    typeof entry.body === "string" ? replaceGettingStartedEnvTokens(entry.body, gettingStartedEnv) : entry.body;
 
   if (!title) errors.push(`Documentation page has no title: ${entry.id}`);
   if (!description) errors.push(`Documentation page has no description: ${entry.id}`);
@@ -324,18 +329,20 @@ function rewriteDocumentationLinks(markdown: string, validSlugs: ReadonlySet<str
 function rewriteDocumentationUrl(url: string, validSlugs: ReadonlySet<string>) {
   let parsed: URL;
   try {
-    parsed = new URL(url, SITE_ORIGIN);
+    parsed = new URL(url, CANONICAL_SITE_ORIGIN);
   } catch {
     return url;
   }
-  if (parsed.origin !== SITE_ORIGIN) return url;
+  if (parsed.origin !== CANONICAL_SITE_ORIGIN && parsed.origin !== RETRIEVAL_SITE_ORIGIN) {
+    return url;
+  }
 
   const slug = parsed.pathname.replace(/^\/+|\/+$/g, "");
   if (!validSlugs.has(slug)) return url;
 
   const markdownPath = markdownPathForSlug(slug);
-  if (url.startsWith(SITE_ORIGIN)) {
-    return `${SITE_ORIGIN}${markdownPath}${parsed.search}${parsed.hash}`;
+  if (url.startsWith(CANONICAL_SITE_ORIGIN) || url.startsWith(RETRIEVAL_SITE_ORIGIN)) {
+    return `${RETRIEVAL_SITE_ORIGIN}${markdownPath}${parsed.search}${parsed.hash}`;
   }
   if (url.startsWith("/")) {
     return `${markdownPath}${parsed.search}${parsed.hash}`;

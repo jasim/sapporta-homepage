@@ -13,6 +13,7 @@ import { Content as LlmOneShot } from "../home-content/04-llm-one-shot.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import SapportaMark from "../components/SapportaMark.astro";
+import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 import {
   Code2,
   Copy,
@@ -23,6 +24,10 @@ import "../styles/homepage-essay.css";
 
 const { page, brand, navigation } = frontmatter;
 const codeTheme = "github-light-default";
+const createProjectAgentUrl =
+  gettingStartedEnv.agentMarkdownUrl(
+    "docs/getting-started/create-a-project",
+  );
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
@@ -146,7 +151,7 @@ export const books = sapportaTable({
             <pre
               class="essay-get-started-prompt"
               data-agent-prompt>Create a Todo management application using Sapporta
-https://sapporta.com/docs/getting-started/create-a-project.md</pre>
+{createProjectAgentUrl}</pre>
           </section>
         </article>
       </div>

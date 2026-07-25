@@ -29,7 +29,7 @@ used both to build Sapporta projects and to operate them through coding agents.
 Ensure it is installed:
 
 ```bash
-npx skills add https://github.com/jasim/sapporta-skills --skill sapporta
+{{SAPPORTA_SKILL_INSTALL_COMMAND}}
 ```
 
 Start the local development server:

@@ -5,16 +5,14 @@ import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import docsSidebar from "./sidebar.mjs";
-import { sapportaInitCommand } from "./src/generated/sapporta-cli.mjs";
+import { gettingStartedEnv, replaceGettingStartedEnvTokens } from "./src/lib/getting-started-env.mjs";
 import { rehypeHomepageScreenshots } from "./src/markdown/rehype-homepage-screenshots.mjs";
 
-const SAPPORTA_INIT_COMMAND_TOKEN = "{{SAPPORTA_INIT_COMMAND}}";
-
-function injectSapportaInitCommand() {
+function injectGettingStartedEnv() {
   return (tree) => {
     const visit = (node) => {
-      if (typeof node.value === "string" && node.value.includes(SAPPORTA_INIT_COMMAND_TOKEN)) {
-        node.value = node.value.replaceAll(SAPPORTA_INIT_COMMAND_TOKEN, sapportaInitCommand);
+      if (typeof node.value === "string") {
+        node.value = replaceGettingStartedEnvTokens(node.value, gettingStartedEnv);
       }
       if (Array.isArray(node.children)) node.children.forEach(visit);
     };
@@ -25,13 +23,13 @@ function injectSapportaInitCommand() {
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://sapporta.com",
+  site: gettingStartedEnv.docsCanonicalOrigin,
   base: "/",
   output: "static",
   trailingSlash: "ignore",
   markdown: {
     processor: unified({
-      remarkPlugins: [injectSapportaInitCommand],
+      remarkPlugins: [injectGettingStartedEnv],
       rehypePlugins: [rehypeHomepageScreenshots],
     }),
   },

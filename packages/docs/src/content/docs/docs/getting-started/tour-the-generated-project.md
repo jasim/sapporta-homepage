@@ -70,7 +70,7 @@ the root of the Sapporta project.
   <p>
     Use Sapporta, the database framework for TypeScript, and ensure the Sapporta
     skill is installed. Follow the setup instructions at
-    <a href="https://sapporta.com/docs/getting-started/introduction/">https://sapporta.com/docs/getting-started/introduction/</a>.
+    <a href="{{SAPPORTA_GETTING_STARTED_AGENT_URL}}">{{SAPPORTA_GETTING_STARTED_AGENT_URL}}</a>.
   </p>
   <p>
     Keep the first version focused and easy to understand: include the core
@@ -98,11 +98,7 @@ the root of the Sapporta project.
   <ul>
     <li>README.md</li>
     <li>AGENTS.md</li>
-    <li>
-      <a href="https://github.com/jasim/sapporta-skills/tree/main/skills/sapporta">
-        Sapporta coding-agent skill
-      </a>
-    </li>
+    <li>The installed Sapporta coding-agent skill</li>
   </ul>
 </div>
 
