@@ -15,7 +15,7 @@ application.
 That is also what makes spreadsheets beautiful. People use them because they can
 work with data without having to anticipate every requirement in advance.
 Operations like sorting, searching, and filtering, are available to all sheets,
-and together they form an incomplete but high-leverage algebra for working with
+and together they form a partial but high-leverage algebra for working with
 tabular data.
 
 Building them as one-off features in a conventional web application, even with

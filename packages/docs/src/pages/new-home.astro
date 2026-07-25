@@ -7,9 +7,8 @@ import {
 import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.md";
 import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
 import { Content as RegularApplication } from "../home-content/03-regular-application.md";
-import { Content as LlmOneShot } from "../home-content/04-llm-one-shot.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
-import { Content as CreditsFooter } from "../home-content/06-credits-footer.md";
+import { Content as StackDetails } from "../home-content/stack.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
@@ -27,6 +26,17 @@ const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
   );
+const createProjectAgentPrompt = `Build a focused task management app with Sapporta.
+${createProjectAgentUrl}
+
+Model people, projects, tasks, labels, and comments.
+
+Include:
+- task creation and assignment
+- status, priority, due dates, labels, and comments
+- views for open tasks, overdue tasks, assignees, and projects
+
+Add realistic sample data. Keep the first version small and focussed.`;
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
@@ -116,41 +126,91 @@ export const books = sapportaTable({
           <HeroContent />
 
           <section
-            class="essay-get-started"
-            aria-labelledby="essay-get-started-title"
+            class="essay-capabilities"
+            aria-label="Sapporta capabilities"
           >
-            <div class="essay-get-started-header">
-              <h2
-                class="essay-get-started-title"
-                id="essay-get-started-title"
-              >
-                Get started with your coding agent
-              </h2>
-              <button
-                class="essay-get-started-copy"
-                type="button"
-                data-copy-agent-prompt
-                aria-label="Copy prompt to clipboard"
-                title="Copy prompt to clipboard"
-              >
-                <Copy
-                  aria-hidden="true"
-                  size={15}
-                  strokeWidth={2}
-                />
-                <span data-copy-agent-label
-                  >Copy</span
+            <ul class="essay-capability-grid">
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
                 >
-              </button>
-              <span
-                class="essay-get-started-status"
-                data-copy-agent-status
-                aria-live="polite"></span>
-            </div>
-            <pre
-              class="essay-get-started-prompt"
-              data-agent-prompt>Create a Todo management application using Sapporta
-{createProjectAgentUrl}</pre>
+                  Grids
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  Editable table UI with search,
+                  sort, filters, nesting, and
+                  keyboard flow.
+                </span>
+              </li>
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
+                >
+                  Reports
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  Summary rows, detail rows, and
+                  drill-down links.
+                </span>
+              </li>
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
+                >
+                  REST APIs for every table
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  CRUD, lookup, count, export, and
+                  typed custom endpoints.
+                </span>
+              </li>
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
+                >
+                  Forms
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  Validated data entry with
+                  reliable keyboard navigation.
+                </span>
+              </li>
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
+                >
+                  Security
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  Workspace and role scoped reads
+                  and writes.
+                </span>
+              </li>
+              <li class="essay-capability">
+                <span
+                  class="essay-capability-title"
+                >
+                  Deployment
+                </span>
+                <span
+                  class="essay-capability-text"
+                >
+                  Project wiring from <code
+                    >npx sapporta init</code
+                  > to production.
+                </span>
+              </li>
+            </ul>
           </section>
         </article>
       </div>
@@ -244,6 +304,47 @@ export const books = sapportaTable({
       </div>
 
       <div
+        class="essay-shell essay-shell--get-started"
+      >
+        <section
+          class="essay-get-started"
+          aria-labelledby="essay-get-started-title"
+        >
+          <div class="essay-get-started-header">
+            <h2
+              class="essay-get-started-title"
+              id="essay-get-started-title"
+            >
+              Get started with your coding agent
+            </h2>
+            <button
+              class="essay-get-started-copy"
+              type="button"
+              data-copy-agent-prompt
+              aria-label="Copy prompt to clipboard"
+              title="Copy prompt to clipboard"
+            >
+              <Copy
+                aria-hidden="true"
+                size={15}
+                strokeWidth={2}
+              />
+              <span data-copy-agent-label
+                >Copy</span
+              >
+            </button>
+            <span
+              class="essay-get-started-status"
+              data-copy-agent-status
+              aria-live="polite"></span>
+          </div>
+          <pre
+            class="essay-get-started-prompt"
+            data-agent-prompt>{createProjectAgentPrompt}</pre>
+        </section>
+      </div>
+
+      <div
         class="essay-shell essay-shell--content"
       >
         <article
@@ -262,14 +363,43 @@ export const books = sapportaTable({
             <BuiltForAgents />
           </section>
           <section class="essay-section">
-            <LlmOneShot />
-          </section>
-          <section class="essay-section">
-            <CreditsFooter />
+            <StackDetails />
           </section>
         </article>
       </div>
     </main>
+
+    <footer class="essay-footer">
+      <div class="essay-footer-inner">
+        <a
+          class="essay-footer-wordmark"
+          href={brand.href}
+        >
+          <SapportaMark
+            class="essay-footer-mark"
+            title=""
+          />
+          <span>{brand.label}</span>
+        </a>
+
+        <div class="essay-footer-meta">
+          <p>
+            Sapporta is <a
+              href="https://github.com/jasim/sapporta"
+              >open-source</a
+            > and is released under the MIT license.
+          </p>
+          <p>
+            Built and maintained by <a
+              href="https://x.com/jasim_ab"
+              >Jasim A Basheer</a
+            >, <a href="https://protoship.io"
+              >Protoship</a
+            >.
+          </p>
+        </div>
+      </div>
+    </footer>
 
     <dialog
       class="essay-lightbox"

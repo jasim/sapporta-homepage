@@ -28,6 +28,31 @@ Keep both objects in the same module. Other schema files import the raw table
 when they need a Drizzle reference. Sapporta registers the wrapped definition
 and derives generated surfaces from both parts.
 
+Every wrapper starts with explicit product metadata:
+
+```ts
+meta: {
+  label: "...",
+  rowScope: "workspaceUserScoped",
+  rowLabelColumns: ["display_name"],
+},
+```
+
+`rowLabelColumns` is required, must name a column on the raw table, and should
+form a meaningful label in lookups and references. Use a human-facing value
+such as `name`, `title`, or `number`; do not use an opaque primary key merely to
+satisfy the requirement. A pure join table is normally contextual rather than a
+standalone resource. If it needs a direct screen or lookup, give it a meaningful
+displayable domain value and use that as its row label.
+
+Start with `workspaceUserScoped`, the strictest workspace boundary. It requires
+`workspace_id` and `scoped_to_user_id`, and prevents other workspace members
+from seeing a row unless the product explicitly allows it. Use
+`workspaceGlobal` only after confirming that every authorized member should
+access every row. The projects and tasks below deliberately use
+`workspaceGlobal` because this tutorial models team-shared work; another app
+should keep the stricter default unless that shared-access rule is intentional.
+
 Create `packages/api/schema/projects.ts`:
 
 ```ts
