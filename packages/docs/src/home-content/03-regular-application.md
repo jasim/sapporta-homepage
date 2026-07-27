@@ -1,4 +1,4 @@
-## A regular application you own
+## Sapporta projects are regular applications
 
 The Sapporta metadata is the only declarative part of a Sapporta application.
 

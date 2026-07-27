@@ -29,13 +29,11 @@ function isWhitespace(node) {
 
 function screenshotFigure(paragraph) {
   const image = imageFromParagraph(paragraph);
-  if (!image) return undefined;
-
-  const src = image.properties.src;
-  if (!src.startsWith("/assets/home/exercise-workflow/")) {
+  if (!isHomepageScreenshot(image)) {
     return undefined;
   }
 
+  const src = image.properties.src;
   const alt =
     typeof image.properties.alt === "string"
       ? image.properties.alt
@@ -77,6 +75,44 @@ function screenshotFigure(paragraph) {
   };
 }
 
+function isHomepageScreenshot(image) {
+  return Boolean(
+    image?.properties.src.startsWith(
+      "/assets/home/exercise-workflow/",
+    ),
+  );
+}
+
+function isHeading(node) {
+  return (
+    node?.type === "element" &&
+    /^h[1-6]$/.test(node.tagName)
+  );
+}
+
+function nextContentIndex(children, startIndex) {
+  let index = startIndex;
+  while (
+    index < children.length &&
+    isWhitespace(children[index])
+  ) {
+    index += 1;
+  }
+  return index;
+}
+
+function hasFollowingScreenshots(children, index) {
+  const screenshotIndex = nextContentIndex(
+    children,
+    index + 1,
+  );
+  return Boolean(
+    isHomepageScreenshot(
+      imageFromParagraph(children[screenshotIndex]),
+    ),
+  );
+}
+
 export function rehypeHomepageScreenshots() {
   return (tree) => {
     if (!Array.isArray(tree.children)) {
@@ -100,12 +136,10 @@ export function rehypeHomepageScreenshots() {
       let nextIndex = index + 1;
 
       while (nextIndex < tree.children.length) {
-        while (
-          nextIndex < tree.children.length &&
-          isWhitespace(tree.children[nextIndex])
-        ) {
-          nextIndex += 1;
-        }
+        nextIndex = nextContentIndex(
+          tree.children,
+          nextIndex,
+        );
 
         const figure = screenshotFigure(tree.children[nextIndex]);
         if (!figure) break;
@@ -118,6 +152,26 @@ export function rehypeHomepageScreenshots() {
         continue;
       }
 
+      const copy = [paragraph];
+      while (nextIndex < tree.children.length) {
+        const node = tree.children[nextIndex];
+        if (
+          isHeading(node) ||
+          (node?.type === "element" &&
+            node.tagName === "p" &&
+            !imageFromParagraph(node) &&
+            hasFollowingScreenshots(
+              tree.children,
+              nextIndex,
+            ))
+        ) {
+          break;
+        }
+
+        copy.push(node);
+        nextIndex += 1;
+      }
+
       children.push({
         type: "element",
         tagName: "div",
@@ -126,10 +180,17 @@ export function rehypeHomepageScreenshots() {
           {
             type: "element",
             tagName: "div",
+            properties: {
+              className: ["essay-beat-copy"],
+            },
+            children: copy,
+          },
+          {
+            type: "element",
+            tagName: "div",
             properties: { className: ["essay-beat-media"] },
             children: figures,
           },
-          paragraph,
         ],
       });
       index = nextIndex - 1;

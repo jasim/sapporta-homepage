@@ -523,13 +523,14 @@ h1#starlight__page-title {
   @apply p-0;
 }
 
-.expressive-code pre > code {
-  padding-block: var(--ec-codePadBlk);
+.expressive-code .frame pre > code {
+  padding-block: 1.5rem;
 }
 
 .expressive-code {
   --ec-brdRad: 0;
   --ec-brdCol: transparent;
+  --ec-codePadInl: 1.5rem;
   --ec-frm-edBg: transparent;
   --ec-frm-trmBg: transparent;
   --ec-frm-edTabBarBg: transparent;
@@ -553,12 +554,38 @@ h1#starlight__page-title {
 
 .expressive-code .frame.is-terminal .header,
 .expressive-code .frame .header {
-  @apply flex h-8 items-center border-b border-sap-rule bg-sap-surface px-3 text-[0.68rem] font-semibold text-sap-muted uppercase;
+  @apply flex h-12 items-center border-b border-sap-rule bg-sap-surface px-3 text-[0.68rem] font-semibold text-sap-muted uppercase;
   letter-spacing: 0.04em;
 }
 
 .expressive-code .frame .header::before {
   content: "Code";
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) .header {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.3rem;
+  height: auto;
+  padding-block: 0.65rem;
+}
+
+/* Expressive Code positions this pseudo-element over its title by default. */
+.expressive-code .frame.has-title:not(.is-terminal) .header::before {
+  inset: auto;
+  padding: 0;
+  position: static;
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) .title {
+  border: 0;
+  margin-block-start: 0;
+  padding: 0;
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) .title::after,
+.expressive-code .frame.has-title:not(.is-terminal) .header::after {
+  display: none;
 }
 
 .expressive-code .frame:has(pre[data-language="bash"]) .header::before,
