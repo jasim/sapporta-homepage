@@ -1,74 +1,83 @@
 ---
 title: "Choose an application interface"
 description:
-  "Select generated screens, table APIs, app endpoints, reports, CLI commands,
-  or SQL for one task."
+  "Start here before choosing a caller: select the application operation, then
+  continue to OpenAPI and the CLI when the task is to inspect and call a mounted
+  route."
 ---
 
 Choose the application operation before choosing its caller. A generated table
-route, domain endpoint, report, and SQL query preserve different rules. The
-browser, typed client, CLI, and agent are callers of those operations.
+route, domain endpoint, report, and SQL query preserve different rules. A
+browser, typed client, CLI command, or agent is only a caller of one of those
+operations.
 
-## Start with the operation
+## Decide what owns the work
 
-The interface follows the shape of the work. A generated surface already knows
-the table schema, editable fields, row labels, and request authority. An
-app-owned endpoint adds a business transition. A report adds a reusable read
-model. SQL operates below those application boundaries.
+Start with the invariant that must survive the call. That choice determines
+where authorization, validation, and confirmation belong.
 
-| Operation                  | Use first                            | Task-app example                                   |
-| -------------------------- | ------------------------------------ | -------------------------------------------------- |
-| Interactive record work    | Generated record screen              | Edit a task priority                               |
-| Programmatic CRUD          | Table API or `rows` command          | Create or update one task                          |
-| Named domain transition    | App-owned endpoint                   | Complete a task and insert history                 |
-| Reusable aggregate         | Report route and screen              | Show progress by project                           |
-| Repository change          | Coding agent with the Sapporta skill | Add the completion workflow                        |
-| Exceptional administration | Privileged SQL                       | Inspect a value unavailable through an app surface |
+| Outcome                                       | Owning operation                        | Suitable callers                                               | Confirmation                                                         |
+| --------------------------------------------- | --------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Inspect or edit an ordinary registered record | Generated record screen or table API    | Browser, `rows` CLI command, or data-console agent             | Read the affected row through the same visible table surface         |
+| Apply a named business transition             | App-owned endpoint                      | Typed browser client, `api` CLI command, or data-console agent | Read the declared domain result and the affected state               |
+| Reuse an aggregate or read model              | Protected report route and screen       | Browser, `api` CLI command, or data-console agent              | Check the returned dataset or aggregate against its scoped base rows |
+| Change repository behavior                    | Source code and tests                   | Coding agent with the Sapporta skill                           | Review the diff and focused verification                             |
+| Perform exceptional administration            | Ability-gated unrestricted SQL endpoint | Explicitly authorized operator using `sql`                     | Bound the query or mutation and inspect the resulting state          |
 
-The browser, CLI, and typed client are different callers. They can still reach
-the same generated or app-owned route. Choosing a caller is separate from
-choosing the application operation.
+A custom screen does not automatically require a custom data operation. It can
+call the generated table API when one registered table still owns the record.
+Conversely, putting a multi-table transition behind a custom button does not
+make a sequence of table updates atomic; that rule belongs in one app-owned
+endpoint.
 
-## Compare the choices in the task app
+## Keep authority with the operation
 
-Start the task app and discover its mounted surfaces before selecting one:
+Authentication establishes the caller. Abilities decide whether that caller may
+perform the action. Row visibility limits which records the permitted action may
+reach. These checks remain server-side regardless of whether the caller is a
+generated screen, the CLI, or an agent.
 
-```bash
-pnpm dev
-pnpm exec sapporta tables show tasks
-pnpm exec sapporta endpoints show "PUT /api/tables/tasks/{id}"
-pnpm exec sapporta endpoints show "POST /api/tasks/{id}/complete"
-pnpm exec sapporta endpoints show "GET /api/reports/project-progress"
-```
+A missing row and a row hidden from the caller may intentionally produce the
+same not-found result. Do not respond by changing workspace parameters, adding
+owner fields, or falling back to SQL. Client payloads also omit server-managed
+workspace, ownership, role, audit, and row-scope fields unless the owning
+contract explicitly accepts them.
 
-Changing priority is a single-table update, so the generated route is the
-correct boundary:
+The shared authentication boundary can reject a request before a generated or
+app-owned operation runs. Endpoint discovery shows the operation's HTTP
+contract; it does not prove the caller's ability or row visibility.
 
-```bash
-pnpm exec sapporta rows update tasks 1 --values '{"priority":"high"}'
-pnpm exec sapporta rows get tasks 1 --output json
-```
+## Discover, call, and confirm
 
-Completing the same task is different. The operation changes the task and
-inserts an immutable event. The app-owned endpoint can apply both writes in one
-transaction and return a declared conflict if the task is already complete.
+Once the owner is clear:
 
-```bash
-pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
-pnpm exec sapporta api get /api/reports/project-progress
-```
+1. Inspect the live table metadata or mounted endpoint.
+2. Resolve names and record IDs from rows visible to the caller.
+3. Execute the narrowest operation that preserves the rule.
+4. Read back the intended consequence through an application surface.
 
+An HTTP success proves transport and the declared response, not every intended
+side effect. Confirm the affected record, event, report, or other observable
+invariant. If the write result is uncertain after a transport failure, read
+before retrying.
 
-Use `sql query` only when no generated route, domain endpoint, or report answers
-the question. SQL access is privileged and bypasses the generated row helpers,
-so it is an administrative interface rather than a substitute for application
-behavior.
+## Keep SQL last
 
-Use the surface that owns the rule: CRUD through generated tables, transitions
-through domain endpoints, summaries through reports, and unrestricted SQL only
-for deliberate administration.
+`sql query` and `sql execute` call ability-gated unrestricted metadata
+endpoints. They bypass generated row helpers and the application operations
+above, so they are administrative fallbacks rather than alternate CRUD commands.
+Prefer a generated route, named domain endpoint, or scoped report whenever one
+owns the task.
 
-## Related reference
+## Continue with the caller
 
-- [Table endpoints](/docs/reference/http/table-endpoints/)
-- [API and SQL commands](/docs/reference/cli/api-and-sql-commands/)
+- [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+  identifies mounted methods, paths, inputs, and declared responses.
+- [Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/) calls
+  those operations from the project-local command line.
+- [Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
+  adds bounded authority, read-back, and safe stopping for live-record work.
+- [Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/)
+  is the separate path for repository changes.
+- [Security guides](/docs/guides/security/authentication-and-abilities/) own
+  authentication, abilities, workspaces, and row visibility.

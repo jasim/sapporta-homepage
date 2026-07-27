@@ -1,13 +1,16 @@
 ---
 title: "DOM and styling contract"
-description: "Look up public CSS entrypoints, DOM attributes, state values, and visual precedence."
+description:
+  "Look up public CSS entrypoints, DOM attributes, state values, and visual
+  precedence."
 ---
 
 ## Identity
-`@sapporta/grid/index.css` and public DOM state attributes.
-BaseGrid renders grid mechanics and stable DOM state. It does not own product
-visuals. Style rows, cells, nested levels, and editing state with
-`data-grid-part`, `data-row-*`, and `data-cell-*` selectors.
+
+`@sapporta/grid/index.css` and public DOM state attributes. BaseGrid renders
+grid mechanics and stable DOM state. It does not own product visuals. Style
+rows, cells, nested levels, and editing state with `data-grid-part`,
+`data-row-*`, and `data-cell-*` selectors.
 
 The Sapporta column preset supplies default admin chrome for grids that opt into
 `columnPreset.chrome()`. That preset may use CSS variables internally, but
@@ -15,9 +18,8 @@ application overrides should target the DOM state attributes directly.
 
 ## Choose the States Your Grid Uses
 
-Styling follows the interaction config. If the grid does not enable active
-rows, row selection, or cell range selection, BaseGrid will not render those
-states.
+Styling follows the interaction config. If the grid does not enable active rows,
+row selection, or cell range selection, BaseGrid will not render those states.
 
 ```ts
 createGridRuntime({
@@ -28,7 +30,8 @@ createGridRuntime({
 ```
 
 For React-owned BaseGrid runtimes, create the runtime with
-`useGridRuntimeEffect` as shown in the [BaseGrid reference](/grid/reference/base-grid/#construction-and-react-lifecycle).
+`useGridRuntimeEffect` as shown in the
+[BaseGrid reference](/grid/reference/base-grid/#construction-and-react-lifecycle).
 
 Common choices:
 
@@ -57,7 +60,7 @@ through your grid chrome.
 ```
 
 For Sapporta framework table-grid root styling, see
-[the framework table-grid reference](/docs/reference/frontend/tgrid/#styling-tgrid-roots).
+[the framework table-grid reference](/docs/reference/frontend/tgrid/).
 
 ## Highlight the Current Row
 
@@ -111,8 +114,7 @@ BaseGrid marks the active cell with `data-cell-status="focus"`.
 
 ## Style Cell Range Selection
 
-Cells in the selected range are marked with
-`data-cell-status="in-selection"`.
+Cells in the selected range are marked with `data-cell-status="in-selection"`.
 
 ```css
 .projectGrid [data-grid-part="cell"][data-cell-status="in-selection"] {
@@ -121,8 +123,8 @@ Cells in the selected range are marked with
 ```
 
 When focus moves to another nested level, the inactive level root has
-`data-active="false"`. Use that root state when inactive cell chrome should
-look different.
+`data-active="false"`. Use that root state when inactive cell chrome should look
+different.
 
 ```css
 .projectGrid
@@ -135,8 +137,7 @@ look different.
 
 ## Style Editing
 
-When an editor is open, the cell is marked with
-`data-cell-status="editing"`.
+When an editor is open, the cell is marked with `data-cell-status="editing"`.
 
 ```css
 .projectGrid [data-grid-part="cell"][data-cell-status="editing"] {
@@ -151,8 +152,8 @@ cell.
 
 ## Style Hover and Phantom Rows
 
-Hover is for discoverability. Keep it lower priority than active or selected
-row states.
+Hover is for discoverability. Keep it lower priority than active or selected row
+states.
 
 ```css
 .projectGrid
@@ -254,5 +255,7 @@ When multiple rules can apply, order application CSS from broad to specific:
 The Sapporta preset follows the same visual order with low-specificity
 selectors, so normal application selectors such as
 `.projectGrid [data-grid-part="row"][data-row-active="true"]` override it.
+
 ## Related documentation
+
 [Grid reference overview](/grid/reference/)

@@ -83,11 +83,20 @@ rejected filter can expose or export a much larger result set.
 GET /api/tables/tasks?filter[status]=open
 ```
 
-The request above is invalid because it omits the operator bracket. For typed
-frontend table code, use `TypedFilterCondition` with `encodeTypedFilters()` at
-the URL boundary, and use `parseFiltersForTable()` when restoring URL filters
-against table metadata. That keeps numbers, booleans, dates, timestamps, and
-lookup IDs typed until serialization.
+The request above is invalid because it omits the operator bracket. It returns
+HTTP `400` with a stable code:
+
+```json
+{
+  "error": "Filter \"filter[status]\" must use filter[col][op]=value syntax",
+  "code": "unknown_filter_shape"
+}
+```
+
+For typed frontend table code, use `TypedFilterCondition` with
+`encodeTypedFilters()` at the URL boundary, and use `parseFiltersForTable()`
+when restoring URL filters against table metadata. That keeps numbers, booleans,
+dates, timestamps, and lookup IDs typed until serialization.
 
 Strict failure preserves the meaning of the request. A malformed narrow query
 must not become a valid broad query.

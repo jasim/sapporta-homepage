@@ -9,6 +9,23 @@ description:
 
 `@sapporta/grid/column-preset`.
 
+```ts
+import {
+  boolean,
+  column,
+  currency,
+  date,
+  foreignKey,
+  identifier,
+  lookupValue,
+  number,
+  percentage,
+  rowSelectionColumn,
+  select,
+  text,
+} from "@sapporta/grid/column-preset";
+```
+
 ## ColumnPreset API
 
 ColumnPreset helpers return ordinary `ColumnSchema` values. They are the
@@ -142,12 +159,22 @@ const variance = currency({
   name: "Variance",
   colorRule: "signed",
 });
+
+const completion = percentage({
+  id: "completion",
+  name: "Completion",
+  edit: "none",
+});
 ```
 
 Number, currency, and percentage editors retain raw text until commit. Their
 default parser accepts commas and surrounding whitespace, returns `null` for
 empty text, converts finite numeric text to a number, and preserves invalid text
 for the host save boundary.
+
+Percentage values are fractions. A cell value of `0.4` renders as `40%`. The
+default numeric parser does not divide input by 100, so a value of `40` renders
+as `4,000%`.
 
 ```ts
 type NumericInputParseResult =

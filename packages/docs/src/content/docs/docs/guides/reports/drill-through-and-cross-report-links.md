@@ -4,25 +4,37 @@ description:
   "Make report values explorable without placing navigation in the wire dataset."
 ---
 
-Report values become navigation when a resolver can turn stable data identity
-into a route. The dataset carries IDs and values. The React screen carries URL
-knowledge.
+A report value becomes navigation only when the frontend can turn authorized,
+stable data identity into a route. The dataset carries IDs and values. The React
+screen carries URL policy.
 
 ## Keep IDs in data and routes in the screen
 
-The backend mapper includes `project_id` as a visually hidden column. The
-frontend imports the public report link types and decides what each visible cell
-should do:
+The backend mapper includes `project_id` as a visually hidden column. It does
+not serialize `href` values. The frontend decides what each visible cell should
+do:
 
 ```tsx
 import type { ReportCellLinkResolvers } from "@sapporta/frontend/report";
 import type { ProjectProgressQuery } from "task-app-shared";
 
-function taskTableHref(projectId: number, status?: string): string {
+function generatedTableHref(
+  table: string,
+  filters: ReadonlyArray<readonly [column: string, value: string | number]>,
+): string {
   const query = new URLSearchParams();
-  query.set("filter[project_id][eq]", String(projectId));
-  if (status) query.set("filter[status][eq]", status);
-  return `/tables/tasks?${query.toString()}`;
+  for (const [column, value] of filters) {
+    query.set(`filter[${column}][eq]`, String(value));
+  }
+  return `/tables/${table}?${query.toString()}`;
+}
+
+function taskTableHref(projectId: number, status?: string): string {
+  const filters: Array<readonly [string, string | number]> = [
+    ["project_id", projectId],
+  ];
+  if (status !== undefined) filters.push(["status", status]);
+  return generatedTableHref("tasks", filters);
 }
 
 export const projectProgressLinks = {
@@ -34,7 +46,7 @@ export const projectProgressLinks = {
         return [
           {
             label: "Open project",
-            href: `/tables/projects?filter[id][eq]=${projectId}`,
+            href: generatedTableHref("projects", [["id", projectId]]),
             kind: "drill-down",
             icon: "drill-up",
           },
@@ -70,12 +82,12 @@ export const projectProgressLinks = {
 ```
 
 The resolver record is keyed first by `levelName` and then by column ID. Its
-context also contains the current value, column, ancestors, dataset, and
-optional report input. A hierarchical report can therefore link a child cell
-using its own hidden ID plus an ancestor account or project ID.
+context contains the current node, value, column, ancestors, dataset, and
+optional report input. A hierarchical report can therefore resolve a child cell
+from its own hidden ID plus an ancestor ID.
 
-A resolver may return a list, but the current renderer uses only the first
-entry. Put one canonical action first rather than treating a cell as a menu.
+A resolver may return a list, but the current renderer follows only the first
+link. Put one canonical action first; later entries are not rendered as a menu.
 
 Pass the resolvers and current query to the renderer:
 
@@ -87,7 +99,7 @@ Pass the resolvers and current query to the renderer:
 />
 ```
 
-Cross-report links use that input to preserve relevant state:
+Cross-report links can use the same input to preserve relevant state:
 
 ```ts
 completion: ({ node, input }) => {
@@ -109,32 +121,53 @@ completion: ({ node, input }) => {
 ```
 
 Only use `target: "_blank"` for deliberately external destinations. Internal
-report and generated-table navigation should keep the normal app-shell behavior.
+report and generated-table navigation should keep normal app-shell behavior.
 
-## Exercise the links
+## Choose a destination the application actually owns
 
-Open `/reports/project-progress` and use each linked value. For the Website
-Relaunch row, the project name should open `/tables/projects` filtered by its
-primary key. Its open count should open a task grid whose strict filters include
-both `project_id` and `status`. A dedicated record page requires an app-owned
-route; Sapporta does not generate `/tables/:table/:id`.
+The generated project destination is the filtered table route:
 
-The filter URL follows generated query syntax:
+```text
+/tables/projects?filter[id][eq]=<project-id>
+```
+
+`URLSearchParams` percent-encodes the bracket characters, but it represents the
+same strict filter grammar. Sapporta generates `/tables/:tableName` and
+`/tables/:tableName/new`; it does not generate `/tables/:tableName/:id`. An
+app-owned `/projects/:id` route is valid only when the application explicitly
+registers it.
+
+Task links use the same generated query syntax:
 
 ```http
 GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][eq]=open
 ```
 
-Compare the number of returned rows with the linked count. Repeat for completed
-tasks and for a synthetic or identifier-less row. Resolvers return an empty link
-list when no safe destination exists.
+## Exercise links and missing identities
 
+Open `/reports/project-progress` and check each linked value:
+
+- a project name opens the project table filtered by primary key;
+- open and completed counts open task tables with both `project_id` and
+  `status`;
+- the returned task count agrees with the linked report value;
+- a cross-report link preserves the intended `project_id`; and
+- a synthetic or identifier-less node returns `[]` and renders no link.
+
+Footer rows do not invoke cell resolvers in the current renderer. There are no
+general public row or footer resolver slots to configure.
 
 Links are navigation, not authorization. Hidden IDs remain visible to anyone who
-can read the report response, URL filters are user-controlled, and every target
-route applies its own ability and row-security checks.
+can read the report response, URL filters are user-controlled, and every
+destination must repeat its own ability and row-security checks.
 
-## Related reference
+Also reload and share the filtered report URL before following its links. That
+browser check proves the screen reconstructs both the report input and its
+drill-through context from URL state.
+
+## Related documentation
 
 - [Report links](/docs/reference/reports/report-links/)
 - [Query syntax](/docs/reference/http/query-syntax/)
+- [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)
+- [App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)

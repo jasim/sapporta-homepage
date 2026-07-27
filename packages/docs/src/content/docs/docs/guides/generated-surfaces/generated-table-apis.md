@@ -5,8 +5,7 @@ description:
 ---
 
 Every registered table receives one HTTP surface for ordinary record work. The
-generated screens, CLI, scripts, and integrations can all use that same
-surface.
+generated screens, CLI, scripts, and integrations can all use that same surface.
 
 ## Inspect before calling
 
@@ -19,14 +18,18 @@ pnpm exec sapporta endpoints show "GET /api/tables/tasks"
 pnpm exec sapporta endpoints show "PUT /api/tables/tasks/{id}"
 ```
 
-The command shows the actual method, path, auth boundary, request shape, and
-declared responses. Generated updates use `PUT`, not `PATCH`.
+The command shows the actual method, path, query or body shape, and declared
+responses. It does not describe the application authorization boundary. Read the
+route registration and security policy, then prove protected behavior with
+negative authorization tests. Generated updates use `PUT`, not `PATCH`, while
+accepting a patch-shaped subset of writable fields.
 
-For routine data work, the CLI handles authentication and the response envelope:
+For routine data work, the CLI handles authentication and the response envelope.
+Set `TASK_ID` from a create or list response before updating:
 
 ```bash
 pnpm exec sapporta rows list tasks --where '{"status":{"eq":"open"}}'
-pnpm exec sapporta rows update tasks 1 --values '{"priority":"high"}'
+pnpm exec sapporta rows update tasks "$TASK_ID" --values '{"priority":"high"}'
 ```
 
 The equivalent list request is:
@@ -55,10 +58,17 @@ Its response is an object with rows and pagination metadata:
 
 Single-row reads and writes return `{ "data": row }`. Create and update bodies
 contain API-writable domain values only. They omit default-generated primary
-keys, `workspace_id`, `scoped_to_user_id`, `apiWritable: false` columns, and
-server-authored references because the server derives or supplies those values.
-Client-assigned primary keys remain writable when the table definition permits
-them.
+keys, system-managed scope fields, `apiWritable: false` columns, and references
+with `apiSettable: false`. Client-assigned primary keys remain writable when the
+table definition permits them. A timestamp default does not make that column
+API-owned by itself; declare `apiWritable: false` when direct callers must not
+set it.
+
+Create a parent first, take its key from the `201` response, and use that value
+for child foreign keys. Do not assume a fresh database starts at ID `1`. Read
+the created child back through the list or single-row HTTP endpoint and verify
+the server-authored values that matter to the workflow.
+
 Generated OpenAPI and clients expose the same caller-controlled field set, and
 request-time policy rejects prohibited fields when a caller bypasses them.
 
@@ -81,11 +91,27 @@ route. A project lookup therefore returns only visible projects:
 ```json
 {
   "entries": [
-    { "value": 1, "label": "Website Relaunch", "meta": {} }
+    {
+      "value": 1,
+      "label": "Website Relaunch",
+      "meta": { "id": 1, "name": "Website Relaunch" }
+    }
   ]
 }
 ```
 
+The lookup `value` remains a number or string to match the target primary key.
+`meta` contains visible fields from the source row and is not invariantly empty.
+
+For an append-only history table, generated reads remain ordinary list queries:
+
+```http
+GET /api/tables/task_events?filter[task_id][eq]=42&sort=-occurred_at
+```
+
+That request is independent of any tutorial fixture. It asks for the visible
+events for one returned task key, newest first. Event creation should use the
+app-owned workflow that changes current state and records history together.
 
 ## Know when CRUD is no longer the operation
 
@@ -98,8 +124,16 @@ Use generated routes while the operation still means “read or change this
 table.” Use an app-owned endpoint when the operation has its own name,
 transaction, external effect, or response.
 
+Once the caller has action permission, a generated single-row read, update, or
+delete uses the same `404 ROW_NOT_FOUND` result for a missing row and a row
+hidden by its row predicate. Possessing an ID is not authority to read or change
+it. The
+[security guide](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
+owns the full authorization and row-scope model.
+
 ## Related reference
 
 - [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
+- [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)

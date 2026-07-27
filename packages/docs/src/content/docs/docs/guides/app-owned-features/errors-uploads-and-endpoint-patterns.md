@@ -18,34 +18,33 @@ Use status codes to describe the failure at the HTTP boundary:
   server derived or validated.
 - `502` means an upstream system failed or returned unusable data.
 
-A domain module raises semantic errors. The adapter maps them to HTTP once and
-rethrows everything unexpected:
+A domain module raises one typed expected-error family. In the task-completion
+slice, that family already carries the declared status and strict feature
+payload. The adapter catches it once:
 
 ```ts
 try {
+  const auth = c.get("auth");
+
   return {
     status: 200,
     body: completeTask({ db: c.get("db"), auth }, request.params.id),
   };
 } catch (error) {
-  if (error instanceof TaskNotFoundError) {
-    return {
-      status: 404,
-      body: { error: error.message, code: error.code },
-    };
-  }
-  if (error instanceof TaskAlreadyCompletedError) {
-    return {
-      status: 409,
-      body: { error: error.message, code: error.code },
-    };
-  }
-  throw error;
+  return taskCompletionErrorResponse(error);
 }
 ```
 
-Declare each expected status in the shared contract. On the frontend,
-`ApiError.body` remains `unknown`; narrow it before reading `error` or `code`.
+`taskCompletionErrorResponse()` accepts only `TaskCompletionError`, covers the
+family's declared `404` and `409` variants, and rethrows everything else.
+Unexpected database, programming, and infrastructure failures therefore stay on
+the application's central error path.
+
+Declare each feature-owned status in the shared contract. Request parsing owns
+the declared generic `400`; shared authentication middleware owns `401` and
+`403` outside the feature response map. On the frontend, `ApiError.body` remains
+`unknown`; parse the exported strict feature schema before using a code for
+recovery.
 
 ## Receive multipart files through `files`
 

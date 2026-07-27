@@ -4,24 +4,36 @@ description:
   "Resolve caller identity and grant feature actions at the server edge."
 ---
 
-Authentication establishes a principal. Abilities permit named product
-actions. Data authority and row security determine which records the permitted
-action may observe.
+Authentication establishes a principal. Abilities answer whether that principal
+may perform an action. Data authority and row security answer a different
+question: which rows that action may observe or change.
 
-## Identity first, permission second
+## Start with the server boundary
 
-Project auth resolves a browser session or bearer token into `c.get("auth")`.
-That context contains the principal, active membership, abilities, data
-authority, and request-bound row-security helpers. A route can therefore ask a
-narrow question such as `can("run", "task_completion")` without parsing roles
-itself.
+Project auth resolves a browser session or agent bearer token into
+`c.get("auth")`. The context contains four separate request facts:
 
-Abilities belong in `packages/api/authz/ability.ts`. Add the domain rule inside
-the generated `buildAbility()` without removing its starter grants for
-authentication, token management, and sample routes:
+1. `principal` identifies the caller and its current workspace membership.
+2. `ability` contains the action/subject grants built for that principal.
+3. `dataAuthority` contains the workspace and user authority slots selected by
+   the application.
+4. `rowSecurity` turns those authority slots into table predicates and trusted
+   write values.
+
+Generated table handlers and app-owned handlers use the same context. A typed
+client or protected React route can improve the caller experience, but neither
+one authorizes a server request.
+
+## Grant generated and domain actions deliberately
+
+Generated table handlers authorize against the registered table's SQL name.
+List, get, lookup, and count require `read`; CSV download requires `export`; the
+write routes require `create`, `update`, or `delete`.
+
+App-owned workflows use their own action and subject. For example, completing a
+task is a domain transition rather than another spelling of generated update:
 
 ```ts
-// Keep the generated grants above this addition.
 if (
   ctx.principal.kind === "user" &&
   ctx.principal.membership.roles.includes("owner")
@@ -30,31 +42,47 @@ if (
 }
 ```
 
-The completion handler checks that feature action before it reads or writes task
-data:
+The generated starter currently also grants owners `can("manage", "all")`. Keep
+that broad owner policy. Any narrower named owner grants shown beside it are
+illustrative and redundant because `manage/all` already satisfies them; they are
+not cumulative setup requirements.
+
+The signed-in-user grants for `read`, `create`, and `delete` on
+`agent_access_token` have another narrow meaning: they authorize the interactive
+token-management routes. They are not action scopes embedded in an agent bearer
+token.
+
+## Check the action before touching data
+
+The route adapter checks its feature action, then passes the request context to
+the domain workflow:
 
 ```ts
 const auth = c.get("auth");
 forbidUnless(c, auth.ability.can("run", "task_completion"));
 
-return completeTask({
+const context = {
   db: c.get("db"),
   auth,
-  taskId: request.params.id,
-});
+};
+const taskId = request.params.id;
+
+return completeTask(context, taskId);
 ```
 
-An ability check does not filter rows. The workflow still uses `scopedRows()` or
-one `auth.rowSecurity.forTable(...)` guard for every table it touches. This
-matters even for owners: an owner-only action does not imply cross-workspace
-database access.
+The workflow still needs a scoped read and row-scoped writes. An owner-only
+action does not imply cross-workspace database access.
 
-## Private by default
+App-owned feature contracts declare their feature-owned responses, such as
+validation, not-found, and conflict branches. The shared infrastructure
+`401`/`403` envelopes are documented once in
+[Auth and row security](/docs/reference/server/auth-and-row-security/) instead
+of being copied into every feature contract.
 
-App-owned routes are protected unless their mounted path is intentionally added
-to `publicApiRoutes` in `packages/api/app.ts`. A public entry only lets
-anonymous traffic reach the handler. The handler still checks an ability and
-applies row security to table-backed data.
+## Keep private routes private
+
+App-owned routes are private unless their mounted path is intentionally added to
+`publicApiRoutes` in `packages/api/app.ts`:
 
 ```ts
 export const publicApiRoutes = [
@@ -62,28 +90,29 @@ export const publicApiRoutes = [
 ] as const satisfies readonly PublicRoutePattern[];
 ```
 
-The task-completion route should not appear in that array.
+Allow-listing lets an anonymous request reach the handler. It does not create an
+ability grant or data authority. A public table-backed handler must still check
+its action and use row-safe data access.
 
-## Exercise the boundary
+## Prove the boundary directly
 
-Run the app as an owner, complete an open task, and then repeat the request as a
-member. Discover the mounted contract before calling it:
+Exercise the server without relying on hidden buttons or protected frontend
+routes:
 
-```bash
-pnpm exec sapporta endpoints show "POST /api/tasks/{id}/complete"
-pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
-```
+| Case                                            | What it proves                                   |
+| ----------------------------------------------- | ------------------------------------------------ |
+| Each role against each generated action         | The table action matrix is intentional           |
+| Owner and member against `run/task_completion`  | The named workflow grant is enforced             |
+| No credential                                   | The shared authentication boundary returns `401` |
+| Credential without the feature ability          | The project ability boundary returns `403`       |
+| Valid ability with another workspace's row ID   | Ability does not widen row visibility            |
+| Direct HTTP request to a route hidden in the UI | Frontend navigation is not authorization         |
 
-The owner call returns the declared success response. The member call reaches
-authentication but fails authorization with `403`. A missing session or bearer
-token fails earlier with `401`.
+Endpoint discovery proves that a route is mounted, not that its authorization is
+correct. Pair it with source review and negative requests.
 
+## Related documentation
 
-`buildAbility()` owns named product actions. Route handlers enforce those
-actions at the edge. Row-security helpers remain responsible for database
-visibility.
-
-## Related reference
-
-- [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Workspaces, ownership, and row visibility](/docs/guides/security/workspaces-ownership-and-row-visibility/)
+- [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Authentication and token endpoints](/docs/reference/http/authentication-and-token-endpoints/)

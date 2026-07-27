@@ -4,31 +4,37 @@ description:
   "Give non-browser callers revocable access to one user and workspace boundary."
 ---
 
-An agent token represents one user in one workspace. It is scoped by identity
-and workspace, not by an independent list of actions. The token inherits the
-represented membership's complete ability set.
+An agent access token represents one user in one workspace. That association
+selects identity and row authority; it is not an independently configurable
+OAuth-style list of action scopes.
+
+On every request, project auth reloads the token's current user/workspace
+membership and builds abilities from its current roles. Removing the membership
+or changing its roles therefore changes later requests. The browser session's
+active workspace is irrelevant to a bearer token.
 
 ## Create the token in the intended workspace
 
-Open `/account/profile` while signed in, switch to the workspace the caller
-should represent, and create an agent access token. Give it a name that
-identifies the caller and purpose. Add an expiry for temporary work.
+Open `/account/profile` in an interactive browser session, switch to the
+workspace the caller should represent, and create an agent access token. Give it
+a name that identifies the caller and purpose. Add an expiry for temporary work.
 
-The creation response displays the raw `spat_...` token once. Later token lists
-return only metadata such as its name, workspace, creation time, expiry, last
-use, and revocation time. The project database stores a hash of the secret
-rather than the raw value.
+The creation response displays the raw `spat_...` token once. Later list calls
+return metadata such as its name, workspace, creation time, expiry, last use,
+and revocation time. The project database stores a hash of the secret, not the
+raw token.
 
+The `read`, `create`, and `delete` abilities on `agent_access_token` authorize
+these interactive token-management actions. Bearer credentials may call ordinary
+app APIs, but token-management endpoints reject them with `403 forbidden`.
 
-Token creation, listing, and revocation require an interactive browser session.
-A bearer token may call ordinary app APIs, but it cannot create, list, or revoke
-other tokens.
+## Keep the credential out of durable text
 
-## Call the same mounted API
+Use an environment variable or secret manager. Do not paste the token into
+prompts, documentation, source files, committed configuration, screenshots, or
+shell history where avoidable.
 
-Keep the token in an environment variable or secret manager. Do not paste it
-into shell history, source files, documentation captures, or commits. The CLI
-reads `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`:
+The CLI reads `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`:
 
 ```bash
 export SAPPORTA_API_URL="http://localhost:3000"
@@ -37,13 +43,9 @@ export SAPPORTA_API_TOKEN
 
 pnpm exec sapporta endpoints show "GET /api/reports/project-progress"
 pnpm exec sapporta rows list tasks --output json
-pnpm exec sapporta api get /api/reports/project-progress
 ```
 
-Flags remain available, but an environment variable or automation secret input
-keeps the credential out of process arguments and logs.
-
-For direct HTTP calls, the authentication shape is a normal bearer header:
+For direct HTTP, send a normal bearer header:
 
 ```http
 GET /api/tables/tasks HTTP/1.1
@@ -51,33 +53,48 @@ Host: localhost:3000
 Authorization: Bearer spat_<token-id>_<secret>
 ```
 
-The token resolves to one user and the workspace active when the token was
-created. It receives that context's abilities and row visibility. It does not
-accept a workspace query parameter and cannot be widened by adding
-`workspace_id` to a request.
+The token-bound workspace supplies request authority. A query parameter, request
+body, or `workspace_id` field cannot switch or widen it.
 
-## Prove the boundary and revoke it
+## Discover, operate, and read back
 
-Create the canonical five tasks in Workspace A and at least one different task
-in Workspace B. The Workspace A token should return only the five Workspace A
-records. To automate against Workspace B, create a separate token while
-Workspace B is active.
+Protected apps require credentials to retrieve their OpenAPI/endpoint inventory.
+The inventory proves which operation is mounted and describes its HTTP shape; it
+does not encode application abilities or row policy.
 
-Return to `/account/profile`, revoke the Workspace A token, and repeat one CLI
-command. The next request fails with the documented token-revoked authentication
-response. Revocation takes effect on the API; deleting a local environment
-variable alone does not revoke a credential.
+Choose the narrowest mounted operation that owns the change, make the request,
+and then read the affected record through an authoritative scoped operation. A
+successful transport response alone does not prove that the intended row
+changed.
+
+## Prove isolation and lifecycle
+
+Use a small fixture with one record in Workspace A and a different record in
+Workspace B. A Workspace A token should see only Workspace A rows. Automation
+for Workspace B gets a separate token created while Workspace B is active.
+
+Then exercise each recovery branch:
+
+| Condition                                       | Stable response          | Next step                                         |
+| ----------------------------------------------- | ------------------------ | ------------------------------------------------- |
+| Revoked token                                   | `401 token_revoked`      | Replace or remove the credential                  |
+| Expired token                                   | `401 token_expired`      | Create a new time-bounded token                   |
+| Membership removed                              | `403 workspace_required` | Restore membership or choose another workspace    |
+| Bearer calls token-management route             | `403 forbidden`          | Use an interactive session                        |
+| Revoke target belongs to another workspace/user | `404 not_found`          | Recheck the active browser workspace and token ID |
+
+Status and code are the contract. Message wording is illustrative.
+
+Revoking the credential invalidates the next API request. Removing a local
+environment variable does not revoke it:
 
 ```bash
 unset SAPPORTA_API_TOKEN
 ```
 
-
-Revocation produces `token_revoked`; expiry produces `token_expired`; removal
-of the represented workspace membership produces `workspace_required`. Use
-separate short-lived tokens for separate workspaces or automation jobs.
-
-## Related reference
+## Related documentation
 
 - [Authentication and token endpoints](/docs/reference/http/authentication-and-token-endpoints/)
-- [CLI overview](/docs/reference/cli/overview-and-global-options/)
+- [Error catalogue and diagnostics](/docs/reference/operations/error-catalogue-and-diagnostics/)
+- [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+- [Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/)

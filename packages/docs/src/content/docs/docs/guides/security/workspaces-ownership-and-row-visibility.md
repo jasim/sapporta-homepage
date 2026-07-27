@@ -4,29 +4,29 @@ description:
   "Choose a row scope and keep trusted ownership values under server control."
 ---
 
-Row scope answers a product question: does this row belong to the application,
-the workspace, or one person inside the workspace? The answer determines both
-read predicates and server-authored ownership values.
+Row scope answers a product question: does this row belong to the whole
+application, one workspace, or one person inside a workspace? The table declares
+that rule. The request's data authority supplies the trusted workspace and user
+values used to enforce it.
 
 ## Choose the scope from the product rule
 
-`workspaceGlobal` makes a row visible to authorized members of its workspace.
-`workspaceUserScoped` narrows that boundary to the active workspace and current
-user. It is the default when `rowScope` is omitted. `systemGlobal` is for
-deliberately application-wide rows; for an authorized request, its ownership
-predicate is unrestricted SQL `TRUE`.
+- `systemGlobal` is deliberately application-wide.
+- `workspaceGlobal` is shared by authorized members of one workspace.
+- `workspaceUserScoped` is limited to one workspace and user. It is the default
+  when `rowScope` is omitted.
 
-Projects and tasks are shared work, so both use `workspaceGlobal` and contain a
-`workspace_id` column:
+The schema reference owns the exact required-column and default contract:
+[Table and column metadata](/docs/reference/schema/table-and-column-metadata/).
+
+Projects and tasks shared by a workspace declare `workspaceGlobal` and include
+the required workspace column:
 
 ```ts
-export const projects = sapportaTable({
-  drizzle: projectsTable,
-  meta: {
-    label: "Projects",
-    rowScope: "workspaceGlobal",
-    rowLabelColumns: ["name"],
-  },
+export const tasksTable = sqliteTable("tasks", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspace_id: text("workspace_id").notNull(),
+  title: text("title").notNull(),
 });
 
 export const tasks = sapportaTable({
@@ -39,72 +39,98 @@ export const tasks = sapportaTable({
 });
 ```
 
-A personal task draft would use the narrower scope and define both required
-ownership columns:
+A personal draft would use `workspaceUserScoped` and define both `workspace_id`
+and `scoped_to_user_id`.
+
+## Resolve request authority separately from roles
+
+`resolveRequestDataAuthority(...)` is generated application code, not a
+framework export. It maps the principal to the authority slots this app
+supports:
 
 ```ts
-export const taskDraftsTable = sqliteTable("task_drafts", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  workspace_id: text("workspace_id").notNull(),
-  scoped_to_user_id: text("scoped_to_user_id").notNull(),
-  title: text("title").notNull(),
-});
+export async function resolveRequestDataAuthority(input: {
+  principal: AppPrincipal;
+  c: Context;
+}): Promise<RequestDataAuthority> {
+  if (input.principal.kind !== "user") {
+    return requestDataAuthority({
+      systemGlobalOnly: systemGlobalOnlyAuthority(),
+    });
+  }
 
-export const taskDrafts = sapportaTable({
-  drizzle: taskDraftsTable,
-  meta: {
-    label: "Task drafts",
-    rowScope: "workspaceUserScoped",
-    rowLabelColumns: ["title"],
-  },
-});
-```
-
-The request's data authority supplies the trusted workspace and user. Generated
-create and update routes reject client-supplied `workspace_id`, `workspaceId`,
-`scoped_to_user_id`, and `scopedToUserId`. Generated reads compose the same
-authority into their SQL predicates.
-
-## Exercise shared and personal rows
-
-Create task data without either ownership field:
-
-```bash
-pnpm exec sapporta rows create projects --values '{"name":"Website Relaunch"}'
-pnpm exec sapporta rows create tasks --values '{"project_id":1,"title":"Audit launch checklist","status":"open","priority":"high"}'
-pnpm exec sapporta rows list tasks --output json
-```
-
-Repeat the list as another member of the same workspace. The shared task remains
-visible. Repeat it with a token created in another active workspace. The task is
-absent because that token supplies a different workspace authority.
-
-Also try a direct HTTP create that attempts to choose the workspace:
-
-```http
-POST /api/tables/tasks
-Content-Type: application/json
-
-{
-  "project_id": 1,
-  "title": "Cross-boundary task",
-  "workspace_id": "another-workspace"
+  const workspace = input.principal.membership.workspace;
+  return requestDataAuthority({
+    systemGlobalOnly: systemGlobalOnlyAuthority(),
+    workspaceGlobalOnly: workspaceGlobalOnlyAuthority(workspace),
+    workspaceUserScoped: workspaceUserScopedAuthority({
+      workspace,
+      user: input.principal.user,
+    }),
+  });
 }
 ```
 
-The request is rejected. Scope values are server-authored data, not filters or
-form fields.
+The browser session's active workspace or an agent token's bound workspace
+determines the principal membership passed here. Membership roles influence
+`buildAbility()` separately; an owner role does not automatically grant broader
+row authority.
 
+Custom routes can narrow this authority with generated project helpers such as
+`requireAuthorizedWorkspaceData(...)`. They must not accept a workspace ID from
+a URL or body and turn it into authority.
 
-Missing and invisible rows intentionally share not-found behavior for get,
-update, and delete. That prevents a caller from using response differences to
-discover another workspace's primary keys.
+## Keep caller values and authority values apart
 
-Generated routes and custom row helpers derive ownership from request authority.
-Scope metadata states the sharing rule; it does not delegate that rule to a
-form or filter.
+Generated reads compose row scope into their SQL predicates. Generated creates
+stamp the trusted scope values. Generated writes reject exactly these four
+automatic scope aliases when a caller supplies them:
 
-## Related reference
+```text
+workspace_id
+workspaceId
+scoped_to_user_id
+scopedToUserId
+```
+
+Other names such as `owner_id`, `role`, or `approved_by` are not automatically
+protected because they sound authoritative. Use `apiWritable: false` for a
+server-owned column, `apiSettable: false` for a server-owned reference, or an
+app-owned workflow that supplies the value through `serverValues`.
+
+Filters, hidden inputs, lookup choices, URL parameters, record IDs, and Grid
+state are presentation or query inputs. None of them grants authority.
+
+## Generated and custom routes enforce the same rule
+
+Generated table routes apply row policy automatically. App-owned routes must
+choose one of the row-safe paths explicitly:
+
+- `scopedRows(...)` for generated-style operations on one table;
+- `auth.rowSecurity.forTable(table)` for custom Drizzle shapes; or
+- an application helper such as `requireAuthorizedWorkspaceData(...)` to
+  validate and narrow the authority before creating table guards.
+
+A missing row and a row hidden by scope return the same generated result:
+`404 ROW_NOT_FOUND`. That concealment prevents callers from probing other
+workspaces' primary keys.
+
+## Test two principals and two workspaces
+
+Use an isolated fixture rather than tutorial IDs:
+
+1. Create visible and hidden rows for users in two workspaces.
+2. Prove a same-workspace shared row is visible under `workspaceGlobal`.
+3. Prove a personal row is visible only to its owning user under
+   `workspaceUserScoped`.
+4. Prove list results omit hidden rows and get/update/delete expose the same
+   not-found branch for hidden and absent IDs.
+5. Submit each of the four managed aliases and expect `422 VALIDATION_FAILED`.
+6. Repeat one request with a valid ability but the wrong workspace to show that
+   action authorization and row authority remain separate.
+
+## Related documentation
 
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Authentication and abilities](/docs/guides/security/authentication-and-abilities/)

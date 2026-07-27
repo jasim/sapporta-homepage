@@ -1,82 +1,145 @@
 ---
 title: "Use the Sapporta CLI"
 description:
-  "Discover and operate a running application from the project-local command
-  line."
+  "Call a known running application operation from the project-local command
+  line, with explicit targeting, structured output, and read-back."
 ---
 
 The Sapporta CLI is a client for a running application. It discovers tables and
-documented endpoints, performs generated row operations, calls app-owned
-routes, and exposes owner-only SQL for exceptional administration.
+documented endpoints, performs generated row operations, calls app-owned routes,
+and exposes ability-gated SQL for exceptional administration. SQL bypasses
+generated row helpers even when the caller is allowed to use it.
 
-## Target the running app
+## Verify the installed command
 
 Use the project-local binary so the commands match the installed framework
 version:
 
 ```bash
+pnpm exec sapporta --version
 pnpm exec sapporta --help
-pnpm exec sapporta endpoints list
-pnpm exec sapporta tables list
+pnpm exec sapporta rows list --help
+pnpm exec sapporta api post --help
 ```
 
-API-backed commands target `http://localhost:3000` by default. A remote app or
-non-default port needs an explicit URL and, for a protected app, a bearer token.
-Flags override environment values.
+Verify nested help before automating a command. The current CLI groups live API
+work under `endpoints`, `tables`, `rows`, `api`, and `sql`; subcommand options
+remain the authoritative grammar for the installed version.
+
+## Target the running app
+
+API-backed commands target `http://localhost:3000` by default. Set an explicit
+URL when that default is not unquestionably the intended application. A
+protected app also needs a bearer token.
 
 ```bash
-pnpm exec sapporta \
-  --api-url https://tasks.example.com \
-  endpoints list
+export SAPPORTA_API_URL="https://app.example.com"
+read -s SAPPORTA_API_TOKEN
+export SAPPORTA_API_TOKEN
+
+pnpm exec sapporta endpoints list
 ```
 
-Prefer `SAPPORTA_API_TOKEN` to `--api-token`; the environment keeps the secret
-out of process arguments. A token represents one user in one active workspace.
+`--api-url`, `--api-token`, and `--output` override `SAPPORTA_API_URL`,
+`SAPPORTA_API_TOKEN`, and `SAPPORTA_OUTPUT_FORMAT`. Prefer an environment
+variable or secret injection to `--api-token`, which can expose the credential
+in process arguments or logs.
 
 ## Discover, change, and confirm
 
-Inspect the task table and a representative row before changing data:
+The following commands use an illustrative `books` table. Replace the table,
+columns, and ID with values discovered from the target application.
 
 ```bash
-pnpm exec sapporta tables show tasks
-pnpm exec sapporta tables sample tasks
-pnpm exec sapporta rows list tasks \
-  --where '{"status":{"eq":"open"}}' \
-  --sort "due_date"
+pnpm exec sapporta tables list
+pnpm exec sapporta tables show books
+pnpm exec sapporta endpoints show "GET /api/tables/books"
+pnpm exec sapporta --output json rows list books \
+  --q "Relativity" \
+  --limit 10
 ```
 
-Use the generated row command for an ordinary field update. System-managed
-fields such as `workspace_id`, `created_at`, and `updated_at` stay out of the
-payload.
+Resolve the intended row from that visible result. Do not copy an ID from
+documentation or guess a foreign key. Once exactly one row is identified, set
+`BOOK_ID` to that returned value. The shell guard and exact read below confirm
+the target before the ordinary field update:
 
 ```bash
-pnpm exec sapporta rows update tasks 1 --values '{"priority":"high"}'
-pnpm exec sapporta --output json rows get tasks 1
+: "${BOOK_ID:?Set BOOK_ID from the single inspected row}"
+pnpm exec sapporta --output json rows get books "$BOOK_ID"
+pnpm exec sapporta rows update books "$BOOK_ID" \
+  --values '{"author":"Albert Einstein"}'
+pnpm exec sapporta --output json rows get books "$BOOK_ID"
 ```
 
-Use the generic API command for an app-owned operation or report:
+Payloads contain fields accepted by the owning operation. Omit server-managed
+workspace, ownership, role, audit, and row-scope fields rather than trying to
+change authority from the client.
+
+Use `api` only after discovery when a named app-owned operation or report owns
+the task. For example, if the live inventory contains an operation such as
+`POST /api/books/{id}/publish`, inspect its exact body and responses before
+calling its mounted path:
 
 ```bash
-pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
+pnpm exec sapporta endpoints show "POST /api/books/{id}/publish"
 pnpm exec sapporta --output json \
-  api get /api/reports/project-progress --query '{"project_id":1}'
+  api post "/api/books/$BOOK_ID/publish" --body '{}'
 ```
 
-JSON output is the stable boundary for scripts and agents. Table output is more
-readable during interactive inspection. Non-TTY output defaults to JSON, but an
-explicit `--output json` makes the contract visible in automation.
+That route is illustrative, not generated by Sapporta. Use only an app-owned
+operation returned by `endpoints list`, then confirm its intended consequence
+with a harmless read.
 
+## Use structured output and error codes
 
-An `APP_SERVER_UNREACHABLE` result is a target or server problem. An auth error
-is an authority problem. A structured 400 after a row or API call is a request
-problem. Keeping those failures separate prevents dependency or database changes
-from masking a bad URL, token, or payload.
+Table output is convenient for interactive inspection. Non-TTY output defaults
+to JSON, but explicit `--output json` makes automation deterministic. Successful
+commands return the server's structured result when one exists. CLI failures in
+JSON mode use this envelope:
+
+```json
+{ "ok": false, "error": "...", "code": "stable_owner_code" }
+```
+
+Branch on `code`, not `error` prose. Direct HTTP clients can also branch on the
+owning status/code pair.
+
+| Failure owner                     | Example code                                           | Response                                                |
+| --------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| CLI target or network             | `APP_SERVER_UNREACHABLE`                               | Check the URL, running server, and network permission   |
+| Shared application authentication | `unauthenticated`, `token_expired`, or `token_revoked` | Stop and repair the caller authority                    |
+| Generated table operation         | `ROW_NOT_FOUND` or a query-validation code             | Correct the visible ID, query, or payload               |
+| App-owned endpoint                | Code declared by that feature contract                 | Follow only the recovery branch owned by that operation |
+
+A harmless `rows list ... --limit 1` is suitable for checking a credential. Do
+not test authority with a mutation. Also do not retry a mutation after an
+ambiguous transport failure until a read shows whether it took effect.
+
+Malformed local input is a safe way to verify the failure envelope without
+contacting an application:
+
+```bash
+pnpm exec sapporta --output json rows list books --where '{'
+```
+
+```json
+{ "ok": false, "error": "Invalid JSON for --where", "code": "INVALID_JSON" }
+```
 
 The CLI operates the same mounted application surface as the browser. Its value
 is a repeatable read-back loop and machine-readable output, not a second data
 model.
 
-## Related reference
+Migration commands are project package scripts rather than running-app CLI
+operations. Use the
+[schema changes and migrations guide](/docs/guides/model-data/schema-changes-and-migrations/)
+instead of inferring migration readiness from a data command.
 
+## Continue
+
+- [Choose an application interface](/docs/guides/discovery/choose-an-application-interface/)
+- [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+- [Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
 - [CLI overview](/docs/reference/cli/overview-and-global-options/)
 - [CLI command index](/docs/reference/indexes/cli-commands/)

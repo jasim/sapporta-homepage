@@ -163,7 +163,7 @@ Reference.
 
 ## Related documentation
 
-- [Master-detail and row activation](/docs/guides/generated-surfaces/table-aware-grids-and-customization/#build-a-master-detail-view)
+- [Master-detail and row activation](/docs/guides/generated-surfaces/table-aware-grids-and-customization/)
 - [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [Grid interactions](/grid/reference/interactions/)

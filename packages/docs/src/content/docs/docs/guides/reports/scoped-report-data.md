@@ -4,48 +4,63 @@ description:
   "Keep hidden rows out of report details, counts, totals, and statistics."
 ---
 
-A count can reveal a hidden row without displaying it. Percentages, empty
-groups, totals, and links reveal the same kind of fact. A report must remove
-invisible base rows before it joins or aggregates them.
+A report can leak a row without displaying it. Counts, percentages, empty
+groups, totals, and drill-through IDs all reveal facts about their inputs. The
+safe sequence is fixed: authorize the report action, resolve data authority,
+scope every base read, and only then join, group, or map.
 
-## Scope base rows before the report sees them
+## Guard every participating table
 
-The project-progress handler narrows the request to an authorized workspace data
-context, then constructs separate guards for projects and tasks:
+The project-progress store receives the already-authorized workspace context. It
+creates one guard for projects and another for tasks, then combines the product
+filter with each table's row predicate before either query executes:
 
 ```ts
-const auth = requireAuthorizedWorkspaceData(c, {
-  action: "read",
-  subject: "project_progress",
-});
-const db = c.get("db");
+import { eq } from "drizzle-orm";
+import type { SapportaEnv } from "@sapporta/server";
+import type { AuthorizedWorkspaceDataContext } from "../project-auth/middleware.js";
 
-const projectAccess = auth.rowSecurity.forTable(projects);
-const taskAccess = auth.rowSecurity.forTable(tasks);
+type ReadProjectProgressRowsOptions = {
+  db: SapportaEnv["Variables"]["db"];
+  auth: AuthorizedWorkspaceDataContext;
+  projectId?: number;
+};
 
-const visibleProjects = await db
-  .select()
-  .from(projectsTable)
-  .where(projectAccess.ownedRows());
+export async function readProjectProgressRows({
+  db,
+  auth,
+  projectId,
+}: ReadProjectProgressRowsOptions) {
+  const projectAccess = auth.rowSecurity.forTable(projects);
+  const taskAccess = auth.rowSecurity.forTable(tasks);
 
-const visibleTasks = await db
-  .select()
-  .from(tasksTable)
-  .where(taskAccess.ownedRows());
+  const projectFilter =
+    projectId === undefined ? undefined : eq(projectsTable.id, projectId);
+  const taskFilter =
+    projectId === undefined ? undefined : eq(tasksTable.project_id, projectId);
 
-return projectProgressDataset({
-  projects: visibleProjects,
-  tasks: visibleTasks,
-  today: Temporal.Now.plainDateISO(),
-});
+  const visibleProjects = await db
+    .select()
+    .from(projectsTable)
+    .where(projectAccess.ownedRows(projectFilter));
+
+  const visibleTasks = await db
+    .select()
+    .from(tasksTable)
+    .where(taskAccess.ownedRows(taskFilter));
+
+  return { projects: visibleProjects, tasks: visibleTasks };
+}
 ```
 
-This two-read version is easy to inspect and test. A larger report can aggregate
-in SQL, but the visibility predicate must still be part of each base-table query
-before grouping. For joins, build one guard per participating table and compose
-both ownership predicates into the joined query. For raw SQL, use explicit
-guarded base-row CTEs and keep the code in a store module with a short
-explanation of why the scoped Drizzle primitives do not fit.
+`ownedRows(productFilter)` AND-composes the product filter with the trusted row
+predicate. Scoping the project query does not make an unscoped task query safe.
+The same rule applies to every joined table, including tables that contribute
+only a count or footer value.
+
+The store returns ordinary visible rows. The route passes those rows and its
+explicit date baseline to `projectProgressDataset(...)`; the mapper contains no
+auth or database code.
 
 ## Keep authority out of report input
 
@@ -59,11 +74,10 @@ export const projectProgressQuerySchema = z.object({
 });
 ```
 
-Even a legitimate project ID is only a filter.
-`projectAccess.ownedRows(eq(projectsTable.id, projectId))` combines it with the
-trusted workspace predicate. A primary key alone is not an authorization rule.
+Even a valid primary key is only a filter. The route's authorized context and
+`ownedRows(...)` supply the authority boundary.
 
-Avoid this report contract:
+Avoid this contract:
 
 ```ts
 // Wrong: the caller is selecting its own authority boundary.
@@ -73,39 +87,46 @@ z.object({
 });
 ```
 
-## Compare equivalent scoped surfaces
+## Move large aggregation without dropping scope
 
-Seed the canonical two projects and five tasks in Workspace A. Seed one project
-with one completed task in Workspace B. Create a token while each workspace is
-active, then run the same commands with each token:
+The two-read example is intentionally educational and in-memory. Moving it
+behind a route centralizes reuse, but it still loads every visible input row.
+When that stops being bounded, move the grouping and totals into a store query.
 
-```bash
-pnpm exec sapporta api get /api/reports/project-progress
-pnpm exec sapporta rows list projects --output json
-pnpm exec sapporta rows list tasks --output json
-```
+Keep the same ordering in the store:
 
-For Workspace A, the report footer and task list both total five. For Workspace
-B, they both total one. The extra completed task must not change Workspace A's
-completion ratio from 40% to 50%.
+1. build one row guard for each base table;
+2. apply `ownedRows(productFilter)` to each base relation;
+3. join or aggregate only those scoped relations; and
+4. return a small ordinary result for dataset mapping.
 
-Also call the Workspace A report with Workspace B's project ID:
+Drizzle queries should carry the predicates into the database. If a required
+shape cannot be expressed safely with the scoped primitives, isolate raw SQL in
+a store module and build explicit guarded base-row CTEs before joining or
+grouping. Raw SQL bypasses row helpers, so its review and negative tests are
+part of the security boundary.
 
-```bash
-pnpm exec sapporta api get /api/reports/project-progress --query '{"project_id":3}'
-```
+## Prove the absence of cross-workspace input
 
-The response contains no hidden project or task information. If the app chooses
-a not-found response for this filter, that behavior should match its declared
-contract and should not distinguish absent from invisible IDs.
+Use a local test fixture that creates its own records:
 
+- Workspace A has visible projects and tasks with known totals.
+- Workspace B has at least one project and task that would change those totals
+  if either base read leaked.
+- A caller without the report ability is rejected.
+- Workspace A filtering by Workspace B's project ID yields the declared empty or
+  not-found behavior without identifying the hidden project.
 
-A pure mapper makes aggregation easier to test, but purity is not security. The
-route or store must remove hidden rows before the mapper receives them. Apply
-the same rule to exports and summary cards, especially when they return only a
-number.
+Run the report as Workspace A before and after inserting the Workspace B rows.
+Its nodes, footer totals, hidden IDs, and completion ratio must remain
+byte-for-byte equivalent. Then compare the report totals with generated,
+row-scoped reads of `projects` and `tasks` under the same authority.
 
-## Related reference
+A `200` response proves only that the route ran. It does not prove that hidden
+rows contributed zero values.
 
+## Related documentation
+
+- [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
-- [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)

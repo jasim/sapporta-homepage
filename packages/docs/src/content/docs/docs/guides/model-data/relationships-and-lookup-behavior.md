@@ -56,21 +56,33 @@ export const projects = sapportaTable({
 ```
 
 `rowLabelColumns: ["name"]` makes lookup results display the project name while
-preserving the numeric project ID as the value. Keep that ID type through
-pickers, caches, filters, and API calls. The lookup route returns entries, not
-an ID-to-label map:
+preserving the project primary key as the value. Keep that key type through
+pickers, caches, filters, and API calls: numeric keys remain numbers and text
+keys remain strings. The lookup route returns entries, not an ID-to-label map:
 
 ```json
 {
-  "entries": [{ "value": 1, "label": "Website Relaunch", "meta": {} }]
+  "entries": [
+    {
+      "value": 1,
+      "label": "Website Relaunch",
+      "meta": { "id": 1, "name": "Website Relaunch" }
+    }
+  ]
 }
 ```
 
-`children` describes the reverse path. Expanding a project row filters `tasks`
-by `project_id`, shows the chosen columns, and applies the stable due-date sort.
-Declare child collections only when the reverse path is part of the record
-workflow. A join table may appear under both parents. A self-reference usually
-needs a purpose-built hierarchy.
+`meta` contains ordinary visible fields from the source row. Consumers may use
+those fields for presentation, but they should not assume the object is empty or
+that it has one universal shape.
+
+`children` describes the reverse path. Expanding a project row in
+`/tables/projects` filters `tasks` by `project_id`, shows the chosen columns,
+and applies the stable due-date sort. This is a table-row expansion and child
+collection, not a generated `/tables/projects/:id` detail route. Declare child
+collections only when the reverse path is part of the record workflow. A join
+table may appear under both parents. A self-reference usually needs a
+purpose-built hierarchy.
 
 The `search.children.tasks` entry lets a visible task make its project appear in
 the parent result. Search configuration is separate from the child grid's
@@ -85,10 +97,12 @@ only the matching children.
 
 ## Exercise both directions
 
-Run the app and create a project named **Website Relaunch** at
-`/tables/projects/new`. Create a task at `/tables/tasks/new` and choose that
-project from the lookup. Return to `/tables/projects` and expand the project row
-to find the task under **Tasks**.
+Create the parent before the child. Run the app and create a project named
+**Website Relaunch** at `/tables/projects/new`. If you use the API or CLI,
+capture the returned project key instead of assuming a fresh database assigned
+`1`. Create a task at `/tables/tasks/new` and choose that project from the
+lookup. Return to `/tables/projects` and expand the project row to find the task
+under **Tasks**.
 
 Lookup options, child rows, and child-assisted search all use the active read
 ability and row scope. Relationship metadata never widens access.
@@ -96,5 +110,6 @@ ability and row scope. Relationship metadata never widens access.
 ## Related reference
 
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
+- [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)

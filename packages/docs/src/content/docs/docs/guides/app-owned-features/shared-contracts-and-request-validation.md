@@ -1,13 +1,14 @@
 ---
 title: "Shared contracts and request validation"
 description:
-  "Define browser-safe wire shapes once for validation, OpenAPI, handlers, and
-  clients."
+  "Start here for an app-owned workflow: define the browser-safe wire shape
+  before the transaction, endpoint, and typed client."
 ---
 
 A shared contract describes one HTTP operation as data: method, path, input,
 responses, and documentation. The server uses it to parse requests and type the
-handler. OpenAPI and the browser client use the same value.
+handler. OpenAPI and the browser client use the same value, so the wire shape
+does not have to be recreated at each boundary.
 
 ## Keep the wire boundary in the shared package
 
@@ -16,19 +17,27 @@ shared package may contain Zod schemas, contracts, wire types, constants, and
 pure serializers. It remains a leaf package: React components, Hono handlers,
 Drizzle queries, database handles, and file I/O stay in their owning packages.
 
-The task app uses a contract for an operation that changes a task and records a
-history event together. Create `packages/shared/src/contracts/complete-task.ts`:
+Suppose one operation must change a task and record a history event together.
+The contract for that bounded slice lives in
+`packages/shared/src/contracts/complete-task.ts`:
 
 ```ts
+import { errorBodySchema } from "@sapporta/shared/contracts";
 import { initContract } from "@sapporta/rest-core";
 import { z } from "zod";
 
 const c = initContract();
 
-const errorSchema = z.object({
-  error: z.string(),
-  code: z.string(),
-});
+export const taskCompletionErrorSchema = z
+  .object({
+    error: z.string(),
+    code: z.enum(["TASK_NOT_FOUND", "TASK_ALREADY_COMPLETED"]),
+  })
+  .strict();
+
+export type TaskCompletionErrorBody = z.output<
+  typeof taskCompletionErrorSchema
+>;
 
 export const completeTaskContract = c.router({
   completeTask: c.mutation({
@@ -46,13 +55,17 @@ export const completeTaskContract = c.router({
         event_id: z.number().int(),
         status: z.literal("completed"),
       }),
-      400: errorSchema,
-      404: errorSchema,
-      409: errorSchema,
+      400: errorBodySchema,
+      404: taskCompletionErrorSchema,
+      409: taskCompletionErrorSchema,
     },
   }),
 });
 ```
+
+`packages/shared` imports `initContract` from `@sapporta/rest-core`. Although a
+server package may re-export that helper, depending on `@sapporta/server` from
+the shared leaf would move a server-oriented dependency toward the browser.
 
 The path is `/tasks/:id/complete`, not `/api/tasks/:id/complete`. The API
 application is already mounted under `/api`; repeating that prefix in the
@@ -61,12 +74,27 @@ contract would produce the wrong URL.
 Re-export the contract from `packages/shared/src/contracts/index.ts`:
 
 ```ts
-export { completeTaskContract } from "./complete-task.js";
+export {
+  completeTaskContract,
+  taskCompletionErrorSchema,
+  type TaskCompletionErrorBody,
+} from "./complete-task.js";
 ```
 
 `packages/shared/src/index.ts` already re-exports that barrel in a generated
 project. Both the API package and frontend package can now import
-`completeTaskContract` from `task-app-shared`.
+`completeTaskContract` and the feature-error schema from the project shared
+package.
+
+The strict empty object means this action accepts `{}` and rejects caller-owned
+fields. The exported error schema is also strict and names only the two
+feature-owned codes. The adapter's request failures remain the generic
+`errorBodySchema` at `400`.
+
+Authentication middleware can still end a protected request with the
+application's shared `401` or `403` envelope before the feature handler runs.
+That infrastructure behavior is documented once outside feature contracts; it is
+not repeated in this response map.
 
 ## Let the adapter parse the request
 
@@ -103,7 +131,6 @@ registration, the invalid path is rejected before the handler runs:
 }
 ```
 
-
 Request schemas define the runtime input boundary. Malformed JSON or a failed
 path, query, header, or body parse returns an adapter-generated `400` before the
 handler runs, so declare that response when it belongs in OpenAPI.
@@ -115,8 +142,8 @@ client boundary even though the handler returned it.
 
 ## Check the shared boundary
 
-Build all three packages and inspect the registered operation after its route is
-mounted:
+After the route is mounted, build the project and inspect the registered
+operation:
 
 ```bash
 pnpm build

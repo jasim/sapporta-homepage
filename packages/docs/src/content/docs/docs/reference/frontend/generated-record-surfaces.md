@@ -17,9 +17,13 @@ integration points.
 
 ## Generated routes and components
 
-- `TableRoute` renders the table-aware list and record surface for serialized
-  table metadata.
-- `NewRecordRoute` connects the generated `/tables/:tableName/new` route.
+- `/tables/:tableName` renders `TableRoute`, the table-aware list, inline record
+  editing, row expansion, and declared child collections.
+- `/tables/:tableName/new` renders `NewRecordRoute`.
+- There is no generated `/tables/:tableName/:id` browser route. The separate
+  HTTP operation `GET /api/tables/<table>/<id>` returns one row but does not
+  create a frontend page. Use the table workflow/expanded row or add an
+  app-owned detail route.
 - `NewRecordPage` renders a metadata-derived create form for one `TableSchema`.
 - `FormField` renders one `RecordFormFieldModel`. It accepts `field`, `value`,
   `issue`, and `onChange` values and supplies the matching label, input,
@@ -45,14 +49,21 @@ const title = fieldModelForColumn(fields, "title");
 const project = foreignKeyFieldModelForColumn(fields, "project_id");
 ```
 
-`buildRecordFormFields({ table, lookups })` returns one
-`RecordFormFieldModel` for each editable column. The union contains `text`,
-`number`, `currency`, `percentage`, `date`, `timestamp`, `checkbox`, `select`,
-and `foreignKey` variants. Select models include their declared options.
-Foreign-key models include scoped lookup capabilities.
+`buildRecordFormFields({ table, lookups })` returns one `RecordFormFieldModel`
+for each editable column. The union contains `text`, `number`, `currency`,
+`percentage`, `date`, `timestamp`, `checkbox`, `select`, and `foreignKey`
+variants. Select models include their declared options. Foreign-key models
+include scoped lookup capabilities.
 
-Generated primary keys, system-managed scope columns, and columns excluded by
-the table write policy do not produce editable field models.
+Columns do not produce editable field models when they are `visuallyHidden`, are
+primary keys with a generated default, have `apiWritable: false`, or use a
+system-managed scope name. Client-assigned primary keys remain editable when the
+metadata permits them.
+
+`created_at` and `updated_at` are visually hidden by default, and an application
+may override that presentation hint. A timestamp default does not make a column
+API-owned: use `apiWritable: false` when direct generated-API callers must not
+set it.
 
 `fieldModelForColumn()` returns the model for one SQL column name and throws
 when the field is absent. `foreignKeyFieldModelForColumn()` also verifies that
@@ -76,27 +87,30 @@ if (!parsed.ok) {
 await createTableRow(table.name, parsed.value);
 ```
 
-`parseCreateDraft(table, draft)` performs a non-mutating submit-time decode.
-Its result is either `{ ok: true, value }` or `{ ok: false, issues }`.
+`parseCreateDraft(table, draft)` performs a non-mutating submit-time decode. Its
+result is either `{ ok: true, value }` or `{ ok: false, issues }`.
 `ParseCreateDraftResult` names this union. `CreateDraftIssue` remains as a
 deprecated alias; use `FieldIssue` from `@sapporta/shared/validation`.
 
 - Numeric, currency, percentage, date, and timestamp controls may retain raw
-  text while the user edits. The parser converts valid complete drafts at
-  submit time.
+  text while the user edits. The parser converts valid complete drafts at submit
+  time.
 - Optional empty non-text values are omitted. Omission preserves database
   defaults and optional insert behavior.
 - Empty text remains `""`. It is never converted to `null`.
 - Required empty values and invalid drafts produce `FieldIssue` values keyed by
   public SQL column name.
+- A searchable select may expose a clear button. Clearing a required select
+  still produces a required-field issue; the editor affordance does not change
+  schema nullability.
 - Values for non-editable columns are ignored. Client metadata does not grant
   write authority.
 
 The parser implements create presence and wire-decoding rules. The server still
 owns API write policy, trusted scope values, reference visibility,
 authorization, structural validation, application validation, and database
-constraints. Patch parsing is a separate contract because omission means
-"leave unchanged" during update.
+constraints. Patch parsing is a separate contract because omission means "leave
+unchanged" during update.
 
 ## Submission errors
 
@@ -111,17 +125,19 @@ import {
 - `FormSubmissionError(issues)` carries local `FieldIssue[]` values. Its
   `issues` array is copied at construction.
 - `fieldIssuesForSubmissionError(error)` returns copied issues from a
-  `FormSubmissionError` or recognized field details from a Sapporta
-  `ApiError`. Other errors produce `[]`.
+  `FormSubmissionError` or recognized field details from a Sapporta `ApiError`.
+  Other errors produce `[]`.
 - `firstFormErrorMessage(errors)` converts the first TanStack Form field error
-  to display text. It supports strings, `Error` instances, objects with a
-  string `message`, and other printable values. An empty list returns
-  `undefined`.
+  to display text. It supports strings, `Error` instances, objects with a string
+  `message`, and other printable values. An empty list returns `undefined`.
 
 Generated create forms map recognized API validation details into TanStack
-Form's field error map and keep the API summary as the form-level error. A
-field issue may use a direct `field` name or a nested path such as
-`lines.0.quantity`.
+Form's field error map and keep the API summary as the form-level error. A field
+issue may use a direct `field` name or a nested path such as `lines.0.quantity`.
+
+A successful generated create sends `POST /api/tables/<table>`, reloads mounted
+TGrid sessions for that table, invalidates its public TanStack Query prefix, and
+replace-navigates to `/tables/<table>`.
 
 ## Shared validation values
 
@@ -140,8 +156,8 @@ interface ApiProblem {
 }
 ```
 
-- `fieldIssuesFromZodError(error)` preserves nested Zod paths with dot
-  notation. A pathless issue uses the field name `form`.
+- `fieldIssuesFromZodError(error)` preserves nested Zod paths with dot notation.
+  A pathless issue uses the field name `form`.
 - `apiProblemFromBody(body)` validates a Sapporta error body and returns its
   summary, optional code, and recognized field details. Invalid bodies return
   `undefined`. Unrecognized detail entries are ignored.
@@ -153,6 +169,7 @@ can act on.
 ## Related documentation
 
 - [Generated record screens and forms](/docs/guides/generated-surfaces/record-screens-and-forms/)
+- [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

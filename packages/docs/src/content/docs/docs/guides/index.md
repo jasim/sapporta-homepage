@@ -1,57 +1,84 @@
 ---
 title: "Guides"
 description:
-  "Follow a Sapporta feature from stored data to its runtime and operating
-  boundary."
+  "Choose the guide that owns a table, workflow, report, security boundary, live
+  operation, or deployment change."
 ---
 
-The guides start where the task-app tutorial ends. Each guide answers one
-implementation question: which part of Sapporta owns this behavior, what is the
-smallest useful change, and where must the boundary remain explicit?
+Start with the result you need and choose the boundary that owns it. Each link
+below is the first guide for that job. Its focused follow-ups carry the change
+into dependent layers.
 
 Reference pages catalogue types, options, commands, and response shapes. Guides
 explain how those pieces compose.
 
-## Choose the owning boundary
+If you have not chosen whether the operation belongs to a generated table,
+app-owned route, report, or custom frontend action, start with
+[Choose an application interface](/docs/guides/discovery/choose-an-application-interface/).
+If you are asking an agent to change repository behavior, use
+[Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/).
+Operating records in a running application is a different job.
+
+## Model table-backed features
 
 Start with
-[model data](/docs/guides/model-data/tables-columns-and-schema-metadata/) when
-the feature is still a property of a stored record. Drizzle owns SQL
-constraints. Sapporta metadata owns generated labels, search, forms, grids, and
-row scope. Continue to
-[table search](/docs/guides/model-data/search-indexes-and-display-metadata/)
-when a root row should also be found through foreign-key labels or nested child
-records.
+[Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
+when the outcome changes stored rows, relationships, search metadata, a
+migration, or the CRUD behavior derived from the table definition. If a
+registered table already exists and ordinary browser CRUD is the requested
+surface, start with
+[Generated record screens and forms](/docs/guides/generated-surfaces/record-screens-and-forms/).
 
-Continue with
-[generated record screens](/docs/guides/generated-surfaces/record-screens-and-forms/)
-when ordinary CRUD is the workflow. Move to
-[Grid-first workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
-when the page needs a different interaction or row model.
+## Build custom data interfaces
 
-Read
-[authentication and abilities](/docs/guides/security/authentication-and-abilities/)
-before adding a protected action. Authentication establishes the caller,
-abilities permit an operation, and row security limits the data that operation
-may observe.
+Start with
+[Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
+when you need custom columns or hierarchy for one registered table, or a
+temporary, composite, calculated, or browser-owned row model. That guide chooses
+among a generated table screen, TGrid, BaseGrid, and an app-owned screen before
+you take on their different row and cache responsibilities.
 
-Use
-[app-owned features](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
-for a named domain action, multi-table transaction, integration, or screen that
-is not ordinary table CRUD. The shared contract defines the wire boundary; the
-API owns authorization and persistence; the frontend owns interaction state.
+## Build domain workflows
 
-Use [reports](/docs/guides/reports/route-based-reports/) for reusable read
-models. Reports scope base rows first, map them into `GridDataset`, and resolve
-navigation in the frontend.
+Start with
+[Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+for a named action, multi-table transaction, integration, or typed React caller
+that ordinary table CRUD should not own. The contract fixes the browser-safe
+wire shape before the workflow, endpoint, and client are added.
 
-Use
-[discovery and automation](/docs/guides/discovery/openapi-and-endpoint-discovery/)
-to inspect and operate the live application. Use
-[deployment and operations](/docs/guides/operations/application-configuration/)
-when the question concerns process configuration, migration order, durable
-storage, mail, or failure diagnosis.
+## Secure actions and data
 
-A feature may cross several groups. Begin with the user-visible operation, then
-follow its contract toward storage and authority. That order preserves the
-meaning of the feature while its implementation crosses packages.
+Start with
+[Authentication and abilities](/docs/guides/security/authentication-and-abilities/)
+when the outcome depends on caller identity or permission. Follow its security
+links when workspace authority, row visibility, server-owned values, or an agent
+token is the actual boundary.
+
+## Build reports
+
+Start with [Route-based reports](/docs/guides/reports/route-based-reports/) for
+a reusable aggregate or read model. The report path then scopes base rows, maps
+the dataset, and adds drill-through in that order.
+
+## Inspect and operate a running application
+
+Start with
+[Choose an application interface](/docs/guides/discovery/choose-an-application-interface/)
+when the owning operation or caller is not yet clear. For a bounded live-record
+operation performed by an agent, start with
+[Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/).
+For a known mounted route, the interface guide routes you to OpenAPI discovery
+and the project-local CLI.
+
+## Configure and ship
+
+Start with
+[Application configuration](/docs/guides/operations/application-configuration/)
+for local, same-origin, or split-origin runtime setup. When the specific job is
+applying a committed migration during a release or diagnosing migration startup,
+start with
+[Run migrations in deployed environments](/docs/guides/operations/run-migrations-in-deployed-environments/).
+
+A change may cross several groups. Start at the boundary that owns the requested
+behavior, then follow that guide's links to the dependent schema, authority,
+API, frontend, report, or runtime layers.

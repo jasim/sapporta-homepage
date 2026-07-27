@@ -5,8 +5,10 @@ description:
 ---
 
 A typed client turns a shared contract into browser methods. Each method accepts
-the inferred request, validates the response by default, returns the success
-body, and throws `ApiError` for a non-2xx response.
+the inferred request and validates the response by default. A valid success
+returns its body. A non-2xx response that reaches the unwrap step throws
+`ApiError`; transport and response-validation failures stay on their original
+error paths.
 
 ## Create one application client module
 
@@ -44,90 +46,96 @@ the contract supplies `/tasks/:id/complete`, producing the mounted request URL
 
 ## Preserve expected failure details
 
-`createApiClient()` unwraps successful 2xx responses. For any non-2xx response,
-it throws `ApiError(status, body)`. Narrow the unknown body before displaying
-its fields:
+`ApiError.body` is `unknown`. A proxy, stale server, or unexpected failure may
+not return the declared body, so recovery begins by parsing the exported strict
+feature schema rather than copying its fields into frontend code:
 
 ```ts
 import { ApiError } from "@sapporta/shared/client";
+import {
+  taskCompletionErrorSchema,
+  type TaskCompletionErrorBody,
+} from "task-app-shared";
 
-type ErrorBody = { error: string; code: string };
-
-function isErrorBody(value: unknown): value is ErrorBody {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "error" in value &&
-    typeof value.error === "string" &&
-    "code" in value &&
-    typeof value.code === "string"
-  );
-}
-
-export async function completeTaskFromScreen(taskId: number) {
-  try {
-    return await taskActionsApi.completeTask({
-      params: { id: taskId },
-      body: {},
-    });
-  } catch (error) {
-    if (
-      error instanceof ApiError &&
-      (error.status === 404 || error.status === 409) &&
-      isErrorBody(error.body)
-    ) {
-      throw new Error(error.body.error);
+export type TaskActionFailure =
+  | {
+      status: 404;
+      body: TaskCompletionErrorBody & { code: "TASK_NOT_FOUND" };
     }
-    throw error;
+  | {
+      status: 409;
+      body: TaskCompletionErrorBody & {
+        code: "TASK_ALREADY_COMPLETED";
+      };
+    };
+
+export function taskActionFailure(
+  error: unknown,
+): TaskActionFailure | undefined {
+  if (!(error instanceof ApiError)) return undefined;
+
+  const parsed = taskCompletionErrorSchema.safeParse(error.body);
+  if (!parsed.success) return undefined;
+
+  if (error.status === 404 && parsed.data.code === "TASK_NOT_FOUND") {
+    return { status: 404, body: parsed.data };
   }
+
+  if (error.status === 409 && parsed.data.code === "TASK_ALREADY_COMPLETED") {
+    return { status: 409, body: parsed.data };
+  }
+
+  return undefined;
 }
 ```
 
-For a real screen, retain the status or code as well as the message when those
-values affect the next action. A `409` may prompt a refresh because another
-caller already completed the task. A `404` may remove an item that is no longer
-visible.
+The status/code pair matters. A schema-valid `404/TASK_NOT_FOUND` means the
+screen's item is stale or no longer visible. A schema-valid
+`409/TASK_ALREADY_COMPLETED` means a prior transaction already committed. Both
+branches can refetch authoritative state without revealing whether a `404` row
+exists outside the request's authority.
 
-`ApiError.body` is `unknown` because a proxy or unexpected server failure may
-not return a declared body. Narrow it before reading fields. Response validation
-can be disabled with `validateResponse: false`, but doing so removes the
-client-side proof that a successful body matches the shared contract.
+Returning `undefined` is not permission to invent a local generic conflict.
+Malformed bodies, mismatched status/code pairs, shared `401`/`403` responses,
+transport failures, response-validation failures, and unexpected errors stay on
+the application's central error path. `apiProblemFromBody()` remains useful for
+display-only error text; its optional generic code is not an exhaustive recovery
+signal.
 
-## Call the client from a React action
+## Refresh the caches that own affected reads
 
 Keep pending and error state close to the button that owns the operation.
-Refresh the server-backed data after success rather than patching several
-related client collections independently.
+Disable only the active command so the surrounding page stays readable.
 
-```tsx
-const [pendingTaskId, setPendingTaskId] = useState<number | null>(null);
-const [actionError, setActionError] = useState<string | null>(null);
+The completion workflow updates `tasks` and inserts `task_events`. After
+success, invalidate both generated-table prefixes rather than patching several
+collections independently:
 
-async function handleComplete(taskId: number) {
-  setPendingTaskId(taskId);
-  setActionError(null);
+```ts
+import { tableQueryKeys } from "@sapporta/frontend/table/query";
 
-  try {
-    await taskActionsApi.completeTask({
-      params: { id: taskId },
-      body: {},
-    });
-    await refreshProgress();
-  } catch (error) {
-    if (error instanceof ApiError && isErrorBody(error.body)) {
-      setActionError(error.body.error);
-      return;
-    }
-    setActionError("The task could not be completed.");
-  } finally {
-    setPendingTaskId(null);
-  }
-}
+await Promise.all([
+  queryClient.invalidateQueries({
+    queryKey: tableQueryKeys.table("tasks"),
+  }),
+  queryClient.invalidateQueries({
+    queryKey: tableQueryKeys.table("task_events"),
+  }),
+]);
 ```
 
-The endpoint updates both task status and history, so one refetch gives the
-screen the committed server result. Disable only the active task action with
-`pendingTaskId === task.id`; the rest of the page can remain readable.
+Apply the same invalidation after either declared stale-state branch above. A
+valid `400` can be displayed, but it does not imply that committed table state
+changed and does not trigger this recovery. Let every unrecognized failure reach
+the screen's central error boundary.
+
+TGrid sessions use a separate cache. Call `reloadTGridRows("tasks")` or
+`reloadTGridRows("task_events")` only when the owning screen coordinates an
+affected mounted TGrid. See
+[Table query options](/docs/reference/frontend/table-query-options/) for the
+cache-key hierarchy. The
+[custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
+guide owns the full mutation pattern.
 
 ## Observe the inferred request
 
@@ -135,7 +143,7 @@ Start the app, complete an open task from the screen, and inspect the browser
 Network panel. The request should be:
 
 ```text
-POST /api/tasks/1/complete
+POST /api/tasks/{id}/complete
 Content-Type: application/json
 
 {}
@@ -150,7 +158,6 @@ The response body is the declared success value:
   "status": "completed"
 }
 ```
-
 
 For production, `VITE_API_URL` is a public origin, without `/api`. It never
 contains a token or secret. Cookie-authenticated cross-origin deployments also

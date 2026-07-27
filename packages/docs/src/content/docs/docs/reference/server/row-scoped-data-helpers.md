@@ -4,47 +4,162 @@ description:
   "Look up `scopedRows()` construction and generated-style CRUD behavior."
 ---
 
-## Identity
+## Imports
 
-`scopedRows`, `ScopedRows`, `ScopedRowsOptions`, `ListRowsInput`,
-`ListRowsResult`, `TableRowSecurity`, and `InsertValuesOptions` from
-`@sapporta/server`.
+`@sapporta/server` exports `scopedRows`, `ScopedRows`, `ScopedRowsOptions`,
+`ListRowsInput`, `ListRowsResult`, `RowSecurity`, `TableRowSecurity`,
+`InsertValuesOptions`, `RowNotFoundError`, and `ImmutableTableOperationError`.
 
-## Contract
-
-- `scopedRows(db, auth, table, { searchPlan })` constructs operations for one
-  table and request authority. Obtain the plan from
-  `catalog.searchPlanFor(table.sqlName)`.
-- List/get/create/update/delete methods apply row visibility, trusted values,
-  validation, references, and immutable policy.
-- Get/update/delete use not-found behavior for missing or invisible rows.
-- Construct helpers against a transaction handle when all operations must share
-  one transaction.
-- `auth.rowSecurity.forTable(table)` creates a request-bound guard for custom
-  Drizzle reads, writes, joins, aggregates, and transactions. Create one guard
-  for every table touched.
-- `guard.ownedRows(predicate?)` combines a caller predicate with request row
-  visibility for reads, updates, and deletes.
-- `guard.insertValues(db, input, options?)` prepares an asynchronous write;
-  `guard.insertValuesSync(tx, input, options?)` is the synchronous variant for
-  the default `better-sqlite3` transaction callback.
-- `options.serverValues` supplies trusted server-authored fields such as the
-  parent foreign key in a detail insert. It does not bypass final reference
-  visibility validation.
-- `RowNotFoundError` and `ImmutableTableOperationError` are public error types.
-
-## Minimal lookup
+## `scopedRows(...)`
 
 ```ts
-import { scopedRows } from "@sapporta/server";
+function scopedRows(
+  db: BetterSQLite3Database,
+  auth: SapportaAuthContext,
+  table: TableDef,
+  options: { searchPlan: SearchPlan },
+): ScopedRows;
+```
 
+Use the catalog-compiled plan for the same `TableDef`:
+
+```ts
 const rows = scopedRows(db, auth, tasks, {
   searchPlan: catalog.searchPlanFor(tasks.sqlName),
 });
 ```
 
+A plan for a different table is rejected. `scopedRows()` performs no ability
+check; generated handlers authorize first, and custom handlers must do the same.
+
+`ScopedRows` exposes:
+
+```ts
+interface ScopedRows {
+  list(query?: ListRowsInput): Promise<ListRowsResult>;
+  get(id: RowId): Promise<Record<string, unknown>>;
+  create(
+    input: unknown,
+  ): Promise<Record<string, unknown> | Record<string, unknown>[]>;
+  update(id: RowId, patch: unknown): Promise<Record<string, unknown>>;
+  delete(id: RowId): Promise<Record<string, unknown>>;
+  exportRows(query?: ListRowsInput): Promise<Record<string, unknown>[]>;
+  lookup(query?: ListRowsInput): Promise<LookupEntry[]>;
+  count(query?: ListRowsInput): Promise<Record<string, number>>;
+}
+```
+
+List, lookup, count, and export filter by row visibility. Singular
+get/update/delete throw `RowNotFoundError` for both missing and invisible rows.
+Create and update apply API write policy, reference visibility, and the normal
+save pipeline. Update and delete throw `ImmutableTableOperationError` when the
+table is immutable.
+
+## Per-table guards
+
+```ts
+const guard = auth.rowSecurity.forTable(table);
+```
+
+`forTable(table)` accepts only the registered table. It binds request authority
+and catalog metadata, not a database handle. Create one guard for every table a
+custom query touches.
+
+The core custom-query operations are:
+
+```ts
+guard.ownedRows(predicate?: SQL): SQL;
+
+guard.insertValues<T extends Record<string, unknown>>(
+  db: BetterSQLite3Database,
+  input: T,
+  options?: InsertValuesOptions<T>,
+): Promise<T & Record<string, unknown>>;
+
+guard.insertValuesSync<T extends Record<string, unknown>>(
+  db: BetterSQLite3Database,
+  input: T,
+  options?: InsertValuesOptions<T>,
+): T & Record<string, unknown>;
+
+guard.patchValues<T extends Record<string, unknown>>(
+  db: BetterSQLite3Database,
+  patch: T,
+): Promise<T>;
+
+guard.validateReferences(
+  db: BetterSQLite3Database,
+  payload: unknown,
+): Promise<void>;
+
+guard.validateReferencesSync(
+  db: BetterSQLite3Database,
+  payload: unknown,
+): void;
+```
+
+`ownedRows(predicate)` SQL-`AND`s the supplied predicate with the request's
+table-ownership predicate. Use it on every custom select, update, and delete.
+The guard does not expose persistence methods named `read`, `update`, or
+`delete`; custom code runs Drizzle with the returned predicate.
+
+`patchValues(...)` validates a caller patch but does not persist it.
+`insertValues(...)` and `insertValuesSync(...)` prepare values in this order:
+
+1. reject caller-supplied scope fields and `apiSettable: false` references;
+2. merge trusted `serverValues`;
+3. validate final foreign-key visibility;
+4. stamp trusted scope fields from request authority.
+
+They return prepared values. The caller still performs the insert or invokes a
+save pipeline.
+
+## `serverValues`
+
+```ts
+interface InsertValuesOptions<T extends Record<string, unknown>> {
+  serverValues?:
+    | Record<string, unknown>
+    | ((input: T, index: number) => Record<string, unknown>);
+}
+```
+
+When the feature accepts no writable event fields, keep the caller input empty:
+
+```ts
+const values = eventAccess.insertValuesSync(
+  tx,
+  {},
+  {
+    serverValues: {
+      task_id: taskId,
+      event_type: "completed",
+      occurred_at: Temporal.Now.instant(),
+    },
+  },
+);
+
+tx.insert(taskEventsTable).values(values).run();
+```
+
+`serverValues` may supply a reference marked `apiSettable: false`, but it does
+not bypass final reference visibility validation.
+
+## Transactions, immutability, and raw access
+
+The default `better-sqlite3` transaction callback is synchronous. Use
+`insertValuesSync(tx, ...)` and synchronous Drizzle operations inside it.
+Awaited network, mail, or queue effects belong after commit.
+
+Per-table guards enforce row predicates only where the application uses them.
+They do not enforce table abilities or `immutable`. `scopedRows().update()` and
+`.delete()` enforce immutability; raw/custom Drizzle can bypass it. Custom
+mutations must check the route ability, compose `ownedRows(...)`, prepare caller
+patches when applicable, and preserve the intended immutable policy.
+
 ## Related documentation
 
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+- [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)

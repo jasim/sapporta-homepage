@@ -25,9 +25,12 @@ import {
   tableRecordsPageQueryOptions,
 } from "@sapporta/frontend/table/query";
 import { ApiError } from "@sapporta/shared/client";
-import { apiProblemFromBody } from "@sapporta/shared/validation";
 import { Button } from "@sapporta/ui";
 import { Link } from "react-router-dom";
+import {
+  taskCompletionErrorSchema,
+  type TaskCompletionErrorBody,
+} from "task-app-shared";
 import { taskActionsApi } from "./api";
 
 type Project = { id: number; name: string };
@@ -37,6 +40,8 @@ type Task = {
   title: string;
   status: string;
 };
+
+const TABLE_ROW_CAP = 100;
 
 function decodeProject(row: Record<string, unknown>): Project {
   if (typeof row.id === "number" && typeof row.name === "string") {
@@ -62,15 +67,22 @@ function decodeTask(row: Record<string, unknown>): Task {
   throw new Error("Unexpected task row");
 }
 
-function actionErrorMessage(error: unknown): string | undefined {
-  if (error === null) return undefined;
-  if (error instanceof ApiError) {
-    return (
-      apiProblemFromBody(error.body)?.summary ??
-      "The task could not be completed."
-    );
+function taskActionFailure(
+  error: unknown,
+): TaskCompletionErrorBody | undefined {
+  if (!(error instanceof ApiError)) return undefined;
+
+  const parsed = taskCompletionErrorSchema.safeParse(error.body);
+  if (!parsed.success) return undefined;
+
+  if (
+    (error.status === 404 && parsed.data.code === "TASK_NOT_FOUND") ||
+    (error.status === 409 && parsed.data.code === "TASK_ALREADY_COMPLETED")
+  ) {
+    return parsed.data;
   }
-  return "The task could not be completed.";
+
+  return undefined;
 }
 
 export function ProjectProgress() {
@@ -79,7 +91,7 @@ export function ProjectProgress() {
     tableRecordsPageQueryOptions({
       tableName: "projects",
       page: 1,
-      limit: 100,
+      limit: TABLE_ROW_CAP,
       decodeRow: decodeProject,
     }),
   );
@@ -87,10 +99,23 @@ export function ProjectProgress() {
     tableRecordsPageQueryOptions({
       tableName: "tasks",
       page: 1,
-      limit: 100,
+      limit: TABLE_ROW_CAP,
       decodeRow: decodeTask,
     }),
   );
+
+  async function refreshCompletionState() {
+    reloadTGridRows("tasks");
+    reloadTGridRows("task_events");
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: tableQueryKeys.table("tasks"),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: tableQueryKeys.table("task_events"),
+      }),
+    ]);
+  }
 
   const completeTask = useMutation({
     mutationFn: async (task: Task) => {
@@ -100,36 +125,34 @@ export function ProjectProgress() {
       });
       return task;
     },
-    onSuccess: async () => {
-      reloadTGridRows("tasks");
-      reloadTGridRows("task_events");
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: tableQueryKeys.table("tasks"),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: tableQueryKeys.table("task_events"),
-        }),
-      ]);
+    onSuccess: refreshCompletionState,
+    onError: async (error) => {
+      if (taskActionFailure(error)) {
+        await refreshCompletionState();
+      }
     },
+    throwOnError: (error) => taskActionFailure(error) === undefined,
   });
 
   const projects = projectsQuery.data?.data ?? [];
   const tasks = tasksQuery.data?.data ?? [];
   const loading = projectsQuery.isPending || tasksQuery.isPending;
   const loadError = projectsQuery.error ?? tasksQuery.error;
-  const actionError = actionErrorMessage(completeTask.error);
+  const actionError = taskActionFailure(completeTask.error);
   const pendingTaskId = completeTask.isPending
     ? completeTask.variables?.id
     : undefined;
+  const incomplete =
+    (projectsQuery.data?.meta.total ?? 0) >
+      (projectsQuery.data?.data.length ?? 0) ||
+    (tasksQuery.data?.meta.total ?? 0) > (tasksQuery.data?.data.length ?? 0);
 
   const tasksByProject = useMemo(() => {
     const grouped = new Map<number, Task[]>();
     for (const task of tasks) {
-      grouped.set(task.project_id, [
-        ...(grouped.get(task.project_id) ?? []),
-        task,
-      ]);
+      const projectTasks = grouped.get(task.project_id) ?? [];
+      projectTasks.push(task);
+      grouped.set(task.project_id, projectTasks);
     }
     return grouped;
   }, [tasks]);
@@ -147,15 +170,25 @@ export function ProjectProgress() {
         <Button
           className="mt-3"
           onClick={() =>
-            void Promise.all([
-              projectsQuery.refetch(),
-              tasksQuery.refetch(),
-            ])
+            void Promise.all([projectsQuery.refetch(), tasksQuery.refetch()])
           }
         >
           Retry
         </Button>
       </div>
+    );
+  }
+
+  if (incomplete) {
+    return (
+      <main className="space-y-3 p-6">
+        <h1 className="text-xl font-semibold">Project progress</h1>
+        <p role="status" className="text-sm text-sap-muted">
+          This bounded summary is incomplete because at least one generated read
+          exceeded the {TABLE_ROW_CAP}-row cap. Use the scoped project-progress
+          report for complete totals.
+        </p>
+      </main>
     );
   }
 
@@ -192,7 +225,7 @@ export function ProjectProgress() {
       )}
       {actionError && (
         <p role="alert" className="text-sm text-red-700">
-          {actionError}
+          {actionError.error}
         </p>
       )}
 
@@ -238,14 +271,24 @@ export function ProjectProgress() {
 
 `tableRecordsPageQueryOptions()` supplies stable table cache keys, passes query
 cancellation to the generated HTTP request, and decodes each row at the browser
-boundary. `apiProblemFromBody()` recognizes Sapporta error bodies for the typed
-action. The component does not maintain a second loader or error-envelope
-parser.
+boundary. `taskCompletionErrorSchema` narrows only the feature's declared
+recovery bodies. The component does not maintain a second loader or hand-copy
+the error envelope.
 
-The completion transaction changes both `tasks` and `task_events`. Its success
-handler invalidates both TanStack Query table prefixes. `reloadTGridRows()`
-refreshes an affected table only when a mounted TGrid uses that table as its
-root. TanStack Query and TGrid are separate server-state consumers.
+The completion transaction changes both `tasks` and `task_events`. Success,
+`404 TASK_NOT_FOUND`, and `409 TASK_ALREADY_COMPLETED` all make the visible
+collections potentially stale, so those declared branches invalidate both
+TanStack Query table prefixes. The `409` contract describes a sequential repeat
+after the task is already complete; it does not promise a cross-process
+simultaneous-writer conflict.
+
+Malformed declared bodies, transport and response-validation failures, and
+unexpected errors do not become local action messages. `throwOnError` keeps them
+on the application's central error-boundary path.
+
+`reloadTGridRows()` signals an affected mounted, registered TGrid root and is a
+no-op when that session is absent. TanStack Query and TGrid are separate
+server-state consumers.
 
 Client filters, hidden fields, and route parameters are product constraints, not
 authorization. Do not add `workspace_id` or `scoped_to_user_id` to this
@@ -298,22 +341,34 @@ when both the page and its data are intentionally anonymous.
 
 ## Exercise every screen state
 
-Run the frontend build, then start the app:
+Use rows created inside the test or test session; do not depend on a previous
+guide's seed data or fixed IDs. Cover these states and boundaries:
 
-```bash
-pnpm build
-pnpm dev
-```
+1. Loading, retryable read error, empty, ready, per-task pending, success,
+   declared stale failure, and the central unexpected-error path.
+2. Only the task being submitted is disabled; the rest of the screen remains
+   readable.
+3. An aborted query publishes no replacement page, and one malformed row fails
+   the query instead of producing a smaller aggregate.
+4. When either response has `meta.total > data.length`, the 100-row incomplete
+   state appears and no complete-looking counts are rendered.
+5. Success and declared stale `404`/repeat `409` branches invalidate the `tasks`
+   and `task_events` TanStack Query prefixes.
+6. Only mounted TGrids registered for those affected root tables reload.
+7. Stable project and task IDs survive sort and refresh; no interaction state
+   depends on an array index.
+8. A completion ratio of `0.4` displays as `40%`.
+9. The empty-state action navigates to `/tables/projects/new`, while the Tasks
+   link returns to `/tables/tasks`.
+10. Reloading `/projects/progress` stays inside the protected shell, while
+    negative API tests still prove server ability and row-scope enforcement.
+11. Loading, error, empty, incomplete, and ready layouts remain usable at narrow
+    and desktop widths.
 
-Use the canonical task dataset. Open `/projects/progress`, complete
-`Audit launch checklist`, and follow the Tasks link to the generated table. The
-project count should increase, the task status should read `completed`, and the
-generated Task history should contain the completion event.
-
-
-The screen downloads at most 100 records and aggregates them in the browser.
-That bound is part of the example's meaning. Larger or reusable summaries belong
-in a scoped report route.
+This screen intentionally reads at most 100 records from each table. It is for a
+small, screen-local projection. Put reusable or complete authoritative totals
+behind a scoped [report route](/docs/guides/reports/route-based-reports/); large
+datasets need scoped SQL grouping or another store-level implementation.
 
 ## Related reference
 

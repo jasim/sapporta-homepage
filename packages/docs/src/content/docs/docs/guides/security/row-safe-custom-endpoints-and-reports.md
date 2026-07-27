@@ -3,58 +3,63 @@ title: "Row-safe custom endpoints and reports"
 description: "Apply abilities and row visibility to app-owned reads and writes."
 ---
 
-Generated table routes apply row visibility for you. App-owned code chooses
-between two levels: `scopedRows()` for ordinary table operations and
-`auth.rowSecurity.forTable()` for custom Drizzle shapes.
+Generated table routes apply action checks and row visibility for you. App-owned
+code makes those decisions explicitly. The useful model has six boundaries:
+
+| Boundary         | Question                                                 | Mechanism                                                          |
+| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| Credential       | Who is calling, and in which workspace?                  | Session or agent token                                             |
+| Action ability   | May this principal run the operation?                    | `forbidUnless(...)` or an authorized project helper                |
+| Data authority   | Which workspace/user authority may the request exercise? | `resolveRequestDataAuthority(...)` and authority-narrowing helpers |
+| Row enforcement  | Which rows satisfy table and domain predicates?          | `scopedRows(...)`, per-table guards, and `ownedRows(...)`          |
+| Write integrity  | Which fields must trusted server code author?            | Managed scope fields, API metadata, and `serverValues`             |
+| State transition | Which changes must commit together?                      | A synchronous database transaction                                 |
+
+Passing one boundary does not imply another. A valid record ID, hidden input,
+URL filter, report link, or Grid state never grants authority.
 
 ## Use `scopedRows()` for ordinary table work
 
-`scopedRows(db, auth, table, { searchPlan })` binds one table and its
-catalog-compiled search plan to the current request authority. Its operations
-apply visible-row predicates, reject client ownership fields, stamp trusted
-insert ownership, validate references, and return not found for missing or
-invisible rows. Capture the catalog returned by `loadSapportaProject()` when
-assembling app-owned routes.
+`scopedRows(db, auth, table, { searchPlan })` binds one table and the catalog's
+compiled search plan to the request. Its operations apply visible-row
+predicates, reject caller-supplied scope aliases, stamp trusted insert scope,
+validate references, and conceal missing and invisible singular rows.
 
 ```ts
-import { scopedRows } from "@sapporta/server";
-import { tasks } from "../schema/tasks.js";
+const taskRows = scopedRows(c.get("db"), auth, tasks, {
+  searchPlan: catalog.searchPlanFor(tasks.sqlName),
+});
 
-api.register(
-  "reopenTask",
-  reopenTaskContract.reopenTask,
-  async ({ c, request }) => {
-    const auth = c.get("auth");
-    forbidUnless(c, auth.ability.can("run", "task_reopening"));
-
-    const taskRows = scopedRows(c.get("db"), auth, tasks, {
-      searchPlan: catalog.searchPlanFor(tasks.sqlName),
-    });
-    const task = await taskRows.update(request.params.id, {
-      status: "open",
-    });
-
-    return { status: 200, body: task };
-  },
-);
+const task = await taskRows.update(request.params.id, {
+  status: "open",
+});
 ```
 
-The client supplies the intended change. It does not supply `workspace_id`, a
-user scope, or an owner id.
+The route still checks an ability before calling the helper. `scopedRows()` does
+not make that decision itself.
 
-## Use one guard per table for custom SQL shapes
+## Use one table guard for each custom query shape
 
-The complete-task workflow changes `tasks` and `task_events` atomically. It
-therefore builds a guard for each table against the transaction handle:
+Construct a guard from request auth and the registered table:
 
 ```ts
-import { and, eq } from "drizzle-orm";
-import { Temporal } from "@sapporta/shared/temporal";
+const taskAccess = auth.rowSecurity.forTable(tasks);
+```
 
-const result = db.transaction((tx) => {
-  const taskAccess = auth.rowSecurity.forTable(tasks);
-  const eventAccess = auth.rowSecurity.forTable(taskEvents);
+`forTable(table)` does not take a database or transaction handle.
+`ownedRows(predicate?)` returns the request's row predicate and SQL-`AND`s any
+supplied domain predicate with it. Pass `db` or `tx` only to operations whose
+signature requires a database handle.
 
+The complete-task implementation belongs in the
+[domain workflow guide](/docs/guides/app-owned-features/domain-workflows-and-transactions/).
+This security-specific fragment shows the row and write boundaries:
+
+```ts
+const taskAccess = context.auth.rowSecurity.forTable(tasks);
+const eventAccess = context.auth.rowSecurity.forTable(taskEvents);
+
+return context.db.transaction((tx) => {
   const task = tx
     .select()
     .from(tasksTable)
@@ -62,82 +67,127 @@ const result = db.transaction((tx) => {
     .get();
 
   if (!task) throw new TaskNotFoundError();
-  if (task.status === "completed") throw new TaskAlreadyCompletedError();
+  if (task.status === "completed") {
+    throw new TaskAlreadyCompletedError();
+  }
 
+  const occurredAt = Temporal.Now.instant();
   tx.update(tasksTable)
-    .set({ status: "completed", updated_at: Temporal.Now.instant() })
-    .where(
-      taskAccess.ownedRows(
-        and(eq(tasksTable.id, taskId), eq(tasksTable.status, task.status)),
-      ),
-    )
+    .set({ status: "completed", updated_at: occurredAt })
+    .where(taskAccess.ownedRows(eq(tasksTable.id, task.id)))
     .run();
 
   const event = eventAccess.insertValuesSync(
     tx,
+    {},
     {
-      event_type: "completed",
-      occurred_at: Temporal.Now.instant(),
+      serverValues: {
+        task_id: task.id,
+        event_type: "completed",
+        occurred_at: occurredAt,
+      },
     },
-    { serverValues: { task_id: taskId } },
   );
-
   tx.insert(taskEventsTable).values(event).run();
-  return { taskId, status: "completed" as const };
+
+  return { taskId: task.id, status: "completed" as const };
 });
 ```
 
-The default Sapporta SQLite transaction callback is synchronous.
-`insertValuesSync()` keeps reference validation and trusted ownership inside
-that transaction. `serverValues` is the correct place for the route-authored
-`task_id`; it does not bypass foreign-key visibility checks.
+The empty caller object matters: this workflow accepts no caller-writable event
+fields. Trusted code supplies every event value through `serverValues`.
+`insertValuesSync()` prepares and validates those values; the following Drizzle
+insert persists them.
 
-Reports follow the same rule. Scope every base table before mapping or
-aggregating:
+The default `better-sqlite3` transaction callback is synchronous. Keep database
+reads, writes, and synchronous row-security preparation inside it. Perform
+email, network calls, queue publication, and other awaited effects after the
+transaction commits.
+
+For append-only history, grant the generated `read` and `export` actions when
+the product needs them, but omit generated `create` when only the trusted
+workflow may append. That ability policy is separate from `immutable`:
+immutability blocks enforcing update/delete paths and does not authorize
+creation.
+
+With the prior scoped read and one connection's transaction serialization, a
+later sequential call can observe `completed` and return the app feature's
+declared `409 TASK_ALREADY_COMPLETED` branch. This pattern does not promise that
+simultaneous writers in different processes always receive `409`; deployment
+connection behavior may instead serialize, block, or surface another database
+failure. The full HTTP-aware typed error family and strict feature error schema
+remain owned by the workflow guide.
+
+## Scope report inputs before projection
+
+A report needs its own route ability, even if it only reads visible rows. A
+generated-project helper can check that ability and narrow the context to the
+workspace slot:
 
 ```ts
+const auth = requireAuthorizedWorkspaceData(c, {
+  action: "read",
+  subject: "project-progress",
+});
+const db = c.get("db");
+
 const projectAccess = auth.rowSecurity.forTable(projects);
 const taskAccess = auth.rowSecurity.forTable(tasks);
 
-const visibleProjects = await db
+const visibleProjects = db
   .select()
   .from(projectsTable)
-  .where(projectAccess.ownedRows());
+  .where(projectAccess.ownedRows())
+  .all();
 
-const visibleTasks = await db
+const visibleTasks = db
   .select()
   .from(tasksTable)
-  .where(taskAccess.ownedRows());
+  .where(taskAccess.ownedRows())
+  .all();
 
 return projectProgressDataset({
   projects: visibleProjects,
   tasks: visibleTasks,
-  today: Temporal.Now.plainDateISO(),
+  today,
 });
 ```
 
-The pure mapper never receives hidden rows, so hidden rows cannot affect detail
-lines, counts, percentages, or footer totals. Raw SQL is a fallback when these
-primitives cannot express the query. Keep it in a store module and preserve the
-same visible-row predicates there.
+`requireAuthorizedWorkspaceData(...)` is generated application infrastructure,
+not an `@sapporta/server` export. The mapper receives only visible rows, so
+hidden records cannot influence lines, counts, percentages, or totals.
+Additional report filters go inside `ownedRows(filter)` and therefore narrow the
+request's row predicate rather than replacing it.
 
-## Run the focused checks
+A hidden ID returned from those scoped base reads is authorized response data
+and may support a link. An ID supplied by the caller, hidden in the UI, or
+embedded in a route is not authority by itself.
 
-```bash
-pnpm build
-pnpm exec sapporta endpoints show "POST /api/tasks/{id}/complete"
-pnpm exec sapporta api get /api/reports/project-progress
-```
+## Treat immutability and raw access honestly
 
-Exercise success, repeated completion, and cross-workspace task IDs. A
-cross-workspace ID returns the same not-found response as an absent ID. For the
-report, compare its totals with generated task queries under the same token.
+`immutable` blocks `scopedRows().update()` and `.delete()`. It does not grant
+read or create abilities, and a table guard does not enforce immutability for a
+custom Drizzle mutation. Ability checks happen before generated immutable
+enforcement.
 
-A primary key is a filter, not an authority boundary. Updates and deletes need
-both the key and `ownedRows(...)`. Use `scopedRows()` until the workflow
-requires a custom query shape, then create an explicit guard for every table.
+Raw Drizzle or SQL is trusted authority. It bypasses row policy and immutable
+helper checks unless the code explicitly composes `ownedRows(...)` and preserves
+the same write rules. Keep unavoidable raw access in a narrow store module and
+test its negative cases directly.
 
-## Related reference
+## Prove success and failure
+
+For a workflow, test the authorized transition, sequential repeat, missing and
+invisible IDs, managed-field rejection, event-insert rollback, exactly one
+history row, and authoritative readback. Test direct generated event creation
+separately from immutable update/delete. For a report, test authorized,
+unauthorized, empty, and cross-workspace datasets and compare totals with scoped
+base reads. Test an immutable update both without the ability and with the
+ability so the two `403` namespaces stay distinct.
+
+## Related documentation
 
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
-- [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
+- [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Scoped report data](/docs/guides/reports/scoped-report-data/)
+- [Error catalogue and diagnostics](/docs/reference/operations/error-catalogue-and-diagnostics/)

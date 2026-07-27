@@ -18,7 +18,60 @@ resulting `TableDef` is the input to generated HTTP and frontend surfaces.
 Keep both exports in the same schema module. Other schema files import the raw
 table when they need a foreign key. Sapporta registers the wrapped table.
 
+The two modules below are a complete parent/child starter. They define shared
+workspace projects first, then tasks that reference them. Nothing in the example
+depends on seeded rows or assumed IDs.
+
 ```ts
+// packages/api/schema/projects.ts
+import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { sapportaTable, text, timestamp } from "@sapporta/server/table";
+import { Temporal } from "@sapporta/shared/temporal";
+
+export const projectsTable = sqliteTable("projects", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspace_id: text("workspace_id").notNull(),
+  name: text("name").notNull(),
+  created_at: timestamp("created_at")
+    .$defaultFn(() => Temporal.Now.instant())
+    .notNull(),
+});
+
+export const projects = sapportaTable({
+  drizzle: projectsTable,
+  meta: {
+    label: "Projects",
+    rowScope: "workspaceGlobal",
+    rowLabelColumns: ["name"],
+    search: { self: ["name"] },
+    columns: {
+      created_at: { apiWritable: false },
+    },
+    children: [
+      {
+        table: "tasks",
+        foreignKey: "project_id",
+        label: "Tasks",
+        columns: ["title", "status", "due_date"],
+        defaultSort: "due_date",
+      },
+    ],
+  },
+  validate(value, context) {
+    if (typeof value.name === "string" && value.name.trim() === "") {
+      context.addIssue("name", "Project name is required");
+    }
+  },
+});
+
+export type Project = typeof projectsTable.$inferSelect;
+export type NewProject = typeof projectsTable.$inferInsert;
+
+export default projects;
+```
+
+```ts
+// packages/api/schema/tasks.ts
 import { index, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 import {
   date,
@@ -30,6 +83,8 @@ import {
 import { Temporal } from "@sapporta/shared/temporal";
 import { projectsTable } from "./projects.js";
 
+const TASK_STATUSES = ["open", "in_progress", "completed"] as const;
+
 export const tasksTable = sqliteTable(
   "tasks",
   {
@@ -40,17 +95,9 @@ export const tasksTable = sqliteTable(
       .references(() => projectsTable.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     description: text("description"),
-    status: select("status", ["open", "in_progress", "completed"] as const)
-      .notNull()
-      .default("open"),
-    priority: select("priority", ["low", "medium", "high"] as const)
-      .notNull()
-      .default("medium"),
+    status: select("status", TASK_STATUSES).notNull().default("open"),
     due_date: date("due_date"),
     created_at: timestamp("created_at")
-      .$defaultFn(() => Temporal.Now.instant())
-      .notNull(),
-    updated_at: timestamp("updated_at")
       .$defaultFn(() => Temporal.Now.instant())
       .notNull(),
   },
@@ -73,7 +120,13 @@ export const tasks = sapportaTable({
     columns: {
       project_id: { label: "Project" },
       description: { textDisplay: "multiLine" },
+      created_at: { apiWritable: false },
     },
+  },
+  validate(value, context) {
+    if (typeof value.title === "string" && value.title.trim() === "") {
+      context.addIssue("title", "Task title is required");
+    }
   },
 });
 
@@ -91,9 +144,18 @@ Derive row types with `$inferSelect` and `$inferInsert`; a handwritten row
 interface can drift from the table.
 
 `workspace_id` is required by `workspaceGlobal`, but it is a server-managed
-value. Generated clients and forms must not submit it. A `workspaceUserScoped`
-table also needs `scoped_to_user_id`; a `systemGlobal` table needs neither
-workspace column.
+value. Generated clients and forms must not submit it. The default
+`workspaceUserScoped` scope also requires `scoped_to_user_id`; `systemGlobal`
+needs neither scope column. The
+[row-visibility guide](/docs/guides/security/workspaces-ownership-and-row-visibility/)
+owns the authority and access implications of those choices.
+
+`rowLabelColumns` must be non-empty, and every entry must be a real SQL column
+on that table. Choose values a person recognizes, such as `name` or `title`.
+Keep an opaque key for identity rather than using it as the display label. For a
+join table, `rowLabelColumns` still reads values stored on the join row; it does
+not resolve labels from referenced rows. Add a real contextual domain column
+when the join record needs a useful standalone label.
 
 ## Values and domain validation
 
@@ -118,8 +180,8 @@ pnpm exec sapporta api get /api/meta/tables/tasks
 ```
 
 The metadata response identifies `tasks`, its row label, whether search is
-available, and the select options derived from status and priority. The
-server-side row scope and full search plan are not serialized to the browser.
+available, and the select options derived from status. The server-side row scope
+and full search plan are not serialized to the browser.
 
 Change metadata when presentation or generated behavior changes. Change the
 Drizzle table when stored structure or constraints change, then generate a
@@ -129,6 +191,7 @@ reviewed migration.
 
 - [Table definitions](/docs/reference/schema/table-definitions/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
+- [Relationships and lookup behavior](/docs/guides/model-data/relationships-and-lookup-behavior/)
 - [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Table validation](/docs/reference/schema/table-validation/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

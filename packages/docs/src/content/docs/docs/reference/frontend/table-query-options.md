@@ -1,15 +1,15 @@
 ---
 title: "Table query options"
 description:
-  "Look up generated table read functions, TanStack Query option builders,
-  cache keys, decoding, cancellation, and invalidation boundaries."
+  "Look up generated table read functions, TanStack Query option builders, cache
+  keys, decoding, cancellation, and invalidation boundaries."
 ---
 
 ## Identity
 
-Table query builders are exported from `@sapporta/frontend/table/query` and
-from the main `@sapporta/frontend` entry point. They compose the generated
-table HTTP client with TanStack Query.
+Table query builders are exported from `@sapporta/frontend/table/query` and from
+the main `@sapporta/frontend` entry point. They compose the generated table HTTP
+client with TanStack Query.
 
 New Sapporta projects install `@tanstack/react-query`. The workspace-owned
 `packages/frontend/src/query-client.ts` exports one application `QueryClient`,
@@ -19,10 +19,13 @@ should reuse that provider and the public table query builders.
 ## Read functions
 
 ```ts
-fetchTableRow(tableName, recordId, { signal? });
-fetchTableRows({ tableName, page?, limit?, sort?, filters?, search? }, {
-  signal?,
-});
+import { fetchTableRow, fetchTableRows } from "@sapporta/frontend";
+
+await fetchTableRow(tableName, recordId, { signal });
+await fetchTableRows(
+  { tableName, page, limit, sort, filters, search },
+  { signal },
+);
 ```
 
 `fetchTableRow()` returns `SingleRow`. `fetchTableRows()` returns
@@ -30,8 +33,13 @@ fetchTableRows({ tableName, page?, limit?, sort?, filters?, search? }, {
 Their optional `AbortSignal` reaches the underlying `fetch` request.
 
 `buildTableRowsQuery()` is the shared serializer for page, limit, sort, typed
-filters, and search. Page query keys use this serialized request shape, so UI-
-only filter IDs do not create distinct cache entries for the same HTTP query.
+filters, and search. Page query keys use this serialized request shape, so
+UI-only filter IDs do not create distinct cache entries for the same HTTP query.
+
+These functions remain supported low-level primitives. Use them when a non-React
+caller owns the request lifecycle directly. A React feature screen normally
+composes the option builders below with `useQuery()` so it shares cache keys,
+cancellation, and server state with the rest of the application.
 
 ## Query option builders
 
@@ -71,10 +79,12 @@ Without `decodeRow`, both builders return generic `Row` values. Supplying
 `decodeRow(row)` changes the inferred query data to the application row type.
 Each page row is decoded independently. Decoder failures reject the query.
 Sapporta does not infer an application domain type from a generic table
-response.
+response. The page decoder uses ordinary array mapping, so one thrown decoder
+error fails the whole query rather than publishing a shorter page. Partial
+results require a separate wire contract and visible diagnostics.
 
-Both query functions consume TanStack Query's request signal. Cancelling or
-superseding the query aborts the generated table request.
+Both query functions consume TanStack Query's request signal. When TanStack
+Query aborts that signal, the generated table request receives the abort.
 
 ## Exported types
 
@@ -130,10 +140,15 @@ lists. Invalidate `pages(tableName)` when only list membership, ordering, or
 aggregated page state is stale. Invalidate or update one `record()` entry only
 when the mutation's effect is confined to that record.
 
-TGrid sessions do not read TanStack Query's cache. Call
-`reloadTGridRows(tableName)` when a mutation must refresh mounted TGrid rows,
-and invalidate the relevant TanStack Query prefix when the same mutation
-affects app-owned cached screens. These are separate server-state consumers.
+Record and page entries are separate, non-normalized cache values. Updating a
+`record()` entry does not rewrite a copy of that row already present in page
+data.
+
+TGrid sessions do not read TanStack Query's cache. `reloadTGridRows(tableName)`
+sends a fire-and-forget reload command to the mounted, registered TGrid session
+for that root table; it is a no-op when no such session exists. Invalidate the
+relevant TanStack Query prefix separately when the same mutation affects
+app-owned cached screens. These are different server-state consumers.
 
 ## Query ownership invariants
 
@@ -146,8 +161,8 @@ affects app-owned cached screens. These are separate server-state consumers.
 - A decoder validates the browser wire value. It does not replace server
   validation or authorize fields for mutation.
 - Form draft state belongs to TanStack Form. Server records and lists belong to
-  TanStack Query. Copying query results into form state after initialization
-  can overwrite dirty input.
+  TanStack Query. Copying query results into form state after initialization can
+  overwrite dirty input.
 
 ## Related documentation
 

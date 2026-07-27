@@ -1,18 +1,27 @@
 ---
 title: "Route-based reports"
 description:
-  "Create a protected typed report route and screen with shareable filters."
+  "Start here for a reusable aggregate: define the protected typed route and
+  screen, then scope base rows, map the dataset, and add drill-through."
 ---
 
-A Sapporta report is an app-owned read model. A shared contract names its input
-and `GridDataset` output. The API applies authority before computing it. A React
-route owns filters, execution state, rendering, and navigation.
+Generated table screens and endpoints remain the shortest path for ordinary
+record work. As soon as one result joins rows or calculates totals for more than
+one caller, it becomes an app-owned read model. A report route gives the
+browser, CLI, and typed clients one authoritative result.
+
+That boundary centralizes reuse and authorization, but it does not make an
+all-row JavaScript loop scalable. Keep a small, screen-local aggregate in the
+browser only when every input is explicitly bounded. Use a scoped report route
+for reusable results, and move large grouping work into scoped SQL or a store
+module.
 
 ## Start with the wire contract
 
-Compact, shareable filters fit a GET query. Large nested report input can use a
-POST body instead. Create `packages/shared/src/contracts/project-progress.ts`
-and re-export it from the shared contracts index:
+Compact, shareable filters fit a GET query. Larger nested inputs can use a POST
+body instead. Put the browser-safe contract in
+`packages/shared/src/contracts/project-progress.ts` and re-export it from the
+shared contracts index:
 
 ```ts
 import { initContract } from "@sapporta/rest-core";
@@ -38,85 +47,82 @@ export const projectProgressContract = c.router({
     responses: {
       200: gridDatasetSchema,
       400: errorBodySchema,
-      401: errorBodySchema,
-      403: errorBodySchema,
     },
   }),
 });
 ```
 
-The contract path omits `/api`. `packages/api/app.ts` mounts app routes under
-that prefix.
+The contract path is deliberately bare. The parent API mount supplies `/api`, so
+the deployed route is `/api/reports/project-progress`.
 
-## Register a thin protected route
+This contract declares its feature-owned response. Authentication and ability
+failures use the application's shared `401`/`403` auth envelope rather than
+being copied into every feature contract. If this report deliberately returns a
+feature-specific not-found response for an invisible `project_id`, add that
+response to the shared contract; returning an empty filtered dataset is also a
+valid product choice when it does not reveal whether the ID exists.
 
-Create `packages/api/app/project-progress.ts`. The route resolves permission and
-workspace data authority, reads only visible base rows, and hands ordinary
-objects to a pure mapper:
+## Keep the protected adapter thin
+
+The handler chooses the ability and data authority, asks a store function for
+already-visible rows, calculates one date baseline, and calls the pure mapper:
 
 ```ts
-import { eq } from "drizzle-orm";
-import { Temporal } from "@sapporta/shared/temporal";
+import type { Temporal } from "@sapporta/shared/temporal";
 import { TsRestApi, type SapportaEnv } from "@sapporta/server";
 import { projectProgressContract } from "task-app-shared";
 import { requireAuthorizedWorkspaceData } from "../project-auth/index.js";
-import { projects, projectsTable } from "../schema/projects.js";
-import { tasks, tasksTable } from "../schema/tasks.js";
 import { projectProgressDataset } from "../modules/reports/project-progress.js";
+import { readProjectProgressRows } from "../stores/project-progress.js";
 
-const api = new TsRestApi<SapportaEnv>();
+type ProjectProgressRouteOptions = {
+  today(): Temporal.PlainDate;
+};
 
-api.register(
-  "projectProgress",
-  projectProgressContract.projectProgress,
-  async ({ c, request }) => {
-    const auth = requireAuthorizedWorkspaceData(c, {
-      action: "read",
-      subject: "project_progress",
-    });
-    const db = c.get("db");
-    const projectAccess = auth.rowSecurity.forTable(projects);
-    const taskAccess = auth.rowSecurity.forTable(tasks);
-    const projectId = request.query.project_id;
+export function createProjectProgressApi(
+  options: ProjectProgressRouteOptions,
+): TsRestApi<SapportaEnv> {
+  const api = new TsRestApi<SapportaEnv>();
 
-    const visibleProjects = await db
-      .select()
-      .from(projectsTable)
-      .where(
-        projectAccess.ownedRows(
-          projectId === undefined ? undefined : eq(projectsTable.id, projectId),
-        ),
-      );
-    const visibleTasks = await db
-      .select()
-      .from(tasksTable)
-      .where(
-        taskAccess.ownedRows(
-          projectId === undefined
-            ? undefined
-            : eq(tasksTable.project_id, projectId),
-        ),
-      );
+  api.register(
+    "projectProgress",
+    projectProgressContract.projectProgress,
+    async ({ c, request }) => {
+      const auth = requireAuthorizedWorkspaceData(c, {
+        action: "read",
+        subject: "project-progress",
+      });
+      const rows = await readProjectProgressRows({
+        db: c.get("db"),
+        auth,
+        projectId: request.query.project_id,
+      });
+      const asOf = options.today();
 
-    return {
-      status: 200,
-      body: projectProgressDataset({
-        projects: visibleProjects,
-        tasks: visibleTasks,
-        today: Temporal.Now.plainDateISO(),
-      }),
-    };
-  },
-);
+      return {
+        status: 200,
+        body: projectProgressDataset({ ...rows, asOf }),
+      };
+    },
+  );
 
-export default api;
+  return api;
+}
 ```
 
-Grant signed-in workspace members `read` on `project_progress` in
-`packages/api/authz/ability.ts`. Then mount the sub-app:
+Grant the intended roles `read` on the application-owned `project-progress`
+subject. The frontend's protected route is a UX boundary; this server check and
+the row predicates remain authoritative.
+
+The application clock is injected where the route is assembled:
 
 ```ts
-import projectProgressApi from "./app/project-progress.js";
+import { Temporal } from "@sapporta/shared/temporal";
+import { createProjectProgressApi } from "./app/project-progress.js";
+
+const projectProgressApi = createProjectProgressApi({
+  today: () => Temporal.Now.plainDateISO(),
+});
 
 export function loadApp(app: TsRestApi<SapportaEnv>, options: LoadAppOptions) {
   app.route("/", projectProgressApi);
@@ -125,16 +131,24 @@ export function loadApp(app: TsRestApi<SapportaEnv>, options: LoadAppOptions) {
 }
 ```
 
-`route()` mounts the Hono handlers. `extend()` adds the sub-app's contract
-emitters to the combined OpenAPI document.
+`route()` mounts the Hono handlers. `extend()` copies the sub-app's current
+documentation emitters. Register operations before those calls, and complete
+both calls before the combined OpenAPI document is generated. The general
+registration contract belongs in
+[TsRestApi and route registration](/docs/reference/server/ts-rest-api-and-route-registration/).
 
-## Add the typed screen
+The mapper never calls `Temporal.Now`. Tests inject a fixed
+`Temporal.PlainDate`; production wiring decides what “today” means. A product
+that needs shareable historical results should add a validated `as_of` query and
+include it in URL state instead.
+
+## Add the typed client and protected screen
 
 The frontend imports the same contract:
 
 ```ts
-import { createApiClient } from "@sapporta/shared/client";
 import { getApiBase } from "@sapporta/frontend/platform";
+import { createApiClient } from "@sapporta/shared/client";
 import { projectProgressContract } from "task-app-shared";
 
 export const projectProgressApi = createApiClient(projectProgressContract, {
@@ -142,53 +156,75 @@ export const projectProgressApi = createApiClient(projectProgressContract, {
 });
 ```
 
-Keep the selected project in `useSearchParams`, call
-`projectProgressApi.projectProgress({ query })`, and render the successful body
-with `ReportGridDataset`:
+Read `project_id` from `useSearchParams`, call
+`projectProgressApi.projectProgress({ query })`, and use that query in the
+screen's query key. The screen needs four visible states:
+
+1. loading while the request is in flight;
+2. an error surface when the typed call fails;
+3. an empty result when `dataset.nodes` is empty; and
+4. the report result.
+
+The dataset label is display text supplied by the mapper. Render it above the
+Grid; `ReportGridDataset` does not render the heading:
 
 ```tsx
-<ReportScreenFrame
-  title="Project progress"
-  subtitle="Task status and overdue work by project."
->
-  <ReportToolbar>{/* project filter and Run button */}</ReportToolbar>
-  {dataset ? (
+<>
+  <h1>{dataset.label}</h1>
+  {dataset.nodes.length === 0 ? (
+    <EmptyReport message="No visible projects match this filter." />
+  ) : (
     <ReportGridDataset
       dataset={dataset}
       links={projectProgressLinks}
       linkContext={{ input: query }}
     />
-  ) : null}
-</ReportScreenFrame>
+  )}
+</>
 ```
 
-Register `/reports/project-progress` in `appProtectedRoutes` and add a
-navigation item. The URL query is the report state, so a filtered result can be
-reloaded, bookmarked, or shared with another authorized user.
+Register the nested React route as `reports/project-progress` in
+`appProtectedRoutes`, and use the absolute `/reports/project-progress` URL in
+navigation. Keeping the filter in the URL makes an authorized result reloadable,
+bookmarkable, and shareable. Follow
+[Typed client creation](/docs/reference/contracts/typed-client-creation/) and
+[App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
+for the exhaustive client and shell APIs.
 
-## Run the report
+## Prove runtime and documentation agree
+
+In a project that implements and runs this report, use these commands from the
+repository root:
 
 ```bash
-pnpm build
 pnpm exec sapporta endpoints show "GET /api/reports/project-progress"
 pnpm exec sapporta api get /api/reports/project-progress
 pnpm exec sapporta api get /api/reports/project-progress --query '{"project_id":1}'
 ```
 
-The unfiltered canonical dataset contains two projects, five tasks, two
-completed tasks, and 40% completion. Overdue counts depend on the date at the
-route boundary. Mapper tests inject a fixed `Temporal.PlainDate`; production
-routes use the current date or an application clock.
+The endpoint must appear in runtime discovery and the merged OpenAPI document.
+An OpenAPI entry alone does not prove `route()` mounted the handler, and a
+successful call alone does not prove `extend()` published it.
 
-Parse route-test responses with `gridDatasetSchema` so the wire shape cannot
-drift from the renderer contract.
+Focused route and screen tests should cover:
 
+- full and filtered results parsed with `gridDatasetSchema`;
+- missing ability and an invisible project filter;
+- another workspace contributing no rows, identifiers, or totals;
+- report totals agreeing with scoped generated reads of the base tables;
+- loading, error, empty, and result UI;
+- URL filter reload and share behavior; and
+- project and task/status drill-through.
 
 Keep each report as a vertical slice unless two reports genuinely share domain
 query logic. Sharing the renderer contract is not enough reason to couple their
 queries.
 
-## Related reference
+## Related documentation
 
+- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
+- [Scoped report data](/docs/guides/reports/scoped-report-data/)
 - [Report routes and registration](/docs/reference/reports/report-routes-and-registration/)
-- [GridDataset](/docs/reference/reports/grid-dataset/)
+- [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+- [Table, row, and report commands](/docs/reference/cli/table-row-and-report-commands/)

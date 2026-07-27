@@ -4,17 +4,28 @@ description:
   "Generate, review, apply, and preserve migration history for a schema change."
 ---
 
-A schema edit is intent. A migration is the reviewed procedure that carries
-that intent into an existing database. Sapporta keeps those two artifacts
-separate.
+A schema edit is intent. A migration is the reviewed procedure that carries that
+intent into an existing database. Sapporta keeps those two artifacts separate.
 
 ## Make the schema change first
 
-Schema files are the source of truth. For example, a completion history feature
-adds `packages/api/schema/task-events.ts` with a task foreign key and an index
-ordered for the child history view:
+Schema files are the source of truth. Start by deciding what the new table
+means. A task row answers “what is its status now?” An event row answers “what
+happened, and when?” Store events when that history is itself a domain fact, not
+merely because a screen needs another copy of current state. A correction is
+normally another deliberate event when the domain needs to preserve what
+happened before.
+
+For example, a completion-history feature adds
+`packages/api/schema/task-events.ts` with a task foreign key and an index
+ordered for its newest-first read path:
 
 ```ts
+import { index, integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { sapportaTable, text, timestamp } from "@sapporta/server/table";
+import { Temporal } from "@sapporta/shared/temporal";
+import { tasksTable } from "./tasks.js";
+
 export const taskEventsTable = sqliteTable(
   "task_events",
   {
@@ -41,7 +52,7 @@ export const taskEvents = sapportaTable({
   meta: {
     label: "Task events",
     rowScope: "workspaceGlobal",
-    rowLabelColumns: ["event_type"],
+    rowLabelColumns: ["event_type", "occurred_at"],
     immutable: true,
   },
 });
@@ -49,10 +60,15 @@ export const taskEvents = sapportaTable({
 export default taskEvents;
 ```
 
-`immutable: true` keeps generated CRUD append-only: callers may create events
-but cannot update or delete them. Exporting the wrapped table registers its
-metadata; exporting only the raw Drizzle table would create storage with no
-Sapporta surface.
+`immutable: true` blocks generated update and delete operations on enforcing
+paths. It does not grant create permission, choose who may read the row, or
+constrain trusted raw database access. Keep ordinary clients from authoring
+history by reserving event creation for an app-owned workflow. The
+[security guide](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
+owns those enforcement details.
+
+Exporting the wrapped table registers its metadata; exporting only the raw
+Drizzle table would create storage with no Sapporta surface.
 
 Generate a migration with a name that describes the release change:
 
@@ -71,7 +87,7 @@ CREATE TABLE `task_events` (
   `workspace_id` text NOT NULL,
   `task_id` integer NOT NULL,
   `event_type` text NOT NULL,
-  `occurred_at` integer NOT NULL,
+  `occurred_at` text NOT NULL,
   FOREIGN KEY (`task_id`) REFERENCES `tasks`(`id`) ON DELETE cascade
 );
 
@@ -84,29 +100,36 @@ byte-for-byte Drizzle Kit formatting. Rename prompts, table rebuilds, dropped
 columns, and destructive statements are release decisions. Resolve them before
 the SQL touches any database.
 
-## Apply and check
+## Apply, check, and start
 
-After review, check the migration history and apply the migration:
+After reviewing the SQL and generated snapshot, apply the migration:
 
 ```bash
-pnpm --filter ./packages/api db:check
 pnpm --filter ./packages/api db:migrate
+pnpm --filter ./packages/api db:check
 ```
 
-`db:check` runs Drizzle Kit's migration-history check. It does not compare the
-live database with the TypeScript schema. At startup, Sapporta separately
+`db:check` runs Drizzle Kit's snapshot-chain check. It validates migration
+snapshot versions, shape, and parent relationships; it does not inspect live
+tables or prove that a migration was applied.
+
+Start the app after applying the change:
+
+```bash
+pnpm dev
+```
+
+Loading the application exercises a separate Sapporta readiness guard. Startup
 rejects pending migrations, applied files missing from disk, and applied files
-whose contents changed. Never edit an applied migration; add a new migration.
+whose contents changed. It never applies migrations automatically. Production
+releases therefore run the committed migration before new code serves traffic.
 
-Sapporta does not apply migrations automatically during ordinary startup.
-Production releases run the committed migration before code that expects the
-new shape.
-
-
-Commit the schema edit and generated SQL together. The schema records the target
-state; the migration records how deployed data reaches it.
+Commit the schema edit, generated SQL, journal, and snapshot together. The
+schema records the target state; the migration records how deployed data reaches
+it. Never edit an applied migration; add another migration.
 
 ## Related reference
 
 - [Migrations](/docs/reference/schema/migrations/)
 - [Migration and startup invariants](/docs/reference/operations/migration-and-startup-invariants/)
+- [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
