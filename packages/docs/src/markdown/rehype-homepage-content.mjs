@@ -95,23 +95,6 @@ function isHomepageScreenshot(image) {
   return Boolean(image?.properties.src.startsWith("/assets/home/exercise-workflow/"));
 }
 
-function isHeading(node) {
-  return node?.type === "element" && /^h[1-6]$/.test(node.tagName);
-}
-
-function nextContentIndex(children, startIndex) {
-  let index = startIndex;
-  while (index < children.length && isWhitespace(children[index])) {
-    index += 1;
-  }
-  return index;
-}
-
-function hasFollowingScreenshots(children, index) {
-  const screenshotIndex = nextContentIndex(children, index + 1);
-  return Boolean(isHomepageScreenshot(imageFromParagraph(children[screenshotIndex])));
-}
-
 const contentBlockTags = new Set(["h1", "h2", "h3", "h4", "p", "ul", "ol", "pre", "blockquote", "hr", "table", "img"]);
 
 function classifyContentNode(node, parent, isHero, heroParagraphIndex) {
@@ -217,68 +200,32 @@ export function rehypeHomepageContent() {
     const children = [];
 
     for (let index = 0; index < tree.children.length; index += 1) {
-      const paragraph = tree.children[index];
-      if (paragraph?.type !== "element" || paragraph.tagName !== "p" || imageFromParagraph(paragraph)) {
-        children.push(paragraph);
+      const figure = screenshotFigure(tree.children[index]);
+      if (!figure) {
+        children.push(tree.children[index]);
         continue;
       }
 
-      const figures = [];
+      const figures = [figure];
       let nextIndex = index + 1;
 
       while (nextIndex < tree.children.length) {
-        nextIndex = nextContentIndex(tree.children, nextIndex);
-
-        const figure = screenshotFigure(tree.children[nextIndex]);
-        if (!figure) break;
-        figures.push(figure);
-        nextIndex += 1;
-      }
-
-      if (figures.length === 0) {
-        children.push(paragraph);
-        continue;
-      }
-
-      const copy = [paragraph];
-      while (nextIndex < tree.children.length) {
-        const node = tree.children[nextIndex];
-        if (
-          isHeading(node) ||
-          (node?.type === "element" &&
-            node.tagName === "p" &&
-            !imageFromParagraph(node) &&
-            hasFollowingScreenshots(tree.children, nextIndex))
-        ) {
-          break;
+        if (isWhitespace(tree.children[nextIndex])) {
+          nextIndex += 1;
+          continue;
         }
 
-        copy.push(node);
+        const nextFigure = screenshotFigure(tree.children[nextIndex]);
+        if (!nextFigure) break;
+        figures.push(nextFigure);
         nextIndex += 1;
       }
 
       children.push({
         type: "element",
         tagName: "div",
-        properties: { className: ["home-story"] },
-        children: [
-          {
-            type: "element",
-            tagName: "div",
-            properties: {
-              className: ["home-story__copy"],
-            },
-            children: copy,
-          },
-          {
-            type: "element",
-            tagName: "div",
-            properties: {
-              className: ["home-story__media"],
-            },
-            children: figures,
-          },
-        ],
+        properties: { className: ["home-screenshot-grid"] },
+        children: figures,
       });
       index = nextIndex - 1;
     }

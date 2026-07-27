@@ -28,7 +28,7 @@ const appIdeas = [
     category: "Productivity",
     description:
       "Plan projects, assign work, track due dates, and review progress.",
-    prompt: `Build a focused task management app with Sapporta.
+    prompt: `Build a task management app with Sapporta.
 
 Model people, projects, tasks, labels, and comments.
 

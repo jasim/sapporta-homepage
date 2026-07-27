@@ -9,9 +9,6 @@ making it difficult to reason about the system clearly. And since
 we're no longer writing code directly, we are constrained to the operations
 permitted by it.
 
-_I'm looking for ideas to whittle down this declarative surface; if you can
-help, kindly [pen an email to me](mailto:jasim@protoship.io) post-haste._
-
 For everything else, Sapporta avoids being an opaque, fully declarative
 framework. There is no inversion of control. Sapporta projects are regular
 codebases that you fully

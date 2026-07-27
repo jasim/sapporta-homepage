@@ -23,3 +23,7 @@ written by you.
 It is also secure by default - since all endpoints are secured by row-security
 and CASL, the agents only have access to the exact data that the user themselves
 have.
+
+![A coding agent terminal adding a task from freeform text](/assets/home/exercise-workflow/agent-add-task.png "Describe a todo in freeform text and the coding agent creates the corresponding task record.")
+
+![A coding agent terminal answering a complex question about task data](/assets/home/exercise-workflow/agent-query-tasks.png "Ask a multi-part question about the work and the coding agent queries the task data to answer it.")

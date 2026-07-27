@@ -10,6 +10,7 @@ import { Content as RegularApplication } from "../home-content/03-regular-applic
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import { Content as StackDetails } from "../home-content/stack.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
+import HomepageActions from "../components/HomepageActions.astro";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 import {
@@ -26,7 +27,7 @@ const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
   );
-const createProjectAgentPrompt = `Build a focused task management app with Sapporta.
+const createProjectAgentPrompt = `Build a task management app with Sapporta.
 ${createProjectAgentUrl}
 
 Model people, projects, tasks, labels, and comments.
@@ -92,43 +93,43 @@ export const books = sapportaTable({
       href="#main-content">{page.skipLabel}</a
     >
 
+    <header class="home-header">
+      <nav
+        class="home-header__nav"
+        aria-label={navigation.label}
+      >
+        {
+          navigation.links.map((link) => (
+            <a
+              class="home-header__nav-link"
+              href={link.href}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+
     <main
       id="main-content"
       class="home-page__main"
     >
       <div class="home-layout home-layout--intro">
-        <header class="home-header">
-          <h1 class="home-header__title">
+        <article class="home-copy home-intro">
+          <h1 class="home-hero__title">
             <a
-              class="home-wordmark home-wordmark--header"
+              class="home-wordmark home-wordmark--hero"
               href={brand.href}
             >
               <SapportaMark
-                class="home-wordmark__mark"
+                class="home-wordmark__mark home-wordmark__mark--hero"
                 title=""
               />
               <span>{brand.label}</span>
             </a>
           </h1>
 
-          <nav
-            class="home-header__nav"
-            aria-label={navigation.label}
-          >
-            {
-              navigation.links.map((link) => (
-                <a
-                  class="home-header__nav-link"
-                  href={link.href}
-                >
-                  {link.label}
-                </a>
-              ))
-            }
-          </nav>
-        </header>
-
-        <article class="home-copy home-intro">
           <HeroContent />
 
           <section
@@ -219,6 +220,14 @@ export const books = sapportaTable({
               </li>
             </ul>
           </section>
+
+          <HomepageActions
+            align="start"
+            compact
+            primaryLabel="Documentation"
+            primaryIcon="docs"
+            primaryStyle={false}
+          />
         </article>
       </div>
 
