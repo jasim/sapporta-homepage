@@ -6,7 +6,7 @@ import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import docsSidebar from "./sidebar.mjs";
 import { gettingStartedEnv, replaceGettingStartedEnvTokens } from "./src/lib/getting-started-env.mjs";
-import { rehypeHomepageScreenshots } from "./src/markdown/rehype-homepage-screenshots.mjs";
+import { rehypeHomepageContent } from "./src/markdown/rehype-homepage-content.mjs";
 
 function injectGettingStartedEnv() {
   return (tree) => {
@@ -30,7 +30,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [injectGettingStartedEnv],
-      rehypePlugins: [rehypeHomepageScreenshots],
+      rehypePlugins: [rehypeHomepageContent],
     }),
   },
   vite: {

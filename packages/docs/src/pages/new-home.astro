@@ -86,22 +86,25 @@ export const books = sapportaTable({
     />
     <title>{page.title}</title>
   </head>
-  <body class="essay-page">
+  <body class="home-page">
     <a
-      class="essay-skip-link"
+      class="home-page__skip-link"
       href="#main-content">{page.skipLabel}</a
     >
 
-    <main id="main-content" class="essay-main">
-      <div class="essay-shell essay-shell--hero">
-        <header class="essay-masthead">
-          <h1 class="essay-brand-title">
+    <main
+      id="main-content"
+      class="home-page__main"
+    >
+      <div class="home-layout home-layout--intro">
+        <header class="home-header">
+          <h1 class="home-header__title">
             <a
-              class="essay-wordmark"
+              class="home-wordmark home-wordmark--header"
               href={brand.href}
             >
               <SapportaMark
-                class="essay-wordmark-mark"
+                class="home-wordmark__mark"
                 title=""
               />
               <span>{brand.label}</span>
@@ -109,12 +112,15 @@ export const books = sapportaTable({
           </h1>
 
           <nav
-            class="essay-nav"
+            class="home-header__nav"
             aria-label={navigation.label}
           >
             {
               navigation.links.map((link) => (
-                <a href={link.href}>
+                <a
+                  class="home-header__nav-link"
+                  href={link.href}
+                >
                   {link.label}
                 </a>
               ))
@@ -122,90 +128,91 @@ export const books = sapportaTable({
           </nav>
         </header>
 
-        <article class="essay-prose essay-hero">
+        <article class="home-copy home-intro">
           <HeroContent />
 
           <section
-            class="essay-capabilities"
+            class="home-capabilities"
             aria-label="Sapporta capabilities"
           >
-            <ul class="essay-capability-grid">
-              <li class="essay-capability">
+            <ul class="home-capabilities__list">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   Grids
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   Editable table UI with search,
                   sort, filters, nesting, and
                   keyboard flow.
                 </span>
               </li>
-              <li class="essay-capability">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   Reports
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   Summary rows, detail rows, and
                   drill-down links.
                 </span>
               </li>
-              <li class="essay-capability">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   REST APIs for every table
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   CRUD, lookup, count, export, and
                   typed custom endpoints.
                 </span>
               </li>
-              <li class="essay-capability">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   Forms
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   Validated data entry with
                   reliable keyboard navigation.
                 </span>
               </li>
-              <li class="essay-capability">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   Security
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   Workspace and role scoped reads
                   and writes.
                 </span>
               </li>
-              <li class="essay-capability">
+              <li class="home-capabilities__item">
                 <span
-                  class="essay-capability-title"
+                  class="home-capabilities__title"
                 >
                   Deployment
                 </span>
                 <span
-                  class="essay-capability-text"
+                  class="home-capabilities__description"
                 >
                   Project wiring from <code
+                    class="home-capabilities__code"
                     >npx sapporta init</code
                   > to production.
                 </span>
@@ -215,27 +222,27 @@ export const books = sapportaTable({
         </article>
       </div>
 
-      <div class="essay-shell essay-shell--grid">
+      <div class="home-layout home-layout--demo">
         <section
-          class="essay-grid"
+          class="home-demo-section"
           aria-label="Books and Quotes grid demo"
         >
-          <div class="essay-demo" data-demo-tabs>
+          <div class="home-demo" data-demo-tabs>
             <div
-              class="essay-demo-tabs"
+              class="home-demo__tabs"
               role="tablist"
               aria-label="Data grid example views"
             >
               <button
-                class="essay-demo-tab"
-                id="essay-demo-grid-tab"
+                class="home-demo__tab"
+                id="home-demo-grid-tab"
                 type="button"
                 role="tab"
                 aria-selected="true"
-                aria-controls="essay-demo-grid-panel"
+                aria-controls="home-demo-grid-panel"
               >
                 <Table2
-                  className="essay-demo-tab-icon"
+                  className="home-demo__tab-icon"
                   aria-hidden="true"
                   size={17}
                   strokeWidth={2}
@@ -244,16 +251,16 @@ export const books = sapportaTable({
                 >
               </button>
               <button
-                class="essay-demo-tab"
-                id="essay-demo-code-tab"
+                class="home-demo__tab"
+                id="home-demo-code-tab"
                 type="button"
                 role="tab"
                 aria-selected="false"
-                aria-controls="essay-demo-code-panel"
+                aria-controls="home-demo-code-panel"
                 tabindex="-1"
               >
                 <Code2
-                  className="essay-demo-tab-icon"
+                  className="home-demo__tab-icon"
                   aria-hidden="true"
                   size={17}
                   strokeWidth={2}
@@ -265,10 +272,10 @@ export const books = sapportaTable({
             </div>
 
             <div
-              class="essay-demo-panel"
-              id="essay-demo-grid-panel"
+              class="home-demo__panel home-demo__panel--grid"
+              id="home-demo-grid-panel"
               role="tabpanel"
-              aria-labelledby="essay-demo-grid-tab"
+              aria-labelledby="home-demo-grid-tab"
             >
               <BooksTableDataGrid
                 client:only="react"
@@ -276,21 +283,25 @@ export const books = sapportaTable({
             </div>
 
             <div
-              class="essay-demo-panel essay-demo-code-panel"
-              id="essay-demo-code-panel"
+              class="home-demo__panel home-demo__panel--code"
+              id="home-demo-code-panel"
               role="tabpanel"
-              aria-labelledby="essay-demo-code-tab"
+              aria-labelledby="home-demo-code-tab"
               hidden
             >
-              <figure class="essay-schema-panel">
+              <figure class="home-code-sample">
                 <figcaption
-                  class="essay-schema-header"
+                  class="home-code-sample__header"
                 >
-                  <span class="essay-schema-path">
+                  <span
+                    class="home-code-sample__path"
+                  >
                     packages/api/schema/books.ts
                   </span>
                 </figcaption>
-                <div class="essay-schema-code">
+                <div
+                  class="home-code-sample__body"
+                >
                   <Code
                     code={booksSchemaCode}
                     lang="ts"
@@ -304,25 +315,27 @@ export const books = sapportaTable({
       </div>
 
       <div
-        class="essay-shell essay-shell--get-started"
+        class="home-layout home-layout--quick-start"
       >
         <section
-          class="essay-get-started"
-          aria-labelledby="essay-get-started-title"
+          class="home-quick-start"
+          aria-labelledby="home-quick-start-title"
         >
-          <div class="essay-get-started-card">
+          <div class="home-quick-start__content">
             <h2
-              class="essay-get-started-title"
-              id="essay-get-started-title"
+              class="home-quick-start__title"
+              id="home-quick-start-title"
             >
               Get started with your coding agent
             </h2>
-            <p class="essay-get-started-description">
-              Copy this starter prompt, then paste it into
-              your coding agent.
+            <p
+              class="home-quick-start__description"
+            >
+              Copy this starter prompt, then paste
+              it into your coding agent.
             </p>
             <button
-              class="essay-get-started-copy"
+              class="home-quick-start__copy-button"
               type="button"
               data-copy-agent-prompt
               aria-label="Copy starter prompt to clipboard"
@@ -338,66 +351,68 @@ export const books = sapportaTable({
               >
             </button>
             <span
-              class="essay-get-started-status"
+              class="home-quick-start__status"
               data-copy-agent-status
               aria-live="polite"></span>
             <pre
-              class="essay-get-started-prompt"
+              class="home-quick-start__prompt"
               data-agent-prompt>{createProjectAgentPrompt}</pre>
           </div>
         </section>
       </div>
 
       <div
-        class="essay-shell essay-shell--content"
+        class="home-layout home-layout--article"
       >
-        <article
-          class="essay-prose essay-content"
-        >
-          <section class="essay-section">
+        <article class="home-copy home-article">
+          <section class="home-article__section">
             <DataGridExperience />
           </section>
-          <section class="essay-section">
+          <section class="home-article__section">
             <FeaturesInBrief />
           </section>
-          <section class="essay-section">
+          <section class="home-article__section">
             <RegularApplication />
           </section>
-          <section class="essay-section">
+          <section class="home-article__section">
             <BuiltForAgents />
           </section>
-          <section class="essay-section">
+          <section class="home-article__section">
             <StackDetails />
           </section>
         </article>
       </div>
     </main>
 
-    <footer class="essay-footer">
-      <div class="essay-footer-inner">
+    <footer class="home-footer">
+      <div class="home-footer__inner">
         <a
-          class="essay-footer-wordmark"
+          class="home-wordmark home-wordmark--footer"
           href={brand.href}
         >
           <SapportaMark
-            class="essay-footer-mark"
+            class="home-wordmark__mark home-wordmark__mark--footer"
             title=""
           />
           <span>{brand.label}</span>
         </a>
 
-        <div class="essay-footer-meta">
-          <p>
+        <div class="home-footer__meta">
+          <p class="home-footer__paragraph">
             Sapporta is <a
+              class="home-footer__link"
               href="https://github.com/jasim/sapporta"
               >open-source</a
             > and is released under the MIT license.
           </p>
-          <p>
+          <p class="home-footer__paragraph">
             Built and maintained by <a
+              class="home-footer__link"
               href="https://x.com/jasim_ab"
               >Jasim A Basheer</a
-            >, <a href="https://protoship.io"
+            >, <a
+              class="home-footer__link"
+              href="https://protoship.io"
               >Protoship</a
             >.
           </p>
@@ -406,34 +421,35 @@ export const books = sapportaTable({
     </footer>
 
     <dialog
-      class="essay-lightbox"
+      class="home-lightbox"
       data-image-lightbox
-      aria-labelledby="essay-lightbox-caption"
+      aria-labelledby="home-lightbox-caption"
     >
-      <div class="essay-lightbox-frame">
+      <div class="home-lightbox__frame">
         <button
-          class="essay-lightbox-close"
+          class="home-lightbox__close"
           type="button"
           data-image-lightbox-close
           aria-label="Close expanded screenshot"
           title="Close"
         >
           <svg
+            class="home-lightbox__close-icon"
             aria-hidden="true"
             viewBox="0 0 24 24"
           >
             <path d="M18 6 6 18M6 6l12 12"></path>
           </svg>
         </button>
-        <figure class="essay-lightbox-figure">
+        <figure class="home-lightbox__figure">
           <img
-            class="essay-lightbox-image"
+            class="home-lightbox__image"
             data-image-lightbox-image
             alt=""
           />
           <figcaption
-            class="essay-lightbox-caption"
-            id="essay-lightbox-caption"
+            class="home-lightbox__caption"
+            id="home-lightbox-caption"
             data-image-lightbox-caption
           >
           </figcaption>
@@ -647,7 +663,7 @@ export const books = sapportaTable({
 
       const imageLinks =
         document.querySelectorAll<HTMLAnchorElement>(
-          ".grid-shot-button",
+          ".home-screenshot__link",
         );
 
       for (const imageLink of imageLinks) {

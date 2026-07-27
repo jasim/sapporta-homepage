@@ -59,10 +59,13 @@ signup screen when no signed-in session exists.
 
 ![Generated Sapporta signup screen](/assets/getting-started/generated-app-signup.jpg)
 
-Enter a name, email address, and password. The account requires email
-verification. In local development, the email server writes every message to the
-`pnpm dev` console. Open the verification URL from the console to verify the
-account.
+Enter a name, email address, and password.
+
+> **Look at your logs for the email verification link!**
+>
+> The account requires email verification. In local development, the email
+> server writes every message to the `pnpm dev` console. Open the verification
+> URL from the console to verify the account.
 
 Sapporta uses [Better Auth](https://better-auth.com/) for authentication. The
 authentication UI and related screens are present in the generated application
