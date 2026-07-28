@@ -12,7 +12,8 @@ Generated HTTP routes under `/api/tables/<table>`.
 ## Contract
 
 - `GET /api/tables/<table>` returns
-  `{ data: row[], meta: { total, page, limit, pages } }`.
+  `{ data: row[], meta: { total, page, limit, pages } }`. `page` defaults to
+  `1`; `limit` defaults to `50` and accepts `1` through `1000`.
 - `GET /api/tables/<table>/<id>` returns `{ data: row }`. This HTTP operation
   does not imply a generated frontend detail route.
 - `POST /api/tables/<table>` accepts one row, an array of rows, or a supported
@@ -25,12 +26,19 @@ Generated HTTP routes under `/api/tables/<table>`.
 - `GET /api/tables/<table>/_lookup` returns
   `{ entries: Array<{ value: string | number, label: string, meta: row }> }`.
   `meta` contains ordinary visible source-row fields; it is not invariantly
-  empty.
+  empty. The query uses exactly one of two modes:
+  - `ids=1,2` recovers `1` through `500` selected IDs and rejects `q`, `fields`,
+    or `limit`.
+  - `q=relaunch&fields=name,code&limit=20` searches visible display fields.
+    Search defaults to `50` results and accepts at most `500`.
 - `GET /api/tables/<table>/_count` returns either
   `{ data: { kind: "total", count: number } }` or
   `{ data: { kind: "grouped", groups: Array<{ value, count }> } }`. Group values
   are typed strings, numbers, booleans, or `null`.
 - `GET /api/tables/<table>/export.csv` returns CSV.
+- List, export, and count preserve repeated `filter[column][operator]` keys and
+  AND-combine every condition. They do not collapse repeated keys to the last
+  value.
 - `q` on the list and CSV export routes runs the same table search plan. Lookup
   `q` follows lookup display fields instead; count does not accept table search.
 - Count accepts the canonical `filter[column][operator]` parameters. Without
@@ -58,6 +66,10 @@ Generated HTTP routes under `/api/tables/<table>`.
   field unchanged.
 - Primary and foreign keys may be strings or numbers. Lookup `value`, create
   bodies, filters, and returned rows preserve the declared key type.
+- CSV export is unpaginated, but it does not first materialize the complete
+  result. The handler streams a deterministically ordered selection through one
+  SQLite cursor and one read snapshot. Finishing or cancelling the response
+  releases that cursor.
 - After action authorization succeeds, a missing row and a row excluded by its
   row predicate both return HTTP `404`:
 

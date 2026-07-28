@@ -60,11 +60,34 @@ total count:
 }
 ```
 
+## Repeat a condition without collapsing it
+
+Sometimes one column needs more than one condition. Repeating the same key keeps
+both predicates:
+
+```http
+GET /api/tables/tasks?filter[title][contains]=launch&filter[title][contains]=checklist
+```
+
+That request means the visible title must contain **launch** and **checklist**.
+The conditions stay in their original order and are combined with AND, just like
+different filter keys. This is different from `filter[status][in]=open,review`,
+where one `in` condition owns a comma-separated value list.
+
+Generated URL state, `encodeTypedFilters()`, table query builders, typed
+clients, and CSV export preserve duplicates as repeated URL keys. They do not
+emit indexed names such as `filter[title][contains][0]`, and they do not keep
+only the last value. That distinction matters because dropping either condition
+would silently widen the result.
+
 Generated table screens serialize the same query state in the URL. Open
 `/tables/tasks`, select the project and open status, search for **launch**, set
 due-date sort, and refresh. The controls and result should survive because the
 URL owns the current query state. CSV export uses the active filter, search, and
-sort rather than silently exporting all visible rows.
+sort rather than silently exporting all visible rows. The export streams that
+complete selection through one deterministically ordered SQLite cursor and one
+read snapshot, then releases the cursor when the response finishes or is
+cancelled.
 
 Status is select-backed text, so its `in` and `nin` value editor is a searchable
 multi-value combobox. The input query filters the options derived from the

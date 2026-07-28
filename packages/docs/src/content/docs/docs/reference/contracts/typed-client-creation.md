@@ -14,6 +14,11 @@ from `@sapporta/frontend/platform`.
 - `createApiClient(contract, options)` returns a throwing client whose contract
   key becomes the method name.
 - Calls pass `params`, `query`, and `body` according to the route contract.
+- A `QueryParamRecord` value may contain a readonly string array. The client
+  serializes that array as repeated URL keys in order, which preserves same-key
+  table filters instead of collapsing them. Numeric table query inputs remain
+  strings at this client boundary and are coerced by the shared contract on the
+  server.
 - Use `{ baseUrl: getApiBase }`, not `{ baseUrl: getApiBase() }`. The client
   calls the resolver immediately before every request and prepends the result to
   the contract path.
@@ -32,3 +37,4 @@ from `@sapporta/frontend/platform`.
 ## Related documentation
 
 - [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+- [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)

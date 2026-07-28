@@ -15,26 +15,56 @@ active workspace is irrelevant to a bearer token.
 
 ## Create the token in the intended workspace
 
-Open `/account/profile` in an interactive browser session, switch to the
-workspace the caller should represent, and create an agent access token. Give it
-a name that identifies the caller and purpose. Add an expiry for temporary work.
+An agent access token carries one user and workspace boundary into the CLI, so
+the setup begins in the browser rather than the terminal. Open
+`/account/profile` in an interactive browser session, switch to the workspace
+the caller should represent, and create an agent access token. Give it a name
+that identifies the caller and purpose, and add an expiry when the access is
+temporary.
 
-The creation response displays the raw `spat_...` token once. Later list calls
-return metadata such as its name, workspace, creation time, expiry, last use,
-and revocation time. The project database stores a hash of the secret, not the
-raw token.
+After creation, the dialog offers two ways to finish. If a coding agent will
+work from this checkout, open the agent at the project root and choose **Copy
+setup prompt**. The prompt already contains the application's CLI base URL and
+the one-time token, so paste it into that trusted agent before closing the
+dialog. If you prefer to configure the environment yourself, choose **Copy
+token** and use the manual variables below. Neither route is automatic, and the
+plaintext token is not available again after the dialog closes.
+
+Later token-list requests return metadata such as the token's name, workspace,
+creation time, expiry, last use, and revocation time. The project database
+stores a hash of the secret rather than the raw token.
 
 The `read`, `create`, and `delete` abilities on `agent_access_token` authorize
 these interactive token-management actions. Bearer credentials may call ordinary
 app APIs, but token-management endpoints reject them with `403 forbidden`.
 
-## Keep the credential out of durable text
+## Hand the setup prompt to one trusted agent
 
-Use an environment variable or secret manager. Do not paste the token into
-prompts, documentation, source files, committed configuration, screenshots, or
-shell history where avoidable.
+The setup prompt asks the agent to verify the Sapporta skill and project-local
+CLI, then reuse the project's existing directory environment tooling, such as
+mise, direnv, or a dotenv runner, to provide `SAPPORTA_API_URL` and
+`SAPPORTA_API_TOKEN` to every Sapporta command. If the project has no such tool,
+the fallback is a private, gitignored local wrapper rather than a newly
+installed environment manager.
 
-The CLI reads `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`:
+From there, the agent records the exact authenticated invocation in `AGENTS.md`
+and proves the connection with the read-only `pnpm exec sapporta endpoints list`
+command. In a sandboxed agent, that final check may require explicit network
+permission for the application URL.
+
+The generated setup prompt contains the raw credential by design, so treat the
+whole prompt as a secret-bearing handoff. Paste it only into the intended agent
+session. The resulting `AGENTS.md` instruction may name an environment tool or
+wrapper, but it must never contain the token itself. Keep the credential out of
+source files, committed configuration, screenshots, shell history, and later
+task prompts.
+
+## Configure the CLI manually
+
+The CLI reads `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`. The URL is the
+deployment base before `/api`. The generated prompt includes the base URL
+derived from the running application; the agent then places it in the project's
+private environment tooling.
 
 ```bash
 export SAPPORTA_API_URL="http://localhost:3000"
@@ -45,7 +75,7 @@ pnpm exec sapporta endpoints show "GET /api/reports/project-progress"
 pnpm exec sapporta rows list tasks --output json
 ```
 
-For direct HTTP, send a normal bearer header:
+If you call HTTP directly instead, send a normal bearer header:
 
 ```http
 GET /api/tables/tasks HTTP/1.1
@@ -98,3 +128,4 @@ unset SAPPORTA_API_TOKEN
 - [Error catalogue and diagnostics](/docs/reference/operations/error-catalogue-and-diagnostics/)
 - [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
 - [Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/)
+- [Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/)

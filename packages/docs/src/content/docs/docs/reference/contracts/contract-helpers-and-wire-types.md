@@ -30,28 +30,70 @@ exports.
   `packages/shared/src/index.ts`.
 - Table metadata wire types and auth/report contracts remain safe for browser
   imports.
-- Generated count contracts export `countQuerySchema`, `groupCountSchema`,
-  `countResultSchema`, and `countResponseSchema` with their `CountQuery`,
-  `GroupCount`, `CountResult`, and `CountResponse` types. `CountResult` is a
-  discriminated union:
-
-  ```ts
-  type CountResult =
-    | { kind: "total"; count: number }
-    | {
-        kind: "grouped";
-        groups: Array<{
-          value: string | number | boolean | null;
-          count: number;
-        }>;
-      };
-  ```
-
-  The group bound comes from `MAX_COUNT_GROUPS` in the main `@sapporta/shared`
-  entry point.
-
 - The shared package contains no Hono handlers, Drizzle queries, database
   connections, React components, or other I/O.
+
+## Generated table query contracts
+
+`@sapporta/shared/contracts` owns the transport grammar before the server
+resolves table-specific columns and Drizzle expressions:
+
+- `exportRowsQuerySchema` and `ExportRowsQuery` cover filters, `q`, and sort.
+- `listRowsQuerySchema` and `ListRowsQuery` add bounded page and limit values.
+- `lookupQuerySchema` and `LookupQuery` keep ID recovery separate from search.
+- `countQuerySchema` and `CountQuery` cover filters and optional grouping.
+
+Pagination and lookup numbers are strings at the URL and generated-client input.
+The schemas coerce them at the boundary, so parsed `ListRowsQuery` and
+`LookupQuery` values carry bounded numbers into server resolvers. Lookup ID mode
+similarly turns the comma-separated `ids` string into a non-empty bounded string
+array.
+
+The accompanying constants make those defaults and bounds explicit:
+`DEFAULT_PAGE`, `DEFAULT_PAGE_SIZE`, `MAX_PAGE`, `MAX_PAGE_SIZE`,
+`DEFAULT_LOOKUP_LIMIT`, `MAX_LOOKUP_LIMIT`, and `MAX_LOOKUP_IDS`.
+
+## Preserve repeated query keys
+
+An ordinary `Record<string, string>` cannot represent the same filter key twice.
+The main `@sapporta/shared` entry point therefore exports:
+
+```ts
+type QueryParamValue = string | readonly string[];
+type QueryParamRecord = Record<string, QueryParamValue>;
+```
+
+`appendQueryParam()` keeps a singleton as a string and promotes it to an ordered
+array only when a second value arrives. `queryParamRecordToSearchParams()`
+converts that record back to repeated URL keys. Together they carry repeated
+same-key filters through frontend builders, typed clients, and server adapters
+without collapsing one predicate.
+
+`isQueryParamRecord()` checks that an unknown object contains only string or
+string-array values. `hasRepeatedQueryParams()` then reports whether a validated
+record contains at least one repeated key.
+
+## Count result contracts
+
+Generated count contracts export `countQuerySchema`, `groupCountSchema`,
+`countResultSchema`, and `countResponseSchema` with their `CountQuery`,
+`GroupCount`, `CountResult`, and `CountResponse` types. `CountResult` is a
+discriminated union:
+
+```ts
+type CountResult =
+  | { kind: "total"; count: number }
+  | {
+      kind: "grouped";
+      groups: Array<{
+        value: string | number | boolean | null;
+        count: number;
+      }>;
+    };
+```
+
+The group bound comes from `MAX_COUNT_GROUPS` in the main `@sapporta/shared`
+entry point.
 
 Feature contracts declare feature-owned responses. Shared infrastructure
 authentication responses such as `401` and `403` are documented once at their
@@ -61,4 +103,6 @@ auth boundary rather than copied into every feature response map.
 
 - [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
+- [Query syntax](/docs/reference/http/query-syntax/)
+- [Typed client creation](/docs/reference/contracts/typed-client-creation/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)

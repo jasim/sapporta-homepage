@@ -103,6 +103,16 @@ route. A project lookup therefore returns only visible projects:
 
 The lookup `value` remains a number or string to match the target primary key.
 `meta` contains visible fields from the source row and is not invariantly empty.
+The query has two intentionally separate modes. Search mode supplies a picker's
+candidate list with optional `q`, visible `fields`, and a bounded `limit`. ID
+mode uses `ids=1,2` to recover values the form has already selected. It accepts
+a non-empty bounded ID list and cannot be mixed with search parameters, so
+rehydrating a saved value never quietly becomes a broader search.
+
+CSV export follows the active filters, table search, sort, ability, and row
+scope. Although the response is unpaginated, the server streams it through one
+deterministic SQLite cursor and read snapshot instead of collecting every row
+before sending the first byte.
 
 ## Count without loading rows
 

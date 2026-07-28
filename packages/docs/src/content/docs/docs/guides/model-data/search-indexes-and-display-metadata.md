@@ -193,24 +193,41 @@ The metadata endpoint exposes only `"searchable": true` or `"searchable": false`
 to the browser. The recursive plan remains on the server, where table
 definitions and authorization are available.
 
-Generated handlers retrieve the compiled plan from the loaded table catalog. If
-you call `scopedRows()` directly in app-owned server code, pass that exact plan
-to a list or export call that contains `q`:
+Generated handlers retrieve the compiled plan from the loaded table catalog.
+They own the `q` query parameter because `q` is HTTP grammar, not a
+`scopedRows()` input.
+
+App-owned code starts one layer lower. When it receives a search term through
+its own contract, compile the plan into a Drizzle predicate and pass that
+predicate to the bounded read that fits the result:
 
 ```ts
+import { buildSearchPredicate, scopedRows } from "@sapporta/server";
+
 const rows = scopedRows(db, auth, books);
-const result = await rows.list(
-  { q: "blue" },
-  { searchPlan: catalog.searchPlanFor(books.sqlName) },
+const searchWhere = buildSearchPredicate(
+  catalog.searchPlanFor(books.sqlName),
+  "blue",
+  auth,
 );
+const result = await rows.page({
+  where: searchWhere,
+  page: 1,
+  limit: 50,
+});
 ```
 
-This keeps relational search context attached only to the operations that use
-it. Calls without `q`, including `count()` and `countBy()`, do not need a search
-plan. Lower-level integrations can also use the exported `SearchPlan`,
-`compileSearchPlans()`, and `buildSearchPredicate()` primitives, but most
-applications should let `loadSapportaProject()` build the catalog once and reuse
-`catalog.searchPlanFor()`.
+The resulting SQL can also narrow `findMany()` or `scan()`. This keeps
+relational search context attached to the operation that uses it while the row
+helper continues to add request visibility. Calls without search, including
+`count()` and `countBy()`, need no search plan.
+
+A generated-style HTTP adapter has a different job. It can pass the
+contract-parsed query to `resolvePageQuery()` or `resolveExportQuery()`, which
+resolve `q`, filters, columns, and ordering into the same Drizzle-shaped inputs.
+Most application routes do not need that transport adapter; they can let
+`loadSapportaProject()` build the catalog once and reuse
+`catalog.searchPlanFor()` with `buildSearchPredicate()`.
 
 Generated table screens also keep the search term in the page URL:
 
@@ -418,3 +435,4 @@ literal, relational, and tied to generated table reads.
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
+- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)

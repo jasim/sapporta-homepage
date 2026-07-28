@@ -23,21 +23,30 @@ URL filter, report link, or Grid state never grants authority.
 `scopedRows(db, auth, table)` binds one table to the request. Its operations
 apply visible-row predicates, reject caller-supplied scope aliases, stamp
 trusted insert scope, validate references, and conceal missing and invisible
-singular rows. A list or export that contains `q` receives the catalog's
-compiled search plan as an option on that call.
+singular rows. Its read inputs are ordinary Drizzle expressions rather than HTTP
+query strings, so filters and ordering stay typed until an actual route adapter
+serializes or parses them.
 
 ```ts
+import { eq } from "drizzle-orm";
+
 const taskRows = scopedRows(c.get("db"), auth, tasks);
 
-const task = await taskRows.update(request.params.id, {
-  status: "open",
+const openTasks = await taskRows.findMany({
+  where: eq(tasksTable.status, "open"),
+  limit: 25,
 });
 ```
 
 The route still checks an ability before calling the helper. `scopedRows()` does
-not make that decision itself. Its `count()` and `countBy()` operations keep
-scalar and grouped aggregation inside the same visible-row predicate; they do
-not turn a count into a route authorization check.
+not make that decision itself. `findMany()` requires an explicit result bound,
+while `page()` adds a matching count and page metadata. Use `scan()` only when a
+workflow must process the complete visible selection sequentially; it keeps one
+SQLite cursor and read snapshot open until iteration finishes or stops.
+
+The helper's `count()` and `countBy()` operations keep scalar and grouped
+aggregation inside the same visible-row predicate. None of these reads turns a
+data boundary into a route authorization check.
 
 ## Use one table guard for each custom query shape
 

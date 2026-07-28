@@ -32,14 +32,49 @@ await fetchTableRows(
 `PaginatedRows`. Both functions call the generated, auth-aware table routes.
 Their optional `AbortSignal` reaches the underlying `fetch` request.
 
-`buildTableRowsQuery()` is the shared serializer for page, limit, sort, typed
-filters, and search. Page query keys use this serialized request shape, so
-UI-only filter IDs do not create distinct cache entries for the same HTTP query.
+## Selection and page serializers
 
-These functions remain supported low-level primitives. Use them when a non-React
-caller owns the request lifecycle directly. A React feature screen normally
-composes the option builders below with `useQuery()` so it shares cache keys,
-cancellation, and server state with the rest of the application.
+`buildTableSelectionQuery()` serializes the filter, sort, and search state
+shared by paged reads and CSV exports. `buildTableRowsQuery()` starts with that
+selection and adds page and limit:
+
+```ts
+import {
+  buildTableRowsQuery,
+  buildTableSelectionQuery,
+} from "@sapporta/frontend";
+
+const selection = buildTableSelectionQuery({
+  filters,
+  sort,
+  search,
+});
+
+const pageQuery = buildTableRowsQuery({
+  filters,
+  sort,
+  search,
+  page: 2,
+  limit: 25,
+});
+```
+
+Both functions return `QueryParamRecord` from `@sapporta/shared`. Ordinary keys
+remain strings, including the wire forms of numeric page and limit values. When
+two typed conditions encode to the same filter key, that key becomes an ordered
+string array. The typed client turns the array back into repeated URL keys, so a
+pair such as `title contains launch` and `title contains checklist` reaches the
+server as two AND predicates rather than one last-value-wins object property.
+
+Page query keys use this same lossless serialized request shape. UI-only filter
+IDs do not create distinct cache entries for the same HTTP query, while repeated
+conditions remain distinct in the key.
+
+`fetchTableRow()` and `fetchTableRows()` remain supported low-level primitives.
+Use them when a non-React caller owns the request lifecycle directly. A React
+feature screen normally composes the option builders below with `useQuery()` so
+it shares cache keys, cancellation, and server state with the rest of the
+application.
 
 ## Query option builders
 

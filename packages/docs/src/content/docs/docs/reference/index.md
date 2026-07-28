@@ -1,13 +1,15 @@
 ---
 title: "Reference"
-description: "Look up the canonical Sapporta package, HTTP, CLI, configuration, and runtime contracts."
+description:
+  "Look up the canonical Sapporta package, HTTP, CLI, configuration, and runtime
+  contracts."
 ---
 
 Reference covers the public Sapporta 0.2.7 package surface, generated project
 contract, HTTP routes, CLI, configuration, runtime behavior, and diagnostics.
-The frontend form, table-query, and Grid interaction contracts include changes
-through framework source revision
-`f579ef770f0857bab888a3f81c9df8e6928d6ed5`.
+The server row-query, shared HTTP, frontend table-query, and Grid interaction
+contracts include changes through framework source revision
+`c15d8a8c8fc8276c86774d4d8e6b7c862f54c9c6`.
 
 ## Lookup indexes
 
@@ -18,7 +20,11 @@ through framework source revision
 
 ## Package boundaries
 
-`@sapporta/server` owns server schema, auth, row helpers, and route registration. `@sapporta/shared` owns browser-safe contracts and wire values. `@sapporta/frontend` owns the app shell, generated record surfaces, TGrid, and report rendering. Standalone `@sapporta/grid` has its own [Grid Reference](/grid/reference/).
+`@sapporta/server` owns server schema, auth, row helpers, and route
+registration. `@sapporta/shared` owns browser-safe contracts and wire values.
+`@sapporta/frontend` owns the app shell, generated record surfaces, TGrid, and
+report rendering. Standalone `@sapporta/grid` has its own
+[Grid Reference](/grid/reference/).
 
 ## Schema and value boundaries
 

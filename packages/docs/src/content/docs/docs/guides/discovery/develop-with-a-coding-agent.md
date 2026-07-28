@@ -14,6 +14,21 @@ change records in an already-running application, use
 [the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
 instead.
 
+## Connect the running application when the task needs it
+
+Before the first request, decide whether the agent needs the running application
+at all. Repository-only work can start from `AGENTS.md` and the Sapporta skill;
+it does not need a bearer token merely to inspect or edit source.
+
+When the task also needs protected endpoint discovery, live rows, or runtime
+read-back, create a token in the intended workspace and use the setup prompt
+from `/account/profile`. Open the agent at the project root before pasting it,
+because the prompt instructs the agent to configure that checkout's private CLI
+environment and record the command future sessions should use. The
+[agent access guide](/docs/guides/security/agent-access-and-scoped-tokens/)
+covers the credential boundary, secret-bearing handoff, and revocation
+lifecycle.
+
 ## Describe an outcome another reviewer can verify
 
 A bounded request gives the agent room to follow local conventions without
@@ -118,5 +133,6 @@ live-operation guides.
 - [Guide index](/docs/guides/)
 - [Choose an application interface](/docs/guides/discovery/choose-an-application-interface/)
 - [Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
+- [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
 - [Generated project layout](/docs/reference/project/generated-project-layout/)
 - [Project and discovery commands](/docs/reference/cli/project-and-discovery-commands/)
