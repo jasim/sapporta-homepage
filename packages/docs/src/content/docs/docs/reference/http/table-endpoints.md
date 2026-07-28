@@ -26,12 +26,20 @@ Generated HTTP routes under `/api/tables/<table>`.
   `{ entries: Array<{ value: string | number, label: string, meta: row }> }`.
   `meta` contains ordinary visible source-row fields; it is not invariantly
   empty.
-- `GET /api/tables/<table>/_count` returns grouped child counts as
-  `{ data: Record<string, number> }`.
+- `GET /api/tables/<table>/_count` returns either
+  `{ data: { kind: "total", count: number } }` or
+  `{ data: { kind: "grouped", groups: Array<{ value, count }> } }`. Group values
+  are typed strings, numbers, booleans, or `null`.
 - `GET /api/tables/<table>/export.csv` returns CSV.
 - `q` on the list and CSV export routes runs the same table search plan. Lookup
-  `q` follows lookup display fields instead; grouped count does not use table
-  search.
+  `q` follows lookup display fields instead; count does not accept table search.
+- Count accepts the canonical `filter[column][operator]` parameters. Without
+  `group_by`, `order` and `limit` are invalid. With `group_by`, count order
+  defaults to descending and `limit` defaults to `50`, with a maximum of `1000`.
+  Count ties use the group value ascending.
+- A foreign-key group returns keys rather than labels. Resolve labels through
+  the target table's lookup route, which applies its own authorization and row
+  scope.
 - Insert and patch schemas expose only caller-controlled fields. Generated
   primary keys with defaults, system-managed scope fields, `apiWritable: false`
   columns, and references with `apiSettable: false` are absent from OpenAPI and
@@ -82,12 +90,25 @@ Generated HTTP routes under `/api/tables/<table>`.
 }
 ```
 
+```json
+{
+  "data": {
+    "kind": "grouped",
+    "groups": [
+      { "value": 1, "count": 4 },
+      { "value": null, "count": 2 }
+    ]
+  }
+}
+```
+
 ## Direct endpoint discovery
 
 Inspect the mounted operation before composing a raw request:
 
 ```bash
 pnpm exec sapporta endpoints show "GET /api/tables/tasks"
+pnpm exec sapporta endpoints show "GET /api/tables/{tableName}/_count"
 pnpm exec sapporta endpoints show "PUT /api/tables/tasks/{id}"
 ```
 
@@ -100,6 +121,7 @@ is not the trusted write shape produced after auth preparation.
 ## Related documentation
 
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
 - [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

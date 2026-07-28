@@ -91,7 +91,10 @@ z.object({
 
 The two-read example is intentionally educational and in-memory. Moving it
 behind a route centralizes reuse, but it still loads every visible input row.
-When that stops being bounded, move the grouping and totals into a store query.
+When a question needs only a filtered total or one-column group from one table,
+`scopedRows().count()` and `.countBy()` keep that work in SQL under the table's
+row predicate. When the report combines tables or calculates a reusable business
+measure, move the grouping and totals into a store query.
 
 Keep the same ordering in the store:
 
@@ -130,3 +133,4 @@ rows contributed zero values.
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)

@@ -6,9 +6,10 @@ description:
 
 ## Identity
 
-`SapportaMeta`, `SapportaTableInputMeta`, `ColumnMeta`, and `ChildMeta` from
-`@sapporta/server`; serialized `TableSchema`, `ColumnSchema`, and `ChildSchema`
-from `@sapporta/shared/contracts`.
+`SapportaMeta`, `SapportaTableInputMeta`, `ColumnMeta`, `ChildMeta`,
+`columnBySqlName()`, and `columnPropertyName()` from `@sapporta/server`;
+serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
+`@sapporta/shared/contracts`.
 
 ## Contract
 
@@ -39,6 +40,10 @@ from `@sapporta/shared/contracts`.
 - Select options belong to the Drizzle column. Use Sapporta `select()` or raw
   Drizzle `text(name, { enum: options })`; schema extraction serializes the same
   option list for browser controls.
+- `columnBySqlName(table, sqlName)` returns the table's `SQLiteColumn` or
+  `null`. `columnPropertyName(table, column)` performs the reverse lookup and
+  returns the Drizzle property name or `null`. SQL column names remain the
+  public query vocabulary even when a Drizzle property uses a different name.
 - Application validation belongs to the top-level `validate()` callback on
   `sapportaTable()`. It composes with structural column validation.
 - `apiWritable: false` removes a column from generated write schemas and forms,

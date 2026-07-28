@@ -58,7 +58,10 @@ token is the actual boundary.
 
 Start with [Route-based reports](/docs/guides/reports/route-based-reports/) for
 a reusable aggregate or read model. The report path then scopes base rows, maps
-the dataset, and adds drill-through in that order.
+the dataset, and adds drill-through in that order. For an ad hoc filtered total
+or bounded one-column group over one registered table, use
+[Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
+instead.
 
 ## Inspect and operate a running application
 

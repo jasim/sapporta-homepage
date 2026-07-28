@@ -20,15 +20,14 @@ URL filter, report link, or Grid state never grants authority.
 
 ## Use `scopedRows()` for ordinary table work
 
-`scopedRows(db, auth, table, { searchPlan })` binds one table and the catalog's
-compiled search plan to the request. Its operations apply visible-row
-predicates, reject caller-supplied scope aliases, stamp trusted insert scope,
-validate references, and conceal missing and invisible singular rows.
+`scopedRows(db, auth, table)` binds one table to the request. Its operations
+apply visible-row predicates, reject caller-supplied scope aliases, stamp
+trusted insert scope, validate references, and conceal missing and invisible
+singular rows. A list or export that contains `q` receives the catalog's
+compiled search plan as an option on that call.
 
 ```ts
-const taskRows = scopedRows(c.get("db"), auth, tasks, {
-  searchPlan: catalog.searchPlanFor(tasks.sqlName),
-});
+const taskRows = scopedRows(c.get("db"), auth, tasks);
 
 const task = await taskRows.update(request.params.id, {
   status: "open",
@@ -36,7 +35,9 @@ const task = await taskRows.update(request.params.id, {
 ```
 
 The route still checks an ability before calling the helper. `scopedRows()` does
-not make that decision itself.
+not make that decision itself. Its `count()` and `countBy()` operations keep
+scalar and grouped aggregation inside the same visible-row predicate; they do
+not turn a count into a route authorization check.
 
 ## Use one table guard for each custom query shape
 

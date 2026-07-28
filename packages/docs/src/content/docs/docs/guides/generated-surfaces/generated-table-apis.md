@@ -15,6 +15,7 @@ contract before composing a direct HTTP request:
 
 ```bash
 pnpm exec sapporta endpoints show "GET /api/tables/tasks"
+pnpm exec sapporta endpoints show "GET /api/tables/{tableName}/_count"
 pnpm exec sapporta endpoints show "PUT /api/tables/tasks/{id}"
 ```
 
@@ -103,6 +104,35 @@ route. A project lookup therefore returns only visible projects:
 The lookup `value` remains a number or string to match the target primary key.
 `meta` contains visible fields from the source row and is not invariantly empty.
 
+## Count without loading rows
+
+The generated count route answers a filtered total over one table:
+
+```http
+GET /api/tables/tasks/_count?filter[status][neq]=completed
+```
+
+```json
+{ "data": { "kind": "total", "count": 8 } }
+```
+
+Add `group_by`, `order`, and `limit` for a bounded group list:
+
+```http
+GET /api/tables/tasks/_count?filter[status][neq]=completed&group_by=project_id&order=desc&limit=10
+```
+
+The result uses `{ kind: "grouped", groups: [...] }`, and each group retains the
+column's JSON type. The operation uses the generated `read` ability and the same
+row predicate as list; it does not load complete rows or accept table search.
+
+Use this route for ad hoc totals and one-column groups. If “pending,” “active,”
+or another business term already belongs to a report, call that report instead
+of inventing a filter at the client. A grouped foreign key returns keys, so
+resolve labels through the target table's separately authorized lookup route.
+The [count guide](/docs/guides/generated-surfaces/count-visible-rows/) covers
+CLI usage, bounds, ordering, null groups, and app-owned server calls.
+
 For an append-only history table, generated reads remain ordinary list queries:
 
 ```http
@@ -134,6 +164,7 @@ owns the full authorization and row-scope model.
 ## Related reference
 
 - [Table endpoints](/docs/reference/http/table-endpoints/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
 - [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)

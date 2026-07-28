@@ -19,6 +19,7 @@ where authorization, validation, and confirmation belong.
 | Outcome                                       | Owning operation                        | Suitable callers                                               | Confirmation                                                         |
 | --------------------------------------------- | --------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
 | Inspect or edit an ordinary registered record | Generated record screen or table API    | Browser, `rows` CLI command, or data-console agent             | Read the affected row through the same visible table surface         |
+| Answer an ad hoc total or one-column group    | Generated table count                   | `rows count`, direct HTTP, or app-owned server code            | State the filter meaning, row boundary, grouping, and result bound   |
 | Apply a named business transition             | App-owned endpoint                      | Typed browser client, `api` CLI command, or data-console agent | Read the declared domain result and the affected state               |
 | Reuse an aggregate or read model              | Protected report route and screen       | Browser, `api` CLI command, or data-console agent              | Check the returned dataset or aggregate against its scoped base rows |
 | Change repository behavior                    | Source code and tests                   | Coding agent with the Sapporta skill                           | Review the diff and focused verification                             |
@@ -29,6 +30,11 @@ call the generated table API when one registered table still owns the record.
 Conversely, putting a multi-table transition behind a custom button does not
 make a sequence of table updates atomic; that rule belongs in one app-owned
 endpoint.
+
+The generated count operation is narrower than a report. It counts visible rows
+from one table, optionally grouped by one column. Use a report when the
+application already owns the meaning, when the question combines tables, or when
+the result needs reusable measures and labels.
 
 ## Keep authority with the operation
 
@@ -77,6 +83,8 @@ owns the task.
   those operations from the project-local command line.
 - [Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
   adds bounded authority, read-back, and safe stopping for live-record work.
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
+  covers scalar and grouped counts through the CLI, HTTP, and server helpers.
 - [Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/)
   is the separate path for repository changes.
 - [Security guides](/docs/guides/security/authentication-and-abilities/) own

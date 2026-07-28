@@ -96,9 +96,7 @@ api.register(
   async ({ c, request, files }) => {
     const auth = c.get("auth");
     forbidUnless(c, auth.ability.can("update", "tasks"));
-    const taskRows = scopedRows(c.get("db"), auth, tasks, {
-      searchPlan: catalog.searchPlanFor(tasks.sqlName),
-    });
+    const taskRows = scopedRows(c.get("db"), auth, tasks);
     await taskRows.get(request.params.id);
 
     const file = files.file;

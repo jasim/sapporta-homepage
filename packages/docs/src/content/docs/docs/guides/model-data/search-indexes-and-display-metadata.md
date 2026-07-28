@@ -195,18 +195,19 @@ definitions and authorization are available.
 
 Generated handlers retrieve the compiled plan from the loaded table catalog. If
 you call `scopedRows()` directly in app-owned server code, pass that exact plan
-as the required fourth argument:
+to a list or export call that contains `q`:
 
 ```ts
-const rows = scopedRows(db, auth, books, {
-  searchPlan: catalog.searchPlanFor(books.sqlName),
-});
-
-const result = await rows.list({ q: "blue" });
+const rows = scopedRows(db, auth, books);
+const result = await rows.list(
+  { q: "blue" },
+  { searchPlan: catalog.searchPlanFor(books.sqlName) },
+);
 ```
 
-This keeps relational search context attached to ordinary row operations.
-Lower-level integrations can also use the exported `SearchPlan`,
+This keeps relational search context attached only to the operations that use
+it. Calls without `q`, including `count()` and `countBy()`, do not need a search
+plan. Lower-level integrations can also use the exported `SearchPlan`,
 `compileSearchPlans()`, and `buildSearchPredicate()` primitives, but most
 applications should let `loadSapportaProject()` build the catalog once and reuse
 `catalog.searchPlanFor()`.

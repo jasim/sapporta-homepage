@@ -30,6 +30,26 @@ exports.
   `packages/shared/src/index.ts`.
 - Table metadata wire types and auth/report contracts remain safe for browser
   imports.
+- Generated count contracts export `countQuerySchema`, `groupCountSchema`,
+  `countResultSchema`, and `countResponseSchema` with their `CountQuery`,
+  `GroupCount`, `CountResult`, and `CountResponse` types. `CountResult` is a
+  discriminated union:
+
+  ```ts
+  type CountResult =
+    | { kind: "total"; count: number }
+    | {
+        kind: "grouped";
+        groups: Array<{
+          value: string | number | boolean | null;
+          count: number;
+        }>;
+      };
+  ```
+
+  The group bound comes from `MAX_COUNT_GROUPS` in the main `@sapporta/shared`
+  entry point.
+
 - The shared package contains no Hono handlers, Drizzle queries, database
   connections, React components, or other I/O.
 
@@ -40,4 +60,5 @@ auth boundary rather than copied into every feature response map.
 ## Related documentation
 
 - [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)

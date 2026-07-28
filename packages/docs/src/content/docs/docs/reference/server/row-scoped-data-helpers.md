@@ -1,13 +1,14 @@
 ---
 title: "Row-scoped data helpers"
 description:
-  "Look up `scopedRows()` construction and generated-style CRUD behavior."
+  "Look up `scopedRows()` construction, generated-style CRUD, and scoped counts."
 ---
 
 ## Imports
 
-`@sapporta/server` exports `scopedRows`, `ScopedRows`, `ScopedRowsOptions`,
-`ListRowsInput`, `ListRowsResult`, `RowSecurity`, `TableRowSecurity`,
+`@sapporta/server` exports `scopedRows`, `ScopedRows`,
+`ScopedRowsSearchOptions`, `ListRowsInput`, `ListRowsResult`, `CountRowsInput`,
+`CountRowsByInput`, `GroupCount`, `RowSecurity`, `TableRowSecurity`,
 `InsertValuesOptions`, `RowNotFoundError`, and `ImmutableTableOperationError`.
 
 ## `scopedRows(...)`
@@ -17,16 +18,19 @@ function scopedRows(
   db: BetterSQLite3Database,
   auth: SapportaAuthContext,
   table: TableDef,
-  options: { searchPlan: SearchPlan },
 ): ScopedRows;
 ```
 
-Use the catalog-compiled plan for the same `TableDef`:
+Construction binds the registered table to the request's row-security policy.
+Supply a catalog-compiled search plan only to a `list()` or `exportRows()` call
+that contains a non-empty `q`:
 
 ```ts
-const rows = scopedRows(db, auth, tasks, {
-  searchPlan: catalog.searchPlanFor(tasks.sqlName),
-});
+const rows = scopedRows(db, auth, tasks);
+const result = await rows.list(
+  { q: "launch" },
+  { searchPlan: catalog.searchPlanFor(tasks.sqlName) },
+);
 ```
 
 A plan for a different table is rejected. `scopedRows()` performs no ability
@@ -36,24 +40,62 @@ check; generated handlers authorize first, and custom handlers must do the same.
 
 ```ts
 interface ScopedRows {
-  list(query?: ListRowsInput): Promise<ListRowsResult>;
+  list(
+    query?: ListRowsInput,
+    options?: ScopedRowsSearchOptions,
+  ): Promise<ListRowsResult>;
   get(id: RowId): Promise<Record<string, unknown>>;
   create(
     input: unknown,
   ): Promise<Record<string, unknown> | Record<string, unknown>[]>;
   update(id: RowId, patch: unknown): Promise<Record<string, unknown>>;
   delete(id: RowId): Promise<Record<string, unknown>>;
-  exportRows(query?: ListRowsInput): Promise<Record<string, unknown>[]>;
+  exportRows(
+    query?: ListRowsInput,
+    options?: ScopedRowsSearchOptions,
+  ): Promise<Record<string, unknown>[]>;
   lookup(query?: ListRowsInput): Promise<LookupEntry[]>;
-  count(query?: ListRowsInput): Promise<Record<string, number>>;
+  count(input?: CountRowsInput): Promise<number>;
+  countBy(input: CountRowsByInput): Promise<GroupCount[]>;
 }
 ```
 
-List, lookup, count, and export filter by row visibility. Singular
-get/update/delete throw `RowNotFoundError` for both missing and invisible rows.
-Create and update apply API write policy, reference visibility, and the normal
-save pipeline. Update and delete throw `ImmutableTableOperationError` when the
-table is immutable.
+List, lookup, count, grouped count, and export filter by row visibility.
+Singular get/update/delete throw `RowNotFoundError` for both missing and
+invisible rows. Create and update apply API write policy, reference visibility,
+and the normal save pipeline. Update and delete throw
+`ImmutableTableOperationError` when the table is immutable.
+
+## Scalar and grouped counts
+
+`count()` returns one number. `countBy()` returns typed group values without
+loading complete rows:
+
+```ts
+interface CountRowsInput {
+  where?: SQL;
+}
+
+interface CountRowsByInput extends CountRowsInput {
+  column: SQLiteColumn;
+  order?: "asc" | "desc";
+  limit?: number;
+}
+
+interface GroupCount {
+  value: string | number | boolean | null;
+  count: number;
+}
+```
+
+Both methods add `where` to the request's row predicate. `countBy()` requires a
+column belonging to the bound table. It defaults to descending count order and
+`50` groups, accepts limits from `1` through `1000`, and orders equal counts by
+the group value ascending. `null` remains an ordinary group value.
+
+These server inputs are transport-free. App-owned code supplies Drizzle
+expressions and a `SQLiteColumn`; the generated HTTP and CLI adapters translate
+canonical filter parameters and a column name into the same operations.
 
 ## Per-table guards
 
@@ -160,6 +202,7 @@ patches when applicable, and preserve the intended immutable policy.
 ## Related documentation
 
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)

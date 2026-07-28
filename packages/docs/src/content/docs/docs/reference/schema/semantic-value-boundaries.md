@@ -136,6 +136,10 @@ strings for Sapporta writes and Temporal values for direct Drizzle application
 code. Database reads return Temporal values. Generated response schemas convert
 them back to canonical JSON strings.
 
+Grouped counts apply the grouped column's semantic schema before returning a
+value. Text, number, and boolean groups keep their JSON primitive type; date and
+timestamp groups use canonical strings; and `null` remains an explicit group.
+
 ## Public conversion and schema helpers
 
 - `parsePlainDate`, `formatPlainDate`, `parseCanonicalInstant`, and
@@ -205,5 +209,6 @@ reference fields.
 - [Table definitions](/docs/reference/schema/table-definitions/)
 - [Table validation](/docs/reference/schema/table-validation/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [ColumnPreset](/grid/reference/column-preset/)

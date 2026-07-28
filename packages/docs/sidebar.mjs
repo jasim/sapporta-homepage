@@ -47,6 +47,9 @@ export default [
             slug: "docs/guides/generated-surfaces/generated-table-apis",
           },
           {
+            slug: "docs/guides/generated-surfaces/count-visible-rows",
+          },
+          {
             slug: "docs/guides/generated-surfaces/filtering-sorting-search-and-pagination",
           },
         ],

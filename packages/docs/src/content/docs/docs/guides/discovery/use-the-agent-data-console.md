@@ -106,8 +106,19 @@ row-scope fields controlled by the server. When a transition spans records or
 preserves a domain invariant, use its discovered app-owned endpoint instead of
 reproducing it with several row commands.
 
-For a read-only question, prefer an existing scoped report, then a filtered
-table query, then an app-owned read endpoint. Privileged `sql query` is an
+For a read-only question, first use an existing scoped report when it defines
+the business meaning. Otherwise use `rows count` for a filtered total or bounded
+one-column group over one table:
+
+```bash
+pnpm exec sapporta --output json rows count tasks \
+  --where '{"status":{"neq":"completed"}}'
+```
+
+State how terms such as “pending” map to stored values. Use `--group-by`,
+`--order`, and `--limit` for grouped counts, and resolve foreign-key labels with
+a separate target-table lookup. If the count surface cannot express the
+question, use an app-owned report or read endpoint. Privileged `sql query` is an
 explicitly authorized administrative fallback, not an escape from application
 visibility.
 
@@ -150,4 +161,5 @@ rows may intentionally share one response.
 - [Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/)
 - [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
 - [Table, row, and report commands](/docs/reference/cli/table-row-and-report-commands/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [API and SQL commands](/docs/reference/cli/api-and-sql-commands/)

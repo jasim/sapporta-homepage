@@ -5,18 +5,20 @@ description: "Find canonical reference owners for Sapporta package exports."
 
 ## Identity
 
-Alphabetic package/export index checked against package export maps for version
-0.2.7.
+Package/export index checked against the linked Sapporta package export maps.
 
 ## Contract
 
 - `@sapporta/server`: `sapportaTable`, `tableApiZod`, `tableWriteZod`,
-  `zodForColumnValue`, `parseTableWrite`, schema/auth helpers, `scopedRows`,
+  `zodForColumnValue`, `parseTableWrite`, `columnBySqlName`,
+  `columnPropertyName`, schema/auth helpers, `scopedRows`,
+  `ScopedRowsSearchOptions`, `CountRowsInput`, `CountRowsByInput`, `GroupCount`,
   `TsRestApi`, `initContract`, migration readiness, and project loading.
-- `@sapporta/shared`: Temporal/filter/date-range/value helpers and browser-safe
-  subpaths for contracts, clients, grid datasets, errors, and validation,
-  including `FieldIssue`, `fieldIssuesFromZodError()`, and
-  `apiProblemFromBody()`.
+- `@sapporta/shared`: Temporal/filter/date-range/value helpers,
+  `CountGroupValue`, `GroupCount`, `DEFAULT_COUNT_GROUP_LIMIT`,
+  `MAX_COUNT_GROUPS`, and browser-safe subpaths for contracts, clients, grid
+  datasets, errors, and validation, including `FieldIssue`,
+  `fieldIssuesFromZodError()`, and `apiProblemFromBody()`.
 - `@sapporta/frontend`: app shell, auth, generated record surfaces,
   metadata-derived form fields, submission-error helpers, generated table query
   options and keys, TGrid, report components, lookups, and platform helpers.

@@ -6,7 +6,8 @@ description:
 
 ## Public surfaces
 
-- Ordinary table-shaped access: `scopedRows(...)` from `@sapporta/server`.
+- Ordinary table-shaped access and single-table totals: `scopedRows(...)`,
+  `.count()`, and `.countBy()` from `@sapporta/server`.
 - Custom Drizzle shapes: `auth.rowSecurity.forTable(table)` from the request
   auth context.
 
@@ -52,6 +53,10 @@ totals. Applying a predicate after aggregation is too late.
 
 ## Aggregation boundary
 
+Use `scopedRows().count()` for a scalar total and `.countBy()` for a bounded
+one-column group when one table owns the question. Both compose a Drizzle
+`where` expression with the request's row predicate.
+
 Small report routes may map already-visible rows in memory. Large reports should
 push grouping into a store query while retaining one scoped predicate per base
 relation. If raw SQL is necessary, construct explicit guarded base-row CTEs
@@ -65,5 +70,6 @@ authorized action.
 ## Related documentation
 
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
+- [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
