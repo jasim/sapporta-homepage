@@ -147,14 +147,6 @@
   gap: 0.45rem;
 }
 
-.home-wordmark:hover {
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--link);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
 .home-wordmark__mark {
   display: block;
   flex: 0 0 auto;

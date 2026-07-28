@@ -15,8 +15,6 @@ navigation:
   links:
     - label: Documentation
       href: /docs/getting-started/introduction/
-    - label: Sapporta Grid
-      href: /grid/
     - label: GitHub
       href: https://github.com/jasim/sapporta
 ---

@@ -1,19 +1,44 @@
 ---
 import { Code } from "astro:components";
-import { toAppHref } from "../app-links";
+import {
+  Content as HeroContent,
+  frontmatter,
+} from "../home-content/hero.md";
+import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.md";
+import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
+import { Content as RegularApplication } from "../home-content/03-regular-application.md";
+import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
+import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
+import { Content as StackDetails } from "../home-content/stack.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import HomepageActions from "../components/HomepageActions.astro";
 import SapportaMark from "../components/SapportaMark.astro";
+import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
+import {
+  Code2,
+  Copy,
+  Table2,
+} from "lucide-react";
 import "../styles/sapporta.css";
-import "../styles/home3.css";
-import { Code2, Table2 } from "lucide-react";
+import "../styles/homepage-essay.css";
 
-const title = "Sapporta";
-const description =
-  "Minimal markdown-style Sapporta homepage draft.";
-const appBaseUrl =
-  process.env.SAPPORTA_PUBLIC_APP_URL ?? "";
+const { page, brand, navigation } = frontmatter;
 const codeTheme = "github-light-default";
+const createProjectAgentUrl =
+  gettingStartedEnv.agentMarkdownUrl(
+    "docs/getting-started/create-a-project",
+  );
+const createProjectAgentPrompt = `Build a task management app with Sapporta.
+${createProjectAgentUrl}
+
+Model people, projects, tasks, labels, and comments.
+
+Include:
+- task creation and assignment
+- status, priority, due dates, labels, and comments
+- views for open tasks, overdue tasks, assignees, and projects
+
+Add realistic sample data.`;
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
@@ -44,7 +69,8 @@ export const books = sapportaTable({
 });`;
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang={page.language}>
   <head>
     <meta charset="utf-8" />
     <meta
@@ -53,919 +79,652 @@ export const books = sapportaTable({
     />
     <meta
       name="description"
-      content={description}
+      content={page.description}
     />
     <link
       rel="icon"
       href="/favicon.svg"
       type="image/svg+xml"
     />
-    <title>{title}</title>
-    <style>
-      .draft-page {
-        margin: 0;
-        min-width: 20rem;
-        padding-bottom: 0;
-      }
-
-      body.homepage.draft-page {
-        padding-bottom: 0;
-      }
-
-      .home3-actions-wrap {
-        box-sizing: border-box;
-        margin: 0 auto;
-        max-width: 96rem;
-        padding-bottom: clamp(
-          1.75rem,
-          3.5vw,
-          2.75rem
-        );
-        padding-top: clamp(2rem, 4vw, 3.5rem);
-      }
-
-      .home3-copy p,
-      .home3-copy li {
-        font-size: clamp(1.08rem, 1.3vw, 1.28rem);
-        line-height: 1.62;
-      }
-
-      .home3-copy p {
-        margin: 0;
-      }
-
-      .home3-copy p + p {
-        margin-top: 1.1rem;
-      }
-
-      .homepage-offer {
-        margin: 0 auto
-          clamp(1.25rem, 2.4vw, 1.9rem);
-        max-width: 40rem;
-      }
-
-      .homepage-offer-list {
-        align-items: center;
-        display: grid;
-        gap: 0.68rem 1.35rem;
-        grid-template-columns: repeat(
-          3,
-          minmax(0, 1fr)
-        );
-        justify-items: center;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .homepage-offer-item {
-        align-items: center;
-        background-image: linear-gradient(
-          rgb(79 180 119 / 0.3),
-          rgb(79 180 119 / 0.3)
-        );
-        background-position: 0 92%;
-        background-repeat: no-repeat;
-        background-size: 100% 0.16em;
-        color: var(--sap-fg);
-        display: inline-flex;
-        font-size: clamp(0.92rem, 1.2vw, 1.04rem);
-        font-weight: 710;
-        justify-content: center;
-        line-height: 1.3;
-        position: relative;
-        text-align: center;
-        white-space: nowrap;
-      }
-
-      .home3-feature-grid {
-        align-items: stretch;
-        display: grid;
-        gap: 1.35rem 1.45rem;
-        grid-auto-rows: 1fr;
-        grid-template-columns: repeat(
-          2,
-          minmax(0, 1fr)
-        );
-        list-style: none;
-        margin: 2.25rem 0 4rem;
-        padding: 0;
-      }
-
-      .home3-copy .home3-feature-grid {
-        list-style: none;
-        margin: 2.25rem 0 4rem;
-        padding: 0;
-      }
-
-      .home3-copy-section {
-        margin-top: clamp(2.75rem, 5vw, 4.5rem);
-      }
-
-      .home3-copy .home3-copy-section h2 {
-        margin: 0 0 1rem;
-      }
-
-      .home3-copy-section-body {
-        min-width: 0;
-      }
-
-      .home3-feature-card {
-        background: transparent;
-        border: 1px solid rgb(79 180 119 / 0.28);
-        border-left-color: rgb(79 180 119 / 0.62);
-        border-left-width: 3px;
-        border-top-color: rgb(79 180 119 / 0.62);
-        border-top-width: 3px;
-        border-radius: 6px;
-        box-shadow: inset 0 0 0 1px
-          rgb(79 180 119 / 0.12);
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        list-style: none;
-        margin: 0;
-        min-width: 0;
-        padding: 0.95rem 1.05rem 0.95rem 1rem;
-        width: 100%;
-      }
-
-      .home3-copy .home3-feature-card {
-        font-size: 1rem;
-        line-height: 1.4;
-        margin: 0;
-      }
-
-      .home3-copy .home3-feature-card::marker {
-        content: "";
-      }
-
-      .home3-feature-card-title {
-        color: var(--sap-fg);
-        display: block;
-        font-size: 0.98rem;
-        font-weight: 800;
-        letter-spacing: 0;
-        line-height: 1.2;
-        margin-bottom: 0.42rem;
-      }
-
-      .home3-feature-card-text {
-        color: var(--sap-fg-soft);
-        display: block;
-        font-size: 0.94rem;
-        line-height: 1.42;
-      }
-
-      .homepage-footer {
-        border-top: 1px solid var(--sap-border);
-        color: var(--sap-fg-muted);
-        margin-top: clamp(3.5rem, 7vw, 6rem);
-        padding-bottom: clamp(2rem, 5vw, 3.5rem);
-        padding-top: clamp(2rem, 4vw, 3rem);
-      }
-
-      .homepage-footer-inner {
-        display: grid;
-        gap: 2rem;
-        grid-template-columns:
-          minmax(0, 1.25fr)
-          minmax(0, 1fr);
-        margin: 0 auto;
-        max-width: 96rem;
-      }
-
-      .homepage-footer-brand {
-        max-width: 34rem;
-      }
-
-      .homepage-footer-title {
-        align-items: center;
-        color: var(--sap-fg);
-        display: inline-flex;
-        font-size: 0.86rem;
-        font-weight: 800;
-        gap: 0.48rem;
-        letter-spacing: 0;
-        line-height: 1;
-        margin-bottom: 0.9rem;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-
-      .homepage-footer-mark {
-        height: 1.32rem;
-        width: 1.32rem;
-      }
-
-      .homepage-footer-copy {
-        color: var(--sap-fg-soft);
-        font-size: 0.94rem;
-        line-height: 1.55;
-        margin: 0;
-      }
-
-      .homepage-footer-copy
-        + .homepage-footer-copy {
-        margin-top: 0.72rem;
-      }
-
-      .homepage-footer-meta {
-        color: var(--sap-fg-muted);
-        font-size: 0.82rem;
-      }
-
-      .homepage-footer-grid {
-        display: grid;
-        gap: 1.5rem;
-        grid-template-columns: repeat(
-          3,
-          minmax(0, 1fr)
-        );
-      }
-
-      .homepage-footer-group-title {
-        color: var(--sap-fg);
-        font-size: 0.76rem;
-        font-weight: 800;
-        letter-spacing: 0;
-        line-height: 1.2;
-        margin: 0 0 0.7rem;
-        text-transform: uppercase;
-      }
-
-      .homepage-footer-list {
-        display: grid;
-        gap: 0.52rem;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .homepage-footer-link {
-        color: var(--sap-fg-soft);
-        font-size: 0.9rem;
-        font-weight: 570;
-        line-height: 1.25;
-        text-decoration: none;
-        text-underline-offset: 0.2em;
-      }
-
-      .homepage-footer-link:hover {
-        color: var(--sap-fg);
-        text-decoration: underline;
-        text-decoration-color: var(--sap-link);
-        text-decoration-thickness: 1px;
-      }
-
-      @media (min-width: 68rem) {
-        .home3-intro-layout .home3-copy {
-          max-width: 96rem;
-        }
-
-        .home3-copy .home3-lede {
-          margin-left: auto;
-          margin-right: auto;
-          max-width: 47rem;
-        }
-
-        .home3-copy .home3-feature-grid {
-          margin: 2.25rem auto 4rem;
-          max-width: 47rem;
-        }
-
-        .home3-copy-section {
-          align-items: start;
-          column-gap: 3.5rem;
-          display: grid;
-          grid-template-columns:
-            minmax(13rem, 0.2fr)
-            minmax(0, 1fr);
-          margin-left: auto;
-          margin-right: auto;
-          width: 66.666%;
-        }
-
-        .home3-copy
-          .home3-feature-grid
-          + .home3-copy-section {
-          margin-top: 0;
-          padding-top: clamp(5rem, 7vw, 6.5rem);
-        }
-
-        .home3-copy .home3-copy-section h2 {
-          margin-bottom: 0;
-          text-align: right;
-        }
-      }
-
-      @media (max-width: 36rem) {
-        .home3-feature-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .homepage-footer-inner,
-        .homepage-footer-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .homepage-offer-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.72rem 1rem;
-          justify-content: center;
-        }
-
-        .homepage-offer-item {
-          white-space: nowrap;
-        }
-      }
-    </style>
+    <title>{page.title}</title>
   </head>
-  <body class="homepage draft-page">
-    <header
-      class:list={[
-        "homepage-header",
-        "homepage-pad",
-      ]}
+  <body class="home-page">
+    <a
+      class="home-page__skip-link"
+      href="#main-content">{page.skipLabel}</a
     >
-      <div class="homepage-header-inner">
-        <a class="homepage-wordmark" href="/">
-          <SapportaMark
-            class="homepage-wordmark-icon"
-            title=""
-          />
-          Sapporta
-        </a>
-        <nav
-          class="homepage-nav"
-          aria-label="Main navigation"
-        >
-          <a
-            class="homepage-nav-link"
-            href="/docs/getting-started/introduction/"
-          >
-            Documentation
-          </a>
-          <a
-            class="homepage-nav-link"
-            href="/grid/"
-          >
-            Sapporta Grid
-          </a>
-          <a
-            class="homepage-nav-link"
-            href="https://github.com/jasim/sapporta"
-          >
-            GitHub
-          </a>
-        </nav>
-      </div>
+
+    <header class="home-header">
+      <nav
+        class="home-header__nav"
+        aria-label={navigation.label}
+      >
+        {
+          navigation.links.map((link) => (
+            <a
+              class="home-header__nav-link"
+              href={link.href}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
     </header>
 
-    <section
-      class:list={[
-        "homepage-hero",
-        "homepage-pad",
-      ]}
-      aria-labelledby="hero-title"
+    <main
+      id="main-content"
+      class="home-page__main"
     >
-      <article class="homepage-hero-copy">
-        <div class="homepage-hero-heading">
-          <SapportaMark
-            class="homepage-hero-mark"
-            title=""
-          />
-          <h1
-            id="hero-title"
-            class="homepage-title"
-          >
-            Sapporta
+      <div class="home-layout home-layout--intro">
+        <article class="home-copy home-intro">
+          <h1 class="home-hero__title">
+            <a
+              class="home-wordmark home-wordmark--hero"
+              href={brand.href}
+            >
+              <SapportaMark
+                class="home-wordmark__mark home-wordmark__mark--hero"
+                title=""
+              />
+              <span>{brand.label}</span>
+            </a>
           </h1>
-          <p class="homepage-subtitle">
-            Build Database Applications in
-            TypeScript
-          </p>
-        </div>
-        <div class="homepage-hero-body">
-          <div
-            class="homepage-offer"
-            aria-label="What Sapporta gives you"
+
+          <HeroContent />
+
+          <section
+            class="home-capabilities"
+            aria-label="Sapporta capabilities"
           >
-            <ul class="homepage-offer-list">
-              <li class="homepage-offer-item">
-                Editable data grids
+            <ul class="home-capabilities__list">
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  Grids
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  Editable table UI with search,
+                  sort, filters, nesting, and
+                  keyboard flow.
+                </span>
               </li>
-              <li class="homepage-offer-item">
-                Generated REST APIs
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  Reports
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  Summary rows, detail rows, and
+                  drill-down links.
+                </span>
               </li>
-              <li class="homepage-offer-item">
-                Forms and reports
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  REST APIs for every table
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  CRUD, lookup, count, export, and
+                  typed custom endpoints.
+                </span>
               </li>
-              <li class="homepage-offer-item">
-                Row-scoped auth
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  Forms
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  Validated data entry with
+                  reliable keyboard navigation.
+                </span>
               </li>
-              <li class="homepage-offer-item">
-                Agent-ready OpenAPI
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  Security
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  Workspace and role scoped reads
+                  and writes.
+                </span>
               </li>
-              <li class="homepage-offer-item">
-                Integrated stack
+              <li class="home-capabilities__item">
+                <span
+                  class="home-capabilities__title"
+                >
+                  Deployment
+                </span>
+                <span
+                  class="home-capabilities__description"
+                >
+                  Project wiring from <code
+                    class="home-capabilities__code"
+                    >npx sapporta init</code
+                  > to production.
+                </span>
               </li>
             </ul>
-          </div>
-          <HomepageActions />
-        </div>
-      </article>
-    </section>
+          </section>
 
-    <main>
-      <section
-        class:list={[
-          "homepage-section",
-          "homepage-section--showcase",
-          "homepage-pad",
-        ]}
-        aria-label="Books table grid"
-      >
-        <div class="homepage-section-inner">
-          <div class="home3-intro-layout">
-            <div class="home3-demo">
-              <input
-                class="home3-demo-tab-input"
-                type="radio"
-                name="home3-demo-view"
-                id="home3-demo-live"
-                checked
-              />
-              <input
-                class="home3-demo-tab-input"
-                type="radio"
-                name="home3-demo-view"
-                id="home3-demo-code"
-              />
-              <div class="home3-demo-header">
-                <div
-                  class="home3-demo-tabs"
-                  aria-label="Books demo view"
+          <HomepageActions
+            align="start"
+            compact
+            primaryLabel="Documentation"
+            primaryIcon="docs"
+            primaryStyle={false}
+          />
+        </article>
+      </div>
+
+      <div class="home-layout home-layout--demo">
+        <section
+          class="home-demo-section"
+          aria-label="Books and Quotes grid demo"
+        >
+          <div class="home-demo" data-demo-tabs>
+            <div
+              class="home-demo__tabs"
+              role="tablist"
+              aria-label="Data grid example views"
+            >
+              <button
+                class="home-demo__tab"
+                id="home-demo-grid-tab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="home-demo-grid-panel"
+              >
+                <Table2
+                  className="home-demo__tab-icon"
+                  aria-hidden="true"
+                  size={17}
+                  strokeWidth={2}
+                />
+                <span>Demo: sample data grid</span
                 >
-                  <label
-                    class="home3-demo-tab"
-                    for="home3-demo-live"
-                  >
-                    <Table2
-                      className="home3-demo-tab-icon"
-                      aria-hidden="true"
-                      size={17}
-                      strokeWidth={2}
-                    />
-                    Live grid
-                  </label>
-                  <label
-                    class="home3-demo-tab"
-                    for="home3-demo-code"
-                  >
-                    <Code2
-                      className="home3-demo-tab-icon"
-                      aria-hidden="true"
-                      size={17}
-                      strokeWidth={2}
-                    />
-                    Schema code
-                  </label>
-                </div>
-              </div>
-              <div class="home3-demo-panels">
-                <div
-                  class="home3-demo-panel home3-demo-panel-live"
+              </button>
+              <button
+                class="home-demo__tab"
+                id="home-demo-code-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="home-demo-code-panel"
+                tabindex="-1"
+              >
+                <Code2
+                  className="home-demo__tab-icon"
+                  aria-hidden="true"
+                  size={17}
+                  strokeWidth={2}
+                />
+                <span
+                  >Code: schema definition</span
                 >
-                  <div class="homepage-grid-wrap">
-                    <BooksTableDataGrid
-                      client:only="react"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="home3-demo-panel home3-demo-panel-code"
-                >
-                  <figure
-                    class="homepage-schema-panel"
-                    aria-labelledby="books-schema-title"
-                  >
-                    <figcaption
-                      class="homepage-schema-header"
-                    >
-                      <span
-                        id="books-schema-title"
-                        class="homepage-schema-path"
-                      >
-                        packages/api/schema/books.ts
-                      </span>
-                    </figcaption>
-                    <div
-                      class="homepage-schema-code"
-                    >
-                      <Code
-                        code={booksSchemaCode}
-                        lang="ts"
-                        theme={codeTheme}
-                      />
-                    </div>
-                  </figure>
-                </div>
-              </div>
+              </button>
             </div>
 
             <div
-              class="home3-copy sl-markdown-content"
+              class="home-demo__panel home-demo__panel--grid"
+              id="home-demo-grid-panel"
+              role="tabpanel"
+              aria-labelledby="home-demo-grid-tab"
             >
-              <p class="home3-lede">
-                Sapporta helps you build
-                applications that operate mostly
-                on relational data - like personal
-                databases, operational tools, and
-                business software.
-              </p>
+              <BooksTableDataGrid
+                client:only="react"
+              />
+            </div>
 
-              <ul class="home3-feature-grid">
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    Grids
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    Editable table UI with search,
-                    sort, filters, nesting, and
-                    keyboard flow.
-                  </span>
-                </li>
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    Reports
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    Summary rows, detail rows, and
-                    drill-down links.
-                  </span>
-                </li>
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    REST APIs for every table
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    CRUD, lookup, count, export,
-                    and typed custom endpoints.
-                  </span>
-                </li>
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    Forms
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    Validated data entry with
-                    reliable keyboard navigation.
-                  </span>
-                </li>
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    Security
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    Workspace and role scoped
-                    reads and writes.
-                  </span>
-                </li>
-                <li class="home3-feature-card">
-                  <span
-                    class="home3-feature-card-title"
-                  >
-                    Deployment
-                  </span>
-                  <span
-                    class="home3-feature-card-text"
-                  >
-                    Project wiring from <code
-                      >npx sapporta init</code
-                    > to production.
-                  </span>
-                </li>
-              </ul>
-
-              <section class="home3-copy-section">
-                <h2>
-                  The rich user experience of
-                  collaborative databases
-                </h2>
-
-                <div
-                  class="home3-copy-section-body"
+            <div
+              class="home-demo__panel home-demo__panel--code"
+              id="home-demo-code-panel"
+              role="tabpanel"
+              aria-labelledby="home-demo-code-tab"
+              hidden
+            >
+              <figure class="home-code-sample">
+                <figcaption
+                  class="home-code-sample__header"
                 >
-                  <p>
-                    Just like creating a new
-                    spreadsheet, in Sapporta, once
-                    you define a table, you
-                    immediately get a live
-                    editable grid. The grid brings
-                    a similar set of features and
-                    UX as that of AirTable, NocoDB
-                    and similar collaborative
-                    databases. It is filterable,
-                    sortable, and searchable. They
-                    also support nested
-                    master-detail relationships,
-                    and full keyboard support that
-                    work across levels.
-                  </p>
-                  <p>
-                    The APIs used by the grid are
-                    bounded by row-level security
-                    and CASL authorization, and so
-                    it can be shipped directly to
-                    end users without additional
-                    hardening.
-                  </p>
-                </div>
-              </section>
-
-              <section class="home3-copy-section">
-                <h2>Not an opaque framework</h2>
-
+                  <span
+                    class="home-code-sample__path"
+                  >
+                    packages/api/schema/books.ts
+                  </span>
+                </figcaption>
                 <div
-                  class="home3-copy-section-body"
+                  class="home-code-sample__body"
                 >
-                  <p>
-                    There is no inversion of
-                    control - Sapporta projects
-                    are regular Hono APIs + React
-                    single page applications that
-                    your codebase owns completely.
-                    There are no opaque
-                    abstractions that obscures
-                    control-flow or hide the
-                    underlying implementation.
-                  </p>
+                  <Code
+                    code={booksSchemaCode}
+                    lang="ts"
+                    theme={codeTheme}
+                  />
                 </div>
-              </section>
-
-              <section class="home3-copy-section">
-                <h2>Agentic development</h2>
-                <div
-                  class="home3-copy-section-body"
-                >
-                  <p>
-                    Sapporta projects are
-                    structured for coding agents.
-                    The generated codebase follows
-                    explicit conventions for
-                    project structure. These
-                    conventions cover data
-                    modeling, API behavior, UI
-                    flows, access rules, and
-                    migrations. Sapporta also
-                    ships
-                    <a
-                      href="https://github.com/jasim/sapporta-skills"
-                      >sapporta-skills</a
-                    >
-                    for table creation, reports, row
-                    access, custom endpoints, and frontend
-                    workflows. The <a
-                      href="https://github.com/jasim/legible-code"
-                      >legible-code</a
-                    >
-                    skill applies domain types, module
-                    boundaries, and the functional core,
-                    imperative shell design to agent-authored
-                    TypeScript.
-                  </p>
-                </div>
-              </section>
-
-              <section class="home3-copy-section">
-                <h2>Type-safe APIs and auth</h2>
-                <div
-                  class="home3-copy-section-body"
-                >
-                  <p>
-                    Every table exposes
-                    auto-generated REST endpoints
-                    (list, create, update etc.),
-                    that adhere to row-level
-                    security and CASL
-                    authorization policies.
-                  </p>
-                  <p>
-                    APIs don't require manual JSON
-                    wiring for request/response
-                    parsing. Both the
-                    auto-generated APIs, as well
-                    as any domain APIs you write,
-                    are all defined using ts-rest.
-                    The definitions go into <code
-                      >packages/shared</code
-                    >, and are immediately
-                    available in the frontend as
-                    typed functions.
-                  </p>
-                </div>
-              </section>
-
-              <section class="home3-copy-section">
-                <h2>
-                  Agentic use, out of the box
-                </h2>
-                <div
-                  class="home3-copy-section-body"
-                >
-                  <p>
-                    Applications that you build
-                    with Sapporta can be operated
-                    fully agentically by default.
-                    Agents can insert new rows, or
-                    update existing rows, map
-                    freeform data into database
-                    entries, execute multi-step
-                    workflows, run reports, and
-                    answer data questions, all
-                    through the same APIs used by
-                    the application UI.
-                  </p>
-
-                  <p>
-                    For example, if you built an
-                    Expense Tracking system with
-                    Sapporta, then its users can
-                    scribble reimbursement details
-                    - rough vendor names, relative
-                    dates, all in a freeform
-                    structure - into an LLM agent,
-                    and have it be recorded
-                    accurately in the database.
-                    This requires no additional
-                    code (but the user needs to
-                    have the <a
-                      href="http://github.com/jasim/sapporta-skills"
-                      >Sapporta skill</a
-                    >
-                    installed).
-                  </p>
-
-                  <p>
-                    This works because Sapporta
-                    publishes the application's
-                    API surface at
-                    <code>/api/openapi.json</code
-                    >. It has detailed route
-                    descriptions, usage examples,
-                    and documented request
-                    parameters for every available
-                    endpoint. This includes all
-                    the automatically generated
-                    table APIs as well as any
-                    domain specific APIs written
-                    by you.
-                  </p>
-
-                  <p>
-                    It is also secure by default -
-                    since all endpoints are
-                    secured by row-security and
-                    CASL, the agents only have
-                    access to the exact data that
-                    the user themselves have.
-                  </p>
-                </div>
-              </section>
+              </figure>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
+
+      <div
+        class="home-layout home-layout--quick-start"
+      >
+        <section
+          class="home-quick-start"
+          aria-labelledby="home-quick-start-title"
+        >
+          <div class="home-quick-start__content">
+            <h2
+              class="home-quick-start__title"
+              id="home-quick-start-title"
+            >
+              Get started with your coding agent
+            </h2>
+            <p
+              class="home-quick-start__description"
+            >
+              Copy this starter prompt, then paste
+              it into your coding agent.
+            </p>
+            <button
+              class="home-quick-start__copy-button"
+              type="button"
+              data-copy-agent-prompt
+              aria-label="Copy starter prompt to clipboard"
+              title="Copy starter prompt to clipboard"
+            >
+              <Copy
+                aria-hidden="true"
+                size={17}
+                strokeWidth={2.25}
+              />
+              <span data-copy-agent-label
+                >Copy starter prompt</span
+              >
+            </button>
+            <span
+              class="home-quick-start__status"
+              data-copy-agent-status
+              aria-live="polite"></span>
+            <pre
+              class="home-quick-start__prompt"
+              data-agent-prompt>{createProjectAgentPrompt}</pre>
+          </div>
+        </section>
+      </div>
+
+      <div
+        class="home-layout home-layout--article"
+      >
+        <article class="home-copy home-article">
+          <section class="home-article__section">
+            <FeaturesInBrief />
+          </section>
+          <section class="home-article__section">
+            <BuiltForAgents />
+          </section>
+          <section class="home-article__section">
+            <DataGridExperience />
+          </section>
+          <section class="home-article__section">
+            <RegularApplication />
+          </section>
+          <section class="home-article__section">
+            <StackDetails />
+          </section>
+          <section class="home-article__section">
+            <StatusAndContributing />
+          </section>
+        </article>
+      </div>
     </main>
 
-    <div class="home3-actions-wrap homepage-pad">
-      <HomepageActions flush />
-    </div>
+    <footer class="home-footer">
+      <div class="home-footer__inner">
+        <a
+          class="home-wordmark home-wordmark--footer"
+          href={brand.href}
+        >
+          <SapportaMark
+            class="home-wordmark__mark home-wordmark__mark--footer"
+            title=""
+          />
+          <span>{brand.label}</span>
+        </a>
 
-    <footer class="homepage-footer homepage-pad">
-      <div class="homepage-footer-inner">
-        <div class="homepage-footer-brand">
-          <a
-            class="homepage-footer-title"
-            href="/"
-          >
-            <SapportaMark
-              class="homepage-footer-mark"
-              title=""
-            />
-            Sapporta
-          </a>
-          <p class="homepage-footer-copy">
-            Sapporta is an open-source toolkit for
-            building TypeScript database
-            applications with generated APIs,
-            editable grids, forms, reports, and
-            row-scoped auth. It is released under
-            the MIT license.
+        <div class="home-footer__meta">
+          <p class="home-footer__paragraph">
+            Sapporta is <a
+              class="home-footer__link"
+              href="https://github.com/jasim/sapporta"
+              >open-source</a
+            > and is released under the MIT license.
           </p>
-          <p
-            class="homepage-footer-copy homepage-footer-meta"
-          >
+          <p class="home-footer__paragraph">
             Built and maintained by <a
-              class="homepage-text-link"
+              class="home-footer__link"
               href="https://x.com/jasim_ab"
               >Jasim A Basheer</a
             >, <a
-              class="homepage-text-link"
+              class="home-footer__link"
               href="https://protoship.io"
               >Protoship</a
             >.
           </p>
         </div>
-
-        <div class="homepage-footer-grid">
-          <nav aria-labelledby="footer-project">
-            <h2
-              id="footer-project"
-              class="homepage-footer-group-title"
-            >
-              Project
-            </h2>
-            <ul class="homepage-footer-list">
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="/docs/getting-started/introduction/"
-                  >Documentation</a
-                >
-              </li>
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="/grid/">Sapporta Grid</a
-                >
-              </li>
-            </ul>
-          </nav>
-
-          <nav aria-labelledby="footer-source">
-            <h2
-              id="footer-source"
-              class="homepage-footer-group-title"
-            >
-              Source
-            </h2>
-            <ul class="homepage-footer-list">
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="https://github.com/jasim/sapporta"
-                  >GitHub</a
-                >
-              </li>
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="https://github.com/jasim/sapporta/issues"
-                  >Issues</a
-                >
-              </li>
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="https://github.com/jasim/sapporta/tree/main/packages/grid"
-                  >Grid package</a
-                >
-              </li>
-              <li>
-                <a
-                  class="homepage-footer-link"
-                  href="https://github.com/jasim/sapporta/blob/main/LICENSE"
-                  >MIT License</a
-                >
-              </li>
-            </ul>
-          </nav>
-        </div>
       </div>
     </footer>
+
+    <dialog
+      class="home-lightbox"
+      data-image-lightbox
+      aria-labelledby="home-lightbox-caption"
+    >
+      <div class="home-lightbox__frame">
+        <button
+          class="home-lightbox__close"
+          type="button"
+          data-image-lightbox-close
+          aria-label="Close expanded screenshot"
+          title="Close"
+        >
+          <svg
+            class="home-lightbox__close-icon"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+          >
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+        <figure class="home-lightbox__figure">
+          <img
+            class="home-lightbox__image"
+            data-image-lightbox-image
+            alt=""
+          />
+          <figcaption
+            class="home-lightbox__caption"
+            id="home-lightbox-caption"
+            data-image-lightbox-caption
+          >
+          </figcaption>
+        </figure>
+      </div>
+    </dialog>
+
+    <script>
+      const copyAgentPromptButton =
+        document.querySelector<HTMLButtonElement>(
+          "[data-copy-agent-prompt]",
+        );
+      const agentPrompt =
+        document.querySelector<HTMLElement>(
+          "[data-agent-prompt]",
+        );
+      const copyAgentStatus =
+        document.querySelector<HTMLElement>(
+          "[data-copy-agent-status]",
+        );
+      const copyAgentLabel =
+        document.querySelector<HTMLElement>(
+          "[data-copy-agent-label]",
+        );
+      let copyAgentStatusTimeout:
+        ReturnType<typeof setTimeout> | undefined;
+
+      copyAgentPromptButton?.addEventListener(
+        "click",
+        async () => {
+          const prompt = agentPrompt?.textContent;
+          if (!prompt) return;
+
+          try {
+            await navigator.clipboard.writeText(
+              prompt,
+            );
+            copyAgentPromptButton.dataset.copied =
+              "true";
+            copyAgentPromptButton.title =
+              "Copied";
+            if (copyAgentLabel) {
+              copyAgentLabel.textContent =
+                "Copied — paste it into your agent";
+            }
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent =
+                "Prompt copied to clipboard";
+            }
+
+            clearTimeout(copyAgentStatusTimeout);
+            copyAgentStatusTimeout = setTimeout(
+              () => {
+                delete copyAgentPromptButton
+                  .dataset.copied;
+                copyAgentPromptButton.title =
+                  "Copy starter prompt to clipboard";
+                if (copyAgentLabel) {
+                  copyAgentLabel.textContent =
+                    "Copy starter prompt";
+                }
+                if (copyAgentStatus) {
+                  copyAgentStatus.textContent =
+                    "";
+                }
+              },
+              2000,
+            );
+          } catch {
+            if (copyAgentLabel) {
+              copyAgentLabel.textContent =
+                "Copy failed";
+            }
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent =
+                "Could not copy prompt";
+            }
+          }
+        },
+      );
+
+      const demos =
+        document.querySelectorAll<HTMLElement>(
+          "[data-demo-tabs]",
+        );
+
+      for (const demo of demos) {
+        const tabs = Array.from(
+          demo.querySelectorAll<HTMLButtonElement>(
+            '[role="tab"]',
+          ),
+        );
+        const panels = Array.from(
+          demo.querySelectorAll<HTMLElement>(
+            '[role="tabpanel"]',
+          ),
+        );
+
+        const selectTab = (
+          selectedTab: HTMLButtonElement,
+          moveFocus = false,
+        ) => {
+          for (const tab of tabs) {
+            const isSelected =
+              tab === selectedTab;
+            tab.setAttribute(
+              "aria-selected",
+              String(isSelected),
+            );
+            tab.tabIndex = isSelected ? 0 : -1;
+          }
+
+          for (const panel of panels) {
+            panel.hidden =
+              panel.id !==
+              selectedTab.getAttribute(
+                "aria-controls",
+              );
+          }
+
+          if (moveFocus) selectedTab.focus();
+        };
+
+        tabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => {
+            selectTab(tab);
+          });
+
+          tab.addEventListener(
+            "keydown",
+            (event) => {
+              let nextIndex: number | undefined;
+
+              if (event.key === "ArrowRight") {
+                nextIndex =
+                  (index + 1) % tabs.length;
+              } else if (
+                event.key === "ArrowLeft"
+              ) {
+                nextIndex =
+                  (index - 1 + tabs.length) %
+                  tabs.length;
+              } else if (event.key === "Home") {
+                nextIndex = 0;
+              } else if (event.key === "End") {
+                nextIndex = tabs.length - 1;
+              }
+
+              if (nextIndex === undefined) return;
+              event.preventDefault();
+              selectTab(tabs[nextIndex], true);
+            },
+          );
+        });
+      }
+
+      const imageLightbox =
+        document.querySelector<HTMLDialogElement>(
+          "[data-image-lightbox]",
+        );
+      const imageLightboxImage =
+        imageLightbox?.querySelector<HTMLImageElement>(
+          "[data-image-lightbox-image]",
+        );
+      const imageLightboxCaption =
+        imageLightbox?.querySelector<HTMLElement>(
+          "[data-image-lightbox-caption]",
+        );
+      const imageLightboxClose =
+        imageLightbox?.querySelector<HTMLButtonElement>(
+          "[data-image-lightbox-close]",
+        );
+      let imageLightboxTrigger:
+        HTMLAnchorElement | undefined;
+
+      const closeImageLightbox = () => {
+        imageLightbox?.close();
+      };
+
+      const openImageLightbox = (
+        trigger: HTMLAnchorElement,
+      ) => {
+        const image =
+          trigger.querySelector<HTMLImageElement>(
+            "img",
+          );
+        if (
+          !imageLightbox ||
+          !imageLightboxImage ||
+          !imageLightboxCaption ||
+          !image
+        ) {
+          return;
+        }
+
+        const caption =
+          trigger
+            .closest("figure")
+            ?.querySelector("figcaption")
+            ?.textContent?.trim() || image.alt;
+
+        imageLightboxTrigger = trigger;
+        imageLightboxImage.src = trigger.href;
+        imageLightboxImage.alt = image.alt;
+        imageLightboxCaption.textContent =
+          caption;
+        document.body.dataset.lightboxOpen =
+          "true";
+        imageLightbox.showModal();
+      };
+
+      const imageLinks =
+        document.querySelectorAll<HTMLAnchorElement>(
+          ".home-screenshot__link",
+        );
+
+      for (const imageLink of imageLinks) {
+        imageLink.addEventListener(
+          "click",
+          (event) => {
+            if (
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+            openImageLightbox(imageLink);
+          },
+        );
+      }
+
+      imageLightboxClose?.addEventListener(
+        "click",
+        closeImageLightbox,
+      );
+
+      imageLightbox?.addEventListener(
+        "click",
+        (event) => {
+          if (event.target === imageLightbox) {
+            closeImageLightbox();
+          }
+        },
+      );
+
+      imageLightbox?.addEventListener(
+        "close",
+        () => {
+          delete document.body.dataset
+            .lightboxOpen;
+          imageLightboxImage?.removeAttribute(
+            "src",
+          );
+          imageLightboxTrigger?.focus();
+          imageLightboxTrigger = undefined;
+        },
+      );
+    </script>
   </body>
 </html>

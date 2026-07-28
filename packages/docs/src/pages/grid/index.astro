@@ -1,56 +1,10 @@
 ---
-import { Code } from "astro:components";
-import SapportaMark from "../../components/SapportaMark.astro";
-import "../../styles/sapporta.css";
-import "../../styles/home3.css";
-
 const title = "Sapporta Grid";
 const description =
-  "Editable, hierarchical data grids for React, backed by a composable JavaScript runtime.";
-const codeTheme = "github-light-default";
-
-const openingCode = `const schema = gridSchema({
-  rootLevel: "projects",
-  levels: {
-    projects: level({
-      columns: [text("project"), select("status"), date("due")],
-      children: { tasks: ({ row }) => taskSource(row.id) },
-    }),
-    tasks: level({
-      columns: [text("task", { edit: true }), select("state"), text("assignee")],
-    }),
-  },
-});
-
-const runtime = createGridRuntime({
-  schema,
-  dataSource: projectSource,
-});
-
-<GridRuntimeProvider runtime={runtime}>
-  <GridLevel path={runtime.root.path} />
-</GridRuntimeProvider>`;
-
-const adapterCode = `const projectSource = remoteGridDataSource({
-  async load({ sort, filters }) {
-    const response = await api.projects.list({ sort, filters });
-    return response.items.map(toGridRow);
-  },
-  async write({ rowId, columnId, value }) {
-    return api.projects.update(rowId, { [columnId]: value });
-  },
-});`;
-
-const runtimeCode = `const runtime = createGridRuntime({ schema, dataSource });
-const orderId = makeRowId(runtime.root.path, "O1");
-
-await runtime.root.data.query?.sort?.set([
-  { colId: "amount", direction: "asc" },
-]);
-runtime.root.toggleExpand(orderId);
-runtime.root.writeCell({ rowId: orderId, colId: "amount" }, 125);`;
+  "How Sapporta Grid separates its runtime, column presets, and table-aware layer.";
 ---
 
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,1314 +27,160 @@ runtime.root.writeCell({ rowId: orderId, colId: "amount" }, 125);`;
     />
     <title>{title}</title>
   </head>
-  <body class="homepage grid-document">
-    <header class="grid-masthead">
-      <a class="grid-wordmark" href="/">
-        <SapportaMark
-          class="grid-wordmark-mark"
-          title=""
-        />
-        <span>Sapporta</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a
-          href="/grid/start/install-and-render-the-first-grid/"
-          >Documentation</a
-        >
-        <a
-          href="https://github.com/jasim/sapporta/tree/main/packages/grid"
-          >Source</a
-        >
-        <a href="/">Sapporta framework</a>
-      </nav>
-    </header>
-
+  <body>
     <main>
-      <article class="grid-article">
-        <header class="grid-opening">
-          <p class="grid-overline">
-            React grid framework
-          </p>
-          <h1>Sapporta Grid</h1>
-          <p class="grid-standfirst">
-            Editable, hierarchical data is
-            rendered in React by Sapporta Grid.
-            Levels, columns, editing rules, and
-            interactions are defined in a schema.
-            Grid operations are handled beneath
-            the rendered surface by a JavaScript
-            runtime.
-          </p>
-          <p>
-            Schema and data-source state are
-            rendered directly by the default
-            components. Individual renderers and
-            editors can be replaced by the
-            application. The same grid operations
-            are available to tests, scripts, and
-            other view layers through the runtime,
-            without rendering the React
-            components.
-          </p>
-          <p class="grid-reading-links">
-            <a
-              href="/grid/start/install-and-render-the-first-grid/"
-              >Install and render the first grid</a
-            >
-            <span aria-hidden="true">·</span>
-            <a
-              href="https://github.com/jasim/sapporta/tree/main/packages/grid"
-              >Read the source</a
-            >
-          </p>
-        </header>
+      <article>
+        <h1>Sapporta Grid</h1>
 
-        <figure
-          class="grid-figure grid-code-figure"
-        >
-          <figcaption>
-            <span>01</span>
-            <strong
-              >A schema with project and task
-              levels</strong
-            >
-            <code>ProjectGrid.tsx</code>
-          </figcaption>
-          <div class="grid-code">
-            <Code
-              code={openingCode}
-              lang="tsx"
-              theme={codeTheme}
-            />
-          </div>
-        </figure>
+        <p>
+          A data grid has two kinds of work to do.
+          It must decide what sorting, selection,
+          editing, and hierarchy mean, and it must
+          put those decisions on a screen.
+          Sapporta Grid keeps the two apart so
+          that the behavior of a grid does not
+          depend on the framework used to render
+          it.
+        </p>
 
-        <figure
-          class="grid-figure grid-live-figure"
-          data-grid-demo
-        >
-          <figcaption>
-            <span>02</span>
-            <strong
-              >The rendered project grid</strong
-            >
-            <span>Local demo data</span>
-          </figcaption>
+        <p>
+          To maintain that separation, all of
+          those decisions belong to the core—to
+          the grid runtime and, at the table-aware
+          level, the grid session. The React
+          components can then stay near the
+          surface, observing the state, rendering
+          it, and passing interactions back down.
+          Because they do not carry the policy
+          themselves, a Svelte or plain-JavaScript
+          view could sit in their place and
+          inherit the same behavior.
+        </p>
 
-          <div class="grid-demo-instructions">
-            <p>
-              Project expansion, task editing,
-              sorting, and draft creation are
-              available in the example below. Each
-              operation is connected to the
-              controls.
-            </p>
-            <div class="grid-demo-controls">
-              <label>
-                <span>Filter projects</span>
-                <input
-                  type="search"
-                  placeholder="Type a project name"
-                  data-grid-filter
-                />
-              </label>
-              <button type="button" data-grid-add
-                >Add a project</button
-              >
-            </div>
-            <output data-grid-url
-              >/grid?sort=project:asc</output
-            >
-          </div>
+        <p>
+          That separation becomes the bottom
+          layer, BaseGrid, which provides the
+          runtime, the data-source contract, and a
+          basic React view. Most grids need more
+          than this bare foundation, so
+          ColumnPreset builds on it with typed
+          columns, editors, formatting, and
+          copying. When the rows are registered
+          Sapporta records, TGrid adds one more
+          layer, connecting the same machinery to
+          schema metadata, generated queries,
+          lookups, saves, and record routes.
+        </p>
 
-          <div class="grid-demo-scroll">
-            <div
-              class="grid-demo"
-              role="grid"
-              aria-label="Editable projects and tasks"
-            >
-              <div
-                class="grid-demo-row grid-demo-header"
-                role="row"
-              >
-                <span role="columnheader"></span>
-                <button
-                  type="button"
-                  role="columnheader"
-                  data-grid-sort="project"
-                  aria-sort="ascending"
-                >
-                  Project <span aria-hidden="true"
-                    >↑</span
-                  >
-                </button>
-                <span role="columnheader"
-                  >Status</span
-                >
-                <span role="columnheader"
-                  >Owner</span
-                >
-                <span role="columnheader"
-                  >Due</span
-                >
-              </div>
+        <p>
+          Which layer you reach for depends less
+          on how the grid should look than on
+          where its rows come from. Registered
+          Sapporta records usually remain in a
+          generated table screen or TGrid, where
+          the server still owns authorization and
+          row security. By contrast, data
+          assembled by the application—a temporary
+          set of rows, a calculation, or a bounded
+          projection for one screen—belongs in
+          BaseGrid, generally with ColumnPreset.
+        </p>
 
-              <div
-                class="grid-project"
-                data-project="Ledger import"
-              >
-                <div
-                  class="grid-demo-row"
-                  role="row"
-                >
-                  <button
-                    class="grid-expander"
-                    type="button"
-                    aria-expanded="false"
-                    aria-label="Expand Ledger import"
-                    data-grid-expand>›</button
-                  >
-                  <span
-                    role="gridcell"
-                    tabindex="0"
-                    >Ledger import</span
-                  >
-                  <span role="gridcell"
-                    ><span
-                      class="grid-state"
-                      data-state="doing"
-                      >Doing</span
-                    ></span
-                  >
-                  <span role="gridcell">Maya</span
-                  >
-                  <span role="gridcell"
-                    >18 Jul</span
-                  >
-                </div>
-                <div
-                  class="grid-child-level"
-                  hidden
-                >
-                  <div class="grid-child-note">
-                    Tasks are loaded from the
-                    project task source.
-                  </div>
-                  <div class="grid-child-header">
-                    <span>Task</span><span
-                      >State</span
-                    ><span>Assignee</span>
-                  </div>
-                  <div class="grid-child-row">
-                    <span
-                      contenteditable="true"
-                      role="textbox"
-                      aria-label="Task title"
-                      >Validate imported balances</span
-                    >
-                    <select
-                      aria-label="Task state"
-                      ><option>To do</option
-                      ><option selected
-                        >Doing</option
-                      ><option>Done</option
-                      ></select
-                    >
-                    <span>Maya</span>
-                  </div>
-                  <div class="grid-child-row">
-                    <span
-                      contenteditable="true"
-                      role="textbox"
-                      aria-label="Task title"
-                      >Report rejected rows</span
-                    >
-                    <select
-                      aria-label="Task state"
-                      ><option selected
-                        >To do</option
-                      ><option>Doing</option
-                      ><option>Done</option
-                      ></select
-                    >
-                    <span>Arun</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="grid-project"
-                data-project="Invoice editor"
-              >
-                <div
-                  class="grid-demo-row"
-                  role="row"
-                >
-                  <button
-                    class="grid-expander"
-                    type="button"
-                    aria-expanded="false"
-                    aria-label="Expand Invoice editor"
-                    data-grid-expand>›</button
-                  >
-                  <span
-                    role="gridcell"
-                    tabindex="0"
-                    >Invoice editor</span
-                  >
-                  <span role="gridcell"
-                    ><span
-                      class="grid-state"
-                      data-state="ready"
-                      >Ready</span
-                    ></span
-                  >
-                  <span role="gridcell"
-                    >Jasim</span
-                  >
-                  <span role="gridcell"
-                    >22 Jul</span
-                  >
-                </div>
-                <div
-                  class="grid-child-level"
-                  hidden
-                >
-                  <div class="grid-child-note">
-                    Task columns and a separate
-                    data adapter are used at this
-                    level.
-                  </div>
-                  <div class="grid-child-header">
-                    <span>Task</span><span
-                      >State</span
-                    ><span>Assignee</span>
-                  </div>
-                  <div class="grid-child-row">
-                    <span
-                      contenteditable="true"
-                      role="textbox"
-                      aria-label="Task title"
-                      >Line item lookup</span
-                    >
-                    <select
-                      aria-label="Task state"
-                      ><option>To do</option
-                      ><option selected
-                        >Doing</option
-                      ><option>Done</option
-                      ></select
-                    >
-                    <span>Jasim</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="grid-project"
-                data-project="Keyboard navigation"
-              >
-                <div
-                  class="grid-demo-row"
-                  role="row"
-                >
-                  <button
-                    class="grid-expander"
-                    type="button"
-                    aria-expanded="false"
-                    aria-label="Expand Keyboard navigation"
-                    data-grid-expand>›</button
-                  >
-                  <span
-                    role="gridcell"
-                    tabindex="0"
-                    >Keyboard navigation</span
-                  >
-                  <span role="gridcell"
-                    ><span
-                      class="grid-state"
-                      data-state="open">Open</span
-                    ></span
-                  >
-                  <span role="gridcell">Noah</span
-                  >
-                  <span role="gridcell"
-                    >29 Jul</span
-                  >
-                </div>
-                <div
-                  class="grid-child-level"
-                  hidden
-                >
-                  <div class="grid-child-note">
-                    Tasks remain inside the
-                    project that requested them.
-                  </div>
-                  <div class="grid-child-header">
-                    <span>Task</span><span
-                      >State</span
-                    ><span>Assignee</span>
-                  </div>
-                  <div class="grid-child-row">
-                    <span
-                      contenteditable="true"
-                      role="textbox"
-                      aria-label="Task title"
-                      >Range selection</span
-                    >
-                    <select
-                      aria-label="Task state"
-                      ><option selected
-                        >To do</option
-                      ><option>Doing</option
-                      ><option>Done</option
-                      ></select
-                    >
-                    <span>Noah</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </figure>
-
-        <section
-          class="grid-prose-section"
-          aria-labelledby="hierarchy-heading"
-        >
-          <p class="grid-margin-label">
-            Levels and data
-          </p>
-          <div class="grid-prose">
-            <h2 id="hierarchy-heading">
-              Hierarchical grids and level data
-              sources
-            </h2>
-            <p>
-              Each kind of grid is described by a
-              level. Project columns and a project
-              endpoint belong to the project
-              level. A task level with different
-              columns, editing rules, and an
-              independent endpoint can be loaded
-              by expanding a project. Focus,
-              selection, expansion, and editing
-              are maintained across the visible
-              hierarchy.
-            </p>
-            <p>
-              Local memory or an existing remote
-              API can supply data to each level
-              through its own data source.
-              Loading, ready, refreshing, and
-              failure states are published inside
-              the requesting level. The project
-              grid therefore remains visible when
-              a task request fails.
-            </p>
-          </div>
-          <figure
-            class="grid-inline-figure grid-code-figure"
+        <nav aria-label="Grid documentation">
+          <a
+            href="/grid/start/choose-a-grid-layer/"
+            >Choose a layer</a
           >
-            <figcaption>
-              <span>Data adapter</span>
-              <strong
-                >A remote data-source adapter</strong
-              >
-            </figcaption>
-            <div class="grid-code">
-              <Code
-                code={adapterCode}
-                lang="ts"
-                theme={codeTheme}
-              />
-            </div>
-          </figure>
-        </section>
-
-        <section
-          class="grid-prose-section"
-          aria-labelledby="editing-heading"
-        >
-          <p class="grid-margin-label">
-            Editing and persistence
-          </p>
-          <div class="grid-prose">
-            <h2 id="editing-heading">
-              Cell editing and persistence
-            </h2>
-            <p>
-              Editable cells open in place. A
-              value can be applied directly to an
-              object by a local source. The same
-              commit can be translated into the
-              application’s update call by a
-              remote source. Confirmed or rejected
-              values are returned by that call.
-              Saving and failure feedback appears
-              in the row while the update is in
-              progress.
-            </p>
-            <p>
-              New records begin as draft rows. The
-              nonblank condition, validation, and
-              commit timing are controlled by the
-              application. Entered values remain
-              in the row for correction and retry
-              if creation fails. This editable
-              state is created locally by the <em
-                >Add a project</em
-              > control in the example.
-            </p>
-            <pre
-              class="grid-command"><code>level.drafts.add("new-task", &#123; title: "" &#125;);
-level.drafts.setCell("new-task", "title", "Review import");
-await level.drafts.commit("new-task");</code></pre>
-          </div>
-        </section>
-
-        <section
-          class="grid-prose-section"
-          aria-labelledby="query-heading"
-        >
-          <p class="grid-margin-label">
-            Query state
-          </p>
-          <div class="grid-prose">
-            <h2 id="query-heading">
-              Local and remote query state
-            </h2>
-            <p>
-              Sortable columns support ascending
-              and descending order. Filters,
-              sorting, refetching, and pagination
-              can be run in memory or passed
-              through a remote adapter. The
-              visible grid becomes a linkable
-              application view when its query
-              state is connected to the browser
-              URL. The example URL changes as the
-              filter above is edited.
-            </p>
-          </div>
-        </section>
-
-        <section
-          class="grid-prose-section"
-          aria-labelledby="keyboard-heading"
-        >
-          <p class="grid-margin-label">
-            Keyboard operation
-          </p>
-          <div class="grid-prose">
-            <h2 id="keyboard-heading">
-              Keyboard interaction presets
-            </h2>
-            <p>
-              Cell movement and range extension
-              are assigned by a spreadsheet-style
-              preset. Record movement and Space
-              key selection are assigned by
-              row-oriented presets. One coherent
-              keyboard model is selected for the
-              application, without page-local key
-              handlers.
-            </p>
-            <table class="grid-key-table">
-              <thead
-                ><tr
-                  ><th>Key</th><th
-                    >Visible result in cell-grid
-                    mode</th
-                  ></tr
-                ></thead
-              >
-              <tbody>
-                <tr
-                  ><td><kbd>Arrow keys</kbd></td
-                  ><td>Move the active cell.</td
-                  ></tr
-                >
-                <tr
-                  ><td
-                    ><kbd>Shift</kbd> + <kbd
-                      >Arrow</kbd
-                    ></td
-                  ><td
-                    >Extend the selected cell
-                    range.</td
-                  ></tr
-                >
-                <tr
-                  ><td
-                    ><kbd>Enter</kbd> or <kbd
-                      >F2</kbd
-                    ></td
-                  ><td
-                    >Start editing an editable
-                    cell.</td
-                  ></tr
-                >
-                <tr
-                  ><td
-                    ><kbd>Tab</kbd> / <kbd
-                      >Shift</kbd
-                    > + <kbd>Tab</kbd></td
-                  ><td
-                    >Move to the next or previous
-                    grid target.</td
-                  ></tr
-                >
-                <tr
-                  ><td
-                    ><kbd>Ctrl/Cmd</kbd> + <kbd
-                      >Home</kbd
-                    ></td
-                  ><td
-                    >Move to the first grid
-                    target.</td
-                  ></tr
-                >
-                <tr
-                  ><td
-                    ><kbd>Page Up</kbd> / <kbd
-                      >Page Down</kbd
-                    ></td
-                  ><td
-                    >Move ten rows up or down.</td
-                  ></tr
-                >
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section
-          class="grid-prose-section"
-          aria-labelledby="runtime-heading"
-        >
-          <p class="grid-margin-label">
-            Runtime and rendering
-          </p>
-          <div class="grid-prose">
-            <h2 id="runtime-heading">
-              The JavaScript runtime and React
-              renderer
-            </h2>
-            <p>
-              Row loading, level expansion,
-              sorting, filtering, editing,
-              creation, selection, and row
-              operations are exposed by a core
-              JavaScript object. Its state is
-              rendered by the supplied React
-              primitives. The same public API can
-              be operated directly by an
-              integration test or a script.
-            </p>
-            <p>
-              Column presets and a default
-              stylesheet are included with
-              Sapporta Grid. The public DOM and
-              state attributes can be styled with
-              application CSS. Custom cells and
-              editors can also be supplied while
-              focus, selection, copy, and editing
-              behavior remain under runtime
-              control.
-            </p>
-          </div>
-          <figure
-            class="grid-inline-figure grid-code-figure"
+          <a href="/grid/guides/core-model/"
+            >Core model</a
           >
-            <figcaption>
-              <span>Runtime test</span>
-              <strong
-                >A runtime operation without React</strong
-              >
-            </figcaption>
-            <div class="grid-code">
-              <Code
-                code={runtimeCode}
-                lang="ts"
-                theme={codeTheme}
-              />
-            </div>
-          </figure>
-        </section>
-
-        <footer class="grid-ending">
-          <p class="grid-margin-label">
-            Where to begin
-          </p>
-          <div>
-            <h2>
-              Choosing a grid integration layer
-            </h2>
-            <p>
-              The schema, runtime, React surface,
-              and data-source contract are
-              available from <code
-                >@sapporta/grid</code
-              >. Common renderers and editors are
-              added by the column-preset entry
-              point. Sapporta table metadata,
-              generated endpoints, lookups,
-              routes, and row access are connected
-              to the grid by <code>TGrid</code> in
-              <code>@sapporta/frontend</code>.
-            </p>
-            <p class="grid-ending-links">
-              <a
-                href="/grid/start/choose-a-grid-layer/"
-                >Choose a grid layer →</a
-              >
-              <a
-                href="/docs/getting-started/introduction/"
-                >Read about the full Sapporta
-                framework →</a
-              >
-            </p>
-          </div>
-        </footer>
+          <a
+            href="/docs/guides/generated-surfaces/grid-first-record-workflows/"
+          >
+            Record workflows
+          </a>
+          <a
+            href="/docs/reference/frontend/tgrid/"
+            >TGrid reference</a
+          >
+        </nav>
       </article>
     </main>
-
-    <script>
-      const demo = document.querySelector(
-        "[data-grid-demo]",
-      );
-      if (demo instanceof HTMLElement) {
-        const list =
-          demo.querySelector(".grid-demo");
-        const filter = demo.querySelector(
-          "[data-grid-filter]",
-        );
-        const url = demo.querySelector(
-          "[data-grid-url]",
-        );
-        let ascending = true;
-
-        demo
-          .querySelectorAll("[data-grid-expand]")
-          .forEach((button) => {
-            button.addEventListener(
-              "click",
-              () => {
-                const project = button.closest(
-                  ".grid-project",
-                );
-                const child =
-                  project?.querySelector(
-                    ".grid-child-level",
-                  );
-                if (
-                  !(
-                    button instanceof
-                    HTMLButtonElement
-                  ) ||
-                  !(child instanceof HTMLElement)
-                )
-                  return;
-                const open =
-                  button.getAttribute(
-                    "aria-expanded",
-                  ) === "true";
-                button.setAttribute(
-                  "aria-expanded",
-                  String(!open),
-                );
-                button.textContent = open
-                  ? "›"
-                  : "⌄";
-                child.hidden = open;
-              },
-            );
-          });
-
-        demo
-          .querySelector("[data-grid-sort]")
-          ?.addEventListener("click", (event) => {
-            if (
-              !(list instanceof HTMLElement) ||
-              !(
-                event.currentTarget instanceof
-                HTMLButtonElement
-              )
-            )
-              return;
-            ascending = !ascending;
-            const projects = [
-              ...list.querySelectorAll(
-                ".grid-project",
-              ),
-            ];
-            projects.sort((a, b) => {
-              const left =
-                a.getAttribute("data-project") ??
-                "";
-              const right =
-                b.getAttribute("data-project") ??
-                "";
-              return (
-                left.localeCompare(right) *
-                (ascending ? 1 : -1)
-              );
-            });
-            projects.forEach((project) =>
-              list.append(project),
-            );
-            event.currentTarget.setAttribute(
-              "aria-sort",
-              ascending
-                ? "ascending"
-                : "descending",
-            );
-            const arrow =
-              event.currentTarget.querySelector(
-                "span",
-              );
-            if (arrow)
-              arrow.textContent = ascending
-                ? "↑"
-                : "↓";
-            if (url)
-              url.textContent = `/grid?sort=project:${ascending ? "asc" : "desc"}`;
-          });
-
-        filter?.addEventListener("input", () => {
-          if (
-            !(filter instanceof HTMLInputElement)
-          )
-            return;
-          const query = filter.value
-            .trim()
-            .toLowerCase();
-          demo
-            .querySelectorAll(".grid-project")
-            .forEach((project) => {
-              if (
-                project instanceof HTMLElement
-              ) {
-                project.hidden = !(
-                  project.dataset.project ?? ""
-                )
-                  .toLowerCase()
-                  .includes(query);
-              }
-            });
-          if (url)
-            url.textContent = `/grid?filter=${encodeURIComponent(filter.value)}&sort=project:${ascending ? "asc" : "desc"}`;
-        });
-
-        demo
-          .querySelector("[data-grid-add]")
-          ?.addEventListener("click", () => {
-            if (!(list instanceof HTMLElement))
-              return;
-            const draft =
-              document.createElement("div");
-            draft.className =
-              "grid-project grid-project-draft";
-            draft.dataset.project = "New project";
-            draft.innerHTML = `<div class="grid-demo-row" role="row"><span class="grid-draft-mark">+</span><span role="gridcell"><input aria-label="New project name" value="New project" /></span><span role="gridcell"><span class="grid-state" data-state="draft">Draft</span></span><span role="gridcell">Unassigned</span><span role="gridcell">—</span></div>`;
-            list.append(draft);
-            draft.querySelector("input")?.focus();
-          });
-      }
-    </script>
-
-    <style>
-      :global(*) {
-        box-sizing: border-box;
-      }
-      :global(html) {
-        scroll-behavior: smooth;
-      }
-      :global(body.grid-document) {
-        background: #fbfbf8;
-        color: #18201d;
-        font-family: var(--font-sans);
-        font-feature-settings:
-          "kern" 1,
-          "liga" 1,
-          "calt" 1;
-        margin: 0;
-        overflow-x: hidden;
-        padding-bottom: 7rem;
-        text-rendering: optimizeLegibility;
-      }
-      .grid-masthead {
-        align-items: center;
-        border-bottom: 1px solid #d9ddd7;
-        display: flex;
-        justify-content: space-between;
-        margin: 0 auto;
-        max-width: 78rem;
-        padding: 1.05rem 1.5rem;
-      }
-      .grid-wordmark {
-        align-items: center;
-        color: inherit;
-        display: inline-flex;
-        font-size: 0.78rem;
-        font-weight: 780;
-        gap: 0.55rem;
-        letter-spacing: 0;
-        line-height: 1;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-      .grid-wordmark-mark {
-        height: 1.35rem;
-        width: 1.35rem;
-      }
-      .grid-masthead nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem 1.4rem;
-      }
-      .grid-masthead nav a,
-      .grid-reading-links a,
-      .grid-ending a {
-        color: #075d4c;
-        text-decoration-color: rgb(
-          7 93 76 / 0.35
-        );
-        text-underline-offset: 0.2em;
-      }
-      .grid-masthead nav a {
-        font-size: 0.92rem;
-        font-weight: 650;
-        letter-spacing: 0;
-        line-height: 1;
-        text-decoration: none;
-      }
-      .grid-article {
-        margin: 0 auto;
-        max-width: 78rem;
-        min-width: 0;
-        padding: 0 1.5rem;
-      }
-      .grid-opening {
-        max-width: 48rem;
-        padding: clamp(3.5rem, 8vw, 7.5rem) 0
-          3.5rem;
-      }
-      .grid-overline,
-      .grid-margin-label {
-        color: #66706a;
-        font-size: 0.76rem;
-        font-weight: 800;
-        letter-spacing: 0;
-        line-height: 1.2;
-        text-transform: uppercase;
-      }
-      .grid-opening h1 {
-        font-size: clamp(3.4rem, 8vw, 6.7rem);
-        font-weight: 820;
-        letter-spacing: 0;
-        line-height: 1;
-        margin: 1rem 0 1.75rem;
-      }
-      .grid-opening
-        > p:not(
-          .grid-overline,
-          .grid-reading-links
-        ) {
-        font-size: clamp(1.08rem, 1.3vw, 1.28rem);
-        font-weight: 430;
-        line-height: 1.62;
-        margin: 1rem 0;
-      }
-      .grid-opening .grid-standfirst {
-        font-size: clamp(
-          1.08rem,
-          1.45vw,
-          1.34rem
-        );
-        font-weight: 430;
-        letter-spacing: 0;
-        line-height: 1.5;
-      }
-      .grid-reading-links {
-        display: flex;
-        flex-wrap: wrap;
-        font-size: 0.92rem;
-        gap: 0.5rem 0.8rem;
-        margin-top: 1.8rem;
-      }
-      .grid-figure,
-      .grid-inline-figure {
-        background: #fff;
-        border: 1px solid #ccd2cc;
-        margin: 0;
-        max-width: 100%;
-        min-width: 0;
-      }
-      .grid-figure + .grid-figure {
-        border-top: 0;
-      }
-      .grid-figure > figcaption,
-      .grid-inline-figure > figcaption {
-        align-items: center;
-        background: #f0f2ed;
-        border-bottom: 1px solid #ccd2cc;
-        display: grid;
-        font-size: 0.76rem;
-        gap: 0.75rem;
-        grid-template-columns: auto 1fr auto;
-        padding: 0.65rem 0.85rem;
-      }
-      figcaption > span:first-child {
-        color: #66706a;
-        font-family: var(--font-mono);
-      }
-      figcaption > :last-child {
-        color: #66706a;
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-      }
-      .grid-code {
-        max-height: 22rem;
-        max-width: 100%;
-        min-width: 0;
-        overflow: auto;
-      }
-      .grid-code :global(pre) {
-        background: #fff !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        font-size: 0.78rem !important;
-        line-height: 1.55 !important;
-        margin: 0 !important;
-        padding: 1.25rem !important;
-      }
-      .grid-demo-instructions {
-        align-items: end;
-        border-bottom: 1px solid #dfe3de;
-        display: grid;
-        gap: 1.2rem 2rem;
-        grid-template-columns: 1fr auto;
-        padding: 1.1rem 1.25rem;
-      }
-      .grid-demo-instructions p {
-        font-size: 1rem;
-        font-weight: 430;
-        line-height: 1.5;
-        margin: 0;
-        max-width: 38rem;
-      }
-      .grid-demo-controls {
-        align-items: end;
-        display: flex;
-        gap: 0.55rem;
-      }
-      .grid-demo-controls label {
-        display: grid;
-        font-size: 0.7rem;
-        gap: 0.3rem;
-        text-transform: uppercase;
-      }
-      .grid-demo-controls input,
-      .grid-demo-controls button,
-      .grid-project-draft input {
-        background: #fff;
-        border: 1px solid #aeb7af;
-        border-radius: 0;
-        color: inherit;
-        font: inherit;
-        min-height: 2.25rem;
-        padding: 0.4rem 0.6rem;
-      }
-      .grid-demo-controls button {
-        background: #183f36;
-        border-color: #183f36;
-        color: #fff;
-        cursor: pointer;
-      }
-      .grid-demo-instructions output {
-        color: #66706a;
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        grid-column: 1 / -1;
-      }
-      .grid-demo-scroll {
-        overflow-x: auto;
-      }
-      .grid-demo {
-        min-width: 44rem;
-      }
-      .grid-demo-row {
-        align-items: stretch;
-        border-bottom: 1px solid #e1e4df;
-        display: grid;
-        grid-template-columns:
-          2.5rem minmax(14rem, 1.6fr)
-          7rem 8rem 6rem;
-        min-height: 3rem;
-      }
-      .grid-demo-row > * {
-        align-items: center;
-        border-right: 1px solid #eef0ec;
-        display: flex;
-        min-width: 0;
-        padding: 0.55rem 0.7rem;
-      }
-      .grid-demo-row > *:last-child {
-        border-right: 0;
-      }
-      .grid-demo-header {
-        background: #f7f8f5;
-        color: #58615c;
-        font-size: 0.72rem;
-        font-weight: 720;
-        min-height: 2.35rem;
-        text-transform: uppercase;
-      }
-      .grid-demo-header button {
-        background: transparent;
-        border: 0;
-        color: inherit;
-        cursor: pointer;
-        font: inherit;
-        text-transform: inherit;
-      }
-      .grid-expander {
-        background: transparent;
-        border: 0;
-        color: #075d4c;
-        cursor: pointer;
-        font-size: 1.5rem;
-        justify-content: center;
-        padding: 0 !important;
-      }
-      .grid-state {
-        border: 1px solid;
-        font-size: 0.72rem;
-        padding: 0.2rem 0.35rem;
-      }
-      .grid-state[data-state="doing"] {
-        background: #e2f1eb;
-        border-color: #a8cbbd;
-      }
-      .grid-state[data-state="ready"] {
-        background: #e8eef8;
-        border-color: #b7c5db;
-      }
-      .grid-state[data-state="open"] {
-        background: #f2ede1;
-        border-color: #d1c4a6;
-      }
-      .grid-state[data-state="draft"] {
-        background: #fff8cf;
-        border-color: #d9c564;
-      }
-      .grid-child-level {
-        background: #f5f7f3;
-        border-bottom: 1px solid #cfd5ce;
-        padding: 0.75rem 1rem 1rem 3rem;
-      }
-      .grid-child-note {
-        color: #66706a;
-        font-size: 0.82rem;
-        font-style: italic;
-        margin: 0 0 0.65rem;
-      }
-      .grid-child-header,
-      .grid-child-row {
-        display: grid;
-        grid-template-columns:
-          minmax(14rem, 1.5fr)
-          8rem 8rem;
-      }
-      .grid-child-header {
-        color: #66706a;
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-      .grid-child-header span,
-      .grid-child-row > * {
-        border: 1px solid #d7dcd6;
-        border-right: 0;
-        padding: 0.45rem 0.55rem;
-      }
-      .grid-child-header > *:last-child,
-      .grid-child-row > *:last-child {
-        border-right: 1px solid #d7dcd6;
-      }
-      .grid-child-row {
-        background: #fff;
-        font-size: 0.82rem;
-      }
-      .grid-child-row + .grid-child-row > * {
-        border-top: 0;
-      }
-      .grid-child-row select {
-        background: #fff;
-        border-radius: 0;
-        color: inherit;
-        font: inherit;
-      }
-      [contenteditable="true"]:focus,
-      [role="gridcell"]:focus {
-        outline: 2px solid #16725e;
-        outline-offset: -2px;
-      }
-      .grid-draft-mark {
-        color: #8a7414;
-        font-weight: 800;
-        justify-content: center;
-      }
-      .grid-project-draft input {
-        min-height: auto;
-        width: 100%;
-      }
-      .grid-prose-section,
-      .grid-ending {
-        border-top: 1px solid #ccd2cc;
-        display: grid;
-        gap: 1.5rem 3.5rem;
-        grid-template-columns: 10rem minmax(
-            0,
-            44rem
-          );
-        margin-top: clamp(5rem, 10vw, 9rem);
-        padding-top: 1.25rem;
-      }
-      .grid-prose-section > *,
-      .grid-ending > * {
-        min-width: 0;
-      }
-      .grid-prose {
-        grid-column: 2;
-      }
-      .grid-prose h2,
-      .grid-ending h2 {
-        font-size: 1.58rem;
-        font-weight: 720;
-        letter-spacing: 0;
-        line-height: 1.25;
-        margin: 0 0 1rem;
-      }
-      .grid-prose > p,
-      .grid-ending > div > p {
-        font-size: clamp(1.08rem, 1.3vw, 1.28rem);
-        font-weight: 430;
-        line-height: 1.62;
-        margin: 1rem 0;
-      }
-      .grid-inline-figure {
-        grid-column: 2 / -1;
-        margin-top: 1rem;
-        max-width: 58rem;
-        width: 100%;
-      }
-      .grid-command {
-        background: #eef1ec;
-        border-left: 3px solid #73837b;
-        font-size: 0.77rem;
-        line-height: 1.6;
-        margin: 1.6rem 0 0;
-        overflow: auto;
-        padding: 1rem;
-      }
-      .grid-key-table {
-        border-collapse: collapse;
-        font-size: 0.88rem;
-        margin-top: 2rem;
-        table-layout: fixed;
-        width: 100%;
-      }
-      .grid-key-table th:first-child,
-      .grid-key-table td:first-child {
-        width: 38%;
-      }
-      .grid-key-table th,
-      .grid-key-table td {
-        border-bottom: 1px solid #d9ddd7;
-        padding: 0.75rem 0.4rem;
-        text-align: left;
-        vertical-align: top;
-      }
-      .grid-key-table th {
-        color: #66706a;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-      }
-      .grid-key-table kbd {
-        background: #fff;
-        border: 1px solid #bcc4bc;
-        box-shadow: 0 1px 0 #bcc4bc;
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        padding: 0.12rem 0.3rem;
-      }
-      .grid-ending {
-        grid-template-columns: 10rem minmax(
-            0,
-            44rem
-          );
-        padding-bottom: 2rem;
-      }
-      .grid-ending-links {
-        display: grid;
-        gap: 0.45rem;
-        padding-top: 0.7rem;
-      }
-      .grid-ending code,
-      .grid-prose code {
-        font-size: 0.82em;
-      }
-
-      @media (max-width: 760px) {
-        .grid-masthead {
-          align-items: flex-start;
-        }
-        .grid-masthead nav {
-          gap: 0.45rem;
-          justify-content: flex-end;
-        }
-        .grid-masthead nav a {
-          font-size: 0.75rem;
-        }
-        .grid-opening {
-          padding-top: 4rem;
-        }
-        .grid-figure > figcaption,
-        .grid-inline-figure > figcaption {
-          grid-template-columns: auto 1fr;
-        }
-        figcaption > :last-child {
-          display: none;
-        }
-        .grid-demo-instructions {
-          align-items: stretch;
-          grid-template-columns: 1fr;
-        }
-        .grid-demo-controls {
-          align-items: stretch;
-          flex-direction: column;
-        }
-        .grid-demo-instructions output {
-          grid-column: auto;
-          overflow-wrap: anywhere;
-        }
-        .grid-prose-section,
-        .grid-ending {
-          gap: 0.75rem;
-          grid-template-columns: 1fr;
-          margin-top: 5rem;
-        }
-        .grid-prose,
-        .grid-inline-figure {
-          grid-column: 1;
-        }
-        .grid-margin-label {
-          margin-bottom: 0.6rem;
-        }
-      }
-    </style>
   </body>
 </html>
+
+<style>
+  :root {
+    font-family:
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    color: #20201e;
+    background: #fafaf8;
+    font-synthesis: none;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  main {
+    box-sizing: border-box;
+    display: grid;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-block: clamp(1.5rem, 3vh, 3rem);
+    padding-inline: clamp(2rem, 7vw, 6rem);
+    place-items: center;
+  }
+
+  article {
+    width: min(100%, 46rem);
+  }
+
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    margin: 0 0 1.05rem;
+    font-size: clamp(
+      1rem,
+      0.97rem + 0.2vw,
+      1.125rem
+    );
+    letter-spacing: -0.012em;
+    line-height: 1.62;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1.3rem;
+    margin-top: 1.85rem;
+    font-size: 0.9375rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+
+  a:hover {
+    color: #65655f;
+  }
+
+  a:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+</style>

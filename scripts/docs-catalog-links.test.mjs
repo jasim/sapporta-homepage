@@ -17,7 +17,6 @@ const docsRequire = createRequire(
 const canonicalOrigin = "https://sapporta.com";
 const explicitRoutes = new Set([
   "/",
-  "/new-home",
   "/grid",
   "/grid/",
   "/llms.txt",

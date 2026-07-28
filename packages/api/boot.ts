@@ -56,8 +56,6 @@ const docsDistDir = join(projectRoot, "packages/docs/dist");
 const astroPageRoutes = [
   { path: "/", file: "index.html" },
   { path: "/index.html", file: "index.html" },
-  { path: "/new-home", file: "new-home/index.html" },
-  { path: "/new-home/", file: "new-home/index.html" },
 ] as const;
 
 const conn = connectProject(databasePath);
