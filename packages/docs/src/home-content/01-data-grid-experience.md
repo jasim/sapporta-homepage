@@ -35,6 +35,8 @@ So when you use Sapporta to build a web application with a coding agent, you get
 a fully wired system with a front end for manipulating data, along with all the
 forms and workflows the application needs.
 
-![A task grid filtered by assignee, project, status, and due date](/assets/home/exercise-workflow/tasks-filtered.png "Filter tasks by assignee, project, status, and due date without leaving the grid.")
+![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
 
-![A master-detail view of people and projects with their related tasks](/assets/home/exercise-workflow/tasks-master-detail.png "Move through people or projects and the related task grid follows the active record.")
+![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
+
+![A master-detail view of people and their related tasks](/assets/home/screenshots/master-detail.png "Move through people and the related task grid follows the active record.")

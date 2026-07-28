@@ -19,8 +19,7 @@
   [ts-rest](https://ts-rest.com/), and Sapporta's
   **[Honest](https://github.com/jasim/sapporta/tree/main/packages/honest#readme)**
   [Hono](https://hono.dev/) adapter for contract-first APIs. You define an
-  endpoint's method, path, parameters, request body, and response shapes once in
-  the shared package. The backend uses that contract to parse and type each
+  APIs signature once in the shared package. The backend uses that contract to parse and type each
   request. The frontend uses the same contract to serialize requests, parse and
   validate responses, and expose a fully typed API client. There is no second
   set of parsers, serializers, or request and response interfaces to keep in

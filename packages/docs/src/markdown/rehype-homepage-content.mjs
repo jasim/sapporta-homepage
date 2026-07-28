@@ -92,7 +92,7 @@ function screenshotFigure(paragraph) {
 }
 
 function isHomepageScreenshot(image) {
-  return Boolean(image?.properties.src.startsWith("/assets/home/exercise-workflow/"));
+  return Boolean(image?.properties.src.startsWith("/assets/home/screenshots/"));
 }
 
 const contentBlockTags = new Set(["h1", "h2", "h3", "h4", "p", "ul", "ol", "pre", "blockquote", "hr", "table", "img"]);

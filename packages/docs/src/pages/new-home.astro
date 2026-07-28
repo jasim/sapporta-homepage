@@ -8,6 +8,7 @@ import { Content as DataGridExperience } from "../home-content/01-data-grid-expe
 import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
 import { Content as RegularApplication } from "../home-content/03-regular-application.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
+import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
 import { Content as StackDetails } from "../home-content/stack.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import HomepageActions from "../components/HomepageActions.astro";
@@ -375,19 +376,22 @@ export const books = sapportaTable({
       >
         <article class="home-copy home-article">
           <section class="home-article__section">
-            <DataGridExperience />
-          </section>
-          <section class="home-article__section">
             <FeaturesInBrief />
-          </section>
-          <section class="home-article__section">
-            <RegularApplication />
           </section>
           <section class="home-article__section">
             <BuiltForAgents />
           </section>
           <section class="home-article__section">
+            <DataGridExperience />
+          </section>
+          <section class="home-article__section">
+            <RegularApplication />
+          </section>
+          <section class="home-article__section">
             <StackDetails />
+          </section>
+          <section class="home-article__section">
+            <StatusAndContributing />
           </section>
         </article>
       </div>
