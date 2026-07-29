@@ -253,8 +253,9 @@ export const books = sapportaTable({
           <HomepageActions
             align="start"
             compact
-            primaryLabel="Documentation"
-            primaryIcon="docs"
+            primaryHref="#get-started"
+            primaryLabel="Get Started"
+            primaryIcon="get-started"
             primaryStyle={false}
           />
         </article>
@@ -263,8 +264,19 @@ export const books = sapportaTable({
       <div class="home-layout home-layout--demo">
         <section
           class="home-demo-section"
-          aria-label="Books and Quotes grid demo"
+          aria-labelledby="home-demo-title"
         >
+          <h2
+            class="home-demo__title"
+            id="home-demo-title"
+          >
+            Demo: Books with nested quotes in
+            Sapporta Grid
+          </h2>
+          <p class="home-demo__subtitle">
+            Use the keyboard to navigate, space to
+            expand books to reveal quotes
+          </p>
           <div class="home-demo" data-demo-tabs>
             <div
               class="home-demo__tabs"
@@ -285,8 +297,7 @@ export const books = sapportaTable({
                   size={17}
                   strokeWidth={2}
                 />
-                <span>Demo: sample data grid</span
-                >
+                <span>Sample data grid</span>
               </button>
               <button
                 class="home-demo__tab"
@@ -357,12 +368,12 @@ export const books = sapportaTable({
       >
         <section
           class="home-quick-start"
-          aria-labelledby="home-quick-start-title"
+          aria-labelledby="get-started"
         >
           <div class="home-quick-start__content">
             <h2
               class="home-quick-start__title"
-              id="home-quick-start-title"
+              id="get-started"
             >
               Get started with your coding agent
             </h2>
