@@ -187,8 +187,8 @@ Use [`deploy/nginx.conf.example`](./deploy/nginx.conf.example) as the actual
 starting configuration. This project has two static roots with different
 fallback rules:
 
-- `packages/docs/dist/` owns `/`, `/docs/*`, `/grid/*`, `/_astro/*`,
-  `/assets/*`, `/pagefind/*`, sitemaps, and the LLM indexes.
+- `packages/docs/dist/` owns `/`, `/robots.txt`, `/docs/*`, `/grid/*`,
+  `/_astro/*`, `/assets/*`, `/pagefind/*`, sitemaps, and the LLM indexes.
 - `packages/frontend/dist/` owns `/app-assets/*` and the React Router fallback
   for application routes such as `/welcome`, `/tables/*`, and `/reports/*`.
 - Hono owns `/api/*` and `/health`.

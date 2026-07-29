@@ -61,12 +61,14 @@ http {
             root /var/www/sapporta-homepage-app/packages/docs/dist;
             try_files /index.html =404;
             add_header Cache-Control "no-cache" always;
+            add_header Link '</llms.txt>; rel="alternate"; type="text/markdown"' always;
         }
 
         location = /index.html {
             root /var/www/sapporta-homepage-app/packages/docs/dist;
             try_files /index.html =404;
             add_header Cache-Control "no-cache" always;
+            add_header Link '</llms.txt>; rel="alternate"; type="text/markdown"' always;
         }
 
         location = /grid {
@@ -164,6 +166,14 @@ http {
         location /pagefind/ {
             root /var/www/sapporta-homepage-app/packages/docs/dist;
             try_files $uri =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location = /robots.txt {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /robots.txt =404;
+            default_type text/plain;
+            charset utf-8;
             add_header Cache-Control "no-cache" always;
         }
 

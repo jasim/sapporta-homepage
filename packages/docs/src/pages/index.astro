@@ -24,6 +24,21 @@ import "../styles/homepage-essay.css";
 
 const { page, brand, navigation } = frontmatter;
 const codeTheme = "github-light-default";
+const homepageUrl = `${gettingStartedEnv.docsCanonicalOrigin}/`;
+const llmsIndexUrl = `${gettingStartedEnv.docsCanonicalOrigin}/llms.txt`;
+const homepageStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  name: "Sapporta",
+  description: page.description,
+  url: homepageUrl,
+  codeRepository:
+    "https://github.com/jasim/sapporta",
+  programmingLanguage: "TypeScript",
+  license: "https://opensource.org/license/mit/",
+  downloadUrl:
+    "https://www.npmjs.com/package/sapporta",
+};
 const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
@@ -86,7 +101,20 @@ export const books = sapportaTable({
       href="/favicon.svg"
       type="image/svg+xml"
     />
+    <link rel="canonical" href={homepageUrl} />
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href={llmsIndexUrl}
+      title="Sapporta documentation index"
+    />
     <title>{page.title}</title>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(
+        homepageStructuredData,
+      )}
+    />
   </head>
   <body class="home-page">
     <a

@@ -1,7 +1,7 @@
 ---
 page:
   language: en
-  title: Sapporta
+  title: Sapporta — TypeScript framework for database applications
   description:
     Sapporta is a TypeScript and SQLite framework for building small database
     applications with generated APIs, editable grids, forms, reports, and
@@ -21,4 +21,5 @@ navigation:
 
 Build database applications in TypeScript
 
-Featuring a general-purpose data grid for every table, out-of-the-box agentic capabilities, and permission-aware APIs.
+Featuring a general-purpose data grid for every table, out-of-the-box agentic
+capabilities, and permission-aware APIs.

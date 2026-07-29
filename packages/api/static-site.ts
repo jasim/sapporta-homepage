@@ -29,6 +29,8 @@ export interface StaticSiteOptions {
 }
 
 const markdownContentType = "text/markdown; charset=utf-8";
+const plainTextContentType = "text/plain; charset=utf-8";
+const xmlContentType = "application/xml; charset=utf-8";
 const llmsIndexPaths = new Set([
   "/llms.txt",
   "/.well-known/llms.txt",
@@ -59,8 +61,11 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
       c.req.path.startsWith("/docs/") ||
       c.req.path === "/grid" ||
       c.req.path.startsWith("/grid/");
+    const isHomepage = c.req.path === "/" || c.req.path === "/index.html";
 
-    if (isDocumentationSurface || isLlmsIndex) {
+    if (isHomepage) {
+      c.header("Link", '</llms.txt>; rel="alternate"; type="text/markdown"');
+    } else if (isDocumentationSurface || isLlmsIndex) {
       const links = ['</llms.txt>; rel="llms-txt"'];
       if (alternateExists) {
         links.push(`<${alternatePath}>; rel="alternate"; type="text/markdown"`);
@@ -85,6 +90,8 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   };
 
   for (const pattern of [
+    "/",
+    "/index.html",
     "/llms.txt",
     "/.well-known/llms.txt",
     "/docs",
@@ -128,8 +135,18 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   serveStaticUse(app, "/pagefind/*", docsDist);
   serveStaticGet(app, "/favicon.svg", docsDist);
   serveStaticGet(app, "/LICENSE.txt", docsDist);
-  serveStaticGet(app, "/sitemap-index.xml", docsDist);
-  serveStaticGet(app, "/sitemap-0.xml", docsDist);
+  serveStaticGet(app, "/robots.txt", docsDist, {
+    contentType: plainTextContentType,
+  });
+  serveStaticGet(app, "/sitemap.xml", docsDist, {
+    contentType: xmlContentType,
+  });
+  serveStaticGet(app, "/sitemap-index.xml", docsDist, {
+    contentType: xmlContentType,
+  });
+  serveStaticGet(app, "/sitemap-0.xml", docsDist, {
+    contentType: xmlContentType,
+  });
   serveStaticGet(app, "/llms.txt", docsDist);
   serveStaticGet(app, "/.well-known/llms.txt", docsDist);
   for (const route of astroPageRoutes) {
@@ -160,6 +177,8 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     ...astroPageRoutes.map((route) => route.path),
     "/favicon.svg",
     "/LICENSE.txt",
+    "/robots.txt",
+    "/sitemap.xml",
     "/sitemap-index.xml",
     "/sitemap-0.xml",
     "/llms.txt",
@@ -207,8 +226,24 @@ function serveStaticGet(
   app: AppServer,
   path: string,
   root: string,
-  options: { file?: string; cache?: MiddlewareHandler<SapportaEnv> } = {},
+  options: {
+    file?: string;
+    cache?: MiddlewareHandler<SapportaEnv>;
+    contentType?: string;
+  } = {},
 ) {
   if (options.cache) app.get(path, options.cache);
+  if (options.contentType) {
+    app.get(path, responseContentType(options.contentType));
+  }
   app.get(path, serveStatic({ root, path: options.file }));
+}
+
+function responseContentType(value: string): MiddlewareHandler<SapportaEnv> {
+  return async (c, next) => {
+    await next();
+    if (c.res.status >= 200 && c.res.status < 400) {
+      c.res.headers.set("Content-Type", value);
+    }
+  };
 }

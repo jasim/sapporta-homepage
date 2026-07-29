@@ -1,7 +1,8 @@
 # sapporta-homepage-app
 
-Uses [Sapporta](https://github.com/jasim/sapporta). TypeScript database
-application with a Hono API, SQLite database, and React frontend.
+Homepage for [Sapporta](https://sapporta.com/), the
+[open-source TypeScript database application framework](https://github.com/jasim/sapporta).
+The site runs a Hono API, SQLite database, and React frontend.
 
 ## Run locally
 
