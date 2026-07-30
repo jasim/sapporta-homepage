@@ -170,4 +170,4 @@ drill-through context from URL state.
 - [Report links](/docs/reference/reports/report-links/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)
-- [App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
+- [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)

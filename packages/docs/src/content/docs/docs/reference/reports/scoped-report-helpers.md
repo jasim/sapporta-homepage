@@ -71,5 +71,5 @@ authorized action.
 
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
-- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)

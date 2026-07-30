@@ -78,13 +78,13 @@ scope. A single-row read, update, or delete returns the same `404 ROW_NOT_FOUND`
 cannot see. Creates reject caller-supplied `workspace_id` / `workspaceId` and `scoped_to_user_id` / `scopedToUserId`,
 stamp the applicable values from authenticated request authority, and verify that referenced rows are visible too.
 
-For ordinary custom table work, [`scopedRows(db, auth, table)`](/docs/reference/server/row-scoped-data-helpers/) keeps
+For ordinary custom table work, [`scopedRows(db, auth, table)`](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/) keeps
 those row and write rules while accepting typed Drizzle predicates. The route still checks its own ability;
 `scopedRows()` handles row visibility, managed-field rejection, reference validation, trusted insert scope, and
 immutable update and delete behavior.
 
 When a workflow needs joins, transactions, or a custom result shape, use
-[a per-table guard](/docs/guides/security/row-safe-custom-endpoints-and-reports/):
+[a per-table guard](/docs/reference/server/row-scoped-data/table-row-security-guards/):
 `auth.rowSecurity.forTable(table).ownedRows(domainPredicate)` composes the request's row predicate into each direct
 Drizzle select, update, or delete. `insertValues()` rejects caller-supplied scope fields and server-only references,
 merges trusted `serverValues`, validates reference visibility, and stamps trusted scope before the insert;

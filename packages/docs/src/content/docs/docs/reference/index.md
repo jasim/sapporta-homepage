@@ -29,11 +29,23 @@ report rendering. Standalone `@sapporta/grid` has its own
 ## Schema and value boundaries
 
 - [Table validation](/docs/reference/schema/table-validation/)
-- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
+- [Generated and client values](/docs/reference/schema/semantic-values/generated-and-client-values/)
+- [Server write values and contracts](/docs/reference/schema/semantic-values/server-write-values-and-contracts/)
+
+## Server row access
+
+- [Scoped CRUD and bounded reads](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/)
+- [Scoped lookups and counts](/docs/reference/server/row-scoped-data/lookups-and-counts/)
+- [Generated query resolvers](/docs/reference/server/row-scoped-data/generated-query-resolvers/)
+- [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 
 ## Frontend state and interaction
 
+- [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
+- [App shell layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
-- [Table query options](/docs/reference/frontend/table-query-options/)
-- [TGrid](/docs/reference/frontend/tgrid/)
+- [Table read functions and query options](/docs/reference/frontend/table-queries/read-functions-and-options/)
+- [Table query cache keys and ownership](/docs/reference/frontend/table-queries/cache-keys-and-ownership/)
+- [TGrid definitions, sessions, and queries](/docs/reference/frontend/tgrid/definitions-sessions-and-queries/)
+- [TGrid interactions, columns, and writes](/docs/reference/frontend/tgrid/interactions-columns-and-writes/)
 - [Standalone Grid interactions](/grid/reference/interactions/)

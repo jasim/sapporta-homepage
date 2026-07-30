@@ -81,6 +81,6 @@ retrying can widen a list, export, or count.
 ## Related documentation
 
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Use table search](/docs/guides/model-data/use-table-search/)
 - [Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
 - [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)

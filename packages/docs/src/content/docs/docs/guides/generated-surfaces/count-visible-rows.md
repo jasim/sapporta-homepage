@@ -135,5 +135,5 @@ count them.
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
-- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Scoped lookups and counts](/docs/reference/server/row-scoped-data/lookups-and-counts/)
 - [Route-based reports](/docs/guides/reports/route-based-reports/)

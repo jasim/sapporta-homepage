@@ -60,7 +60,7 @@ serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
 ## Related documentation
 
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Configure table search](/docs/guides/model-data/configure-table-search/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Column sizing](/docs/reference/column-sizing/)
 - [Table validation](/docs/reference/schema/table-validation/)

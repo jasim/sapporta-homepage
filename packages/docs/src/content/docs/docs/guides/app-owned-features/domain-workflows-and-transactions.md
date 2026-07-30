@@ -167,60 +167,8 @@ perform follow-up effects after commit. Work that must be coordinated reliably
 with an external system usually needs a durable outbox or job record rather than
 a long database transaction.
 
-## Apply the parent-detail pattern
-
-A parent-detail create needs one row-security guard for every table it touches.
-Scope referenced-row reads in SQL. Pass parent keys and other server-authored
-fields through `serverValues`; never copy ownership or parent keys from client
-input.
-
-```ts
-import { eq } from "drizzle-orm";
-
-const parentAccess = auth.rowSecurity.forTable(parents);
-const detailAccess = auth.rowSecurity.forTable(details);
-const referencedAccess = auth.rowSecurity.forTable(referencedRows);
-
-const result = db.transaction((tx) => {
-  const referenced = tx
-    .select({ id: referencedRowsTable.id })
-    .from(referencedRowsTable)
-    .where(
-      referencedAccess.ownedRows(
-        eq(referencedRowsTable.id, input.referenced_id),
-      ),
-    )
-    .get();
-
-  if (!referenced) throw new ReferencedRowNotFoundError();
-
-  const parentValues = parentAccess.insertValuesSync(tx, input.parent);
-  const parent = tx
-    .insert(parentsTable)
-    .values(parentValues as typeof parentsTable.$inferInsert)
-    .returning({ id: parentsTable.id })
-    .get();
-
-  const insertedDetails = input.details.map((detail) => {
-    const detailValues = detailAccess.insertValuesSync(tx, detail, {
-      serverValues: { parent_id: parent.id },
-    });
-
-    return tx
-      .insert(detailsTable)
-      .values(detailValues as typeof detailsTable.$inferInsert)
-      .returning()
-      .get();
-  });
-
-  return { parent, details: insertedDetails };
-});
-```
-
-`insertValuesSync()` rejects client ownership fields and server-managed
-references, merges trusted `serverValues`, validates final foreign-key
-visibility, and stamps request ownership. It prepares values for Drizzle; the
-workflow remains responsible for executing the insert and returning the result.
+For an atomic parent plus line-item create, continue with
+[Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/).
 
 ## Prove atomic behavior
 
@@ -256,6 +204,7 @@ central error path.
 
 ## Related reference
 
-- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
+- [Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/)

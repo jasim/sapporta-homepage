@@ -95,4 +95,4 @@ own only its product rendering and any activation action.
 
 Typecheck the example and exercise its visible loading, ready, interaction, and
 failure states. Use only public `@sapporta/grid` export paths. Continue with
-[Grid Reference](/grid/reference/).
+[ColumnPreset](/grid/reference/column-preset/).

@@ -132,5 +132,5 @@ rows contributed zero values.
 
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
-- [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
+- [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)

@@ -1,8 +1,8 @@
 ---
 title: "Route-based reports"
 description:
-  "Start here for a reusable aggregate: define the protected typed route and
-  screen, then scope base rows, map the dataset, and add drill-through."
+  "Start here for a reusable aggregate: define and mount the protected typed
+  report route, then continue to the focused data and screen guides."
 ---
 
 Generated table screens and endpoints remain the shortest path for ordinary
@@ -142,54 +142,9 @@ The mapper never calls `Temporal.Now`. Tests inject a fixed
 that needs shareable historical results should add a validated `as_of` query and
 include it in URL state instead.
 
-## Add the typed client and protected screen
-
-The frontend imports the same contract:
-
-```ts
-import { getApiBase } from "@sapporta/frontend/platform";
-import { createApiClient } from "@sapporta/shared/client";
-import { projectProgressContract } from "task-app-shared";
-
-export const projectProgressApi = createApiClient(projectProgressContract, {
-  baseUrl: getApiBase,
-});
-```
-
-Read `project_id` from `useSearchParams`, call
-`projectProgressApi.projectProgress({ query })`, and use that query in the
-screen's query key. The screen needs four visible states:
-
-1. loading while the request is in flight;
-2. an error surface when the typed call fails;
-3. an empty result when `dataset.nodes` is empty; and
-4. the report result.
-
-The dataset label is display text supplied by the mapper. Render it above the
-Grid; `ReportGridDataset` does not render the heading:
-
-```tsx
-<>
-  <h1>{dataset.label}</h1>
-  {dataset.nodes.length === 0 ? (
-    <EmptyReport message="No visible projects match this filter." />
-  ) : (
-    <ReportGridDataset
-      dataset={dataset}
-      links={projectProgressLinks}
-      linkContext={{ input: query }}
-    />
-  )}
-</>
-```
-
-Register the nested React route as `reports/project-progress` in
-`appProtectedRoutes`, and use the absolute `/reports/project-progress` URL in
-navigation. Keeping the filter in the URL makes an authorized result reloadable,
-bookmarkable, and shareable. Follow
-[Typed client creation](/docs/reference/contracts/typed-client-creation/) and
-[App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
-for the exhaustive client and shell APIs.
+After the route and dataset are in place, continue with
+[Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
+for the typed client, visible screen states, routing, and shareable filters.
 
 ## Prove runtime and documentation agree
 
@@ -206,15 +161,16 @@ The endpoint must appear in runtime discovery and the merged OpenAPI document.
 An OpenAPI entry alone does not prove `route()` mounted the handler, and a
 successful call alone does not prove `extend()` published it.
 
-Focused route and screen tests should cover:
+Focused route tests should cover:
 
 - full and filtered results parsed with `gridDatasetSchema`;
 - missing ability and an invisible project filter;
 - another workspace contributing no rows, identifiers, or totals;
 - report totals agreeing with scoped generated reads of the base tables;
-- loading, error, empty, and result UI;
-- URL filter reload and share behavior; and
-- project and task/status drill-through.
+- runtime and documentation composition for the mounted route.
+
+Screen state, URL reload, and drill-through checks belong to the report-screen
+and link guides.
 
 Keep each report as a vertical slice unless two reports genuinely share domain
 query logic. Sharing the renderer contract is not enough reason to couple their
@@ -225,6 +181,8 @@ queries.
 - [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
+- [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
+- [Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
 - [Report routes and registration](/docs/reference/reports/report-routes-and-registration/)
 - [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
 - [Table, row, and report commands](/docs/reference/cli/table-row-and-report-commands/)

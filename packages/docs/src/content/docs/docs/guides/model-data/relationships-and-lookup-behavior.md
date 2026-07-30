@@ -111,5 +111,5 @@ ability and row scope. Relationship metadata never widens access.
 
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Configure table search](/docs/guides/model-data/configure-table-search/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)

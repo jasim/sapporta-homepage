@@ -98,4 +98,6 @@ provides schema, columns, data sources, and persistence. Use `runtime.root` or
 expanded hierarchy.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
-Continue with [Grid Reference](/grid/reference/).
+Continue with
+[Schema, rows, paths, and identity](/grid/reference/base-grid/schema-rows-and-identity/)
+or [GridRuntime](/grid/reference/base-grid/grid-runtime/).

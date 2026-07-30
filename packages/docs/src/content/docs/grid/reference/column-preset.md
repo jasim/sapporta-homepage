@@ -250,4 +250,7 @@ const style = {
 
 ## Related documentation
 
-[Grid reference overview](/grid/reference/)
+- [Columns and editors](/grid/guides/columns-and-editors/)
+- [Editing and saving](/grid/guides/editing-and-saving/)
+- [Copying grid data](/grid/guides/copying-grid-data/)
+- [Row selection](/grid/reference/interactions/row-selection/)

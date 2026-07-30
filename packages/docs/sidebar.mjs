@@ -35,7 +35,24 @@ export default [
             slug: "docs/guides/model-data/relationships-and-lookup-behavior",
           },
           {
-            slug: "docs/guides/model-data/search-indexes-and-display-metadata",
+            label: "Table search",
+            items: [
+              {
+                slug: "docs/guides/model-data/search-indexes-and-display-metadata",
+              },
+              {
+                slug: "docs/guides/model-data/configure-table-search",
+              },
+              {
+                slug: "docs/guides/model-data/use-table-search",
+              },
+              {
+                slug: "docs/guides/model-data/relational-search-semantics-and-security",
+              },
+              {
+                slug: "docs/guides/model-data/index-relational-search-paths",
+              },
+            ],
           },
           {
             slug: "docs/guides/model-data/schema-changes-and-migrations",
@@ -44,13 +61,21 @@ export default [
             slug: "docs/guides/generated-surfaces/record-screens-and-forms",
           },
           {
-            slug: "docs/guides/generated-surfaces/generated-table-apis",
-          },
-          {
-            slug: "docs/guides/generated-surfaces/count-visible-rows",
-          },
-          {
-            slug: "docs/guides/generated-surfaces/filtering-sorting-search-and-pagination",
+            label: "Generated table APIs",
+            items: [
+              {
+                slug: "docs/guides/generated-surfaces/generated-table-apis",
+              },
+              {
+                slug: "docs/guides/generated-surfaces/generated-lookups-and-csv-export",
+              },
+              {
+                slug: "docs/guides/generated-surfaces/count-visible-rows",
+              },
+              {
+                slug: "docs/guides/generated-surfaces/filtering-sorting-search-and-pagination",
+              },
+            ],
           },
         ],
       },
@@ -61,13 +86,49 @@ export default [
             slug: "docs/guides/generated-surfaces/grid-first-record-workflows",
           },
           {
-            slug: "docs/guides/generated-surfaces/table-aware-grids-and-customization",
+            label: "Registered-table Grid",
+            items: [
+              {
+                slug: "docs/guides/generated-surfaces/grid-interaction-and-selection",
+              },
+              {
+                slug: "docs/guides/generated-surfaces/table-aware-grids-and-customization",
+              },
+              {
+                slug: "docs/guides/generated-surfaces/low-level-tgrid-sessions",
+              },
+            ],
           },
           {
-            slug: "docs/guides/app-owned-features/custom-forms-and-table-queries",
+            slug: "docs/guides/app-owned-features/bounded-basegrid-projections",
           },
           {
-            slug: "docs/guides/app-owned-features/custom-frontend-routes-and-screens",
+            label: "Custom forms",
+            items: [
+              {
+                slug: "docs/guides/app-owned-features/custom-forms-and-table-queries",
+              },
+              {
+                slug: "docs/guides/app-owned-features/custom-forms-and-validation",
+              },
+              {
+                slug: "docs/guides/app-owned-features/cached-table-reads-and-refresh",
+              },
+            ],
+          },
+          {
+            label: "Custom screens",
+            items: [
+              {
+                slug: "docs/guides/app-owned-features/custom-frontend-routes-and-screens",
+              },
+              {
+                slug: "docs/guides/app-owned-features/custom-workflow-screens",
+              },
+              {
+                slug: "docs/guides/app-owned-features/frontend-routes-navigation-and-layout",
+              },
+            ],
           },
         ],
       },
@@ -81,10 +142,27 @@ export default [
             slug: "docs/guides/app-owned-features/domain-workflows-and-transactions",
           },
           {
+            slug: "docs/guides/app-owned-features/parent-detail-transactions",
+          },
+          {
             slug: "docs/guides/app-owned-features/custom-api-endpoints",
           },
           {
-            slug: "docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns",
+            label: "Endpoint patterns",
+            items: [
+              {
+                slug: "docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns",
+              },
+              {
+                slug: "docs/guides/app-owned-features/expected-errors-and-http-mapping",
+              },
+              {
+                slug: "docs/guides/app-owned-features/multipart-file-uploads",
+              },
+              {
+                slug: "docs/guides/app-owned-features/non-json-and-raw-responses",
+              },
+            ],
           },
           {
             slug: "docs/guides/app-owned-features/typed-api-clients",
@@ -101,7 +179,18 @@ export default [
             slug: "docs/guides/security/workspaces-ownership-and-row-visibility",
           },
           {
-            slug: "docs/guides/security/row-safe-custom-endpoints-and-reports",
+            label: "Row-safe custom data",
+            items: [
+              {
+                slug: "docs/guides/security/row-safe-custom-endpoints-and-reports",
+              },
+              {
+                slug: "docs/guides/security/scoped-table-reads-and-writes",
+              },
+              {
+                slug: "docs/guides/security/immutable-tables-and-trusted-raw-access",
+              },
+            ],
           },
           {
             slug: "docs/guides/security/agent-access-and-scoped-tokens",
@@ -119,6 +208,9 @@ export default [
           },
           {
             slug: "docs/guides/reports/report-datasets-and-formatting",
+          },
+          {
+            slug: "docs/guides/reports/report-screens-and-url-state",
           },
           {
             slug: "docs/guides/reports/drill-through-and-cross-report-links",
@@ -197,7 +289,18 @@ export default [
             slug: "docs/reference/schema/table-validation",
           },
           {
-            slug: "docs/reference/schema/semantic-value-boundaries",
+            label: "Semantic values",
+            items: [
+              {
+                slug: "docs/reference/schema/semantic-value-boundaries",
+              },
+              {
+                slug: "docs/reference/schema/semantic-values/generated-and-client-values",
+              },
+              {
+                slug: "docs/reference/schema/semantic-values/server-write-values-and-contracts",
+              },
+            ],
           },
           {
             slug: "docs/reference/schema/schema-metadata-types",
@@ -237,7 +340,24 @@ export default [
             slug: "docs/reference/server/auth-and-row-security",
           },
           {
-            slug: "docs/reference/server/row-scoped-data-helpers",
+            label: "Row-scoped data",
+            items: [
+              {
+                slug: "docs/reference/server/row-scoped-data-helpers",
+              },
+              {
+                slug: "docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads",
+              },
+              {
+                slug: "docs/reference/server/row-scoped-data/lookups-and-counts",
+              },
+              {
+                slug: "docs/reference/server/row-scoped-data/generated-query-resolvers",
+              },
+              {
+                slug: "docs/reference/server/row-scoped-data/table-row-security-guards",
+              },
+            ],
           },
           {
             slug: "docs/reference/server/runtime-services",
@@ -265,16 +385,49 @@ export default [
             slug: "docs/reference/column-sizing",
           },
           {
-            slug: "docs/reference/frontend/app-shell-routes-and-navigation",
+            label: "App shell",
+            items: [
+              {
+                slug: "docs/reference/frontend/app-shell-routes-and-navigation",
+              },
+              {
+                slug: "docs/reference/frontend/app-shell/application-routes-and-navigation",
+              },
+              {
+                slug: "docs/reference/frontend/app-shell/layout-and-sidebar",
+              },
+            ],
           },
           {
             slug: "docs/reference/frontend/generated-record-surfaces",
           },
           {
-            slug: "docs/reference/frontend/table-query-options",
+            label: "Table queries",
+            items: [
+              {
+                slug: "docs/reference/frontend/table-query-options",
+              },
+              {
+                slug: "docs/reference/frontend/table-queries/read-functions-and-options",
+              },
+              {
+                slug: "docs/reference/frontend/table-queries/cache-keys-and-ownership",
+              },
+            ],
           },
           {
-            slug: "docs/reference/frontend/tgrid",
+            label: "TGrid",
+            items: [
+              {
+                slug: "docs/reference/frontend/tgrid",
+              },
+              {
+                slug: "docs/reference/frontend/tgrid/definitions-sessions-and-queries",
+              },
+              {
+                slug: "docs/reference/frontend/tgrid/interactions-columns-and-writes",
+              },
+            ],
           },
         ],
       },
@@ -391,7 +544,18 @@ export default [
             slug: "grid/guides/hierarchical-grids",
           },
           {
-            slug: "grid/guides/advanced-rows",
+            label: "Advanced rows",
+            items: [
+              {
+                slug: "grid/guides/advanced-rows",
+              },
+              {
+                slug: "grid/guides/advanced-rows/summary-rows-and-footers",
+              },
+              {
+                slug: "grid/guides/advanced-rows/phantom-rows-and-inserts",
+              },
+            ],
           },
           {
             slug: "grid/guides/styling",
@@ -405,22 +569,73 @@ export default [
             slug: "grid/reference",
           },
           {
-            slug: "grid/reference/base-grid",
+            label: "BaseGrid",
+            items: [
+              {
+                slug: "grid/reference/base-grid",
+              },
+              {
+                slug: "grid/reference/base-grid/schema-rows-and-identity",
+              },
+              {
+                slug: "grid/reference/base-grid/grid-runtime",
+              },
+              {
+                slug: "grid/reference/base-grid/level-runtime",
+              },
+              {
+                slug: "grid/reference/base-grid/react-api",
+              },
+              {
+                slug: "grid/reference/base-grid/advanced-composition",
+              },
+            ],
           },
           {
             slug: "grid/reference/column-preset",
           },
           {
-            slug: "grid/reference/data-sources",
-          },
-          {
-            slug: "grid/reference/rest-helpers",
+            label: "Data sources",
+            items: [
+              {
+                slug: "grid/reference/data-sources",
+              },
+              {
+                slug: "grid/reference/data-sources/contracts-and-state",
+              },
+              {
+                slug: "grid/reference/data-sources/runtime-data-access",
+              },
+              {
+                slug: "grid/reference/data-sources/writes-and-reconciliation",
+              },
+              {
+                slug: "grid/reference/data-sources/in-memory-and-rest-sources",
+              },
+              {
+                slug: "grid/reference/rest-helpers",
+              },
+            ],
           },
           {
             slug: "grid/reference/clipboard",
           },
           {
-            slug: "grid/reference/interactions",
+            label: "Interactions",
+            items: [
+              {
+                slug: "grid/reference/interactions",
+              },
+              {
+                slug: "grid/reference/interactions/configuration-and-presets",
+              },
+              {
+                slug: "grid/reference/interactions/active-row-and-activation",
+              },
+              {
+                slug: "grid/reference/interactions/row-selection",
+              },
+            ],
           },
           {
             slug: "grid/reference/dom-and-styling-contract",

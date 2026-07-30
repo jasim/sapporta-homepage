@@ -135,5 +135,5 @@ is not the trusted write shape produced after auth preparation.
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
-- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
+- [Use table search](/docs/guides/model-data/use-table-search/)
+- [Generated and client values](/docs/reference/schema/semantic-values/generated-and-client-values/)

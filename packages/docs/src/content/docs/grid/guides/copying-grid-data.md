@@ -3,6 +3,10 @@ title: "Copying grid data"
 description: "Control copied columns, headers, labeled values, and asynchronous clipboard values."
 ---
 
+Clipboard and copy-menu exports are available from `@sapporta/grid/grid`. This
+guide owns the copy behavior shared by BaseGrid, framework table grids, TGrid,
+and report grids.
+
 Every framework table grid, TGrid, and report grid has a right-click copy menu.
 Standalone BaseGrid surfaces get the same menu when they wrap the rendered
 levels in `GridCopyContextMenu`.
@@ -175,4 +179,4 @@ copy behavior before it materializes the CSV rows, which lets lookup-backed
 columns load labels before writing to the clipboard.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
-Continue with [Grid Reference](/grid/reference/).
+Continue with the [Clipboard API](/grid/reference/clipboard/).

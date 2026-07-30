@@ -119,7 +119,7 @@ documents the public pieces available to that screen.
 ## Related reference
 
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Use table search](/docs/guides/model-data/use-table-search/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [Workspaces, ownership, and row visibility](/docs/guides/security/workspaces-ownership-and-row-visibility/)

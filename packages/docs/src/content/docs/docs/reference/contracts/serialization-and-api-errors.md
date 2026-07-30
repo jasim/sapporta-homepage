@@ -49,5 +49,5 @@ Temporal helpers from `@sapporta/shared/temporal`, error schema from
 
 ## Related documentation
 
-- [Errors, uploads, and endpoint patterns](/docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns/)
+- [Expected errors and HTTP mapping](/docs/guides/app-owned-features/expected-errors-and-http-mapping/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)

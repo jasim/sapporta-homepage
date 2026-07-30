@@ -75,4 +75,5 @@ Keep row selection for row operations such as delete, export, bulk edit, or
 side-panel workflows.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
-Continue with [Grid Reference](/grid/reference/).
+Continue with
+[Interaction configuration and presets](/grid/reference/interactions/configuration-and-presets/).

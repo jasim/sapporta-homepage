@@ -170,6 +170,6 @@ can act on.
 
 - [Generated record screens and forms](/docs/guides/generated-surfaces/record-screens-and-forms/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
-- [Table query options](/docs/reference/frontend/table-query-options/)
+- [Table read functions and query options](/docs/reference/frontend/table-queries/read-functions-and-options/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
-- [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)
+- [Generated and client values](/docs/reference/schema/semantic-values/generated-and-client-values/)

@@ -126,6 +126,7 @@ must not become a valid broad query.
 
 ## Related reference
 
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Configure table search](/docs/guides/model-data/configure-table-search/)
+- [Use table search](/docs/guides/model-data/use-table-search/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)

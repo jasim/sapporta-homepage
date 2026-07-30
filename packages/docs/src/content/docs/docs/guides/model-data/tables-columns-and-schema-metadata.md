@@ -192,6 +192,6 @@ reviewed migration.
 - [Table definitions](/docs/reference/schema/table-definitions/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [Relationships and lookup behavior](/docs/guides/model-data/relationships-and-lookup-behavior/)
-- [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
+- [Configure table search](/docs/guides/model-data/configure-table-search/)
 - [Table validation](/docs/reference/schema/table-validation/)
 - [Semantic value boundaries](/docs/reference/schema/semantic-value-boundaries/)

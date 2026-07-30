@@ -74,5 +74,5 @@ credential, then read back through a scoped operation.
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Authentication and token endpoints](/docs/reference/http/authentication-and-token-endpoints/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
-- [Errors, uploads, and endpoint patterns](/docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns/)
+- [Expected errors and HTTP mapping](/docs/guides/app-owned-features/expected-errors-and-http-mapping/)
 - [Troubleshooting](/docs/guides/operations/troubleshooting/)

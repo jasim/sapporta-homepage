@@ -46,4 +46,4 @@ React grid.
 
 Typecheck the example and exercise its visible loading, ready, interaction, and
 failure states. Use only public `@sapporta/grid` export paths. Continue with
-[Grid Reference](/grid/reference/).
+[Data-source writes and reconciliation](/grid/reference/data-sources/writes-and-reconciliation/).

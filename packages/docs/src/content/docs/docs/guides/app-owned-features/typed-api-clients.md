@@ -132,9 +132,9 @@ the screen's central error boundary.
 TGrid sessions use a separate cache. Call `reloadTGridRows("tasks")` or
 `reloadTGridRows("task_events")` only when the owning screen coordinates an
 affected mounted TGrid. See
-[Table query options](/docs/reference/frontend/table-query-options/) for the
+[Table query cache keys and ownership](/docs/reference/frontend/table-queries/cache-keys-and-ownership/) for the
 cache-key hierarchy. The
-[custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
+[custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
 guide owns the full mutation pattern.
 
 ## Observe the inferred request

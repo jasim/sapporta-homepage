@@ -115,4 +115,4 @@ those as UI state. Enforce access on the server endpoint that reads and writes
 the data.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
-Continue with [Grid Reference](/grid/reference/).
+Continue with the [Data-source reference](/grid/reference/data-sources/).
