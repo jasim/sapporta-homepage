@@ -10,7 +10,7 @@ then manage the agent so it doesn't create duplicate sources of truth and comple
 when something doesn't fit what we want, we have to correct the agent, and between all this is lots of waiting and
 uncertainty. So the value of a well-integrated well-curated system never goes away.
 
-Sapporta helps agenting development because it provides a robust infrastructure within which the agents can build in a
+Sapporta helps agentic development because it provides a robust infrastructure within which the agents can build in a
 predictable manner. It gets working table APIs, grids, forms, and row security, then spends its time on the
 domain-specific parts of the product.
 
