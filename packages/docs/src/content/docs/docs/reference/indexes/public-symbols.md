@@ -31,10 +31,14 @@ Package/export index checked against the linked Sapporta package export maps.
   metadata-derived form fields, submission-error helpers, generated table query
   options and keys, `buildTableSelectionQuery()`, `buildTableRowsQuery()`,
   TGrid, report components, lookups, and platform helpers.
+- `@sapporta/frontend/layout` and `@sapporta/frontend/shell`: `AppPage`,
+  `PageFrame`, `PageHeader`, `PageHeaderButton`, `PageBody`, `SidebarProvider`,
+  `SidebarRegion`, `SidebarShell`, `SidebarToggle`, and `useSidebar()`.
 - `@sapporta/grid`: standalone BaseGrid runtime/React APIs, grid-wide active-row
   state, row-activation events, ColumnPreset, `parseNumericInput`, lookup, and
   CSS subpaths; see standalone Grid Reference.
 
 ## Related documentation
 
+- [App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
 - [Grid reference](/grid/reference/)

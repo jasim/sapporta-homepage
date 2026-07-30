@@ -50,6 +50,17 @@ external effect and should not run inside the synchronous SQLite transaction
 callback. If delivery must be durable, insert an outbox record in the
 transaction and process it separately.
 
+## Resolve the verification policy
+
+`readProjectAuthEnv()` resolves the email-verification requirement from one
+policy. An explicit `SAPPORTA_REQUIRE_VERIFIED_EMAIL=true` or `false` takes
+precedence. When the variable is absent, `NODE_ENV=production` requires
+verification and other runtime modes do not.
+
+The generated development environment therefore permits sign-up without a
+verification message. Set the explicit override to `true` when a local workflow
+needs to exercise verification links and unverified-session handling.
+
 ## Inspect mail locally
 
 Stream transport does not deliver the message. It logs selected input fields:
@@ -66,7 +77,6 @@ pnpm dev
 # Trigger the workflow from the browser or its app-owned endpoint.
 pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
 ```
-
 
 Production uses `SAPPORTA_MAIL_TRANSPORT=smtp` with either `SMTP_URL` or the
 individual `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, and `SMTP_PASS`

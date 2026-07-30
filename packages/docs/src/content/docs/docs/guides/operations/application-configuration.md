@@ -10,14 +10,16 @@ different edges of the system.
 
 ## Give each process its own values
 
-| Value                       | Read by             | Purpose                                                        |
-| --------------------------- | ------------------- | -------------------------------------------------------------- |
-| `SAPPORTA_API_PORT`         | API process         | Hono listener; falls back to `PORT`, then 3000                 |
-| `SAPPORTA_FRONTEND_PORT`    | Development command | Vite listener                                                  |
-| `SAPPORTA_PUBLIC_APP_URL`   | API process         | Public browser origin for auth links and default trust         |
-| `SAPPORTA_FRONTEND_ORIGINS` | API process         | Additional exact origins allowed to send credentialed requests |
-| `VITE_API_URL`              | Frontend build      | API origin for a split deployment; `getApiBase()` adds `/api`  |
-| `SAPPORTA_API_URL`          | CLI or automation   | Target running API; it does not configure the server listener  |
+| Value                             | Read by             | Purpose                                                        |
+| --------------------------------- | ------------------- | -------------------------------------------------------------- |
+| `NODE_ENV`                        | API process         | Runtime mode; `production` requires verified email by default  |
+| `SAPPORTA_REQUIRE_VERIFIED_EMAIL` | API process         | Explicit boolean override for the email-verification default   |
+| `SAPPORTA_API_PORT`               | API process         | Hono listener; falls back to `PORT`, then 3000                 |
+| `SAPPORTA_FRONTEND_PORT`          | Development command | Vite listener                                                  |
+| `SAPPORTA_PUBLIC_APP_URL`         | API process         | Public browser origin for auth links and default trust         |
+| `SAPPORTA_FRONTEND_ORIGINS`       | API process         | Additional exact origins allowed to send credentialed requests |
+| `VITE_API_URL`                    | Frontend build      | API origin for a split deployment; `getApiBase()` adds `/api`  |
+| `SAPPORTA_API_URL`                | CLI or automation   | Target running API; it does not configure the server listener  |
 
 Only values prefixed with `VITE_` can enter the built browser bundle. Treat
 every such value as public. `BETTER_AUTH_SECRET`, SMTP credentials, agent
@@ -41,6 +43,7 @@ Same-origin production serves the built SPA and API from one public origin. It
 does not need `VITE_API_URL`.
 
 ```ini
+NODE_ENV=production
 SAPPORTA_API_PORT=3000
 SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
 SAPPORTA_MAIL_TRANSPORT=smtp
@@ -64,6 +67,11 @@ VITE_API_URL=https://api.tasks.example.com
 query, trailing slash, or `/api`. If both `SAPPORTA_API_PORT` and a
 hosting-platform `PORT` are set, they must contain the same number.
 
+Email verification follows `NODE_ENV` when `SAPPORTA_REQUIRE_VERIFIED_EMAIL` is
+absent: production requires verification, and other modes do not. Set the
+override to the literal `true` or `false` when the application needs a policy
+independent of its runtime mode.
+
 ## Observe the resolved topology
 
 Start the chosen configuration, open the app, and inspect one request in the
@@ -75,10 +83,8 @@ pnpm dev
 pnpm exec sapporta --api-url http://localhost:3000 endpoints list
 ```
 
-
-`VITE_API_URL` is embedded in browser code at build time.
-`SAPPORTA_API_URL` selects a target for the CLI process. Neither controls the
-API listener.
+`VITE_API_URL` is embedded in browser code at build time. `SAPPORTA_API_URL`
+selects a target for the CLI process. Neither controls the API listener.
 
 ## Related reference
 

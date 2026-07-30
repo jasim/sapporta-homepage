@@ -61,19 +61,13 @@ signup screen when no signed-in session exists.
 
 Enter a name, email address, and password.
 
-> **Look at your logs for the email verification link!**
->
-> The account requires email verification. In local development, the email
-> server writes every message to the `pnpm dev` console. Open the verification
-> URL from the console to verify the account.
-
 Sapporta uses [Better Auth](https://better-auth.com/) for authentication. The
 authentication UI and related screens are present in the generated application
 and can be customized locally.
 
-After verification, Sapporta creates the first workspace and assigns the first
-user as its owner. The app shell shows project navigation, generated table
-surfaces, the account workspace, and the starter welcome screen.
+Sapporta creates the first workspace and assigns the first user as its owner.
+The app shell shows project navigation, generated table surfaces, the account
+workspace, and the starter welcome screen.
 
 ![Generated Sapporta app after signup](/assets/getting-started/generated-app-welcome.jpg)
 

@@ -18,6 +18,8 @@ Generated workspace scripts, API boot, Vite output, and Dockerfile.
   3000 when neither is set.
 - API routes live under `/api`; the default production process also serves the
   built SPA and fallback routes.
+- `NODE_ENV=production` requires verified email by default. An explicit
+  `SAPPORTA_REQUIRE_VERIFIED_EMAIL=true` or `false` takes precedence.
 - SQLite storage must live on durable writable storage and be backed up by the
   deployment platform.
 - The generated container command migrates once, then starts the API process.

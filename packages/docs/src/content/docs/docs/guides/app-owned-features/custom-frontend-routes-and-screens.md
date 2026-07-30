@@ -20,6 +20,7 @@ status and history.
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { reloadTGridRows } from "@sapporta/frontend";
+import { AppPage } from "@sapporta/frontend/layout";
 import {
   tableQueryKeys,
   tableRecordsPageQueryOptions,
@@ -158,12 +159,16 @@ export function ProjectProgress() {
   }, [tasks]);
 
   if (loading) {
-    return <p className="p-6 text-sm text-sap-muted">Loading progress…</p>;
+    return (
+      <AppPage title="Project progress" bodyClassName="p-6">
+        <p className="text-sm text-sap-muted">Loading progress…</p>
+      </AppPage>
+    );
   }
 
   if (loadError) {
     return (
-      <div className="p-6">
+      <AppPage title="Project progress" bodyClassName="p-6">
         <p role="alert" className="text-sm text-red-700">
           Project progress could not be loaded.
         </p>
@@ -175,48 +180,46 @@ export function ProjectProgress() {
         >
           Retry
         </Button>
-      </div>
+      </AppPage>
     );
   }
 
   if (incomplete) {
     return (
-      <main className="space-y-3 p-6">
-        <h1 className="text-xl font-semibold">Project progress</h1>
+      <AppPage title="Project progress" bodyClassName="space-y-3 p-6">
         <p role="status" className="text-sm text-sap-muted">
           This bounded summary is incomplete because at least one generated read
           exceeded the {TABLE_ROW_CAP}-row cap. Use the scoped project-progress
           report for complete totals.
         </p>
-      </main>
+      </AppPage>
     );
   }
 
   if (projects.length === 0) {
     return (
-      <div className="p-6">
-        <h1 className="text-xl font-semibold">Project progress</h1>
-        <p className="mt-2 text-sm text-sap-muted">No projects are visible.</p>
+      <AppPage title="Project progress" bodyClassName="p-6">
+        <p className="text-sm text-sap-muted">No projects are visible.</p>
         <Link className="mt-4 inline-block underline" to="/tables/projects/new">
           Create a project
         </Link>
-      </div>
+      </AppPage>
     );
   }
 
   return (
-    <main className="space-y-4 p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold">Project progress</h1>
-          <p className="text-sm text-sap-muted">
-            Complete tasks here. Edit records in the generated tables.
-          </p>
-        </div>
+    <AppPage
+      title="Project progress"
+      actions={
         <Link className="text-sm underline" to="/tables/tasks">
           Open Tasks
         </Link>
-      </div>
+      }
+      bodyClassName="space-y-4 p-6"
+    >
+      <p className="text-sm text-sap-muted">
+        Complete tasks here. Edit records in the generated tables.
+      </p>
 
       {completeTask.isSuccess && (
         <p role="status" className="text-sm text-green-700">
@@ -264,10 +267,16 @@ export function ProjectProgress() {
           </section>
         );
       })}
-    </main>
+    </AppPage>
   );
 }
 ```
+
+`AppPage` gives every state the shell's standard fixed header and one scrolling
+body. The shell keeps its responsive sidebar control available without adding a
+toggle to `ProjectProgress`. A workspace that owns its own height and overflow
+can compose `PageFrame`, `PageHeader`, and `PageBody` directly; a naturally
+growing route can omit these wrappers and use the shell scroller.
 
 `tableRecordsPageQueryOptions()` supplies stable table cache keys, passes query
 cancellation to the generated HTTP request, and decodes each row at the browser

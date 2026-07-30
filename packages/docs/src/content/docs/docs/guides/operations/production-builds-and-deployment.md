@@ -26,12 +26,17 @@ already generated, reviewed, and committed during development.
 Configure the API process with production values:
 
 ```ini
+NODE_ENV=production
 BETTER_AUTH_SECRET=<long-production-secret>
 SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
 SAPPORTA_API_PORT=3000
 SAPPORTA_MAIL_TRANSPORT=smtp
 SAPPORTA_MAIL_FROM=Task App <no-reply@tasks.example.com>
 ```
+
+`NODE_ENV=production` requires verified email when
+`SAPPORTA_REQUIRE_VERIFIED_EMAIL` is absent. Set that variable to `true` or
+`false` only when the deployment needs an explicit override.
 
 The generated database is `data/sqlite.db`; the Docker image mounts `/app/data`.
 That directory must be a durable writable volume. Backups live outside the
@@ -54,7 +59,6 @@ pnpm exec sapporta \
   --api-url https://tasks.example.com \
   api get /api/reports/project-progress
 ```
-
 
 A reverse proxy can serve static assets and forward `/api/*` while remaining
 same-origin to the browser. A split deployment builds the frontend with
