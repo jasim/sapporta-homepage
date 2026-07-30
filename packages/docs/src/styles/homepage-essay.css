@@ -501,8 +501,116 @@
 }
 
 .home-demo__panel--grid .homepage-grid {
+  --homepage-grid-active-cell-background: var(--sap-link);
+  --homepage-grid-active-cell-foreground: #ffffff;
+  --homepage-grid-active-row-background: var(--sap-drill-down-link-soft);
+
   background: var(--sap-surface);
   height: clamp(30rem, 58vw, 44rem);
+}
+
+:root[data-theme="dark"] .home-demo__panel--grid .homepage-grid {
+  --homepage-grid-active-cell-foreground: #0e0f0b;
+}
+
+/*
+ * Keep the active row as the quieter context and reserve the stronger blue
+ * treatment for the active cell. Each level owns its current-cell colors so
+ * a retained focus marker in an inactive nested level stays neutral.
+ */
+.home-demo__panel--grid .homepage-grid [data-grid-part="row"][data-row-active="true"] {
+  --grid-row-background: var(--homepage-grid-active-row-background);
+
+  background: var(--homepage-grid-active-row-background);
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-part="root"] {
+  --homepage-grid-current-cell-background: var(--homepage-grid-active-cell-background);
+  --homepage-grid-current-cell-foreground: var(--homepage-grid-active-cell-foreground);
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-part="root"][data-active="false"] {
+  --homepage-grid-current-cell-background: var(--sap-selection);
+  --homepage-grid-current-cell-foreground: var(--sap-fg);
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-part="cell"][data-cell-status="focus"] {
+  --grid-cell-background: var(--homepage-grid-current-cell-background);
+
+  background: var(--homepage-grid-current-cell-background);
+  color: var(--homepage-grid-current-cell-foreground);
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-part="cell"][data-cell-status="focus"]
+  [data-grid-part="cell-content"] {
+  color: inherit;
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-part="cell"][data-cell-status="focus"]
+  [data-grid-part="cell-content"]
+  > *,
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-part="cell"][data-cell-status="focus"]
+  [data-grid-part="cell-content"]
+  :where(a, button) {
+  color: inherit;
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-part="expand-chevron"] {
+  transition: none;
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-part="cell"][data-cell-status="focus"]
+  [data-grid-part="expand-chevron"] {
+  background: color-mix(in srgb, var(--homepage-grid-current-cell-foreground) 14%, transparent);
+  color: var(--homepage-grid-current-cell-foreground);
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-part="cell"][data-cell-status="focus"]
+  [data-grid-part="expand-chevron"]:hover {
+  background: color-mix(in srgb, var(--homepage-grid-current-cell-foreground) 24%, transparent);
+}
+
+/*
+ * Keep the structural row selectors narrow and give nested quote text more of
+ * the available width. The related-table link still fits inside the compact
+ * 36px child-grid gutter.
+ */
+.home-demo__panel--grid .homepage-grid [data-grid-path][data-grid-depth="0"] {
+  --grid-row-header-column-width: 20px;
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-path][data-grid-depth="1"] {
+  --grid-row-header-column-width: 15px;
+  margin-inline-start: 36px;
+  padding-inline-end: 8px;
+}
+
+.home-demo__panel--grid .homepage-grid [data-grid-part="related-table-link"] {
+  left: -32px;
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  :is([data-grid-part="level-status"], [data-grid-part="level-empty"])[data-grid-depth="1"] {
+  margin-inline-start: 36px;
+}
+
+.home-demo__panel--grid
+  .homepage-grid
+  [data-grid-depth="1"]
+  [data-grid-part="cell"][data-col-id="quote_text"]
+  > [data-grid-part="cell-content"] {
+  padding-inline: 0;
 }
 
 .home-demo__panel--grid .homepage-quote-cell {
@@ -528,7 +636,7 @@
   min-height: 8rem;
   outline: none;
   overflow-wrap: normal;
-  padding: 0.5rem calc(0.75rem + 10px);
+  padding: 0.5rem 0.75rem;
   resize: none;
   white-space: pre-wrap;
   width: 100%;
