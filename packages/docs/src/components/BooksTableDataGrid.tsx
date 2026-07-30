@@ -545,7 +545,7 @@ function QuoteDetailsCell() {
       >
         <Maximize2 className="h-4 w-4" aria-hidden="true" />
       </DialogTrigger>
-      <DialogContent className="max-h-[88vh] w-[min(94vw,64rem)] max-w-[94vw] overflow-y-auto p-0">
+      <DialogContent className="homepage-quote-dialog max-h-[88vh] w-[min(94vw,64rem)] max-w-[94vw] overflow-y-auto p-0">
         <DialogHeader className="sr-only">
           <DialogTitle>Quote details</DialogTitle>
           <DialogDescription>{quoteCredit}</DialogDescription>

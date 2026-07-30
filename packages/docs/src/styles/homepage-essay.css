@@ -642,6 +642,38 @@
   width: 100%;
 }
 
+/*
+ * DialogContent owns its close button, so this page-level hook enlarges that
+ * control without changing every Sapporta dialog. On narrow touch screens the
+ * 24px icon sits inside a 48px target with 12px of padding on every side.
+ */
+@media (max-width: 40rem) {
+  .homepage-quote-dialog > button:last-child {
+    align-items: center;
+    background: color-mix(in srgb, var(--sap-surface) 82%, transparent);
+    border-radius: 0.375rem;
+    display: flex;
+    height: 3rem;
+    justify-content: center;
+    opacity: 0.9;
+    padding: 0.75rem;
+    right: 0.25rem;
+    touch-action: manipulation;
+    top: 0.25rem;
+    width: 3rem;
+  }
+
+  .homepage-quote-dialog > button:last-child:hover {
+    background: var(--sap-surface);
+    opacity: 1;
+  }
+
+  .homepage-quote-dialog > button:last-child > svg {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
 /* Quick start ------------------------------------------------------------ */
 
 .home-quick-start {
