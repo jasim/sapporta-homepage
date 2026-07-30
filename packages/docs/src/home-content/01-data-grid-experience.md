@@ -1,7 +1,7 @@
 ## A grid-first interface
 
-80% of most ERP software is just forms, data grids, and reports, and they can
-all be operated well with the keyboard. My goal with Sapporta is to bring the
+A large chunk of most ERP software is just forms, data grids, and reports, and they
+all heavily favour the keyboard. My goal with Sapporta is to bring the 
 same experience to database applications on the web.
 
 Sapporta uses data grids as a universal surface for tabular data. You can put a
