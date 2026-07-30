@@ -9,6 +9,7 @@ import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief
 import { Content as RegularApplication } from "../home-content/03-regular-application.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
+import { Content as FrequentlyAskedQuestions } from "../home-content/faq.markdown";
 import { Content as StackDetails } from "../home-content/stack.md";
 import BooksTableDataGrid from "../components/BooksTableDataGrid";
 import HomepageActions from "../components/HomepageActions.astro";
@@ -43,7 +44,12 @@ const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
   );
-const createProjectAgentPrompt = `Build a task management app with Sapporta.
+const createProjectAgentPrompt = `Before you begin, ensure the Sapporta skill is installed:
+npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
+
+Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.
+
+Build a task management app with Sapporta.
 ${createProjectAgentUrl}
 
 Model people, projects, tasks, labels, and comments.
@@ -383,6 +389,19 @@ export const books = sapportaTable({
               Copy this starter prompt, then paste
               it into your coding agent.
             </p>
+            <p
+              class="home-quick-start__description"
+            >
+              <strong
+                >Using a coding agent?</strong
+              >
+              Have it install, load, and follow the
+              <a
+                href="https://github.com/jasim/sapporta-skills"
+                >Sapporta skill</a
+              > before it begins. The skill guides setup,
+              modelling, implementation, and verification.
+            </p>
             <button
               class="home-quick-start__copy-button"
               type="button"
@@ -431,6 +450,9 @@ export const books = sapportaTable({
           </section>
           <section class="home-article__section">
             <StatusAndContributing />
+          </section>
+          <section class="home-article__section">
+            <FrequentlyAskedQuestions />
           </section>
         </article>
       </div>

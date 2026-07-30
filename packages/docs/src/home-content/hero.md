@@ -19,7 +19,9 @@ navigation:
       href: https://github.com/jasim/sapporta
 ---
 
-Build database applications in TypeScript
+Sapporta is a TypeScript framework for applications built around relational
+data &mdash; from personal databases and operational tools to vertical SaaS products.
 
-Featuring a general-purpose data grid for every table, out-of-the-box agentic
-capabilities, and permission-aware APIs.
+It uses your Drizzle schema to provide permission-aware APIs, editable grids, forms, and reports. With this, your users get a rich spreadsheet-like experience to manage all their data. The APIs also make your applications agentic out of the box.
+
+But the codebase remains a regular TypeScript application -  you can add typed API endpoints, React screens, and build everything you need without constraints.

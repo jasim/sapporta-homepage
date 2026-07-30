@@ -8,6 +8,10 @@ Sapporta uses data grids as a universal surface for tabular data. You can put a
 lot of heart and soul into a single component, and it benefits the entire
 application.
 
+![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
+
+![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
+
 That is also what makes spreadsheets beautiful. People use them because they can
 work with data without having to anticipate every requirement in advance.
 Operations like sorting, searching, and filtering, are available to all sheets,
@@ -34,9 +38,5 @@ Reports use the same data grid and thus have all the same affordances.
 So when you use Sapporta to build a web application with a coding agent, you get
 a fully wired system with a front end for manipulating data, along with all the
 forms and workflows the application needs.
-
-![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
-
-![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
 
 ![A master-detail view of people and their related tasks](/assets/home/screenshots/master-detail.png "Move through people and the related task grid follows the active record.")

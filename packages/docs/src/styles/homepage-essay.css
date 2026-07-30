@@ -266,21 +266,20 @@
 
 .home-hero__title {
   font: inherit;
-  margin: 0 0 clamp(1.75rem, 3.5vw, 2.5rem);
+  margin: 0 0 clamp(1.5rem, 3vw, 2rem);
+}
+
+.home-intro__headline,
+.home-intro__summary {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.62;
+  margin-bottom: 1rem;
+  text-wrap: pretty;
 }
 
 .home-intro__headline {
   color: var(--ink);
-  font-size: clamp(1.75rem, 3vw, 2rem);
-  font-weight: 450;
-  line-height: 1.14;
-  margin-bottom: 0.75rem;
-  text-wrap: balance;
-}
-
-.home-intro__summary {
-  font-size: 1.125rem;
-  margin-bottom: 0;
 }
 
 .home-capabilities {
@@ -987,8 +986,9 @@
     margin-top: 1.6rem;
   }
 
-  .home-intro__headline {
-    font-size: 1.6rem;
+  .home-intro__headline,
+  .home-intro__summary {
+    font-size: 1rem;
   }
 
   .home-wordmark--hero {
@@ -998,10 +998,6 @@
   .home-wordmark__mark--hero {
     height: clamp(2.15rem, 9vw, 2.75rem);
     width: clamp(2.15rem, 9vw, 2.75rem);
-  }
-
-  .home-intro__summary {
-    font-size: 1.0625rem;
   }
 
   .home-capabilities__list {

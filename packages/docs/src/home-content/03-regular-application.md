@@ -16,7 +16,7 @@ See the table declaration code here:
 
 // Regular table schema defined in Drizzle
 export const booksTable = sqliteTable("books", {
-  id: integer("id").primaryKey({autoIncrement: true}),
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   author: text("author").notNull(),
 });
@@ -39,8 +39,8 @@ export const books = sapportaTable({
       },
     ],
     columns: {
-      title: {width: 64},
-      author: {width: 36},
+      title: { width: 64 },
+      author: { width: 36 },
     },
   },
 });
@@ -58,11 +58,11 @@ This declaration is used by Sapporta to:
   frontend uses to build editable grids, create forms, lookups, and nested
   child-table views.
 
-As you can see, this declarative configuration is what makes Sapporta truly 
+As you can see, this declarative configuration is what makes Sapporta truly
 useful for rapidly building database applications.
 
-Aside: I've found that coding agents routinely read the Sapporta library
-code, and understands the configuration and its runtime implications quite well.
-Unlike more complex multi-knob declarative systems (like say Kubernetes), the
+I've found that coding agents routinely read the Sapporta library code, and
+understands the configuration and its runtime implications quite well. Unlike
+more complex multi-knob declarative systems (like say Kubernetes), the
 configuration here maps in a straightforward manner to their runtime, and is
 thus amenable to better understanding and control.
