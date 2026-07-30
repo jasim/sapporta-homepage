@@ -93,6 +93,19 @@ export const books = sapportaTable({
 <!doctype html>
 <html lang={page.language}>
   <head>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -272,17 +285,21 @@ export const books = sapportaTable({
           class="home-demo-section"
           aria-labelledby="home-demo-title"
         >
-          <h2
-            class="home-demo__title"
-            id="home-demo-title"
-          >
-            Demo: Books with nested quotes in
-            Sapporta Grid
-          </h2>
-          <p class="home-demo__subtitle">
-            Use the keyboard to navigate, space to
-            expand books to reveal quotes
-          </p>
+          <div class="home-demo__heading">
+            <p
+              class="home-demo__label"
+              id="home-demo-title"
+            >
+              DEMO
+            </p>
+            <p class="home-demo__subtitle">
+              Use the keyboard to navigate.
+              <br />
+              Press
+              <strong>space</strong> to expand a book
+              and reveal its quotes.
+            </p>
+          </div>
           <div class="home-demo" data-demo-tabs>
             <div
               class="home-demo__tabs"
@@ -449,10 +466,10 @@ export const books = sapportaTable({
             <StackDetails />
           </section>
           <section class="home-article__section">
-            <StatusAndContributing />
+            <FrequentlyAskedQuestions />
           </section>
           <section class="home-article__section">
-            <FrequentlyAskedQuestions />
+            <StatusAndContributing />
           </section>
         </article>
       </div>

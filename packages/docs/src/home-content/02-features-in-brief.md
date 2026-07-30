@@ -1,3 +1,5 @@
+## At a glance
+
 When you create a new Sapporta project by running `sapporta init <project-name>`
 you get a complete, pre-wired project out of the box — API server, React
 frontend, auth, migrations, and a production Dockerfile, all set up and

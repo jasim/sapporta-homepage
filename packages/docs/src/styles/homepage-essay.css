@@ -4,6 +4,7 @@
   --home-layout-gutter-start: 3.75rem;
   --home-layout-gutter-end: 2.5rem;
   --home-copy-width: 42rem;
+  --home-major-section-gap: clamp(5rem, 9vw, 8rem);
 
   /* Keep the embedded Sapporta UI on its canonical theme. */
   --color-sap-bg: var(--sap-bg);
@@ -79,7 +80,6 @@
 
 .home-layout--intro {
   display: block;
-  padding-bottom: clamp(1rem, 2vw, 1.5rem);
   padding-top: 1rem;
 }
 
@@ -87,6 +87,7 @@
 .home-layout--quick-start,
 .home-layout--article {
   display: block;
+  margin-top: var(--home-major-section-gap);
   padding-top: 0;
 }
 
@@ -136,6 +137,7 @@
 }
 
 .home-wordmark--hero {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: clamp(2.75rem, 5vw, 4.25rem);
   font-weight: 600;
   gap: clamp(0.65rem, 1.25vw, 1rem);
@@ -332,7 +334,7 @@
 /* Interactive grid and schema demo -------------------------------------- */
 
 .home-demo-section {
-  margin: 0 0 3rem;
+  margin: 0;
   max-width: 80rem;
   min-width: 0;
   width: 100%;
@@ -343,21 +345,31 @@
   width: 100%;
 }
 
-.home-demo__title {
-  color: var(--ink);
-  font-size: clamp(1.3rem, 2vw, 1.6rem);
-  font-weight: 550;
-  line-height: 1.25;
+.home-demo__heading {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.home-demo__label {
+  background: #0a0a0a;
+  color: #ffffff;
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  line-height: 1;
   margin: 0;
-  max-width: 42rem;
-  text-wrap: balance;
+  padding: 0.52rem 0.68rem;
 }
 
 .home-demo__subtitle {
   color: var(--ink-soft);
   font-size: 0.95rem;
   line-height: 1.5;
-  margin: 0.35rem 0 0.2rem;
+  margin: 0;
   max-width: 42rem;
 }
 
@@ -526,8 +538,6 @@
 
 .home-quick-start {
   max-width: 80rem;
-  padding: clamp(3rem, 6vw, 5rem) 0
-    clamp(5rem, 9vw, 8rem);
   width: 100%;
 }
 
@@ -636,7 +646,7 @@
 }
 
 .home-article__section + .home-article__section {
-  margin-top: 3.5rem;
+  margin-top: clamp(5rem, 8vw, 7rem);
 }
 
 .home-article__section > .expressive-code {
@@ -939,6 +949,7 @@
   .home-page {
     --home-layout-gutter-start: 1rem;
     --home-layout-gutter-end: 1rem;
+    --home-major-section-gap: clamp(4rem, 14vw, 6rem);
   }
 
   .home-layout {
@@ -952,6 +963,10 @@
 
   .home-layout--article {
     padding-bottom: 3.5rem;
+  }
+
+  .home-article__section + .home-article__section {
+    margin-top: 4rem;
   }
 
   .home-footer {
