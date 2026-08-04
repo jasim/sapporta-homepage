@@ -1,12 +1,6 @@
 ## A grid-first interface
 
-A large chunk of most ERP software is just forms, data grids, and reports, and they
-all heavily favour the keyboard. My goal with Sapporta is to bring the 
-same experience to database applications on the web.
-
-Sapporta uses data grids as a universal surface for tabular data. You can put a
-lot of heart and soul into a single component, and it benefits the entire
-application.
+A large chunk of most ERP software is just forms, data grids, and reports, and they all heavily favour the keyboard. Sapporta's goal is to bring the same experience to database applications on the web. It uses data grids as a universal surface for tabular data. You can put a lot of heart and soul into a single component, and it benefits the entire application.
 
 ![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
 

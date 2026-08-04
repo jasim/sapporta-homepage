@@ -11,9 +11,6 @@ export default [
       {
         slug: "docs/getting-started/tour-the-generated-project",
       },
-      {
-        slug: "docs/guides/discovery/develop-with-a-coding-agent",
-      },
     ],
   },
   {
@@ -21,6 +18,9 @@ export default [
     items: [
       {
         slug: "docs/guides",
+      },
+      {
+        slug: "docs/walkthrough",
       },
     ],
   },
