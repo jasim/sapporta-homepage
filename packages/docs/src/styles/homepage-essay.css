@@ -763,6 +763,7 @@
 }
 
 .home-quick-start__agent-note {
+  align-self: start;
   color: color-mix(in srgb, var(--ink-soft) 78%, transparent);
   font-size: 0.75rem;
   grid-column: 1;
