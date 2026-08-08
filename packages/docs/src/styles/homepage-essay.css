@@ -737,40 +737,36 @@
 /* Quick start ------------------------------------------------------------ */
 
 .home-quick-start {
-  border-top: 1px solid var(--ink);
-  padding-top: 1.25rem;
-  max-width: 80rem;
+  max-width: 50rem;
   width: 100%;
 }
 
 .home-quick-start__content {
   color: var(--ink);
-  display: grid;
-  gap: 0 clamp(2.5rem, 6vw, 6rem);
-  grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--home-copy-width));
+  display: flex;
+  flex-direction: column;
   max-width: none;
 }
 
 .home-quick-start__title {
   color: inherit;
-  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
-  font-weight: 700;
-  grid-column: 1;
-  grid-row: 1;
-  line-height: 1.3;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   margin: 0;
   scroll-margin-top: 2rem;
+  text-wrap: balance;
 }
 
 .home-quick-start__agent-note {
-  align-self: start;
-  color: color-mix(in srgb, var(--ink-soft) 78%, transparent);
-  font-size: 0.75rem;
-  grid-column: 1;
-  grid-row: 2 / span 3;
-  line-height: 1.55;
-  margin: 0.75rem 0 0;
-  max-width: 13rem;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  color: color-mix(in srgb, var(--ink-soft) 82%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin: 2.25rem 0 0;
+  max-width: 40rem;
+  padding-top: 1rem;
 }
 
 .home-quick-start__agent-note code {
@@ -781,11 +777,11 @@
 
 .home-quick-start__description {
   color: var(--ink-soft);
-  font-size: 1rem;
-  line-height: 1.5;
-  grid-column: 2;
-  margin: 0 0 1rem;
-  max-width: 35rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin: 0.85rem 0 0;
+  max-width: 38rem;
+  text-wrap: pretty;
 }
 
 .home-quick-start__applications {
@@ -793,8 +789,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  grid-column: 2;
-  margin: 0 0 1rem;
+  margin: 1.75rem 0 0;
 }
 
 .home-quick-start__application-options {
@@ -865,6 +860,14 @@
   outline-offset: 3px;
 }
 
+.home-quick-start__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 1.25rem 0 0;
+}
+
 .home-quick-start__copy-button {
   align-items: center;
   appearance: none;
@@ -879,11 +882,9 @@
   font-size: 0.9rem;
   font-weight: 720;
   gap: 0.5rem;
-  grid-column: 2;
   justify-content: center;
   line-height: 1.3;
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.1rem;
   width: fit-content;
 }
 
@@ -899,17 +900,17 @@
 }
 
 .home-quick-start__prompt {
-  background: var(--surface);
-  border: 0;
-  border-radius: 0.25rem;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent);
   color: var(--ink);
   cursor: text;
   font-size: 0.875rem;
-  grid-column: 2;
   line-height: 1.6;
-  margin: 0;
+  margin: 1.5rem 0 0;
   overflow-x: auto;
-  padding: clamp(1rem, 2vw, 1.25rem);
+  padding: clamp(1.1rem, 2.2vw, 1.4rem);
   user-select: text;
   white-space: pre-wrap;
 }
@@ -951,13 +952,25 @@
   border-top: 1px solid var(--rule);
 }
 
+.home-stage--quick-start {
+  background: color-mix(in srgb, var(--surface) 86%, #5b9d76 14%);
+  border-block: 1px solid var(--rule);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+  scroll-margin-top: 2rem;
+}
+
+.home-section-marker--quick-start {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
 .home-layout--value {
   margin-top: clamp(6rem, 11vw, 10rem);
   padding-bottom: 0;
 }
 
 .home-layout--quick-start {
-  margin-top: clamp(5rem, 9vw, 8rem);
+  margin-top: 0;
 }
 
 .home-layout--framework {
@@ -1401,20 +1414,13 @@
     max-width: var(--home-copy-width);
   }
 
-  .home-article__section--technical,
-  .home-quick-start__content {
+  .home-article__section--technical {
     gap: 1.5rem;
     grid-template-columns: minmax(0, 1fr);
   }
 
   .home-article__section--technical > .home-copy__heading--level-2,
-  .home-article__section--technical > :not(.home-copy__heading--level-2),
-  .home-quick-start__title,
-  .home-quick-start__agent-note,
-  .home-quick-start__description,
-  .home-quick-start__applications,
-  .home-quick-start__copy-button,
-  .home-quick-start__prompt {
+  .home-article__section--technical > :not(.home-copy__heading--level-2) {
     grid-column: 1;
     grid-row: auto;
   }
@@ -1423,13 +1429,8 @@
     margin-bottom: 1rem;
   }
 
-  .home-quick-start__title {
-    margin-bottom: 0.25rem;
-  }
-
-  .home-quick-start__agent-note {
-    margin-top: -0.5rem;
-    max-width: 36rem;
+  .home-stage--quick-start {
+    padding-block: clamp(3.5rem, 9vw, 5rem);
   }
 
   .home-article__section + .home-article__section {

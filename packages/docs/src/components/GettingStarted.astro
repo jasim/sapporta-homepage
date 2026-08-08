@@ -90,32 +90,28 @@ Include:
 Add realistic sample data.`;
 ---
 
-<div class="home-layout home-layout--quick-start">
-  <section
-    class="home-quick-start"
-    aria-labelledby="get-started"
-  >
-    <div class="home-quick-start__content">
-      <h2
-        class="home-quick-start__title"
-        id="get-started"
-      >
-        Get started with your coding agent
-      </h2>
-      <p
-        class="home-quick-start__agent-note"
-        data-agent-guidance
-      >
-        Are you a coding agent? If you want to
-        build a project using Sapporta, you must
-        install the Sapporta skill with <code
-          >{skillInstallCommand}</code
+<section
+  class="home-stage home-stage--quick-start"
+  aria-labelledby="get-started"
+>
+  <div class="home-layout home-layout--quick-start">
+    <div
+      class="home-section-marker home-section-marker--quick-start"
+    >
+      <span>Get Started</span>
+    </div>
+    <div class="home-quick-start">
+      <div class="home-quick-start__content">
+        <h2
+          class="home-quick-start__title"
+          id="get-started"
         >
-      </p>
-      <p class="home-quick-start__description">
-        Choose an example or start blank.
-      </p>
-      <div class="home-quick-start__applications">
+          Get started with your coding agent
+        </h2>
+        <p class="home-quick-start__description">
+          Copy the prompt, refine it for your needs, then send it to your agent.
+        </p>
+        <div class="home-quick-start__applications">
         <div
           class="home-quick-start__application-options"
           role="group"
@@ -162,29 +158,42 @@ Add realistic sample data.`;
       <pre
         class="home-quick-start__prompt"
         data-agent-prompt>{blankPrompt}</pre>
-      <button
-        class="home-quick-start__copy-button"
-        type="button"
-        data-copy-agent-prompt
-        aria-label="Copy starter prompt to clipboard"
-        title="Copy starter prompt to clipboard"
-      >
-        <Copy
-          aria-hidden="true"
-          size={17}
-          strokeWidth={2.25}
-        />
-        <span data-copy-agent-label>
-          Copy starter prompt
-        </span>
-      </button>
-      <span
-        class="home-quick-start__status"
-        data-copy-agent-status
-        aria-live="polite"></span>
+        <div class="home-quick-start__actions">
+          <button
+            class="home-quick-start__copy-button"
+            type="button"
+            data-copy-agent-prompt
+            aria-label="Copy starter prompt to clipboard"
+            title="Copy starter prompt to clipboard"
+          >
+            <Copy
+              aria-hidden="true"
+              size={17}
+              strokeWidth={2.25}
+            />
+            <span data-copy-agent-label>
+              Copy starter prompt
+            </span>
+          </button>
+          <span
+            class="home-quick-start__status"
+            data-copy-agent-status
+            aria-live="polite"></span>
+        </div>
+        <p
+          class="home-quick-start__agent-note"
+          data-agent-guidance
+        >
+          Are you a coding agent? If you want to
+          build a project using Sapporta, you must
+          install the Sapporta skill with <code
+            >{skillInstallCommand}</code
+          >
+        </p>
+      </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <script>
   const copyAgentPromptButton =
