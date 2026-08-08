@@ -1,5 +1,4 @@
 ---
-import { Code } from "astro:components";
 import {
   Content as HeroContent,
   frontmatter,
@@ -10,21 +9,17 @@ import { Content as RegularApplication } from "../home-content/03-regular-applic
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
 import { Content as FrequentlyAskedQuestions } from "../home-content/faq.markdown";
+import { Content as Screenshots } from "../home-content/screenshots.md";
 import { Content as StackDetails } from "../home-content/stack.md";
-import BooksTableDataGrid from "../components/BooksTableDataGrid";
+import GettingStarted from "../components/GettingStarted.astro";
 import HomepageActions from "../components/HomepageActions.astro";
+import HomepageDemo from "../components/HomepageDemo.astro";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
-import {
-  Code2,
-  Copy,
-  Table2,
-} from "lucide-react";
 import "../styles/sapporta.css";
 import "../styles/homepage-essay.css";
 
 const { page, brand, navigation } = frontmatter;
-const codeTheme = "github-light-default";
 const homepageUrl = `${gettingStartedEnv.docsCanonicalOrigin}/`;
 const llmsIndexUrl = `${gettingStartedEnv.docsCanonicalOrigin}/llms.txt`;
 const homepageStructuredData = {
@@ -40,54 +35,6 @@ const homepageStructuredData = {
   downloadUrl:
     "https://www.npmjs.com/package/sapporta",
 };
-const createProjectAgentUrl =
-  gettingStartedEnv.agentMarkdownUrl(
-    "docs/getting-started/create-a-project",
-  );
-const createProjectAgentPrompt = `Before you begin, ensure the Sapporta skill is installed:
-npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
-
-Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.
-
-Build a task management app with Sapporta.
-${createProjectAgentUrl}
-
-Model people, projects, tasks, labels, and comments.
-
-Include:
-- task creation and assignment
-- status, priority, due dates, labels, and comments
-- views for open tasks, overdue tasks, assignees, and projects
-
-Add realistic sample data.`;
-const booksSchemaCode = `export const booksTable = sqliteTable("books", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  author: text("author").notNull(),
-});
-
-export const books = sapportaTable({
-  drizzle: booksTable,
-  meta: {
-    label: "Books",
-    rowScope: "systemGlobal",
-    rowLabelColumns: ["title"],
-    search: { columns: ["author", "title"] },
-    children: [
-      {
-        table: "quotes",
-        foreignKey: "book_id",
-        label: "Quotes",
-        columns: ["quote_text"],
-        defaultSort: "-created_at",
-      },
-    ],
-    columns: {
-      title: { width: 64 },
-      author: { width: 36 },
-    },
-  },
-});`;
 ---
 
 <!doctype html>
@@ -280,158 +227,9 @@ export const books = sapportaTable({
         </article>
       </div>
 
-      <div class="home-layout home-layout--demo">
-        <section
-          class="home-demo-section"
-          aria-labelledby="home-demo-title"
-        >
-          <div class="home-demo__heading">
-            <p
-              class="home-demo__label"
-              id="home-demo-title"
-            >
-              DEMO
-            </p>
-            <p class="home-demo__subtitle">
-              Use the keyboard to navigate.
-              <br />
-              Press
-              <strong>space</strong> to expand a book
-              and reveal its quotes.
-            </p>
-          </div>
-          <div class="home-demo" data-demo-tabs>
-            <div
-              class="home-demo__tabs"
-              role="tablist"
-              aria-label="Data grid example views"
-            >
-              <button
-                class="home-demo__tab"
-                id="home-demo-grid-tab"
-                type="button"
-                role="tab"
-                aria-selected="true"
-                aria-controls="home-demo-grid-panel"
-              >
-                <Table2
-                  className="home-demo__tab-icon"
-                  aria-hidden="true"
-                  size={17}
-                  strokeWidth={2}
-                />
-                <span>Sample data grid</span>
-              </button>
-              <button
-                class="home-demo__tab"
-                id="home-demo-code-tab"
-                type="button"
-                role="tab"
-                aria-selected="false"
-                aria-controls="home-demo-code-panel"
-                tabindex="-1"
-              >
-                <Code2
-                  className="home-demo__tab-icon"
-                  aria-hidden="true"
-                  size={17}
-                  strokeWidth={2}
-                />
-                <span
-                  >Code: schema definition</span
-                >
-              </button>
-            </div>
+      <HomepageDemo />
 
-            <div
-              class="home-demo__panel home-demo__panel--grid"
-              id="home-demo-grid-panel"
-              role="tabpanel"
-              aria-labelledby="home-demo-grid-tab"
-            >
-              <BooksTableDataGrid
-                client:only="react"
-              />
-            </div>
-
-            <div
-              class="home-demo__panel home-demo__panel--code"
-              id="home-demo-code-panel"
-              role="tabpanel"
-              aria-labelledby="home-demo-code-tab"
-              hidden
-            >
-              <figure class="home-code-sample">
-                <figcaption
-                  class="home-code-sample__header"
-                >
-                  <span
-                    class="home-code-sample__path"
-                  >
-                    packages/api/schema/books.ts
-                  </span>
-                </figcaption>
-                <div
-                  class="home-code-sample__body"
-                >
-                  <Code
-                    code={booksSchemaCode}
-                    lang="ts"
-                    theme={codeTheme}
-                  />
-                </div>
-              </figure>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div
-        class="home-layout home-layout--quick-start"
-      >
-        <section
-          class="home-quick-start"
-          aria-labelledby="get-started"
-        >
-          <div class="home-quick-start__content">
-            <h2
-              class="home-quick-start__title"
-              id="get-started"
-            >
-              Get started with your coding agent
-            </h2>
-            <p
-              class="home-quick-start__description"
-            >
-              Copy this starter prompt, then paste
-              it into your coding agent.
-            </p>
-            <button
-              class="home-quick-start__copy-button"
-              type="button"
-              data-copy-agent-prompt
-              aria-label="Copy starter prompt to clipboard"
-              title="Copy starter prompt to clipboard"
-            >
-              <Copy
-                aria-hidden="true"
-                size={17}
-                strokeWidth={2.25}
-              />
-              <span data-copy-agent-label
-                >Copy starter prompt</span
-              >
-            </button>
-            <span
-              class="home-quick-start__status"
-              data-copy-agent-status
-              aria-live="polite"></span>
-            <pre
-              class="home-quick-start__prompt"
-              data-agent-prompt>{createProjectAgentPrompt}</pre>
-          </div>
-        </section>
-      </div>
+      <GettingStarted />
 
       <div
         class="home-layout home-layout--article"
@@ -454,6 +252,9 @@ export const books = sapportaTable({
           </section>
           <section class="home-article__section">
             <FrequentlyAskedQuestions />
+          </section>
+          <section class="home-article__section">
+            <Screenshots />
           </section>
           <section class="home-article__section">
             <StatusAndContributing />
@@ -536,154 +337,6 @@ export const books = sapportaTable({
     </dialog>
 
     <script>
-      const copyAgentPromptButton =
-        document.querySelector<HTMLButtonElement>(
-          "[data-copy-agent-prompt]",
-        );
-      const agentPrompt =
-        document.querySelector<HTMLElement>(
-          "[data-agent-prompt]",
-        );
-      const copyAgentStatus =
-        document.querySelector<HTMLElement>(
-          "[data-copy-agent-status]",
-        );
-      const copyAgentLabel =
-        document.querySelector<HTMLElement>(
-          "[data-copy-agent-label]",
-        );
-      let copyAgentStatusTimeout:
-        ReturnType<typeof setTimeout> | undefined;
-
-      copyAgentPromptButton?.addEventListener(
-        "click",
-        async () => {
-          const prompt = agentPrompt?.textContent;
-          if (!prompt) return;
-
-          try {
-            await navigator.clipboard.writeText(
-              prompt,
-            );
-            copyAgentPromptButton.dataset.copied =
-              "true";
-            copyAgentPromptButton.title =
-              "Copied";
-            if (copyAgentLabel) {
-              copyAgentLabel.textContent =
-                "Copied — paste it into your agent";
-            }
-            if (copyAgentStatus) {
-              copyAgentStatus.textContent =
-                "Prompt copied to clipboard";
-            }
-
-            clearTimeout(copyAgentStatusTimeout);
-            copyAgentStatusTimeout = setTimeout(
-              () => {
-                delete copyAgentPromptButton
-                  .dataset.copied;
-                copyAgentPromptButton.title =
-                  "Copy starter prompt to clipboard";
-                if (copyAgentLabel) {
-                  copyAgentLabel.textContent =
-                    "Copy starter prompt";
-                }
-                if (copyAgentStatus) {
-                  copyAgentStatus.textContent =
-                    "";
-                }
-              },
-              2000,
-            );
-          } catch {
-            if (copyAgentLabel) {
-              copyAgentLabel.textContent =
-                "Copy failed";
-            }
-            if (copyAgentStatus) {
-              copyAgentStatus.textContent =
-                "Could not copy prompt";
-            }
-          }
-        },
-      );
-
-      const demos =
-        document.querySelectorAll<HTMLElement>(
-          "[data-demo-tabs]",
-        );
-
-      for (const demo of demos) {
-        const tabs = Array.from(
-          demo.querySelectorAll<HTMLButtonElement>(
-            '[role="tab"]',
-          ),
-        );
-        const panels = Array.from(
-          demo.querySelectorAll<HTMLElement>(
-            '[role="tabpanel"]',
-          ),
-        );
-
-        const selectTab = (
-          selectedTab: HTMLButtonElement,
-          moveFocus = false,
-        ) => {
-          for (const tab of tabs) {
-            const isSelected =
-              tab === selectedTab;
-            tab.setAttribute(
-              "aria-selected",
-              String(isSelected),
-            );
-            tab.tabIndex = isSelected ? 0 : -1;
-          }
-
-          for (const panel of panels) {
-            panel.hidden =
-              panel.id !==
-              selectedTab.getAttribute(
-                "aria-controls",
-              );
-          }
-
-          if (moveFocus) selectedTab.focus();
-        };
-
-        tabs.forEach((tab, index) => {
-          tab.addEventListener("click", () => {
-            selectTab(tab);
-          });
-
-          tab.addEventListener(
-            "keydown",
-            (event) => {
-              let nextIndex: number | undefined;
-
-              if (event.key === "ArrowRight") {
-                nextIndex =
-                  (index + 1) % tabs.length;
-              } else if (
-                event.key === "ArrowLeft"
-              ) {
-                nextIndex =
-                  (index - 1 + tabs.length) %
-                  tabs.length;
-              } else if (event.key === "Home") {
-                nextIndex = 0;
-              } else if (event.key === "End") {
-                nextIndex = tabs.length - 1;
-              }
-
-              if (nextIndex === undefined) return;
-              event.preventDefault();
-              selectTab(tabs[nextIndex], true);
-            },
-          );
-        });
-      }
-
       const imageLightbox =
         document.querySelector<HTMLDialogElement>(
           "[data-image-lightbox]",

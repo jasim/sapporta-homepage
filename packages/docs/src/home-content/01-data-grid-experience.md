@@ -5,9 +5,9 @@ just forms, data grids, and reports. All of them heavily favour the keyboard.
 They are optimized for power-users and have high information density. Sapporta's
 goal is to bring the same experience to database applications on the web.
 
-It does this by leaning heavily into datagrids. Sapporta uses data grids as a universal
-surface for tabular data. You can put a lot of heart and soul into that single
-component, and it benefits the entire application. 
+It does this by leaning heavily into datagrids. Sapporta uses data grids as a
+universal surface for tabular data. You can put a lot of heart and soul into
+that single component, and it benefits the entire application.
 
 That is also what makes spreadsheets beautiful. People use them because they can
 work with data without having to anticipate every requirement in advance.
@@ -23,12 +23,6 @@ request them. The rest of the application's data becomes a second-class citizen.
 But in Sapporta, just like a spreadsheet, you immediately get a live, editable
 data grid the moment you create a table.
 
-![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
-
-![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
-
-<div class="py-8">
-
 The Sapporta Grid is a custom-built React component that can be deeply composed
 and extended. It brings a similar set of features and UX as Airtable, NocoDB,
 and similar collaborative databases. It is paginated, filterable, sortable, and
@@ -38,5 +32,3 @@ keyboard support that works across levels.
 So when you use Sapporta to build a web application with a coding agent, you get
 a fully wired system with a front end for manipulating data, along with all the
 forms and workflows the application needs.
-
-![A master-detail view of people and their related tasks](/assets/home/screenshots/master-detail.png "Move through people and the related task grid follows the active record.")

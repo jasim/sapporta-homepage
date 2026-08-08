@@ -69,23 +69,23 @@ function screenshotFigure(paragraph) {
     children: [
       {
         type: "element",
+        tagName: "figcaption",
+        properties: {
+          className: ["home-screenshot__caption"],
+        },
+        children: [{ type: "text", value: caption }],
+      },
+      {
+        type: "element",
         tagName: "a",
         properties: {
-          ariaLabel: `Open full-size screenshot: ${caption}`,
+          ariaLabel: `Open full-size screenshot: ${alt || caption}`,
           className: ["home-screenshot__link"],
           href: src,
           rel: ["noreferrer"],
           target: "_blank",
         },
         children: [image],
-      },
-      {
-        type: "element",
-        tagName: "figcaption",
-        properties: {
-          className: ["home-screenshot__caption"],
-        },
-        children: [{ type: "text", value: caption }],
       },
     ],
   };
@@ -224,7 +224,7 @@ export function rehypeHomepageContent() {
       children.push({
         type: "element",
         tagName: "div",
-        properties: { className: ["home-screenshot-grid"] },
+        properties: { className: ["home-screenshot-stack"] },
         children: figures,
       });
       index = nextIndex - 1;

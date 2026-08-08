@@ -1,0 +1,141 @@
+---
+import { Copy } from "lucide-react";
+import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
+
+const createProjectAgentUrl =
+  gettingStartedEnv.agentMarkdownUrl(
+    "docs/getting-started/create-a-project",
+  );
+const createProjectAgentPrompt = `Before you begin, ensure the Sapporta skill is installed:
+npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
+
+Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.
+
+Build a task management app with Sapporta.
+${createProjectAgentUrl}
+
+Model people, projects, tasks, labels, and comments.
+
+Include:
+- task creation and assignment
+- status, priority, due dates, labels, and comments
+- views for open tasks, overdue tasks, assignees, and projects
+
+Add realistic sample data.`;
+---
+
+<div class="home-layout home-layout--quick-start">
+  <section
+    class="home-quick-start"
+    aria-labelledby="get-started"
+  >
+    <div class="home-quick-start__content">
+      <h2
+        class="home-quick-start__title"
+        id="get-started"
+      >
+        Get started with your coding agent
+      </h2>
+      <p class="home-quick-start__description">
+        Copy this starter prompt, then paste it
+        into your coding agent.
+      </p>
+      <button
+        class="home-quick-start__copy-button"
+        type="button"
+        data-copy-agent-prompt
+        aria-label="Copy starter prompt to clipboard"
+        title="Copy starter prompt to clipboard"
+      >
+        <Copy
+          aria-hidden="true"
+          size={17}
+          strokeWidth={2.25}
+        />
+        <span data-copy-agent-label>
+          Copy starter prompt
+        </span>
+      </button>
+      <span
+        class="home-quick-start__status"
+        data-copy-agent-status
+        aria-live="polite"></span>
+      <pre
+        class="home-quick-start__prompt"
+        data-agent-prompt>{createProjectAgentPrompt}</pre>
+    </div>
+  </section>
+</div>
+
+<script>
+  const copyAgentPromptButton =
+    document.querySelector<HTMLButtonElement>(
+      "[data-copy-agent-prompt]",
+    );
+  const agentPrompt =
+    document.querySelector<HTMLElement>(
+      "[data-agent-prompt]",
+    );
+  const copyAgentStatus =
+    document.querySelector<HTMLElement>(
+      "[data-copy-agent-status]",
+    );
+  const copyAgentLabel =
+    document.querySelector<HTMLElement>(
+      "[data-copy-agent-label]",
+    );
+  let copyAgentStatusTimeout:
+    ReturnType<typeof setTimeout> | undefined;
+
+  copyAgentPromptButton?.addEventListener(
+    "click",
+    async () => {
+      const prompt = agentPrompt?.textContent;
+      if (!prompt) return;
+
+      try {
+        await navigator.clipboard.writeText(
+          prompt,
+        );
+        copyAgentPromptButton.dataset.copied =
+          "true";
+        copyAgentPromptButton.title = "Copied";
+        if (copyAgentLabel) {
+          copyAgentLabel.textContent =
+            "Copied — paste it into your agent";
+        }
+        if (copyAgentStatus) {
+          copyAgentStatus.textContent =
+            "Prompt copied to clipboard";
+        }
+
+        clearTimeout(copyAgentStatusTimeout);
+        copyAgentStatusTimeout = setTimeout(
+          () => {
+            delete copyAgentPromptButton.dataset
+              .copied;
+            copyAgentPromptButton.title =
+              "Copy starter prompt to clipboard";
+            if (copyAgentLabel) {
+              copyAgentLabel.textContent =
+                "Copy starter prompt";
+            }
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent = "";
+            }
+          },
+          2000,
+        );
+      } catch {
+        if (copyAgentLabel) {
+          copyAgentLabel.textContent =
+            "Copy failed";
+        }
+        if (copyAgentStatus) {
+          copyAgentStatus.textContent =
+            "Could not copy prompt";
+        }
+      }
+    },
+  );
+</script>

@@ -13,6 +13,8 @@ brand:
 navigation:
   label: Main navigation
   links:
+    - label: Screenshots
+      href: "#screenshots"
     - label: Documentation
       href: /docs/getting-started/introduction/
     - label: GitHub
@@ -21,11 +23,15 @@ navigation:
 
 ## Build personal database tools agentically
 
-Most personal software require a relational database, and a good interface for it. Sapporta is a TypeScript framework for such applications that are built around relational data. 
+Most personal software require a relational database, and a good interface for
+it. Sapporta is a TypeScript framework for such applications that are built
+around relational data.
 
 It provides:
 
-- spreadsheet-grade grids available immediately for every new table 
+- spreadsheet-grade grids available immediately for every new table
 - reports with drill-down navigation
 - ability to agentically use these applications
 - everything tuned together for agentic development
+- secure scoped APIs and agentic guardrails so you can ship them as production
+  applications

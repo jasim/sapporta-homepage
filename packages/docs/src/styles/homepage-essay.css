@@ -4,6 +4,7 @@
   --home-layout-gutter-start: 3.75rem;
   --home-layout-gutter-end: 2.5rem;
   --home-copy-width: 42rem;
+  --home-media-width: 80rem;
   --home-major-section-gap: clamp(5rem, 9vw, 8rem);
 
   /* Keep the embedded Sapporta UI on its canonical theme. */
@@ -781,7 +782,7 @@
 }
 
 .home-article__section {
-  max-width: 64rem;
+  max-width: var(--home-media-width);
   min-width: 0;
 }
 
@@ -894,18 +895,21 @@
   padding: 0;
 }
 
-.home-screenshot-grid {
+.home-screenshot-stack {
   display: grid;
-  gap: clamp(1.25rem, 3vw, 2rem);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 2rem 0 0;
+  gap: clamp(3rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 1fr);
+  margin: clamp(2.25rem, 4vw, 3rem) 0 0;
   min-width: 0;
   width: 100%;
 }
 
 .home-screenshot {
-  margin: 0 0 1rem 0;
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  margin: 0;
   min-width: 0;
+  width: 100%;
 }
 
 .home-screenshot__link {
@@ -932,19 +936,20 @@
 }
 
 .home-screenshot__image {
-  aspect-ratio: 36 / 25;
   display: block;
   height: auto;
   margin: 0;
-  object-fit: cover;
   width: 100%;
 }
 
 .home-screenshot__caption {
-  color: var(--dim);
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  margin-top: 0.6rem;
+  color: var(--ink);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  max-width: var(--home-copy-width);
+  text-wrap: pretty;
 }
 
 /* Footer ----------------------------------------------------------------- */
@@ -1156,10 +1161,6 @@
   }
 
   .home-capabilities__list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .home-screenshot-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
