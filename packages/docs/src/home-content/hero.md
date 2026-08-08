@@ -23,15 +23,12 @@ navigation:
 
 ## Build personal database tools agentically
 
-Most personal software require a relational database, and a good interface for
-it. Sapporta is a TypeScript framework for such applications that are built
-around relational data.
+Sapporta gives coding agents a reliable foundation for building database applications.
 
-It provides:
+It is a full-stack TypeScript framework that provides:
 
 - spreadsheet-grade grids available immediately for every new table
 - reports with drill-down navigation
 - ability to agentically use these applications
-- everything tuned together for agentic development
-- secure scoped APIs and agentic guardrails so you can ship them as production
-  applications
+- skills, docs, backend, frontend -- all tuned together for agentic development
+- auth guardrails to ensure agentically written code is secure for public deployment  
