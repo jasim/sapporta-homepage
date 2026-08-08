@@ -1,5 +1,5 @@
 ---
-import { Copy } from "lucide-react";
+import { Copy, Eraser } from "lucide-react";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 
 const createProjectAgentUrl =
@@ -14,62 +14,78 @@ Load and follow the Sapporta skill. It owns project setup, modelling, implementa
 const applicationPrompts = [
   {
     label: "Calorie tracker",
-    request:
-      "Build a personal calorie tracker with Sapporta.",
-    body: `Model foods, meals, meal items, and date-ranged nutrition goals.
-
-Include:
-- a user-maintained food list with serving sizes, calories, protein, carbs, fat, and fiber
-- one workflow to log a meal with multiple food items
-- server-validated serving units and stored nutrition snapshots that preserve history
-- today and Monday-Sunday weekly summaries against independent daily and weekly goals
-
-Add realistic sample data.`,
+    application: "a personal calorie tracker",
+    model:
+      "foods, meals, meal items, and date-ranged nutrition goals",
+    include: [
+      "a user-maintained food list with serving sizes, calories, protein, carbs, fat, and fiber",
+      "one workflow to log a meal with multiple food items",
+      "server-validated serving units and stored nutrition snapshots that preserve history",
+      "today and Monday-Sunday weekly summaries against independent daily and weekly goals",
+    ],
   },
   {
-    label: "Book-keeping",
-    request:
-      "Build a personal double-entry book-keeping app with Sapporta.",
-    body: `Model accounts, transactions, journal entries, categories, payees, and budgets.
-
-Include:
-- easy entry for income, expenses, and transfers, with automatic double-entry mapping to balanced debits and credits underneath
-- an auditable double-entry ledger
-- monthly budgets and category rules
-- reports for balances, cash flow, and spending by category
-
-Add realistic sample data.`,
+    label: "Bookkeeping",
+    application:
+      "a personal double-entry bookkeeping app",
+    model:
+      "accounts, transactions, journal entries, categories, payees, and budgets",
+    include: [
+      "easy entry for income, expenses, and transfers, with automatic double-entry mapping to balanced debits and credits underneath",
+      "an auditable double-entry ledger",
+      "monthly budgets and category rules",
+      "reports for balances, cash flow, and spending by category",
+    ],
   },
   {
     label: "Task management",
-    request:
-      "Build a task management app with Sapporta.",
-    body: `Model people, projects, tasks, labels, and comments.
-
-Include:
-- task creation and assignment
-- status, priority, due dates, labels, and comments
-- views for open tasks, overdue tasks, assignees, and projects
-
-Add realistic sample data.`,
+    application: "a task management app",
+    model:
+      "people, projects, tasks, labels, and comments",
+    include: [
+      "task creation and assignment",
+      "status, priority, due dates, labels, and comments",
+      "views for open tasks, overdue tasks, assignees, and projects",
+    ],
   },
   {
     label: "CRM",
-    request: "Build a CRM with Sapporta.",
-    body: `Model companies, contacts, opportunities, activities, and follow-ups.
-
-Include:
-- lead and opportunity tracking
-- contact history, notes, and next steps
-- owners, stages, expected values, and close dates
-- views for the pipeline, overdue follow-ups, companies, and owners
-
-Add realistic sample data.`,
+    application: "a CRM",
+    model:
+      "companies, contacts, opportunities, activities, and follow-ups",
+    include: [
+      "lead and opportunity tracking",
+      "contact history, notes, and next steps",
+      "owners, stages, expected values, and close dates",
+      "views for the pipeline, overdue follow-ups, companies, and owners",
+    ],
   },
 ].map((application) => ({
   ...application,
-  prompt: `${createProjectAgentPreamble}\n\n${application.request}\n${createProjectAgentUrl}\n\n${application.body}`,
+  prompt: `${createProjectAgentPreamble}
+
+Using Sapporta, build ${application.application}.
+${createProjectAgentUrl}
+
+Model ${application.model}.
+
+Include:
+${application.include.map((item) => `- ${item}`).join("\n")}
+
+Add realistic sample data.`,
 }));
+
+const blankPrompt = `${createProjectAgentPreamble}
+
+Using Sapporta, build ___.
+${createProjectAgentUrl}
+
+Model ___.
+
+Include:
+- ___
+
+Add realistic sample data.`;
 
 const defaultApplication =
   applicationPrompts.find(
@@ -90,48 +106,68 @@ const defaultApplication =
         Get started with your coding agent
       </h2>
       <p class="home-quick-start__description">
-        Copy this starter prompt, then paste it
-        into your coding agent.
+        Choose an example or start blank.
       </p>
-      <div
-        class="home-quick-start__applications"
-        role="group"
-        aria-label="Choose an application prompt"
-      >
-        {
-          applicationPrompts.map(
-            (application) => {
-              const isSelected =
-                application ===
-                defaultApplication;
+      <div class="home-quick-start__applications">
+        <div
+          class="home-quick-start__application-options"
+          role="group"
+          aria-label="Choose an application prompt"
+        >
+          {
+            applicationPrompts.map(
+              (application) => {
+                const isSelected =
+                  application ===
+                  defaultApplication;
 
-              return (
-                <button
-                  class="home-quick-start__application-button"
-                  type="button"
-                  data-agent-prompt-option
-                  data-agent-prompt-value={
-                    application.prompt
-                  }
-                  data-agent-prompt-label={
-                    application.label
-                  }
-                  data-selected={
-                    isSelected
-                      ? "true"
-                      : undefined
-                  }
-                  aria-pressed={
-                    isSelected ? "true" : "false"
-                  }
-                >
-                  {application.label}
-                </button>
-              );
-            },
-          )
-        }
+                return (
+                  <button
+                    class="home-quick-start__application-button"
+                    type="button"
+                    data-agent-prompt-option
+                    data-agent-prompt-value={
+                      application.prompt
+                    }
+                    data-agent-prompt-label={
+                      application.label
+                    }
+                    data-selected={
+                      isSelected
+                        ? "true"
+                        : undefined
+                    }
+                    aria-pressed={
+                      isSelected
+                        ? "true"
+                        : "false"
+                    }
+                  >
+                    {application.label}
+                  </button>
+                );
+              },
+            )
+          }
+        </div>
+        <button
+          class="home-quick-start__clear-button"
+          type="button"
+          data-clear-agent-prompt
+          data-agent-prompt-value={blankPrompt}
+          aria-label="Clear the application prompt"
+        >
+          <Eraser
+            aria-hidden="true"
+            size={15}
+            strokeWidth={2.25}
+          />
+          Clear
+        </button>
       </div>
+      <pre
+        class="home-quick-start__prompt"
+        data-agent-prompt>{defaultApplication.prompt}</pre>
       <button
         class="home-quick-start__copy-button"
         type="button"
@@ -152,9 +188,6 @@ const defaultApplication =
         class="home-quick-start__status"
         data-copy-agent-status
         aria-live="polite"></span>
-      <pre
-        class="home-quick-start__prompt"
-        data-agent-prompt>{defaultApplication.prompt}</pre>
     </div>
   </section>
 </div>
@@ -180,6 +213,10 @@ const defaultApplication =
     document.querySelectorAll<HTMLButtonElement>(
       "[data-agent-prompt-option]",
     );
+  const clearAgentPromptButton =
+    document.querySelector<HTMLButtonElement>(
+      "[data-clear-agent-prompt]",
+    );
   let copyAgentStatusTimeout:
     ReturnType<typeof setTimeout> | undefined;
 
@@ -195,6 +232,24 @@ const defaultApplication =
     }
   };
 
+  const selectAgentPromptOption = (
+    selectedOption?: HTMLButtonElement,
+  ) => {
+    agentPromptOptions.forEach((option) => {
+      const isSelected =
+        option === selectedOption;
+      option.setAttribute(
+        "aria-pressed",
+        String(isSelected),
+      );
+      if (isSelected) {
+        option.dataset.selected = "true";
+      } else {
+        delete option.dataset.selected;
+      }
+    });
+  };
+
   agentPromptOptions.forEach((option) => {
     option.addEventListener("click", () => {
       const prompt =
@@ -202,18 +257,7 @@ const defaultApplication =
       if (!agentPrompt || !prompt) return;
 
       agentPrompt.textContent = prompt;
-      agentPromptOptions.forEach((candidate) => {
-        const isSelected = candidate === option;
-        candidate.setAttribute(
-          "aria-pressed",
-          String(isSelected),
-        );
-        if (isSelected) {
-          candidate.dataset.selected = "true";
-        } else {
-          delete candidate.dataset.selected;
-        }
-      });
+      selectAgentPromptOption(option);
 
       clearTimeout(copyAgentStatusTimeout);
       resetCopyAgentFeedback();
@@ -222,6 +266,25 @@ const defaultApplication =
       }
     });
   });
+
+  clearAgentPromptButton?.addEventListener(
+    "click",
+    () => {
+      const prompt =
+        clearAgentPromptButton.dataset
+          .agentPromptValue;
+      if (!agentPrompt || !prompt) return;
+
+      agentPrompt.textContent = prompt;
+      selectAgentPromptOption();
+      clearTimeout(copyAgentStatusTimeout);
+      resetCopyAgentFeedback();
+      if (copyAgentStatus) {
+        copyAgentStatus.textContent =
+          "Blank prompt selected";
+      }
+    },
+  );
 
   copyAgentPromptButton?.addEventListener(
     "click",

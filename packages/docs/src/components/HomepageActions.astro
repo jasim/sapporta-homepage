@@ -40,6 +40,8 @@ const actions = [
           "home3-action",
           action.primary &&
             "home3-action-primary",
+          action.icon === "github" &&
+            "home3-action-github",
         ]}
         href={action.href}
       >
@@ -633,9 +635,33 @@ const actions = [
     transform: none;
   }
 
+  .home3-action-primary,
+  .home3-actions-compact .home3-action-primary {
+    background: var(--link);
+    border-color: var(--link);
+    color: var(--bg);
+  }
+
+  .home3-action-primary:hover,
+  .home3-actions-compact
+    .home3-action-primary:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
   .home3-action-icon,
   .home3-actions-compact .home3-action-icon {
     display: none;
+  }
+
+  .home3-action-github .home3-action-icon,
+  .home3-actions-compact
+    .home3-action-github
+    .home3-action-icon {
+    display: block;
+    height: 1.25rem;
+    width: 1.25rem;
   }
 
   @media (max-width: 48rem) {
