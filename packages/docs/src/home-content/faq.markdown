@@ -25,18 +25,6 @@ single-page applications. It wires best in class libraries into a pnpm workspace
 front-end and back-end code, which includes ts-rest for typed APIs, and a front-end setup with state management, forms,
 queries, and UI.
 
-### Can I build customer-facing SaaS applications with it?
-
-Yes, especially vertical SaaS products whose users work with structured, relational data. Sapporta includes
-authentication, workspaces, roles, and row-scoped data access. A workspace in a Sapporta project can be treated as a
-Tenant, and the integrated CASL bindings can let you serve serve different users across tenants with full authentication
-and authorization boundaries.
-
-Sapporta is currently an early alpha and supports SQLite. That makes the deployment model a good fit for small
-applications and focused SaaS products, but it is a constraint to evaluate against your expected workload. However there
-is nothing inherent about the architecture that binds the system to SQLite; adding Postgres, for example, is just
-effort.
-
 ### What kinds of products can I build?
 
 Sapporta is especially well suited to personal database tools: calorie and fitness trackers, personal bookkeeping
@@ -51,6 +39,18 @@ etc. These tools work best when guided workflows and direct data manipulation ca
 It is less opinionated about products whose main surface is not relational data, such as forum software, social
 networks, media editors or real-time multiplayer experiences. You can still build those features in the same TypeScript
 application, but the generated grids and table APIs will provide less leverage there.
+
+### Can I build customer-facing SaaS applications with it?
+
+Yes, especially vertical SaaS products whose users work with structured, relational data. Sapporta includes
+authentication, workspaces, roles, and row-scoped data access. A workspace in a Sapporta project can be treated as a
+Tenant, and the integrated CASL bindings can let you serve serve different users across tenants with full authentication
+and authorization boundaries.
+
+Sapporta is currently an early alpha and supports SQLite. That makes the deployment model a good fit for small
+applications and focused SaaS products, but it is a constraint to evaluate against your expected workload. However there
+is nothing inherent about the architecture that binds the system to SQLite; adding Postgres, for example, is just
+effort.
 
 ### Can I add custom business logic beyond generated CRUD?
 

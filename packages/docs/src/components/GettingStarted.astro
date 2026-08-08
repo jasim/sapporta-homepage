@@ -6,8 +6,10 @@ const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
   );
+const skillInstallCommand =
+  "npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes";
 const createProjectAgentPreamble = `Before you begin, ensure the Sapporta skill is installed:
-npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
+${skillInstallCommand}
 
 Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.`;
 
@@ -86,11 +88,6 @@ Include:
 - ___
 
 Add realistic sample data.`;
-
-const defaultApplication =
-  applicationPrompts.find(
-    ({ label }) => label === "Task management",
-  ) ?? applicationPrompts[0];
 ---
 
 <div class="home-layout home-layout--quick-start">
@@ -105,6 +102,16 @@ const defaultApplication =
       >
         Get started with your coding agent
       </h2>
+      <p
+        class="home-quick-start__agent-note"
+        data-agent-guidance
+      >
+        Are you a coding agent? If you want to
+        build a project using Sapporta, you must
+        install the Sapporta skill with <code
+          >{skillInstallCommand}</code
+        >
+      </p>
       <p class="home-quick-start__description">
         Choose an example or start blank.
       </p>
@@ -117,10 +124,6 @@ const defaultApplication =
           {
             applicationPrompts.map(
               (application) => {
-                const isSelected =
-                  application ===
-                  defaultApplication;
-
                 return (
                   <button
                     class="home-quick-start__application-button"
@@ -132,16 +135,7 @@ const defaultApplication =
                     data-agent-prompt-label={
                       application.label
                     }
-                    data-selected={
-                      isSelected
-                        ? "true"
-                        : undefined
-                    }
-                    aria-pressed={
-                      isSelected
-                        ? "true"
-                        : "false"
-                    }
+                    aria-pressed="false"
                   >
                     {application.label}
                   </button>
@@ -167,7 +161,7 @@ const defaultApplication =
       </div>
       <pre
         class="home-quick-start__prompt"
-        data-agent-prompt>{defaultApplication.prompt}</pre>
+        data-agent-prompt>{blankPrompt}</pre>
       <button
         class="home-quick-start__copy-button"
         type="button"
