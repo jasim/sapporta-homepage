@@ -335,7 +335,7 @@
 /* Interactive grid and schema demo -------------------------------------- */
 
 .home-demo-section {
-  margin: 0;
+  margin: 2rem;
   max-width: 80rem;
   min-width: 0;
   width: 100%;

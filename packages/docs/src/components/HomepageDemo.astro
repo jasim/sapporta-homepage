@@ -34,103 +34,101 @@ export const books = sapportaTable({
 });`;
 ---
 
-<div class="home-layout home-layout--demo">
-  <section
-    class="home-demo-section"
-    aria-labelledby="home-demo-title"
-  >
-    <div class="home-demo__heading">
-      <p
-        class="home-demo__label"
-        id="home-demo-title"
+<section
+  class="home-demo-section"
+  aria-labelledby="home-demo-title"
+>
+  <div class="home-demo__heading">
+    <p
+      class="home-demo__label"
+      id="home-demo-title"
+    >
+      DEMO
+    </p>
+    <p class="home-demo__subtitle">
+      Use the keyboard to navigate.
+      <br />
+      Press
+      <strong>space</strong> to expand a book and
+      reveal its quotes.
+    </p>
+  </div>
+  <div class="home-demo" data-demo-tabs>
+    <div
+      class="home-demo__tabs"
+      role="tablist"
+      aria-label="Data grid example views"
+    >
+      <button
+        class="home-demo__tab"
+        id="home-demo-grid-tab"
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls="home-demo-grid-panel"
       >
-        DEMO
-      </p>
-      <p class="home-demo__subtitle">
-        Use the keyboard to navigate.
-        <br />
-        Press
-        <strong>space</strong> to expand a book and
-        reveal its quotes.
-      </p>
+        <Table2
+          className="home-demo__tab-icon"
+          aria-hidden="true"
+          size={17}
+          strokeWidth={2}
+        />
+        <span>Sample data grid</span>
+      </button>
+      <button
+        class="home-demo__tab"
+        id="home-demo-code-tab"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="home-demo-code-panel"
+        tabindex="-1"
+      >
+        <Code2
+          className="home-demo__tab-icon"
+          aria-hidden="true"
+          size={17}
+          strokeWidth={2}
+        />
+        <span>Code: schema definition</span>
+      </button>
     </div>
-    <div class="home-demo" data-demo-tabs>
-      <div
-        class="home-demo__tabs"
-        role="tablist"
-        aria-label="Data grid example views"
-      >
-        <button
-          class="home-demo__tab"
-          id="home-demo-grid-tab"
-          type="button"
-          role="tab"
-          aria-selected="true"
-          aria-controls="home-demo-grid-panel"
-        >
-          <Table2
-            className="home-demo__tab-icon"
-            aria-hidden="true"
-            size={17}
-            strokeWidth={2}
-          />
-          <span>Sample data grid</span>
-        </button>
-        <button
-          class="home-demo__tab"
-          id="home-demo-code-tab"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="home-demo-code-panel"
-          tabindex="-1"
-        >
-          <Code2
-            className="home-demo__tab-icon"
-            aria-hidden="true"
-            size={17}
-            strokeWidth={2}
-          />
-          <span>Code: schema definition</span>
-        </button>
-      </div>
 
-      <div
-        class="home-demo__panel home-demo__panel--grid"
-        id="home-demo-grid-panel"
-        role="tabpanel"
-        aria-labelledby="home-demo-grid-tab"
-      >
-        <BooksTableDataGrid client:only="react" />
-      </div>
-
-      <div
-        class="home-demo__panel home-demo__panel--code"
-        id="home-demo-code-panel"
-        role="tabpanel"
-        aria-labelledby="home-demo-code-tab"
-        hidden
-      >
-        <figure class="home-code-sample">
-          <figcaption
-            class="home-code-sample__header"
-          >
-            <span class="home-code-sample__path">
-              packages/api/schema/books.ts
-            </span>
-          </figcaption>
-          <div class="home-code-sample__body">
-            <Code
-              code={booksSchemaCode}
-              lang="ts"
-              theme={codeTheme}
-            />
-          </div>
-        </figure>
-      </div>
+    <div
+      class="home-demo__panel home-demo__panel--grid"
+      id="home-demo-grid-panel"
+      role="tabpanel"
+      aria-labelledby="home-demo-grid-tab"
+    >
+      <BooksTableDataGrid client:only="react" />
     </div>
-  </section>
-</div>
+
+    <div
+      class="home-demo__panel home-demo__panel--code"
+      id="home-demo-code-panel"
+      role="tabpanel"
+      aria-labelledby="home-demo-code-tab"
+      hidden
+    >
+      <figure class="home-code-sample">
+        <figcaption
+          class="home-code-sample__header"
+        >
+          <span class="home-code-sample__path">
+            packages/api/schema/books.ts
+          </span>
+        </figcaption>
+        <div class="home-code-sample__body">
+          <Code
+            code={booksSchemaCode}
+            lang="ts"
+            theme={codeTheme}
+          />
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
 
 <script>
   const demos =
