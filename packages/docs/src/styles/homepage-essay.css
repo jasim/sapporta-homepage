@@ -1,11 +1,11 @@
 /* Page foundation -------------------------------------------------------- */
 
 .home-page {
-  --home-layout-gutter-start: 3.75rem;
-  --home-layout-gutter-end: 2.5rem;
-  --home-copy-width: 42rem;
+  --home-layout-gutter-start: clamp(1.25rem, 4vw, 3.75rem);
+  --home-layout-gutter-end: clamp(1.25rem, 4vw, 3.75rem);
+  --home-copy-width: 44rem;
   --home-media-width: 80rem;
-  --home-major-section-gap: clamp(5rem, 9vw, 8rem);
+  --home-major-section-gap: clamp(5rem, 8vw, 7rem);
 
   /* Keep the embedded Sapporta UI on its canonical theme. */
   --color-sap-bg: var(--sap-bg);
@@ -71,17 +71,15 @@
 /* Shared layout ---------------------------------------------------------- */
 
 .home-layout {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 8rem minmax(0, 1fr);
-  justify-content: start;
+  margin-inline: auto;
+  max-width: calc(var(--home-media-width) + var(--home-layout-gutter-start) + var(--home-layout-gutter-end));
   padding-inline: var(--home-layout-gutter-start) var(--home-layout-gutter-end);
   width: 100%;
 }
 
 .home-layout--intro {
   display: block;
-  padding-top: 1rem;
+  padding-top: clamp(3.5rem, 8vw, 7rem);
 }
 
 .home-layout--demo,
@@ -101,6 +99,8 @@
 .home-header {
   display: flex;
   justify-content: flex-end;
+  margin-inline: auto;
+  max-width: calc(var(--home-media-width) + var(--home-layout-gutter-start) + var(--home-layout-gutter-end));
   padding: 1.5rem var(--home-layout-gutter-end) 0.75rem var(--home-layout-gutter-start);
   width: 100%;
 }
@@ -264,7 +264,15 @@
 /* Intro ------------------------------------------------------------------ */
 
 .home-intro {
-  max-width: var(--home-copy-width);
+  align-items: end;
+  display: grid;
+  gap: clamp(3rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, var(--home-copy-width)) minmax(18rem, 1fr);
+  max-width: var(--home-media-width);
+}
+
+.home-intro__primary {
+  min-width: 0;
 }
 
 .home-hero__title {
@@ -286,33 +294,46 @@
 }
 
 .home-capabilities {
-  margin-top: clamp(1.75rem, 3vw, 2.25rem);
+  margin-bottom: 1.7rem;
+  min-width: 0;
+}
+
+.home-capabilities__label {
+  color: var(--dim);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: 0.75rem 0 0.9rem;
+  text-transform: uppercase;
 }
 
 .home-capabilities__list {
   display: grid;
-  gap: 1.35rem clamp(1.5rem, 4vw, 2.75rem);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  grid-template-columns: minmax(0, 1fr);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .home-capabilities__item {
-  display: flex;
-  flex-direction: column;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.4fr);
   min-width: 0;
+  padding: 0.8rem 0;
+}
+
+.home-capabilities__item:first-of-type {
+  border-top: 0;
 }
 
 .home-capabilities__title {
-  align-self: flex-start;
-  background-image: linear-gradient(rgb(79 180 119 / 0.3), rgb(79 180 119 / 0.3));
-  background-position: 0 92%;
-  background-repeat: no-repeat;
-  background-size: 100% 0.16em;
   color: var(--ink);
   font-size: 0.875rem;
-  font-weight: 680;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -320,7 +341,6 @@
   color: var(--ink-soft);
   font-size: 0.875rem;
   line-height: 1.52;
-  margin-top: 0.3rem;
 }
 
 .home-capabilities__code {
@@ -335,7 +355,7 @@
 /* Interactive grid and schema demo -------------------------------------- */
 
 .home-demo-section {
-  margin: 2rem;
+  margin: clamp(2.5rem, 5vw, 4rem) 0 0;
   max-width: 80rem;
   min-width: 0;
   width: 100%;
@@ -678,13 +698,18 @@
 /* Quick start ------------------------------------------------------------ */
 
 .home-quick-start {
+  border-top: 1px solid var(--ink);
+  padding-top: 1.25rem;
   max-width: 80rem;
   width: 100%;
 }
 
 .home-quick-start__content {
   color: var(--ink);
-  max-width: 48rem;
+  display: grid;
+  gap: 0 clamp(2.5rem, 6vw, 6rem);
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--home-copy-width));
+  max-width: none;
 }
 
 .home-quick-start__title {
@@ -693,6 +718,8 @@
   font-weight: 700;
   line-height: 1.3;
   margin: 0;
+  grid-column: 1;
+  grid-row: 1 / span 4;
   scroll-margin-top: 2rem;
 }
 
@@ -700,7 +727,8 @@
   color: var(--ink-soft);
   font-size: 1rem;
   line-height: 1.5;
-  margin: 0.45rem 0 1rem;
+  grid-column: 2;
+  margin: 0 0 1rem;
   max-width: 35rem;
 }
 
@@ -718,20 +746,17 @@
   font-size: 0.9rem;
   font-weight: 720;
   gap: 0.5rem;
+  grid-column: 2;
   justify-content: center;
   line-height: 1.3;
   padding: 0.75rem 1rem;
-  transition:
-    background-color 120ms ease,
-    color 120ms ease,
-    transform 120ms ease;
+  width: fit-content;
 }
 
 .home-quick-start__copy-button:hover,
 .home-quick-start__copy-button[data-copied="true"] {
   background: #17472e;
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .home-quick-start__copy-button:focus-visible {
@@ -746,6 +771,7 @@
   color: var(--ink);
   cursor: text;
   font-size: 0.875rem;
+  grid-column: 2;
   line-height: 1.6;
   margin: 1.25rem 0 0;
   overflow-x: auto;
@@ -777,8 +803,56 @@
 
 /* Article stories and screenshots --------------------------------------- */
 
+.home-stage {
+  min-width: 0;
+}
+
+.home-stage--value {
+  padding-bottom: clamp(5rem, 9vw, 8rem);
+}
+
+.home-stage--framework {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+}
+
+.home-layout--value {
+  margin-top: clamp(6rem, 11vw, 10rem);
+  padding-bottom: 0;
+}
+
+.home-layout--quick-start {
+  margin-top: clamp(5rem, 9vw, 8rem);
+}
+
+.home-layout--framework {
+  margin-top: 0;
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+}
+
+.home-layout--supporting {
+  margin-top: clamp(5rem, 9vw, 8rem);
+}
+
 .home-article {
+  max-width: var(--home-media-width);
   width: 100%;
+}
+
+.home-section-marker {
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
+  color: var(--ink);
+  display: flex;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 1rem;
+  letter-spacing: 0.045em;
+  line-height: 1.4;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  padding-top: 0.8rem;
+  text-transform: uppercase;
 }
 
 .home-article__section {
@@ -794,12 +868,74 @@
   max-width: var(--home-copy-width);
 }
 
+.home-article--value .home-article__section--feature + .home-article__section--feature {
+  border-top: 1px solid var(--rule);
+  margin-top: clamp(5rem, 9vw, 8rem);
+  padding-top: clamp(4rem, 7vw, 6rem);
+}
+
+.home-article__section--technical {
+  align-items: start;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 0 clamp(2.5rem, 6vw, 6rem);
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--home-copy-width));
+  padding-top: 1.25rem;
+}
+
+.home-article--framework .home-article__section--technical + .home-article__section--technical {
+  margin-top: clamp(4rem, 7vw, 6rem);
+}
+
+.home-article__section--technical > .home-copy__heading--level-2 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+}
+
+.home-article__section--technical > :not(.home-copy__heading--level-2) {
+  grid-column: 2;
+}
+
+.home-article__section--technical > :nth-child(2) {
+  grid-row: 1;
+}
+
+.home-article__section--technical > .home-copy__list {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.home-article__section--technical > .home-copy__list > .home-copy__list-item {
+  border-top: 1px solid var(--rule);
+  padding: 0.8rem 0;
+}
+
+.home-article__section--technical > .home-copy__list > .home-copy__list-item + .home-copy__list-item {
+  margin-top: 0;
+}
+
+.home-article__section--technical > .expressive-code {
+  max-width: none;
+}
+
+.home-article--supporting .home-article__section--faq,
+.home-article--supporting .home-article__section--status {
+  max-width: var(--home-copy-width);
+}
+
+.home-article__section--faq .home-copy__heading--level-3 {
+  border-top: 1px solid var(--rule);
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+}
+
 .home-agent-example {
   --home-agent-indent: clamp(1.25rem, 4vw, 2.75rem);
 
   border-left: 2px solid var(--rule);
   display: grid;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   gap: 0.85rem;
   margin: 1.75rem 0 1.75rem var(--home-agent-indent);
   max-width: calc(var(--home-copy-width) - var(--home-agent-indent));
@@ -898,10 +1034,14 @@
 .home-screenshot-stack {
   display: grid;
   gap: clamp(3rem, 6vw, 5rem);
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: clamp(2.25rem, 4vw, 3rem) 0 0;
   min-width: 0;
   width: 100%;
+}
+
+.home-screenshot:first-child {
+  grid-column: 1 / -1;
 }
 
 .home-screenshot {
@@ -965,6 +1105,7 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 8rem minmax(0, var(--home-copy-width));
+  margin-inline: auto;
   max-width: calc(8rem + 1.5rem + var(--home-copy-width));
 }
 
@@ -1103,11 +1244,54 @@
   }
 
   .home-layout--intro {
-    padding-top: 1rem;
+    padding-top: clamp(2.75rem, 10vw, 4.5rem);
   }
 
   .home-layout--article {
     padding-bottom: 3.5rem;
+  }
+
+  .home-layout--value {
+    padding-bottom: 0;
+  }
+
+  .home-layout--framework {
+    padding-block: clamp(3.5rem, 9vw, 5rem);
+  }
+
+  .home-intro {
+    align-items: start;
+    gap: clamp(2.5rem, 8vw, 4rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-capabilities {
+    margin-bottom: 0;
+    max-width: var(--home-copy-width);
+  }
+
+  .home-article__section--technical,
+  .home-quick-start__content {
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-article__section--technical > .home-copy__heading--level-2,
+  .home-article__section--technical > :not(.home-copy__heading--level-2),
+  .home-quick-start__title,
+  .home-quick-start__description,
+  .home-quick-start__copy-button,
+  .home-quick-start__prompt {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .home-article__section--technical > .home-copy__heading--level-2 {
+    margin-bottom: 1rem;
+  }
+
+  .home-quick-start__title {
+    margin-bottom: 0.25rem;
   }
 
   .home-article__section + .home-article__section {
@@ -1162,6 +1346,19 @@
 
   .home-capabilities__list {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-capabilities__item {
+    gap: 0.3rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-screenshot-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-screenshot:first-child {
+    grid-column: 1;
   }
 
   .home-demo__tabs {

@@ -603,4 +603,54 @@ const actions = [
       transform: none;
     }
   }
+
+  /* The homepage uses these as plain utility links, not illustrated buttons. */
+  .home3-actions,
+  .home3-actions-compact {
+    gap: 0.5rem;
+    margin: clamp(1.5rem, 2.5vw, 2rem) 0 0;
+  }
+
+  .home3-action,
+  .home3-actions-compact .home3-action {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    box-shadow: none;
+    color: var(--ink);
+    font-size: 0.875rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.8rem;
+    transition: none;
+  }
+
+  .home3-action:hover,
+  .home3-action-primary:hover {
+    background: var(--surface);
+    border-color: var(--ink-soft);
+    box-shadow: none;
+    color: var(--ink);
+    transform: none;
+  }
+
+  .home3-action-icon,
+  .home3-actions-compact .home3-action-icon {
+    display: none;
+  }
+
+  @media (max-width: 48rem) {
+    .home3-actions-start,
+    .home3-actions-start.home3-actions-compact {
+      align-items: center;
+      flex-direction: row;
+      gap: 0.5rem;
+      margin: clamp(1.5rem, 2.5vw, 2rem) 0 0;
+      max-width: none;
+      width: 100%;
+    }
+
+    .home3-actions-compact .home3-action {
+      width: auto;
+    }
+  }
 </style>

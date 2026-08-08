@@ -21,6 +21,7 @@ import "../styles/homepage-essay.css";
 const { page, brand, navigation } = frontmatter;
 const homepageUrl = `${gettingStartedEnv.docsCanonicalOrigin}/`;
 const llmsIndexUrl = `${gettingStartedEnv.docsCanonicalOrigin}/llms.txt`;
+const socialPreviewUrl = `${homepageUrl}og.png`;
 const homepageStructuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
@@ -60,6 +61,55 @@ const homepageStructuredData = {
     <meta
       name="description"
       content={page.description}
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content={page.title}
+    />
+    <meta
+      property="og:description"
+      content={page.description}
+    />
+    <meta
+      property="og:url"
+      content={homepageUrl}
+    />
+    <meta
+      property="og:image"
+      content={socialPreviewUrl}
+    />
+    <meta
+      property="og:image:width"
+      content="1200"
+    />
+    <meta
+      property="og:image:height"
+      content="630"
+    />
+    <meta
+      property="og:image:alt"
+      content="Sapporta — Build personal database tools agentically"
+    />
+    <meta
+      name="twitter:card"
+      content="summary_large_image"
+    />
+    <meta
+      name="twitter:title"
+      content={page.title}
+    />
+    <meta
+      name="twitter:description"
+      content={page.description}
+    />
+    <meta
+      name="twitter:image"
+      content={socialPreviewUrl}
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Sapporta — Build personal database tools agentically"
     />
     <link
       rel="icon"
@@ -109,151 +159,227 @@ const homepageStructuredData = {
       id="main-content"
       class="home-page__main"
     >
-      <div class="home-layout home-layout--intro">
-        <article class="home-copy home-intro">
-          <h1 class="home-hero__title">
-            <a
-              class="home-wordmark home-wordmark--hero"
-              href={brand.href}
-            >
-              <SapportaMark
-                class="home-wordmark__mark home-wordmark__mark--hero"
-                title=""
+      <section
+        class="home-stage home-stage--value"
+        aria-labelledby="home-value-label"
+      >
+        <div
+          class="home-layout home-layout--intro"
+        >
+          <article class="home-copy home-intro">
+            <div class="home-intro__primary">
+              <h1 class="home-hero__title">
+                <a
+                  class="home-wordmark home-wordmark--hero"
+                  href={brand.href}
+                >
+                  <SapportaMark
+                    class="home-wordmark__mark home-wordmark__mark--hero"
+                    title=""
+                  />
+                  <span>{brand.label}</span>
+                </a>
+              </h1>
+
+              <HeroContent />
+
+              <HomepageActions
+                align="start"
+                compact
+                primaryHref="#get-started"
+                primaryLabel="Get Started"
+                primaryIcon="get-started"
+                primaryStyle={false}
               />
-              <span>{brand.label}</span>
-            </a>
-          </h1>
+            </div>
 
-          <HeroContent />
+            <aside
+              class="home-capabilities"
+              aria-label="Sapporta capabilities"
+            >
+              <ul class="home-capabilities__list">
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    Grids
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    Editable table UI with search,
+                    sort, filters, nesting, and
+                    keyboard flow.
+                  </span>
+                </li>
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    Reports
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    Summary rows, detail rows, and
+                    drill-down links.
+                  </span>
+                </li>
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    REST APIs for every table
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    CRUD, lookup, count, export,
+                    and typed custom endpoints.
+                  </span>
+                </li>
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    Forms
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    Validated data entry with
+                    reliable keyboard navigation.
+                  </span>
+                </li>
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    Security
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    Workspace and role scoped
+                    reads and writes.
+                  </span>
+                </li>
+                <li
+                  class="home-capabilities__item"
+                >
+                  <span
+                    class="home-capabilities__title"
+                  >
+                    Deployment
+                  </span>
+                  <span
+                    class="home-capabilities__description"
+                  >
+                    Project wiring from <code
+                      class="home-capabilities__code"
+                      >npx sapporta init</code
+                    > to production.
+                  </span>
+                </li>
+              </ul>
+            </aside>
+          </article>
+        </div>
 
-          <section
-            class="home-capabilities"
-            aria-label="Sapporta capabilities"
+        <div
+          class="home-layout home-layout--article home-layout--value"
+        >
+          <article
+            class="home-copy home-article home-article--value"
           >
-            <ul class="home-capabilities__list">
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Grids
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Editable table UI with search,
-                  sort, filters, nesting, and
-                  keyboard flow.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Reports
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Summary rows, detail rows, and
-                  drill-down links.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  REST APIs for every table
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  CRUD, lookup, count, export, and
-                  typed custom endpoints.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Forms
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Validated data entry with
-                  reliable keyboard navigation.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Security
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Workspace and role scoped reads
-                  and writes.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Deployment
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Project wiring from <code
-                    class="home-capabilities__code"
-                    >npx sapporta init</code
-                  > to production.
-                </span>
-              </li>
-            </ul>
-          </section>
+            <div class="home-section-marker">
+              <span id="home-value-label"
+                >Features</span
+              >
+            </div>
 
-          <HomepageActions
-            align="start"
-            compact
-            primaryHref="#get-started"
-            primaryLabel="Get Started"
-            primaryIcon="get-started"
-            primaryStyle={false}
-          />
-        </article>
-      </div>
+            <section
+              class="home-article__section home-article__section--feature"
+            >
+              <DataGridExperience />
+            </section>
+            <section
+              class="home-article__section home-article__section--feature"
+            >
+              <BuiltForAgents />
+            </section>
+          </article>
+        </div>
 
-      <GettingStarted />
+        <GettingStarted />
+      </section>
+
+      <section
+        class="home-stage home-stage--framework"
+        aria-labelledby="home-framework-label"
+      >
+        <div
+          class="home-layout home-layout--article home-layout--framework"
+        >
+          <article
+            class="home-copy home-article home-article--framework"
+          >
+            <div
+              class="home-section-marker home-section-marker--framework"
+            >
+              <span id="home-framework-label"
+                >Framework</span
+              >
+            </div>
+
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <FeaturesInBrief />
+            </section>
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <RegularApplication />
+            </section>
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <StackDetails />
+            </section>
+          </article>
+        </div>
+      </section>
 
       <div
-        class="home-layout home-layout--article"
+        class="home-layout home-layout--article home-layout--supporting"
       >
-        <article class="home-copy home-article">
-          <section class="home-article__section">
-            <DataGridExperience />
-          </section>
-          <section class="home-article__section">
-            <BuiltForAgents />
-          </section>
-          <section class="home-article__section">
-            <FeaturesInBrief />
-          </section>
-          <section class="home-article__section">
-            <RegularApplication />
-          </section>
-          <section class="home-article__section">
-            <StackDetails />
-          </section>
-          <section class="home-article__section">
+        <article
+          class="home-copy home-article home-article--supporting"
+        >
+          <section
+            class="home-article__section home-article__section--faq"
+          >
             <FrequentlyAskedQuestions />
           </section>
-          <section class="home-article__section">
+          <section
+            class="home-article__section home-article__section--screenshots"
+          >
             <Screenshots />
           </section>
-          <section class="home-article__section">
+          <section
+            class="home-article__section home-article__section--status"
+          >
             <StatusAndContributing />
           </section>
         </article>
