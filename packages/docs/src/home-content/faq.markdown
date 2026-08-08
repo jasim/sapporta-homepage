@@ -39,25 +39,18 @@ effort.
 
 ### What kinds of products can I build?
 
-Sapporta works well for products built around records and relationships: inventory and asset systems, CRMs, project and
-case tracking, approval workflows, field-service software, personal databases, and vertical SaaS applications.
+Sapporta is especially well suited to personal database tools: calorie and fitness trackers, personal bookkeeping
+systems, home-management databases, and reading or RSS archives. These applications need purpose-built workflows, but
+they also need a flexible way to work with the underlying data. Sooner or later, you will want to correct old entries,
+investigate a discrepancy, reorganize records, or explore a question the original interface never anticipated. Sapporta
+keeps that data directly usable, with the freedom of a spreadsheet rather than a static CRUD scaffold.
+
+The same quality makes Sapporta a natural fit for internal tools such as CRMs, case trackers, inspection/audit systems
+etc. These tools work best when guided workflows and direct data manipulation can live side by side.
 
 It is less opinionated about products whose main surface is not relational data, such as forum software, social
 networks, media editors or real-time multiplayer experiences. You can still build those features in the same TypeScript
 application, but the generated grids and table APIs will provide less leverage there.
-
-### How does Sapporta work with Claude, Codex, and other coding agents?
-
-Sapporta is not tied to one model or agent. Claude, Codex, and other agents that can work in a repository and follow the
-[Sapporta skill](https://github.com/jasim/sapporta-skills) to learn the framework's project structure and workflow.
-
-The skill has guidance on building data-oriented applications - like how to ensure a great search experience in a
-domain-aware manner, where to use nested data-grids, and how to setup master-detail forms, and so on.
-
-And for running applications - locally in development, or hosted as a public SaaS, the agent can discover the exact API
-surface at `/api/openapi.json` or through the project-local Sapporta CLI. That gives it real contracts and table
-metadata instead of asking it to guess routes or JSON shapes. It also lets users generate agent tokens that can securely
-represent the user's authorizations to the agent.
 
 ### Can I add custom business logic beyond generated CRUD?
 
