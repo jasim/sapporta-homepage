@@ -49,19 +49,9 @@ This declaration is used by Sapporta to:
 
 - Generate the list, get, create, update, delete, lookup, count, and CSV export
   endpoints for each table.
-- Derive the Zod request and response schemas for those endpoints and publish
-  their table-specific contracts at `/api/openapi.json`.
-- Apply write rules and the declared `rowScope` on the server, including
-  supplying trusted workspace and user scope values.
-- Publish a browser-safe table model at `/api/meta/tables`, which the React
+- Publish them to `/api/openapi.json` for agentic use
+- Secure them with based on `rowScope`, so that the API can be safely published on the internet
+- Publish `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
   child-table views.
 
-As you can see, this declarative configuration is what makes Sapporta truly
-useful for rapidly building database applications.
-
-I've found that coding agents routinely read the Sapporta library code, and
-understands the configuration and its runtime implications quite well. Unlike
-more complex multi-knob declarative systems (like say Kubernetes), the
-configuration here maps in a straightforward manner to their runtime, and is
-thus amenable to better understanding and control.

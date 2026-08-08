@@ -14,14 +14,16 @@ Sapporta helps agentic development because it provides a robust infrastructure w
 predictable manner. It gets working table APIs, grids, forms, and row security, then spends its time on the
 domain-specific parts of the product.
 
-### Is Sapporta only for internal tools?
+### Is Sapporta only for personal / internal tools?
 
-No. Internal and operational tools are a natural fit because Sapporta gives every table an editable grid, forms, and
-permission-aware APIs. But those are building blocks, not a constrained design space.You can keep the generated screens
-where they are useful and add customer-facing React routes and workflows, without any constraints. Sapporta is a great
-fit for any web application that you want to build with a TypeScript backend and rich React single-page applications. It
-wires best in class libraries into a pnpm workspace: a package for shared code between front-end and back-end code,
-which includes ts-rest for typed APIs, and a front-end setup with state management, forms, queries, and UI.
+No. Personal software, and internal tools are a natural fit because Sapporta gives every table an editable grid, forms,
+and permission-aware APIs. But those are building blocks, not a constrained design space. You can add customer-facing
+React routes and workflows, without any constraints.
+
+Sapporta is a great fit for any web application that you want to build with a TypeScript backend and rich React
+single-page applications. It wires best in class libraries into a pnpm workspace: a package for shared code between
+front-end and back-end code, which includes ts-rest for typed APIs, and a front-end setup with state management, forms,
+queries, and UI.
 
 ### Can I build customer-facing SaaS applications with it?
 
@@ -46,8 +48,8 @@ application, but the generated grids and table APIs will provide less leverage t
 
 ### How does Sapporta work with Claude, Codex, and other coding agents?
 
-Sapporta is not tied to one model or agent. Claude, Codex, and other agents that can work in a repository and follow the [Sapporta skill](https://github.com/jasim/sapporta-skills) to learn the framework's project
-structure and workflow.
+Sapporta is not tied to one model or agent. Claude, Codex, and other agents that can work in a repository and follow the
+[Sapporta skill](https://github.com/jasim/sapporta-skills) to learn the framework's project structure and workflow.
 
 The skill has guidance on building data-oriented applications - like how to ensure a great search experience in a
 domain-aware manner, where to use nested data-grids, and how to setup master-detail forms, and so on.
@@ -59,9 +61,8 @@ represent the user's authorizations to the agent.
 
 ### Can I add custom business logic beyond generated CRUD?
 
-Yes. Generated CRUD is only a starting surface. You can add typed contracts in the shared
-package, Hono handlers and domain modules in the API, transactions around multi-table changes, and custom React routes
-in the frontend.
+Yes. Generated CRUD is only a starting surface. You can add typed contracts in the shared package, Hono handlers and
+domain modules in the API, transactions around multi-table changes, and custom React routes in the frontend.
 
 Those custom features live beside Sapporta's generated routes in a regular TypeScript codebase. They can also use the
 same authentication context, row-scoped data helpers, mailer, and typed client conventions.
@@ -78,10 +79,11 @@ scope. A single-row read, update, or delete returns the same `404 ROW_NOT_FOUND`
 cannot see. Creates reject caller-supplied `workspace_id` / `workspaceId` and `scoped_to_user_id` / `scopedToUserId`,
 stamp the applicable values from authenticated request authority, and verify that referenced rows are visible too.
 
-For ordinary custom table work, [`scopedRows(db, auth, table)`](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/) keeps
-those row and write rules while accepting typed Drizzle predicates. The route still checks its own ability;
-`scopedRows()` handles row visibility, managed-field rejection, reference validation, trusted insert scope, and
-immutable update and delete behavior.
+For ordinary custom table work,
+[`scopedRows(db, auth, table)`](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/) keeps those row
+and write rules while accepting typed Drizzle predicates. The route still checks its own ability; `scopedRows()` handles
+row visibility, managed-field rejection, reference validation, trusted insert scope, and immutable update and delete
+behavior.
 
 When a workflow needs joins, transactions, or a custom result shape, use
 [a per-table guard](/docs/reference/server/row-scoped-data/table-row-security-guards/):
