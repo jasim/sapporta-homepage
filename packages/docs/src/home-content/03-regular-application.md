@@ -1,12 +1,9 @@
 ## Sapporta projects are regular applications
 
-Sapporta projects are regular codebases that you fully own. Sapporta tries to be
-a small toolkit with many composable helpers that plugs into an otherwise
-conventional web application.
+Sapporta projects are regular TypeScript applications - you can add typed API
+endpoints, React screens, and build everything you need without constraints.
 
-### With a sprinkling of declarativeness
-
-The `sapportaTable` declaration is the only declarative configuration in a
+**With a sprinkling of declarativeness.** The `sapportaTable` declaration is the only declarative configuration in a
 Sapporta application.
 
 See the table declaration code here:
@@ -45,6 +42,8 @@ export const books = sapportaTable({
   },
 });
 ```
+
+<div class="pt-6"></div>
 
 This declaration is used by Sapporta to:
 
