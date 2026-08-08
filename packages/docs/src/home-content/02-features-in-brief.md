@@ -1,3 +1,15 @@
+Applications built with Sapporta offer full agentic access without insecure
+exposure. `/api/openapi.json` exposes every registered endpoint and table
+operation, giving agents complete, contract-accurate access to all APIs and
+tables. Row-level security and CASL authorization enforce scope on every call.
+
+The library, code generator, skills, and docs are tuned together for agentic
+development, so you can prompt domain requirements and agents will build them
+with a good user interface, secure data access, and well-factored modules.
+
+Sapporta projects are regular TypeScript applications - you can add typed API
+endpoints, React screens, and build everything you need without constraints.
+
 ## At a glance
 
 When you create a new Sapporta project by running `sapporta init <project-name>`
