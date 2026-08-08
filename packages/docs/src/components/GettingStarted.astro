@@ -6,22 +6,75 @@ const createProjectAgentUrl =
   gettingStartedEnv.agentMarkdownUrl(
     "docs/getting-started/create-a-project",
   );
-const createProjectAgentPrompt = `Before you begin, ensure the Sapporta skill is installed:
+const createProjectAgentPreamble = `Before you begin, ensure the Sapporta skill is installed:
 npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
 
-Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.
+Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.`;
 
-Build a task management app with Sapporta.
-${createProjectAgentUrl}
+const applicationPrompts = [
+  {
+    label: "Calorie tracker",
+    request:
+      "Build a personal calorie tracker with Sapporta.",
+    body: `Model foods, meals, meal items, and date-ranged nutrition goals.
 
-Model people, projects, tasks, labels, and comments.
+Include:
+- a user-maintained food list with serving sizes, calories, protein, carbs, fat, and fiber
+- one workflow to log a meal with multiple food items
+- server-validated serving units and stored nutrition snapshots that preserve history
+- today and Monday-Sunday weekly summaries against independent daily and weekly goals
+
+Add realistic sample data.`,
+  },
+  {
+    label: "Book-keeping",
+    request:
+      "Build a personal double-entry book-keeping app with Sapporta.",
+    body: `Model accounts, transactions, journal entries, categories, payees, and budgets.
+
+Include:
+- easy entry for income, expenses, and transfers, with automatic double-entry mapping to balanced debits and credits underneath
+- an auditable double-entry ledger
+- monthly budgets and category rules
+- reports for balances, cash flow, and spending by category
+
+Add realistic sample data.`,
+  },
+  {
+    label: "Task management",
+    request:
+      "Build a task management app with Sapporta.",
+    body: `Model people, projects, tasks, labels, and comments.
 
 Include:
 - task creation and assignment
 - status, priority, due dates, labels, and comments
 - views for open tasks, overdue tasks, assignees, and projects
 
-Add realistic sample data.`;
+Add realistic sample data.`,
+  },
+  {
+    label: "CRM",
+    request: "Build a CRM with Sapporta.",
+    body: `Model companies, contacts, opportunities, activities, and follow-ups.
+
+Include:
+- lead and opportunity tracking
+- contact history, notes, and next steps
+- owners, stages, expected values, and close dates
+- views for the pipeline, overdue follow-ups, companies, and owners
+
+Add realistic sample data.`,
+  },
+].map((application) => ({
+  ...application,
+  prompt: `${createProjectAgentPreamble}\n\n${application.request}\n${createProjectAgentUrl}\n\n${application.body}`,
+}));
+
+const defaultApplication =
+  applicationPrompts.find(
+    ({ label }) => label === "Task management",
+  ) ?? applicationPrompts[0];
 ---
 
 <div class="home-layout home-layout--quick-start">
@@ -40,6 +93,45 @@ Add realistic sample data.`;
         Copy this starter prompt, then paste it
         into your coding agent.
       </p>
+      <div
+        class="home-quick-start__applications"
+        role="group"
+        aria-label="Choose an application prompt"
+      >
+        {
+          applicationPrompts.map(
+            (application) => {
+              const isSelected =
+                application ===
+                defaultApplication;
+
+              return (
+                <button
+                  class="home-quick-start__application-button"
+                  type="button"
+                  data-agent-prompt-option
+                  data-agent-prompt-value={
+                    application.prompt
+                  }
+                  data-agent-prompt-label={
+                    application.label
+                  }
+                  data-selected={
+                    isSelected
+                      ? "true"
+                      : undefined
+                  }
+                  aria-pressed={
+                    isSelected ? "true" : "false"
+                  }
+                >
+                  {application.label}
+                </button>
+              );
+            },
+          )
+        }
+      </div>
       <button
         class="home-quick-start__copy-button"
         type="button"
@@ -62,7 +154,7 @@ Add realistic sample data.`;
         aria-live="polite"></span>
       <pre
         class="home-quick-start__prompt"
-        data-agent-prompt>{createProjectAgentPrompt}</pre>
+        data-agent-prompt>{defaultApplication.prompt}</pre>
     </div>
   </section>
 </div>
@@ -84,8 +176,52 @@ Add realistic sample data.`;
     document.querySelector<HTMLElement>(
       "[data-copy-agent-label]",
     );
+  const agentPromptOptions =
+    document.querySelectorAll<HTMLButtonElement>(
+      "[data-agent-prompt-option]",
+    );
   let copyAgentStatusTimeout:
     ReturnType<typeof setTimeout> | undefined;
+
+  const resetCopyAgentFeedback = () => {
+    if (!copyAgentPromptButton) return;
+
+    delete copyAgentPromptButton.dataset.copied;
+    copyAgentPromptButton.title =
+      "Copy starter prompt to clipboard";
+    if (copyAgentLabel) {
+      copyAgentLabel.textContent =
+        "Copy starter prompt";
+    }
+  };
+
+  agentPromptOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      const prompt =
+        option.dataset.agentPromptValue;
+      if (!agentPrompt || !prompt) return;
+
+      agentPrompt.textContent = prompt;
+      agentPromptOptions.forEach((candidate) => {
+        const isSelected = candidate === option;
+        candidate.setAttribute(
+          "aria-pressed",
+          String(isSelected),
+        );
+        if (isSelected) {
+          candidate.dataset.selected = "true";
+        } else {
+          delete candidate.dataset.selected;
+        }
+      });
+
+      clearTimeout(copyAgentStatusTimeout);
+      resetCopyAgentFeedback();
+      if (copyAgentStatus) {
+        copyAgentStatus.textContent = `${option.dataset.agentPromptLabel} prompt selected`;
+      }
+    });
+  });
 
   copyAgentPromptButton?.addEventListener(
     "click",
@@ -112,14 +248,7 @@ Add realistic sample data.`;
         clearTimeout(copyAgentStatusTimeout);
         copyAgentStatusTimeout = setTimeout(
           () => {
-            delete copyAgentPromptButton.dataset
-              .copied;
-            copyAgentPromptButton.title =
-              "Copy starter prompt to clipboard";
-            if (copyAgentLabel) {
-              copyAgentLabel.textContent =
-                "Copy starter prompt";
-            }
+            resetCopyAgentFeedback();
             if (copyAgentStatus) {
               copyAgentStatus.textContent = "";
             }

@@ -1,5 +1,10 @@
 ## Sapporta projects are regular applications
 
+When you create a new Sapporta project by running `sapporta init <project-name>`
+you get a complete, pre-wired project out of the box — API server, React
+frontend, auth, migrations, and a production Dockerfile, all set up and
+connected.
+
 Sapporta projects are regular TypeScript applications - you can add typed API
 endpoints, React screens, and build everything you need without constraints.
 
@@ -45,13 +50,15 @@ export const books = sapportaTable({
 
 <div class="pt-6"></div>
 
-This declaration is used by Sapporta to:
+This single declaration gives every table two connected surfaces:
 
-- Generate the list, get, create, update, delete, lookup, count, and CSV export
-  endpoints for each table.
-- Publish them to `/api/openapi.json` for agentic use
-- Secure them with based on `rowScope`, so that the API can be safely published on the internet
-- Publish `/api/meta/tables`, which the React
+- **Table APIs.** Sapporta generates list, get, create, update, delete, lookup,
+  count, and CSV export endpoints, then publishes them to `/api/openapi.json`
+  for agentic use. Row-level security from `rowScope` and role-based permissions
+  defined with CASL secure every call, so the APIs can be safely published on
+  the internet.
+- **Table Grid.** Sapporta publishes `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
-  child-table views.
-
+  child-table views. The grids include filtering, sorting, searching,
+  exporting, nesting, and keyboard navigation. Because they use the table APIs,
+  they inherit the same authorization and permissions.
