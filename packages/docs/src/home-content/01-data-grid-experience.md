@@ -1,10 +1,13 @@
-## A grid-first interface
+## A datagrid for every table
 
-A large chunk of most ERP software is just forms, data grids, and reports, and they all heavily favour the keyboard. Sapporta's goal is to bring the same experience to database applications on the web. It uses data grids as a universal surface for tabular data. You can put a lot of heart and soul into a single component, and it benefits the entire application.
+If you look at traditional ERP software, a large chunk of their interface is
+just forms, data grids, and reports. All of them heavily favour the keyboard.
+They are optimized for power-users and have high information density. Sapporta's
+goal is to bring the same experience to database applications on the web.
 
-![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
-
-![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
+It does this by leaning heavily into datagrids. Sapporta uses data grids as a universal
+surface for tabular data. You can put a lot of heart and soul into that single
+component, and it benefits the entire application. 
 
 That is also what makes spreadsheets beautiful. People use them because they can
 work with data without having to anticipate every requirement in advance.
@@ -18,16 +21,19 @@ on the central parts of the system that finds most use, adding features as users
 request them. The rest of the application's data becomes a second-class citizen.
 
 But in Sapporta, just like a spreadsheet, you immediately get a live, editable
-data grid the moment you create a table. The Sapporta Grid is a custom-built
-React component that can be deeply composed and extended. It brings a similar
-set of features and UX as Airtable, NocoDB, and similar collaborative databases.
-It is paginated, filterable, sortable, and searchable. It also supports nested
-master-detail relationships, with full keyboard support that works across
-levels.
+data grid the moment you create a table.
 
-Sapporta also renders forms for adding and editing records. It has a lightweight
-reporting framework with summary rows, detail rows, and drill-down links.
-Reports use the same data grid and thus have all the same affordances.
+![The Daymark task application showing its open-tasks grid](/assets/home/screenshots/grid-view.png "Work with open tasks in a full application view built around the Sapporta Grid.")
+
+![A task grid with text and assignee filters open](/assets/home/screenshots/grid-filtering.png "Combine text and column filters without leaving the grid.")
+
+<div class="py-8">
+
+The Sapporta Grid is a custom-built React component that can be deeply composed
+and extended. It brings a similar set of features and UX as Airtable, NocoDB,
+and similar collaborative databases. It is paginated, filterable, sortable, and
+searchable. It also supports nested master-detail relationships, with full
+keyboard support that works across levels.
 
 So when you use Sapporta to build a web application with a coding agent, you get
 a fully wired system with a front end for manipulating data, along with all the
