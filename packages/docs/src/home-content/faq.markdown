@@ -14,27 +14,23 @@ Sapporta helps agentic development because it provides a robust infrastructure w
 predictable manner. It gets working table APIs, grids, forms, and row security, then spends its time on the
 domain-specific parts of the product.
 
-### Is Sapporta only for personal / internal tools?
-
-No. Personal software, and internal tools are a natural fit because Sapporta gives every table an editable grid, forms,
-and permission-aware APIs. But those are building blocks, not a constrained design space. You can add customer-facing
-React routes and workflows, without any constraints.
+### What kinds of products can I build?
 
 Sapporta is a great fit for any web application that you want to build with a TypeScript backend and rich React
 single-page applications. It wires best in class libraries into a pnpm workspace: a package for shared code between
 front-end and back-end code, which includes ts-rest for typed APIs, and a front-end setup with state management, forms,
 queries, and UI.
 
-### What kinds of products can I build?
+It is especially well suited to database tools: personal software, internal/operationl tools, and vertical SaaS.
 
-Sapporta is especially well suited to database tools: calorie and fitness trackers, personal bookkeeping
-systems, home-management databases, and reading or RSS archives. These applications need purpose-built workflows, but
-they also need a flexible way to work with the underlying data. Sooner or later, you will want to correct old entries,
-investigate a discrepancy, reorganize records, or explore a question the original interface never anticipated. Sapporta
-keeps that data directly usable, with the freedom of a spreadsheet rather than a static CRUD scaffold.
+Examples of personal software would include calorie and fitness trackers, personal bookkeeping systems, home-management
+databases and so on. These applications need purpose-built workflows, but they also need a flexible way to work with the
+underlying data. Sooner or later, you will want to correct old entries, investigate a discrepancy, reorganize records,
+or explore a question the original interface never anticipated. Sapporta's table grids lets you do all that, with the
+freedom of a spreadsheet rather than a static CRUD scaffold.
 
-The same quality makes Sapporta a natural fit for internal tools such as CRMs, case trackers, inspection/audit systems
-etc. These tools work best when guided workflows and direct data manipulation can live side by side.
+It also makes Sapporta a great fit for internal tools such as CRMs, case trackers, inspection/audit systems etc. You can
+build out regular domain workflows, and make use the flexible datagrids and the ability to use the system agentically.
 
 It is less opinionated about products whose main surface is not relational data, such as forum software, social
 networks, media editors or real-time multiplayer experiences. You can still build those features in the same TypeScript
@@ -129,5 +125,5 @@ Sapporta is an open-source TypeScript framework made of installable libraries an
 conventional pnpm workspace, then runs as part of the application you own.
 
 It is not a hosted platform or external control plane. It is a framework just like Rails and Django, but built with
-TypeScript assembling best in class libraries, and providing more specific conveniences for database applications and
+TypeScript using a curated set of libraries, and providing more specific conveniences for database applications and
 agentic coding.
