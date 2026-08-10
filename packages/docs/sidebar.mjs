@@ -13,15 +13,4 @@ export default [
       },
     ],
   },
-  {
-    label: "Guides",
-    items: [
-      {
-        slug: "docs/guides",
-      },
-      {
-        slug: "docs/walkthrough",
-      },
-    ],
-  },
 ];
