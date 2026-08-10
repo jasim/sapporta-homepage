@@ -401,10 +401,10 @@
 }
 
 /*
- * One enclosure for the whole demo. The heading and tab row are the card's
- * "chrome" on the soft surface tint; the panel is white and sits flush inside.
- * A single hairline under the tabs is the only internal divider, and the active
- * tab's underline lands on it so the tabs read as attached to the panel.
+ * One enclosure for the whole demo. The caption and tab row share the card's
+ * light "chrome" surface; the panel is white and sits flush inside. A single
+ * hairline under the tabs is the only internal divider, and the active tab
+ * docks onto it as a folder tab so the tabs read as attached to the panel.
  */
 .home-demo {
   background: var(--surface);
@@ -445,25 +445,24 @@
 
 .home-demo__tabs {
   /*
-   * A distinct neutral band for the view switch: a step darker than the
-   * caption in light mode, a step lighter in dark (the ink mix flips with the
-   * theme), so the tabs read as their own strip without any color accent.
+   * Editor-style tab row. No filled band — the row shares the caption's light
+   * chrome and is separated from the panel by a single hairline that the
+   * active tab docks onto.
    */
-  align-items: stretch;
-  background: color-mix(in srgb, var(--ink) 7%, var(--surface));
+  align-items: flex-end;
   border-bottom: 1px solid var(--sap-border);
-  border-top: 1px solid var(--sap-border);
   display: flex;
   gap: 0.25rem;
   margin: 0;
-  padding-inline: clamp(1.1rem, 2.6vw, 1.6rem);
+  padding: 0.4rem clamp(1.1rem, 2.6vw, 1.6rem) 0;
 }
 
 .home-demo__tab {
   align-items: center;
   appearance: none;
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
   color: var(--dim);
   cursor: pointer;
   display: inline-flex;
@@ -474,28 +473,29 @@
   gap: 0.45rem;
   line-height: 1.35;
   margin: 0;
-  padding: 0.58rem 0.9rem 0.6rem;
+  padding: 0.55rem 0.9rem 0.6rem;
   position: relative;
   text-align: left;
 }
 
-.home-demo__tab:hover {
+.home-demo__tab:hover:not([aria-selected="true"]) {
   background: color-mix(in srgb, var(--ink) 5%, transparent);
   color: var(--ink);
 }
 
 /*
- * The active tab is filled with the panel color and pulled down over the
- * band's bottom hairline, so it reads as one surface with the panel below.
+ * The active tab is a folder tab: panel-colored fill, framed on three sides,
+ * and pulled down 1px so its open bottom edge docks onto the panel below.
  */
 .home-demo__tab[aria-selected="true"] {
   background: var(--bg);
+  border-color: var(--sap-border);
+  border-bottom-color: var(--bg);
   color: var(--ink);
   margin-bottom: -1px;
 }
 
 .home-demo__tab:focus-visible {
-  border-radius: 1px;
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
@@ -527,12 +527,12 @@
 
 .home-code-sample__header {
   align-items: center;
-  background: var(--surface-soft);
-  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  border-bottom: 1px solid var(--sap-border);
   color: var(--dim);
   display: flex;
   min-height: 2.25rem;
-  padding: 0.48rem 0.85rem;
+  padding: 0.55rem clamp(1.1rem, 2.6vw, 1.6rem);
 }
 
 .home-code-sample__path {
