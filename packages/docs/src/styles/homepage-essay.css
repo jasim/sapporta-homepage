@@ -400,8 +400,18 @@
   width: 100%;
 }
 
+/*
+ * One enclosure for the whole demo. The heading and tab row are the card's
+ * "chrome" on the soft surface tint; the panel is white and sits flush inside.
+ * A single hairline under the tabs is the only internal divider, and the active
+ * tab's underline lands on it so the tabs read as attached to the panel.
+ */
 .home-demo {
+  background: var(--surface);
+  border: 1px solid var(--sap-border-strong);
+  border-radius: 0;
   min-width: 0;
+  overflow: hidden;
   width: 100%;
 }
 
@@ -409,20 +419,20 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem 0.85rem;
+  padding: clamp(1rem, 2.2vw, 1.35rem) clamp(1.1rem, 2.6vw, 1.6rem) 0.9rem;
 }
 
 .home-demo__label {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--ink);
+  color: var(--bg);
   display: inline-block;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 750;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   line-height: 1;
   margin: 0;
-  padding: 0.52rem 0.68rem;
+  padding: 0.5rem 0.66rem;
 }
 
 .home-demo__subtitle {
@@ -434,10 +444,19 @@
 }
 
 .home-demo__tabs {
+  /*
+   * A distinct neutral band for the view switch: a step darker than the
+   * caption in light mode, a step lighter in dark (the ink mix flips with the
+   * theme), so the tabs read as their own strip without any color accent.
+   */
   align-items: stretch;
+  background: color-mix(in srgb, var(--ink) 7%, var(--surface));
+  border-bottom: 1px solid var(--sap-border);
+  border-top: 1px solid var(--sap-border);
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 0.875rem;
+  gap: 0.25rem;
+  margin: 0;
+  padding-inline: clamp(1.1rem, 2.6vw, 1.6rem);
 }
 
 .home-demo__tab {
@@ -454,25 +473,25 @@
   font-weight: 620;
   gap: 0.45rem;
   line-height: 1.35;
-  margin: 0 0 -1px;
-  padding: 0.65rem 0.1rem 0.7rem;
+  margin: 0;
+  padding: 0.58rem 0.9rem 0.6rem;
   position: relative;
   text-align: left;
 }
 
-.home-demo__tab:hover,
-.home-demo__tab[aria-selected="true"] {
+.home-demo__tab:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
   color: var(--ink);
 }
 
-.home-demo__tab[aria-selected="true"]::after {
-  background: var(--link);
-  bottom: 0;
-  content: "";
-  height: 2px;
-  left: 0;
-  position: absolute;
-  right: 0;
+/*
+ * The active tab is filled with the panel color and pulled down over the
+ * band's bottom hairline, so it reads as one surface with the panel below.
+ */
+.home-demo__tab[aria-selected="true"] {
+  background: var(--bg);
+  color: var(--ink);
+  margin-bottom: -1px;
 }
 
 .home-demo__tab:focus-visible {
@@ -496,8 +515,8 @@
 
 .home-code-sample {
   background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 2px;
+  border: 0;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -556,8 +575,8 @@
  * the demo panel boundary instead of changing its global defaults.
  */
 .home-demo__panel--grid :where(.homepage-grid, .homepage-grid-message) {
-  border-color: var(--sap-border);
-  border-radius: 2px;
+  border: 0;
+  border-radius: 0;
 }
 
 .home-demo__panel--grid .homepage-grid {

@@ -1,0 +1,29 @@
+---
+// TEMPORARY dev-only preview for verifying HomepageDemo styling in isolation.
+import HomepageDemo from "../components/HomepageDemo.astro";
+import "../styles/sapporta.css";
+import "../styles/homepage-essay.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Demo preview</title>
+  </head>
+  <body class="home-page">
+    <main
+      style="max-width: 80rem; margin: 3rem auto; padding: 0 2rem;"
+    >
+      <HomepageDemo />
+    </main>
+  </body>
+</html>
