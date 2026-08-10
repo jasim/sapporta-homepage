@@ -23,14 +23,14 @@ queries, and UI.
 
 It is especially well suited to database tools: personal software, internal/operationl tools, and vertical SaaS.
 
-Examples of personal software would include calorie and fitness trackers, personal bookkeeping systems, home-management
-databases and so on. These applications need purpose-built workflows, but they also need a flexible way to work with the
-underlying data. Sooner or later, you will want to correct old entries, investigate a discrepancy, reorganize records,
-or explore a question the original interface never anticipated. Sapporta's table grids lets you do all that, with the
-freedom of a spreadsheet rather than a static CRUD scaffold.
+Examples include personal software such as calorie and fitness trackers, personal bookkeeping systems, and
+home-management databases, as well as internal tools like CRMs, case trackers, and inspection/audit systems.
 
-It also makes Sapporta a great fit for internal tools such as CRMs, case trackers, inspection/audit systems etc. You can
-build out regular domain workflows, and make use the flexible datagrids and the ability to use the system agentically.
+These applications need purpose-built workflows, but they also need a flexible way to work with the underlying data.
+Sooner or later, you will want to correct old entries, investigate a discrepancy, reorganize records, or explore a
+question the original interface never anticipated. Sapporta's table grids let you do all that, with the freedom of a
+spreadsheet rather than a static CRUD scaffold. And because the entire system is queryable and scriptable through typed
+APIs, you can also drive it agentically, letting agents work with the same data and workflows your users do.
 
 It is less opinionated about products whose main surface is not relational data, such as forum software, social
 networks, media editors or real-time multiplayer experiences. You can still build those features in the same TypeScript
