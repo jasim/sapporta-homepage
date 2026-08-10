@@ -27,7 +27,7 @@ queries, and UI.
 
 ### What kinds of products can I build?
 
-Sapporta is especially well suited to personal database tools: calorie and fitness trackers, personal bookkeeping
+Sapporta is especially well suited to database tools: calorie and fitness trackers, personal bookkeeping
 systems, home-management databases, and reading or RSS archives. These applications need purpose-built workflows, but
 they also need a flexible way to work with the underlying data. Sooner or later, you will want to correct old entries,
 investigate a discrepancy, reorganize records, or explore a question the original interface never anticipated. Sapporta

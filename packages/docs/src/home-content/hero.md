@@ -21,14 +21,15 @@ navigation:
       href: https://github.com/jasim/sapporta
 ---
 
-## Build personal database tools agentically
+## Build database tools agentically
 
 Sapporta gives coding agents a reliable foundation for building database applications.
 
-It is a full-stack TypeScript framework that provides:
+It provides:
 
 - spreadsheet-grade grids available immediately for every new table
 - reports with drill-down navigation
 - ability to agentically use these applications
 - skills, docs, backend, frontend -- all tuned together for agentic development
 - auth guardrails to ensure agentically written code is secure for public deployment  
+- a straightforward Hono + React + SQLite codebase
