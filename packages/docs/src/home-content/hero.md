@@ -27,7 +27,7 @@ Sapporta gives coding agents a reliable foundation for building database applica
 
 It provides:
 
-- spreadsheet-grade grids available immediately for every new table
+- spreadsheet-grade grids available immediately for every table
 - reports with drill-down navigation
 - ability to agentically use these applications
 - skills, docs, backend, frontend -- all tuned together for agentic development

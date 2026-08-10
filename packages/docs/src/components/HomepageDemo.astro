@@ -1,7 +1,8 @@
 ---
 import { Code } from "astro:components";
-import { Code2, Table2 } from "lucide-react";
+import { Code2, FileCode2, Table2 } from "lucide-react";
 import BooksTableDataGrid from "./BooksTableDataGrid";
+import booksDataGridCode from "./BooksTableDataGrid.tsx?raw";
 
 const codeTheme = "github-light-default";
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
@@ -92,6 +93,23 @@ export const books = sapportaTable({
         />
         <span>Code: schema definition</span>
       </button>
+      <button
+        class="home-demo__tab"
+        id="home-demo-impl-tab"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="home-demo-impl-panel"
+        tabindex="-1"
+      >
+        <FileCode2
+          className="home-demo__tab-icon"
+          aria-hidden="true"
+          size={17}
+          strokeWidth={2}
+        />
+        <span>Code: grid component</span>
+      </button>
     </div>
 
     <div
@@ -122,6 +140,31 @@ export const books = sapportaTable({
           <Code
             code={booksSchemaCode}
             lang="ts"
+            theme={codeTheme}
+          />
+        </div>
+      </figure>
+    </div>
+
+    <div
+      class="home-demo__panel home-demo__panel--code"
+      id="home-demo-impl-panel"
+      role="tabpanel"
+      aria-labelledby="home-demo-impl-tab"
+      hidden
+    >
+      <figure class="home-code-sample">
+        <figcaption
+          class="home-code-sample__header"
+        >
+          <span class="home-code-sample__path">
+            packages/docs/src/components/BooksTableDataGrid.tsx
+          </span>
+        </figcaption>
+        <div class="home-code-sample__body">
+          <Code
+            code={booksDataGridCode}
+            lang="tsx"
             theme={codeTheme}
           />
         </div>
