@@ -1,15 +1,84 @@
-## Reports with expandable detail
+## Reports are one endpoint away
 
-Sapporta reports display read-only results in a data grid. A report can contain a single list of rows or multiple nested
-levels—for example, accounts with their journal entries underneath.
+Every database application eventually turns into a reporting application. And in
+a conventional stack each report is a small project of its own: a query, a
+bespoke table component, its own sorting, its own drill-downs, its own screen
+chrome. So reports get rationed, and most of the questions people have about
+their data never become screens.
 
-Users can sort the returned rows, resize columns, expand nested rows, and copy values. Reports can include rollup,
-opening, closing, subtotal, and footer rows. Columns support text, numbers, booleans, dates, timestamps, currency,
+In Sapporta, a report is an API endpoint that returns a value of one type:
+`GridDataset`. That's the whole contract. The frontend already knows how to
+render any `GridDataset` as a read-only result grid — the same [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid)
+that powers table screens, so sorting, column resizing, keyboard navigation,
+expanding nested rows, and copying cells or whole blocks as CSV (with or
+without headers) are already there. You write the query and describe its shape;
+the rest exists before you start.
+
+```ts
+// packages/api/app/reports/top-customers.ts
+api.register("topCustomers", contract.topCustomers, ({ c }) => {
+  const rows = query(c, `SELECT id, name, revenue, last_order FROM ...`);
+
+  const body: GridDataset = {
+    name: "top-customers",
+    label: "Top Customers",
+    rootLevel: "customer",
+    levels: {
+      customer: {
+        columns: [
+          { id: "id", label: "ID", kind: "number", visuallyHidden: true },
+          {
+            id: "name", label: "Customer", kind: "text", width: 40,
+            // clicking a name opens that customer's record page
+            links: [{ kind: "table", table: "customers", bind: { id: "id" } }],
+          },
+          { id: "revenue", label: "Revenue", kind: "number", displayFormat: "currency" },
+          { id: "last_order", label: "Last Order", kind: "date" },
+        ],
+        childLevels: [],
+      },
+    },
+    nodes: rows.map((row) => ({
+      rowKey: `customer:${row.id}`,
+      levelName: "customer",
+      columns: row,
+    })),
+  };
+
+  return { status: 200, body };
+});
+```
+
+<div class="pt-6"></div>
+
+A `GridDataset` isn't limited to a flat list. Levels nest, so a report can carry
+its detail with it. The accounting app we build Sapporta against has an account
+ledger report with three levels: the account at the root, its transactions
+underneath with a running balance, and each transaction expandable into its
+individual journal entries. The dataset opens with an opening-balance row and
+closes with Closing Balance and Period Net footer rows — all just part of the
+returned value. Rollup, subtotal, opening, and closing rows are first-class row
+kinds, and columns cover text, numbers, booleans, dates, timestamps, currency,
 percentages, multiline text, and Markdown.
 
-Individual cells can link to another report, a record page, an application route, or an external URL. Hidden columns can
-carry the IDs needed for those links without displaying them. With the keyboard, Space expands a nested row and Enter
-follows the configured link for the active cell.
+Links make reports navigable rather than terminal. Any column can declare
+drill-downs: to a record page, to another report with parameters bound from the
+row, to an application route, or to an external URL. Hidden columns carry the
+IDs those links need without cluttering the display. In that same accounting
+app, clicking an account name in the trial balance opens its ledger for the
+same date range. And it all works from the keyboard: Space expands a nested
+row, Enter follows the active cell's link — press it on a transaction and the
+underlying journal opens. Links are plain data in the dataset, validated
+against the columns when the grid binds them — a link that reads a column that
+doesn't exist fails loudly, not silently.
 
-Each report defines its own inputs and surrounding screen. Sapporta provides reusable components for the page frame,
-parameter toolbar, date ranges, run button, errors, summary statistics, and result grid.
+The screen around the grid is assembled from stock parts: a page frame, a
+parameter toolbar, date-range fields, a run button, error display, and summary
+statistics. A finished report screen — inputs in the URL, results in the grid —
+is a few dozen lines of ordinary React.
+
+Because each report is this cheap, they stop being rationed. The accounting app
+accumulated a trial balance, balance sheet, income statement, expense breakdown,
+monthly summary, net worth over time, and a handful of data-quality checks —
+duplicate detection, unreconciled accounts — each one an afternoon question
+that became a permanent, drillable screen.

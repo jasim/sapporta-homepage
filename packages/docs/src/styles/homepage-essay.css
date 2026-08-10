@@ -514,7 +514,7 @@
 }
 
 .home-code-sample {
-  background: var(--surface);
+  background: var(--bg);
   border: 0;
   border-radius: 0;
   display: flex;
@@ -544,7 +544,7 @@
 }
 
 .home-code-sample__body {
-  background: var(--surface);
+  background: var(--bg);
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
@@ -552,7 +552,7 @@
 }
 
 .home-code-sample__body > pre {
-  background: var(--surface) !important;
+  background: var(--bg) !important;
   border: 0;
   border-radius: 0;
   font-size: clamp(0.72rem, 1vw, 0.84rem);
@@ -567,6 +567,17 @@
 
 .home-code-sample__body > pre > code {
   font-family: var(--font-mono);
+}
+
+/*
+ * Dark mode syntax colors. The dual-theme <Code> emits each token as
+ * `color:<light>` with the dark value alongside in `--shiki-dark`; under the
+ * dark theme we promote those variables to the live color. The panel keeps its
+ * own background (var(--bg)), which matches github-dark-default's canvas.
+ */
+:root[data-theme="dark"] .home-code-sample__body > pre,
+:root[data-theme="dark"] .home-code-sample__body > pre span {
+  color: var(--shiki-dark, inherit) !important;
 }
 
 /*
