@@ -20,10 +20,11 @@ const applicationPrompts = [
     model:
       "foods, meals, meal items, and date-ranged nutrition goals",
     include: [
-      "a user-maintained food list with serving sizes, calories, protein, carbs, fat, and fiber",
-      "one workflow to log a meal with multiple food items",
-      "server-validated serving units and stored nutrition snapshots that preserve history",
-      "today and Monday-Sunday weekly summaries against independent daily and weekly goals",
+      "a user-maintained food list where each food defines one serving — a quantity plus a measurable unit (g, kg, ml, l, piece, tbsp, tsp) — and calories, protein, carbs, fat, and fiber per serving",
+      "one transactional workflow to log a meal (time, optional category label) with many items, each picking a food and a quantity in that food's own serving unit — no unit conversion; mismatched units are rejected server-side",
+      "each meal item stores a snapshot of the food's details and its computed nutrition (quantity ÷ serving quantity × per-serving values), so editing a food never changes logged history or past reports",
+      "non-overlapping date-ranged goals, optionally open-ended, holding independent daily and weekly targets for every nutrient",
+      "a dashboard for today and the Monday-Sunday week: consumed, target, remaining, and percent progress per nutrient, plus the day's logged meals and items",
     ],
   },
   {
@@ -31,35 +32,44 @@ const applicationPrompts = [
     application:
       "a personal double-entry bookkeeping app",
     model:
-      "accounts, transactions, journal entries, categories, payees, and budgets",
+      "accounts, transactions, postings, payees, and budgets",
     include: [
-      "easy entry for income, expenses, and transfers, with automatic double-entry mapping to balanced debits and credits underneath",
-      "an auditable double-entry ledger",
-      "monthly budgets and category rules",
-      "reports for balances, cash flow, and spending by category",
+      "one chart of accounts spanning asset, liability, equity, income, and expense accounts — income and expense accounts serve as the categories, with no separate category table",
+      "easy entry for income, expenses, and transfers: each transaction is a thin header (date, payee, memo) over two or more balanced postings, each posting debiting or crediting exactly one account, so one purchase can split across expense accounts",
+      "a general journal entry form for transactions that fit none of those shapes — the user picks the accounts and debit/credit amounts directly, as long as they balance",
+      "a cleared flag per transaction for bank reconciliation",
+      "payees with a default account to auto-categorize new entries",
+      "monthly budgets per expense account, and reports for balances, cash flow, and spending",
+      "the leanest schema that supports this — no archiving, soft-delete, or status fields beyond the cleared flag",
     ],
   },
   {
     label: "Task management",
-    application: "a task management app",
+    application:
+      "a task tracker for a small team working on shared projects",
     model:
-      "people, projects, tasks, labels, and comments",
+      "projects, tasks, labels, and comments — team members are the workspace's existing users, with no separate people table",
     include: [
-      "task creation and assignment",
-      "status, priority, due dates, labels, and comments",
-      "views for open tasks, overdue tasks, assignees, and projects",
+      "projects and tasks visible to the whole workspace, so the team works from one shared view rather than per-user lists",
+      "tasks with a title, description, one assignee, a fixed todo / in-progress / done status, priority, and optional due date — no subtasks, dependencies, or custom workflows",
+      "workspace-wide labels that can tag any task",
+      "time-ordered comments on tasks as the team's collaboration trail",
+      "views for my open tasks, overdue tasks across all projects, and a per-project board grouped by status",
     ],
   },
   {
-    label: "CRM",
-    application: "a CRM",
+    label: "Maintenance tracker",
+    application:
+      "an equipment maintenance tracker for a small operations team",
     model:
-      "companies, contacts, opportunities, activities, and follow-ups",
+      "assets, vendors, maintenance schedules, and work orders; team members are the workspace's existing users",
     include: [
-      "lead and opportunity tracking",
-      "contact history, notes, and next steps",
-      "owners, stages, expected values, and close dates",
-      "views for the pipeline, overdue follow-ups, companies, and owners",
+      "a workspace-shared asset register: name, location, serial number, purchase date and cost, and the vendor who services it",
+      "recurring maintenance schedules per asset — what needs doing and an interval in days, with the next due date computed from the most recent completed work order",
+      "work orders for all actual work, whether generated from a schedule or logged ad hoc for a breakdown or repair: assignee, priority, due date, open / in-progress / done status, completion date, cost, and notes",
+      "vendors with contact details and their service history across assets",
+      "views for overdue and upcoming maintenance, open work orders by assignee, and per-asset service history with total spend",
+      "keep it simple for now: no parts inventory, meter-based triggers, approval chains etc.",
     ],
   },
 ].map((application) => ({
