@@ -84,7 +84,7 @@ Model ${application.model}.
 Include:
 ${application.include.map((item) => `- ${item}`).join("\n")}
 
-Add realistic sample data.`,
+Add realistic sample data, seeded under a user with email test@example.com and password test123.`,
 }));
 
 const blankPrompt = `${createProjectAgentPreamble}
@@ -97,7 +97,7 @@ Model ___.
 Include:
 - ___
 
-Add realistic sample data.`;
+Add realistic sample data, seeded under a user with email test@example.com and password test123.`;
 ---
 
 <section
