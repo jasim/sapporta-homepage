@@ -1,5 +1,5 @@
 ---
-import { Copy, Eraser } from "lucide-react";
+import { Check, Copy, Eraser } from "lucide-react";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 
 const createProjectAgentUrl =
@@ -164,9 +164,31 @@ Add realistic sample data, seeded under a user with email test@example.com and p
           Clear
         </button>
       </div>
-      <pre
-        class="home-quick-start__prompt"
-        data-agent-prompt>{blankPrompt}</pre>
+      <div class="home-quick-start__prompt-shell">
+        <pre
+          class="home-quick-start__prompt"
+          data-agent-prompt>{blankPrompt}</pre>
+        <button
+          class="home-quick-start__prompt-copy"
+          type="button"
+          data-copy-agent-prompt
+          aria-label="Copy starter prompt to clipboard"
+          title="Copy starter prompt to clipboard"
+        >
+          <Copy
+            aria-hidden="true"
+            size={26}
+            strokeWidth={2}
+            data-copy-icon-copy
+          />
+          <Check
+            aria-hidden="true"
+            size={26}
+            strokeWidth={2}
+            data-copy-icon-check
+          />
+        </button>
+      </div>
         <div class="home-quick-start__actions">
           <button
             class="home-quick-start__copy-button"
@@ -205,8 +227,8 @@ Add realistic sample data, seeded under a user with email test@example.com and p
 </section>
 
 <script>
-  const copyAgentPromptButton =
-    document.querySelector<HTMLButtonElement>(
+  const copyAgentPromptButtons =
+    document.querySelectorAll<HTMLButtonElement>(
       "[data-copy-agent-prompt]",
     );
   const agentPrompt =
@@ -233,11 +255,11 @@ Add realistic sample data, seeded under a user with email test@example.com and p
     ReturnType<typeof setTimeout> | undefined;
 
   const resetCopyAgentFeedback = () => {
-    if (!copyAgentPromptButton) return;
-
-    delete copyAgentPromptButton.dataset.copied;
-    copyAgentPromptButton.title =
-      "Copy starter prompt to clipboard";
+    copyAgentPromptButtons.forEach((button) => {
+      delete button.dataset.copied;
+      button.title =
+        "Copy starter prompt to clipboard";
+    });
     if (copyAgentLabel) {
       copyAgentLabel.textContent =
         "Copy starter prompt";
@@ -298,48 +320,53 @@ Add realistic sample data, seeded under a user with email test@example.com and p
     },
   );
 
-  copyAgentPromptButton?.addEventListener(
-    "click",
-    async () => {
-      const prompt = agentPrompt?.textContent;
-      if (!prompt) return;
+  copyAgentPromptButtons.forEach((button) => {
+    button.addEventListener(
+      "click",
+      async () => {
+        const prompt = agentPrompt?.textContent;
+        if (!prompt) return;
 
-      try {
-        await navigator.clipboard.writeText(
-          prompt,
-        );
-        copyAgentPromptButton.dataset.copied =
-          "true";
-        copyAgentPromptButton.title = "Copied";
-        if (copyAgentLabel) {
-          copyAgentLabel.textContent =
-            "Copied — paste it into your agent";
-        }
-        if (copyAgentStatus) {
-          copyAgentStatus.textContent =
-            "Prompt copied to clipboard";
-        }
+        try {
+          await navigator.clipboard.writeText(
+            prompt,
+          );
+          copyAgentPromptButtons.forEach(
+            (copyButton) => {
+              copyButton.dataset.copied = "true";
+              copyButton.title = "Copied";
+            },
+          );
+          if (copyAgentLabel) {
+            copyAgentLabel.textContent =
+              "Copied — paste it into your agent";
+          }
+          if (copyAgentStatus) {
+            copyAgentStatus.textContent =
+              "Prompt copied to clipboard";
+          }
 
-        clearTimeout(copyAgentStatusTimeout);
-        copyAgentStatusTimeout = setTimeout(
-          () => {
-            resetCopyAgentFeedback();
-            if (copyAgentStatus) {
-              copyAgentStatus.textContent = "";
-            }
-          },
-          2000,
-        );
-      } catch {
-        if (copyAgentLabel) {
-          copyAgentLabel.textContent =
-            "Copy failed";
+          clearTimeout(copyAgentStatusTimeout);
+          copyAgentStatusTimeout = setTimeout(
+            () => {
+              resetCopyAgentFeedback();
+              if (copyAgentStatus) {
+                copyAgentStatus.textContent = "";
+              }
+            },
+            2000,
+          );
+        } catch {
+          if (copyAgentLabel) {
+            copyAgentLabel.textContent =
+              "Copy failed";
+          }
+          if (copyAgentStatus) {
+            copyAgentStatus.textContent =
+              "Could not copy prompt";
+          }
         }
-        if (copyAgentStatus) {
-          copyAgentStatus.textContent =
-            "Could not copy prompt";
-        }
-      }
-    },
-  );
+      },
+    );
+  });
 </script>

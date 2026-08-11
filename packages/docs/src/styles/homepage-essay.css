@@ -929,6 +929,11 @@
   outline-offset: 3px;
 }
 
+.home-quick-start__prompt-shell {
+  margin: 1.5rem 0 0;
+  position: relative;
+}
+
 .home-quick-start__prompt {
   background: var(--bg);
   border: 1px solid var(--rule);
@@ -938,11 +943,56 @@
   cursor: text;
   font-size: 0.875rem;
   line-height: 1.6;
-  margin: 1.5rem 0 0;
+  margin: 0;
   overflow-x: auto;
   padding: clamp(1.1rem, 2.2vw, 1.4rem);
   user-select: text;
   white-space: pre-wrap;
+}
+
+.home-quick-start__prompt-copy {
+  align-items: center;
+  appearance: none;
+  backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--bg) 65%, transparent);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+  width: 3rem;
+}
+
+.home-quick-start__prompt-copy:hover {
+  background: var(--bg);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--ink) 14%, transparent);
+  transform: translateY(-1px);
+}
+
+.home-quick-start__prompt-copy:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.home-quick-start__prompt-copy [data-copy-icon-check] {
+  display: none;
+}
+
+.home-quick-start__prompt-copy[data-copied="true"] [data-copy-icon-copy] {
+  display: none;
+}
+
+.home-quick-start__prompt-copy[data-copied="true"] [data-copy-icon-check] {
+  display: block;
 }
 
 .home-quick-start__status {
