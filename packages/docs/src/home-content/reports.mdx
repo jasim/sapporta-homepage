@@ -1,91 +1,25 @@
 ## Lightweight Reporting System
 
-Sapporta comes with a pre-wired reporting system. To create a new report we need to define an API endpoint, which would
-return the report data in a structured JSON format that adheres to the GridDataset type. This is rendered by a reporting
-front-end component that uses the Sapporta grid underneath.
+Sapporta ships with a light-weight reporting system. To create a new report, we need to create an API endpoint that
+returns JSON matching the `GridDataset` type. On the front-end, Sapporta provides a ReportGrid component that can render
+it using the Sapporta Grid.
 
-- Left to an LLM without explicit guidance, reports are created adhoc. Db query mapped to HTML table server side.
-  Sorting, filtering etc all tangled together.
+Typically, if an LLM write reporting code, it would generate HTML on the server-side, and then things like exporting,
+sorting, and filtering will be tangled up with the reporting and rendering logic. Each report would have to do all this
+ad hoc. Instead, specifying a common wire format for the reports allows us to cleanly separate these concerns.
 
-- Features like Export would need special case code.
+**Reports can have nested levels.** Sapporta Grid lets us render data with multiple levels, and that is useful for
+reports as well. For example, individual rows in an Account Ledger can expand to show their corresponding journal entry,
+and thus provide full context for each transaction without needing to leave the report.
 
-**Building a report in Sapporta**
+**URL deep-linking.** The parameters and deep-links in a report are all captured in the URL, and so we can share the URL
+freely and get to the same report configuration.
 
-- Write an API endpoint, which runs one or more SQL query, and maps them into a `GridDataset` — levels, columns, nodes.
+**Built-in primitives.** Common reporting features like rollups, subtotals, opening rows, and closing rows are all
+first-class primitives.
 
-```ts
-// packages/api/app/reports/top-customers.ts
-api.register("topCustomers", contract.topCustomers, ({ c }) => {
-  const rows = query(c, `SELECT id, name, revenue, last_order FROM ...`);
+**Keyboard navigation**. The keyboard works fully: use Space to expand nested rows, Enter to follow the active cell's
+link.
 
-  const body: GridDataset = {
-    name: "top-customers",
-    label: "Top Customers",
-    rootLevel: "customer",
-    levels: {
-      customer: {
-        columns: [
-          { id: "id", label: "ID", kind: "number", visuallyHidden: true },
-          {
-            id: "name",
-            label: "Customer",
-            kind: "text",
-            width: 40,
-            // clicking a name opens that customer's record page
-            links: [{ kind: "table", table: "customers", bind: { id: "id" } }],
-          },
-          { id: "revenue", label: "Revenue", kind: "number", displayFormat: "currency" },
-          { id: "last_order", label: "Last Order", kind: "date" },
-        ],
-        childLevels: [],
-      },
-    },
-    nodes: rows.map((row) => ({
-      rowKey: `customer:${row.id}`,
-      levelName: "customer",
-      columns: row,
-    })),
-  };
-
-  return { status: 200, body };
-});
-```
-
-<div class="pt-6"></div>
-
-**Common frontend for all reports**
-
-- [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) — the same grid that powers table screens —
-  renders any `GridDataset` as a read-only result grid.
-- Sorting, column resizing, keyboard navigation, and copying cells exist before you write a line of UI.
-- CSV export is a function over the dataset. Another format is one more function, not a change to any report.
-
-**Reports have rich interface**
-
-- Levels nest. The accounting app we build Sapporta against has a ledger report with three: the account at the root, its
-  transactions with a running balance, and each transaction expandable into its journal entries.
-- Opening and closing balance rows ride along in the same returned value. The endpoint decides what the report contains;
-  the grid renders whatever it's given.
-
-**Drill-down links and related data links for data exploration**
-
-- Declare a link on a column — to a record page, to another report with parameters bound from the row, to an application
-  route, or to an external URL. The grid handles the navigation.
-- In the accounting app: click an account name in the trial balance and its ledger opens for the same date range; press
-  Enter on a transaction and its journal opens.
-
-**Deep-linking because report parameters are part of the URL**
-
-- Picking an account is the same foreign-key lookup field the CRUD screens already use. Date-range fields come off the
-  shelf.
-- Parameter values live in the URL, so a filled-in report is a link — send it to someone and it opens live, same account
-  and dates selected.
-
-**Additional features**
-
-- First class primitives for rollup, subtotal, opening, and closing rows.
-- The grid works entirely from the keyboard: press Space to expand a nested row, Enter to follow the active cell's link.
-- Cells or whole blocks can be copied as CSV, with or without headers.
-- A finished report screen requires only a few lines of ordinary React. Sapporta provides primitives for the reporting
-  UI - like the parameter toolbar, error display, summary statistics and so on, that can be composed, extended, or you
-  can write them yourself for custom use cases.
+The reporting system is composable. Things like the inputs for report arguments, error display, summary stats etc. are
+all React components that your code can compose, extend, or even replace wholesale to create fully custom experiences.
