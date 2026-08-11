@@ -954,28 +954,22 @@
   align-items: center;
   appearance: none;
   backdrop-filter: blur(2px);
-  background: color-mix(in srgb, var(--bg) 65%, transparent);
-  border: 1px solid var(--rule);
-  border-radius: 0.5rem;
-  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+  border: 0;
+  border-radius: 0 calc(0.5rem - 1px) 0 0.5rem;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
   cursor: pointer;
   display: inline-flex;
   height: 3rem;
   justify-content: center;
   position: absolute;
-  right: 0.5rem;
-  top: 0.5rem;
-  transition:
-    background 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
+  right: 1px;
+  top: 1px;
   width: 3rem;
 }
 
 .home-quick-start__prompt-copy:hover {
-  background: var(--bg);
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--ink) 14%, transparent);
-  transform: translateY(-1px);
+  color: var(--ink);
 }
 
 .home-quick-start__prompt-copy:focus-visible {

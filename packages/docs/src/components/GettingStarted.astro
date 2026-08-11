@@ -1,5 +1,9 @@
 ---
-import { Check, Copy, Eraser } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Eraser,
+} from "lucide-react";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 
 const createProjectAgentUrl =
@@ -103,7 +107,9 @@ Add realistic sample data, seeded under a user with email test@example.com and p
   class="home-stage home-stage--quick-start"
   aria-labelledby="get-started"
 >
-  <div class="home-layout home-layout--quick-start">
+  <div
+    class="home-layout home-layout--quick-start"
+  >
     <div
       class="home-section-marker home-section-marker--quick-start"
     >
@@ -118,77 +124,82 @@ Add realistic sample data, seeded under a user with email test@example.com and p
           Get started with your coding agent
         </h2>
         <p class="home-quick-start__description">
-          Copy and change the prompt and then send it to your agent.
+          Copy and change the prompt and then send
+          it to your agent.
         </p>
-        <div class="home-quick-start__applications">
         <div
-          class="home-quick-start__application-options"
-          role="group"
-          aria-label="Choose an application prompt"
+          class="home-quick-start__applications"
         >
-          {
-            applicationPrompts.map(
-              (application) => {
-                return (
-                  <button
-                    class="home-quick-start__application-button"
-                    type="button"
-                    data-agent-prompt-option
-                    data-agent-prompt-value={
-                      application.prompt
-                    }
-                    data-agent-prompt-label={
-                      application.label
-                    }
-                    aria-pressed="false"
-                  >
-                    {application.label}
-                  </button>
-                );
-              },
-            )
-          }
+          <div
+            class="home-quick-start__application-options"
+            role="group"
+            aria-label="Choose an application prompt"
+          >
+            {
+              applicationPrompts.map(
+                (application) => {
+                  return (
+                    <button
+                      class="home-quick-start__application-button"
+                      type="button"
+                      data-agent-prompt-option
+                      data-agent-prompt-value={
+                        application.prompt
+                      }
+                      data-agent-prompt-label={
+                        application.label
+                      }
+                      aria-pressed="false"
+                    >
+                      {application.label}
+                    </button>
+                  );
+                },
+              )
+            }
+          </div>
+          <button
+            class="home-quick-start__clear-button"
+            type="button"
+            data-clear-agent-prompt
+            data-agent-prompt-value={blankPrompt}
+            aria-label="Clear the application prompt"
+          >
+            <Eraser
+              aria-hidden="true"
+              size={15}
+              strokeWidth={2.25}
+            />
+            Clear
+          </button>
         </div>
-        <button
-          class="home-quick-start__clear-button"
-          type="button"
-          data-clear-agent-prompt
-          data-agent-prompt-value={blankPrompt}
-          aria-label="Clear the application prompt"
+        <div
+          class="home-quick-start__prompt-shell"
         >
-          <Eraser
-            aria-hidden="true"
-            size={15}
-            strokeWidth={2.25}
-          />
-          Clear
-        </button>
-      </div>
-      <div class="home-quick-start__prompt-shell">
-        <pre
-          class="home-quick-start__prompt"
-          data-agent-prompt>{blankPrompt}</pre>
-        <button
-          class="home-quick-start__prompt-copy"
-          type="button"
-          data-copy-agent-prompt
-          aria-label="Copy starter prompt to clipboard"
-          title="Copy starter prompt to clipboard"
-        >
-          <Copy
-            aria-hidden="true"
-            size={26}
-            strokeWidth={2}
-            data-copy-icon-copy
-          />
-          <Check
-            aria-hidden="true"
-            size={26}
-            strokeWidth={2}
-            data-copy-icon-check
-          />
-        </button>
-      </div>
+          <pre
+            class="home-quick-start__prompt"
+            data-agent-prompt>{blankPrompt}</pre>
+          <button
+            class="home-quick-start__prompt-copy"
+            type="button"
+            data-copy-agent-prompt
+            aria-label="Copy starter prompt to clipboard"
+            title="Copy starter prompt to clipboard"
+          >
+            <Copy
+              aria-hidden="true"
+              size={26}
+              strokeWidth={2}
+              data-copy-icon-copy
+            />
+            <Check
+              aria-hidden="true"
+              size={26}
+              strokeWidth={2}
+              data-copy-icon-check
+            />
+          </button>
+        </div>
         <div class="home-quick-start__actions">
           <button
             class="home-quick-start__copy-button"
@@ -217,9 +228,9 @@ Add realistic sample data, seeded under a user with email test@example.com and p
         >
           Are you a coding agent? If you want to
           build a project using Sapporta, you must
-          install the Sapporta skill with <code
+          first install the Sapporta skill with <code
             >{skillInstallCommand}</code
-          >
+          > before creating or modifying a project.
         </p>
       </div>
     </div>
@@ -321,52 +332,49 @@ Add realistic sample data, seeded under a user with email test@example.com and p
   );
 
   copyAgentPromptButtons.forEach((button) => {
-    button.addEventListener(
-      "click",
-      async () => {
-        const prompt = agentPrompt?.textContent;
-        if (!prompt) return;
+    button.addEventListener("click", async () => {
+      const prompt = agentPrompt?.textContent;
+      if (!prompt) return;
 
-        try {
-          await navigator.clipboard.writeText(
-            prompt,
-          );
-          copyAgentPromptButtons.forEach(
-            (copyButton) => {
-              copyButton.dataset.copied = "true";
-              copyButton.title = "Copied";
-            },
-          );
-          if (copyAgentLabel) {
-            copyAgentLabel.textContent =
-              "Copied — paste it into your agent";
-          }
-          if (copyAgentStatus) {
-            copyAgentStatus.textContent =
-              "Prompt copied to clipboard";
-          }
-
-          clearTimeout(copyAgentStatusTimeout);
-          copyAgentStatusTimeout = setTimeout(
-            () => {
-              resetCopyAgentFeedback();
-              if (copyAgentStatus) {
-                copyAgentStatus.textContent = "";
-              }
-            },
-            2000,
-          );
-        } catch {
-          if (copyAgentLabel) {
-            copyAgentLabel.textContent =
-              "Copy failed";
-          }
-          if (copyAgentStatus) {
-            copyAgentStatus.textContent =
-              "Could not copy prompt";
-          }
+      try {
+        await navigator.clipboard.writeText(
+          prompt,
+        );
+        copyAgentPromptButtons.forEach(
+          (copyButton) => {
+            copyButton.dataset.copied = "true";
+            copyButton.title = "Copied";
+          },
+        );
+        if (copyAgentLabel) {
+          copyAgentLabel.textContent =
+            "Copied — paste it into your agent";
         }
-      },
-    );
+        if (copyAgentStatus) {
+          copyAgentStatus.textContent =
+            "Prompt copied to clipboard";
+        }
+
+        clearTimeout(copyAgentStatusTimeout);
+        copyAgentStatusTimeout = setTimeout(
+          () => {
+            resetCopyAgentFeedback();
+            if (copyAgentStatus) {
+              copyAgentStatus.textContent = "";
+            }
+          },
+          2000,
+        );
+      } catch {
+        if (copyAgentLabel) {
+          copyAgentLabel.textContent =
+            "Copy failed";
+        }
+        if (copyAgentStatus) {
+          copyAgentStatus.textContent =
+            "Could not copy prompt";
+        }
+      }
+    });
   });
 </script>
