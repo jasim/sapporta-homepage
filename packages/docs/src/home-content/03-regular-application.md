@@ -8,8 +8,8 @@ connected.
 Sapporta projects are regular TypeScript applications - you can add typed API
 endpoints, React screens, and build everything you need without constraints.
 
-**With a sprinkling of declarativeness.** The `sapportaTable` declaration is the only declarative configuration in a
-Sapporta application.
+**With a sprinkling of declarativeness.** The `sapportaTable` declaration is the
+only declarative configuration in a Sapporta application.
 
 See the table declaration code here:
 
@@ -59,6 +59,6 @@ This produces both the backend APIs and frontend UI for the table:
   the internet.
 - **Table Grid.** Sapporta publishes `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
-  child-table views. The grids include filtering, sorting, searching,
-  exporting, nesting, and keyboard navigation. Because they use the table APIs,
-  they inherit the same authorization and permissions.
+  child-table views. The grids include filtering, sorting, searching, exporting,
+  nesting, and keyboard navigation. Because they use the table APIs, they
+  inherit the same authorization and permissions.
