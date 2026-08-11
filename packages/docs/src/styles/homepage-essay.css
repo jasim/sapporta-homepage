@@ -1,10 +1,11 @@
 /* Page foundation -------------------------------------------------------- */
 
 .home-page {
-  --home-layout-gutter-start: 3.75rem;
-  --home-layout-gutter-end: 2.5rem;
-  --home-copy-width: 42rem;
-  --home-major-section-gap: clamp(5rem, 9vw, 8rem);
+  --home-layout-gutter-start: clamp(1.25rem, 4vw, 3.75rem);
+  --home-layout-gutter-end: clamp(1.25rem, 4vw, 3.75rem);
+  --home-copy-width: 44rem;
+  --home-media-width: 80rem;
+  --home-major-section-gap: clamp(5rem, 8vw, 7rem);
 
   /* Keep the embedded Sapporta UI on its canonical theme. */
   --color-sap-bg: var(--sap-bg);
@@ -70,17 +71,15 @@
 /* Shared layout ---------------------------------------------------------- */
 
 .home-layout {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 8rem minmax(0, 1fr);
-  justify-content: start;
+  margin-inline: auto;
+  max-width: calc(var(--home-media-width) + var(--home-layout-gutter-start) + var(--home-layout-gutter-end));
   padding-inline: var(--home-layout-gutter-start) var(--home-layout-gutter-end);
   width: 100%;
 }
 
 .home-layout--intro {
   display: block;
-  padding-top: 1rem;
+  padding-top: clamp(3.5rem, 8vw, 7rem);
 }
 
 .home-layout--demo,
@@ -100,6 +99,8 @@
 .home-header {
   display: flex;
   justify-content: flex-end;
+  margin-inline: auto;
+  max-width: calc(var(--home-media-width) + var(--home-layout-gutter-start) + var(--home-layout-gutter-end));
   padding: 1.5rem var(--home-layout-gutter-end) 0.75rem var(--home-layout-gutter-start);
   width: 100%;
 }
@@ -260,10 +261,57 @@
   padding: 0.08em 0.22em;
 }
 
+.home-copy__table {
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--bg));
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 1.25rem 0 1.75rem;
+  table-layout: auto;
+  width: 100%;
+}
+
+.home-copy__table-heading,
+.home-copy__table-cell {
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.home-copy__table-heading {
+  background: var(--surface);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, var(--bg));
+  color: var(--ink);
+  font-weight: 700;
+  vertical-align: bottom;
+}
+
+.home-copy__table-cell {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, var(--bg));
+}
+
+.home-copy__table-heading + .home-copy__table-heading,
+.home-copy__table-cell + .home-copy__table-cell {
+  border-left: 1px solid color-mix(in srgb, var(--ink) 10%, var(--bg));
+}
+
+.home-copy__table tbody > tr:last-child > .home-copy__table-cell {
+  border-bottom: 0;
+}
+
 /* Intro ------------------------------------------------------------------ */
 
 .home-intro {
-  max-width: var(--home-copy-width);
+  align-items: end;
+  display: grid;
+  gap: clamp(3rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, var(--home-copy-width)) minmax(18rem, 1fr);
+  max-width: var(--home-media-width);
+}
+
+.home-intro__primary {
+  min-width: 0;
 }
 
 .home-hero__title {
@@ -285,33 +333,46 @@
 }
 
 .home-capabilities {
-  margin-top: clamp(1.75rem, 3vw, 2.25rem);
+  margin-bottom: 1.7rem;
+  min-width: 0;
+}
+
+.home-capabilities__label {
+  color: var(--dim);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: 0.75rem 0 0.9rem;
+  text-transform: uppercase;
 }
 
 .home-capabilities__list {
   display: grid;
-  gap: 1.35rem clamp(1.5rem, 4vw, 2.75rem);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  grid-template-columns: minmax(0, 1fr);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .home-capabilities__item {
-  display: flex;
-  flex-direction: column;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.4fr);
   min-width: 0;
+  padding: 0.8rem 0;
+}
+
+.home-capabilities__item:first-of-type {
+  border-top: 0;
 }
 
 .home-capabilities__title {
-  align-self: flex-start;
-  background-image: linear-gradient(rgb(79 180 119 / 0.3), rgb(79 180 119 / 0.3));
-  background-position: 0 92%;
-  background-repeat: no-repeat;
-  background-size: 100% 0.16em;
   color: var(--ink);
   font-size: 0.875rem;
-  font-weight: 680;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -319,7 +380,6 @@
   color: var(--ink-soft);
   font-size: 0.875rem;
   line-height: 1.52;
-  margin-top: 0.3rem;
 }
 
 .home-capabilities__code {
@@ -334,14 +394,24 @@
 /* Interactive grid and schema demo -------------------------------------- */
 
 .home-demo-section {
-  margin: 0;
+  margin: clamp(2.5rem, 5vw, 4rem) 0 0;
   max-width: 80rem;
   min-width: 0;
   width: 100%;
 }
 
+/*
+ * One enclosure for the whole demo. The caption and tab row share the card's
+ * light "chrome" surface; the panel is white and sits flush inside. A single
+ * hairline under the tabs is the only internal divider, and the active tab
+ * docks onto it as a folder tab so the tabs read as attached to the panel.
+ */
 .home-demo {
+  background: var(--surface);
+  border: 1px solid var(--sap-border-strong);
+  border-radius: 0;
   min-width: 0;
+  overflow: hidden;
   width: 100%;
 }
 
@@ -349,20 +419,20 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem 0.85rem;
+  padding: clamp(1rem, 2.2vw, 1.35rem) clamp(1.1rem, 2.6vw, 1.6rem) 0.9rem;
 }
 
 .home-demo__label {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--ink);
+  color: var(--bg);
   display: inline-block;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 750;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   line-height: 1;
   margin: 0;
-  padding: 0.52rem 0.68rem;
+  padding: 0.5rem 0.66rem;
 }
 
 .home-demo__subtitle {
@@ -374,17 +444,25 @@
 }
 
 .home-demo__tabs {
-  align-items: stretch;
+  /*
+   * Editor-style tab row. No filled band — the row shares the caption's light
+   * chrome and is separated from the panel by a single hairline that the
+   * active tab docks onto.
+   */
+  align-items: flex-end;
+  border-bottom: 1px solid var(--sap-border);
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 0.875rem;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.4rem clamp(1.1rem, 2.6vw, 1.6rem) 0;
 }
 
 .home-demo__tab {
   align-items: center;
   appearance: none;
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
   color: var(--dim);
   cursor: pointer;
   display: inline-flex;
@@ -394,29 +472,30 @@
   font-weight: 620;
   gap: 0.45rem;
   line-height: 1.35;
-  margin: 0 0 -1px;
-  padding: 0.65rem 0.1rem 0.7rem;
+  margin: 0;
+  padding: 0.55rem 0.9rem 0.6rem;
   position: relative;
   text-align: left;
 }
 
-.home-demo__tab:hover,
-.home-demo__tab[aria-selected="true"] {
+.home-demo__tab:hover:not([aria-selected="true"]) {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
   color: var(--ink);
 }
 
-.home-demo__tab[aria-selected="true"]::after {
-  background: var(--link);
-  bottom: 0;
-  content: "";
-  height: 2px;
-  left: 0;
-  position: absolute;
-  right: 0;
+/*
+ * The active tab is a folder tab: panel-colored fill, framed on three sides,
+ * and pulled down 1px so its open bottom edge docks onto the panel below.
+ */
+.home-demo__tab[aria-selected="true"] {
+  background: var(--bg);
+  border-color: var(--sap-border);
+  border-bottom-color: var(--bg);
+  color: var(--ink);
+  margin-bottom: -1px;
 }
 
 .home-demo__tab:focus-visible {
-  border-radius: 1px;
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
@@ -435,9 +514,9 @@
 }
 
 .home-code-sample {
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 2px;
+  background: var(--bg);
+  border: 0;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -448,12 +527,12 @@
 
 .home-code-sample__header {
   align-items: center;
-  background: var(--surface-soft);
-  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  border-bottom: 1px solid var(--sap-border);
   color: var(--dim);
   display: flex;
   min-height: 2.25rem;
-  padding: 0.48rem 0.85rem;
+  padding: 0.55rem clamp(1.1rem, 2.6vw, 1.6rem);
 }
 
 .home-code-sample__path {
@@ -465,7 +544,7 @@
 }
 
 .home-code-sample__body {
-  background: var(--surface);
+  background: var(--bg);
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
@@ -473,7 +552,7 @@
 }
 
 .home-code-sample__body > pre {
-  background: var(--surface) !important;
+  background: var(--bg) !important;
   border: 0;
   border-radius: 0;
   font-size: clamp(0.72rem, 1vw, 0.84rem);
@@ -491,13 +570,24 @@
 }
 
 /*
+ * Dark mode syntax colors. The dual-theme <Code> emits each token as
+ * `color:<light>` with the dark value alongside in `--shiki-dark`; under the
+ * dark theme we promote those variables to the live color. The panel keeps its
+ * own background (var(--bg)), which matches github-dark-default's canvas.
+ */
+:root[data-theme="dark"] .home-code-sample__body > pre,
+:root[data-theme="dark"] .home-code-sample__body > pre span {
+  color: var(--shiki-dark, inherit) !important;
+}
+
+/*
  * Deliberate adapter selectors for the embedded React grid. The component is
  * shared with another homepage, so new-home-specific overrides stay behind
  * the demo panel boundary instead of changing its global defaults.
  */
 .home-demo__panel--grid :where(.homepage-grid, .homepage-grid-message) {
-  border-color: var(--sap-border);
-  border-radius: 2px;
+  border: 0;
+  border-radius: 0;
 }
 
 .home-demo__panel--grid .homepage-grid {
@@ -677,30 +767,135 @@
 /* Quick start ------------------------------------------------------------ */
 
 .home-quick-start {
-  max-width: 80rem;
+  max-width: 50rem;
   width: 100%;
 }
 
 .home-quick-start__content {
   color: var(--ink);
-  max-width: 48rem;
+  display: flex;
+  flex-direction: column;
+  max-width: none;
 }
 
 .home-quick-start__title {
   color: inherit;
-  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   margin: 0;
   scroll-margin-top: 2rem;
+  text-wrap: balance;
+}
+
+.home-quick-start__agent-note {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  color: color-mix(in srgb, var(--ink-soft) 82%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin: 2.25rem 0 0;
+  max-width: 40rem;
+  padding-top: 1rem;
+}
+
+.home-quick-start__agent-note code {
+  color: inherit;
+  font: inherit;
+  overflow-wrap: anywhere;
 }
 
 .home-quick-start__description {
   color: var(--ink-soft);
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0.45rem 0 1rem;
-  max-width: 35rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin: 0.85rem 0 0;
+  max-width: 38rem;
+  text-wrap: pretty;
+}
+
+.home-quick-start__applications {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 1.75rem 0 0;
+}
+
+.home-quick-start__application-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.home-quick-start__application-button {
+  appearance: none;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.25;
+  padding: 0.45rem 0.7rem;
+}
+
+.home-quick-start__application-button:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.home-quick-start__application-button[data-selected="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.home-quick-start__application-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.home-quick-start__clear-button {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  gap: 0.4rem;
+  margin-left: auto;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.7rem;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--ink) 36%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.home-quick-start__clear-button:hover {
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+
+.home-quick-start__clear-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.home-quick-start__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 1.25rem 0 0;
 }
 
 .home-quick-start__copy-button {
@@ -719,18 +914,14 @@
   gap: 0.5rem;
   justify-content: center;
   line-height: 1.3;
-  padding: 0.75rem 1rem;
-  transition:
-    background-color 120ms ease,
-    color 120ms ease,
-    transform 120ms ease;
+  padding: 0.75rem 1.1rem;
+  width: fit-content;
 }
 
 .home-quick-start__copy-button:hover,
 .home-quick-start__copy-button[data-copied="true"] {
   background: #17472e;
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .home-quick-start__copy-button:focus-visible {
@@ -739,16 +930,17 @@
 }
 
 .home-quick-start__prompt {
-  background: var(--surface);
-  border: 0;
-  border-radius: 0.25rem;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent);
   color: var(--ink);
   cursor: text;
   font-size: 0.875rem;
   line-height: 1.6;
-  margin: 1.25rem 0 0;
+  margin: 1.5rem 0 0;
   overflow-x: auto;
-  padding: clamp(1rem, 2vw, 1.25rem);
+  padding: clamp(1.1rem, 2.2vw, 1.4rem);
   user-select: text;
   white-space: pre-wrap;
 }
@@ -776,12 +968,72 @@
 
 /* Article stories and screenshots --------------------------------------- */
 
+.home-stage {
+  min-width: 0;
+}
+
+.home-stage--value {
+  padding-bottom: clamp(5rem, 9vw, 8rem);
+}
+
+.home-stage--framework {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+}
+
+.home-stage--quick-start {
+  background: color-mix(in srgb, var(--surface) 86%, #5b9d76 14%);
+  border-block: 1px solid var(--rule);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+  scroll-margin-top: 2rem;
+}
+
+.home-section-marker--quick-start {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.home-layout--value {
+  margin-top: clamp(6rem, 11vw, 10rem);
+  padding-bottom: 0;
+}
+
+.home-layout--quick-start {
+  margin-top: 0;
+}
+
+.home-layout--framework {
+  margin-top: 0;
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+}
+
+.home-layout--supporting {
+  margin-top: clamp(5rem, 9vw, 8rem);
+}
+
 .home-article {
+  max-width: var(--home-media-width);
   width: 100%;
 }
 
+.home-section-marker {
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
+  color: var(--ink);
+  display: flex;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 1rem;
+  letter-spacing: 0.045em;
+  line-height: 1.4;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  padding-top: 0.8rem;
+  text-transform: uppercase;
+}
+
 .home-article__section {
-  max-width: 64rem;
+  max-width: var(--home-media-width);
   min-width: 0;
 }
 
@@ -793,12 +1045,73 @@
   max-width: var(--home-copy-width);
 }
 
+.home-article--value .home-article__section--feature + .home-article__section--feature {
+  border-top: 1px solid var(--rule);
+  margin-top: clamp(5rem, 9vw, 8rem);
+  padding-top: clamp(4rem, 7vw, 6rem);
+}
+
+.home-article__section--technical {
+  align-items: start;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 0 clamp(2.5rem, 6vw, 6rem);
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--home-copy-width));
+  padding-top: 1.25rem;
+}
+
+.home-article--framework .home-article__section--technical + .home-article__section--technical {
+  margin-top: clamp(4rem, 7vw, 6rem);
+}
+
+.home-article__section--technical > .home-copy__heading--level-2 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+}
+
+.home-article__section--technical > :not(.home-copy__heading--level-2) {
+  grid-column: 2;
+}
+
+.home-article__section--technical > :nth-child(2) {
+  grid-row: 1;
+}
+
+.home-article__section--technical > .home-copy__list {
+  padding-inline-start: 0;
+}
+
+.home-article__section--technical > .home-copy__list > .home-copy__list-item {
+  border-top: 1px solid var(--rule);
+  padding: 0.8rem 0;
+}
+
+.home-article__section--technical > .home-copy__list > .home-copy__list-item + .home-copy__list-item {
+  margin-top: 0;
+}
+
+.home-article__section--technical > .expressive-code {
+  max-width: none;
+}
+
+.home-article--supporting .home-article__section--faq,
+.home-article--supporting .home-article__section--status {
+  max-width: var(--home-copy-width);
+}
+
+.home-article__section--faq .home-copy__heading--level-3 {
+  border-top: 1px solid var(--rule);
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+}
+
 .home-agent-example {
   --home-agent-indent: clamp(1.25rem, 4vw, 2.75rem);
 
   border-left: 2px solid var(--rule);
   display: grid;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   gap: 0.85rem;
   margin: 1.75rem 0 1.75rem var(--home-agent-indent);
   max-width: calc(var(--home-copy-width) - var(--home-agent-indent));
@@ -894,18 +1207,25 @@
   padding: 0;
 }
 
-.home-screenshot-grid {
+.home-screenshot-stack {
   display: grid;
-  gap: clamp(1.25rem, 3vw, 2rem);
+  gap: clamp(3rem, 6vw, 5rem);
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 2rem 0 0;
+  margin: clamp(2.25rem, 4vw, 3rem) 0 0;
   min-width: 0;
   width: 100%;
 }
 
+.home-screenshot:first-child {
+  grid-column: 1 / -1;
+}
+
 .home-screenshot {
-  margin: 0 0 1rem 0;
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  margin: 0;
   min-width: 0;
+  width: 100%;
 }
 
 .home-screenshot__link {
@@ -932,19 +1252,20 @@
 }
 
 .home-screenshot__image {
-  aspect-ratio: 36 / 25;
   display: block;
   height: auto;
   margin: 0;
-  object-fit: cover;
   width: 100%;
 }
 
 .home-screenshot__caption {
-  color: var(--dim);
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  margin-top: 0.6rem;
+  color: var(--ink);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  max-width: var(--home-copy-width);
+  text-wrap: pretty;
 }
 
 /* Footer ----------------------------------------------------------------- */
@@ -956,16 +1277,15 @@
 }
 
 .home-footer__inner {
-  align-items: start;
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 8rem minmax(0, var(--home-copy-width));
-  max-width: calc(8rem + 1.5rem + var(--home-copy-width));
+  margin-inline: auto;
+  max-width: var(--home-media-width);
 }
 
 .home-footer__meta {
   font-size: 0.8125rem;
   line-height: 1.55;
+  margin-top: 1rem;
+  max-width: var(--home-copy-width);
 }
 
 .home-footer__paragraph {
@@ -1098,11 +1418,49 @@
   }
 
   .home-layout--intro {
-    padding-top: 1rem;
+    padding-top: clamp(2.75rem, 10vw, 4.5rem);
   }
 
   .home-layout--article {
     padding-bottom: 3.5rem;
+  }
+
+  .home-layout--value {
+    padding-bottom: 0;
+  }
+
+  .home-layout--framework {
+    padding-block: clamp(3.5rem, 9vw, 5rem);
+  }
+
+  .home-intro {
+    align-items: start;
+    gap: clamp(2.5rem, 8vw, 4rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-capabilities {
+    margin-bottom: 0;
+    max-width: var(--home-copy-width);
+  }
+
+  .home-article__section--technical {
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-article__section--technical > .home-copy__heading--level-2,
+  .home-article__section--technical > :not(.home-copy__heading--level-2) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .home-article__section--technical > .home-copy__heading--level-2 {
+    margin-bottom: 1rem;
+  }
+
+  .home-stage--quick-start {
+    padding-block: clamp(3.5rem, 9vw, 5rem);
   }
 
   .home-article__section + .home-article__section {
@@ -1111,11 +1469,6 @@
 
   .home-footer {
     padding-bottom: 2.5rem;
-  }
-
-  .home-footer__inner {
-    gap: 0.9rem;
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .home-header {
@@ -1159,8 +1512,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .home-screenshot-grid {
+  .home-capabilities__item {
+    gap: 0.3rem;
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-screenshot-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-screenshot:first-child {
+    grid-column: 1;
   }
 
   .home-demo__tabs {

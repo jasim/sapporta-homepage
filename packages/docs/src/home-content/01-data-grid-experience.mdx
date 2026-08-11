@@ -1,0 +1,40 @@
+import HomepageDemo from "../components/HomepageDemo.astro";
+
+## A datagrid for every table
+
+If you look at traditional ERP software, a large chunk of their interface is
+just forms, data grids, and reports. All of them heavily favour the keyboard.
+They are optimized for power-users and have high information density. Sapporta's
+goal is to bring the same experience to database applications on the web.
+
+It does this by leaning heavily into datagrids. Sapporta uses data grids as a
+universal surface for tabular data. You can put a lot of heart and soul into
+that single component, and it benefits the entire application.
+
+That is also what makes spreadsheets beautiful. People use them because they can
+work with data without having to anticipate every requirement in advance.
+Operations like sorting, searching, and filtering, are available to all sheets,
+and together they form a partial but high-leverage algebra for changing and
+understanding data
+
+Building them as one-off features in a conventional web application, even with
+an LLM, requires defining them from scratch for every table. So we often focus
+on the central parts of the system that finds most use, adding features as users
+request them. The rest of the application's data becomes a second-class citizen.
+
+But in Sapporta, just like a spreadsheet, you immediately get a live, editable
+data grid the moment you create a table.
+
+<HomepageDemo />
+
+<div class="p-4"></div>
+
+The [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is a custom-built React component that can be deeply composed
+and extended. It brings a similar set of features and UX as Airtable, NocoDB,
+and similar collaborative databases. It is paginated, filterable, sortable, and
+searchable. It also supports nested master-detail relationships, with full
+keyboard support that works across levels.
+
+So when you use Sapporta to build a web application with a coding agent, you get
+a fully wired system with a front end for manipulating data, along with all the
+forms and workflows the application needs.

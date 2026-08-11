@@ -1,32 +1,27 @@
 ---
-import { Code } from "astro:components";
 import {
   Content as HeroContent,
   frontmatter,
 } from "../home-content/hero.md";
-import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.md";
-import { Content as FeaturesInBrief } from "../home-content/02-features-in-brief.md";
+import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.mdx";
 import { Content as RegularApplication } from "../home-content/03-regular-application.md";
 import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
 import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
 import { Content as FrequentlyAskedQuestions } from "../home-content/faq.markdown";
+import { Content as Reports } from "../home-content/reports.mdx";
+import { Content as Screenshots } from "../home-content/screenshots.md";
 import { Content as StackDetails } from "../home-content/stack.md";
-import BooksTableDataGrid from "../components/BooksTableDataGrid";
+import GettingStarted from "../components/GettingStarted.astro";
 import HomepageActions from "../components/HomepageActions.astro";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
-import {
-  Code2,
-  Copy,
-  Table2,
-} from "lucide-react";
 import "../styles/sapporta.css";
 import "../styles/homepage-essay.css";
 
 const { page, brand, navigation } = frontmatter;
-const codeTheme = "github-light-default";
 const homepageUrl = `${gettingStartedEnv.docsCanonicalOrigin}/`;
 const llmsIndexUrl = `${gettingStartedEnv.docsCanonicalOrigin}/llms.txt`;
+const socialPreviewUrl = `${homepageUrl}og.png`;
 const homepageStructuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
@@ -40,54 +35,6 @@ const homepageStructuredData = {
   downloadUrl:
     "https://www.npmjs.com/package/sapporta",
 };
-const createProjectAgentUrl =
-  gettingStartedEnv.agentMarkdownUrl(
-    "docs/getting-started/create-a-project",
-  );
-const createProjectAgentPrompt = `Before you begin, ensure the Sapporta skill is installed:
-npx skills add https://github.com/jasim/sapporta-skills --skill sapporta --global --yes
-
-Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.
-
-Build a task management app with Sapporta.
-${createProjectAgentUrl}
-
-Model people, projects, tasks, labels, and comments.
-
-Include:
-- task creation and assignment
-- status, priority, due dates, labels, and comments
-- views for open tasks, overdue tasks, assignees, and projects
-
-Add realistic sample data.`;
-const booksSchemaCode = `export const booksTable = sqliteTable("books", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  author: text("author").notNull(),
-});
-
-export const books = sapportaTable({
-  drizzle: booksTable,
-  meta: {
-    label: "Books",
-    rowScope: "systemGlobal",
-    rowLabelColumns: ["title"],
-    search: { columns: ["author", "title"] },
-    children: [
-      {
-        table: "quotes",
-        foreignKey: "book_id",
-        label: "Quotes",
-        columns: ["quote_text"],
-        defaultSort: "-created_at",
-      },
-    ],
-    columns: {
-      title: { width: 64 },
-      author: { width: 36 },
-    },
-  },
-});`;
 ---
 
 <!doctype html>
@@ -114,6 +61,55 @@ export const books = sapportaTable({
     <meta
       name="description"
       content={page.description}
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content={page.title}
+    />
+    <meta
+      property="og:description"
+      content={page.description}
+    />
+    <meta
+      property="og:url"
+      content={homepageUrl}
+    />
+    <meta
+      property="og:image"
+      content={socialPreviewUrl}
+    />
+    <meta
+      property="og:image:width"
+      content="1200"
+    />
+    <meta
+      property="og:image:height"
+      content="630"
+    />
+    <meta
+      property="og:image:alt"
+      content="Sapporta — Build database tools agentically"
+    />
+    <meta
+      name="twitter:card"
+      content="summary_large_image"
+    />
+    <meta
+      name="twitter:title"
+      content={page.title}
+    />
+    <meta
+      name="twitter:description"
+      content={page.description}
+    />
+    <meta
+      name="twitter:image"
+      content={socialPreviewUrl}
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Sapporta — Build database tools agentically"
     />
     <link
       rel="icon"
@@ -163,299 +159,125 @@ export const books = sapportaTable({
       id="main-content"
       class="home-page__main"
     >
-      <div class="home-layout home-layout--intro">
-        <article class="home-copy home-intro">
-          <h1 class="home-hero__title">
-            <a
-              class="home-wordmark home-wordmark--hero"
-              href={brand.href}
-            >
-              <SapportaMark
-                class="home-wordmark__mark home-wordmark__mark--hero"
-                title=""
-              />
-              <span>{brand.label}</span>
-            </a>
-          </h1>
-
-          <HeroContent />
-
-          <section
-            class="home-capabilities"
-            aria-label="Sapporta capabilities"
-          >
-            <ul class="home-capabilities__list">
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Grids
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Editable table UI with search,
-                  sort, filters, nesting, and
-                  keyboard flow.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Reports
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Summary rows, detail rows, and
-                  drill-down links.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  REST APIs for every table
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  CRUD, lookup, count, export, and
-                  typed custom endpoints.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Forms
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Validated data entry with
-                  reliable keyboard navigation.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Security
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Workspace and role scoped reads
-                  and writes.
-                </span>
-              </li>
-              <li class="home-capabilities__item">
-                <span
-                  class="home-capabilities__title"
-                >
-                  Deployment
-                </span>
-                <span
-                  class="home-capabilities__description"
-                >
-                  Project wiring from <code
-                    class="home-capabilities__code"
-                    >npx sapporta init</code
-                  > to production.
-                </span>
-              </li>
-            </ul>
-          </section>
-
-          <HomepageActions
-            align="start"
-            compact
-            primaryHref="#get-started"
-            primaryLabel="Get Started"
-            primaryIcon="get-started"
-            primaryStyle={false}
-          />
-        </article>
-      </div>
-
-      <div class="home-layout home-layout--demo">
-        <section
-          class="home-demo-section"
-          aria-labelledby="home-demo-title"
+      <section
+        class="home-stage home-stage--value"
+        aria-labelledby="home-value-label"
+      >
+        <div
+          class="home-layout home-layout--intro"
         >
-          <div class="home-demo__heading">
-            <p
-              class="home-demo__label"
-              id="home-demo-title"
-            >
-              DEMO
-            </p>
-            <p class="home-demo__subtitle">
-              Use the keyboard to navigate.
-              <br />
-              Press
-              <strong>space</strong> to expand a book
-              and reveal its quotes.
-            </p>
-          </div>
-          <div class="home-demo" data-demo-tabs>
-            <div
-              class="home-demo__tabs"
-              role="tablist"
-              aria-label="Data grid example views"
-            >
-              <button
-                class="home-demo__tab"
-                id="home-demo-grid-tab"
-                type="button"
-                role="tab"
-                aria-selected="true"
-                aria-controls="home-demo-grid-panel"
-              >
-                <Table2
-                  className="home-demo__tab-icon"
-                  aria-hidden="true"
-                  size={17}
-                  strokeWidth={2}
-                />
-                <span>Sample data grid</span>
-              </button>
-              <button
-                class="home-demo__tab"
-                id="home-demo-code-tab"
-                type="button"
-                role="tab"
-                aria-selected="false"
-                aria-controls="home-demo-code-panel"
-                tabindex="-1"
-              >
-                <Code2
-                  className="home-demo__tab-icon"
-                  aria-hidden="true"
-                  size={17}
-                  strokeWidth={2}
-                />
-                <span
-                  >Code: schema definition</span
+          <article class="home-copy home-intro">
+            <div class="home-intro__primary">
+              <h1 class="home-hero__title">
+                <a
+                  class="home-wordmark home-wordmark--hero"
+                  href={brand.href}
                 >
-              </button>
-            </div>
-
-            <div
-              class="home-demo__panel home-demo__panel--grid"
-              id="home-demo-grid-panel"
-              role="tabpanel"
-              aria-labelledby="home-demo-grid-tab"
-            >
-              <BooksTableDataGrid
-                client:only="react"
-              />
-            </div>
-
-            <div
-              class="home-demo__panel home-demo__panel--code"
-              id="home-demo-code-panel"
-              role="tabpanel"
-              aria-labelledby="home-demo-code-tab"
-              hidden
-            >
-              <figure class="home-code-sample">
-                <figcaption
-                  class="home-code-sample__header"
-                >
-                  <span
-                    class="home-code-sample__path"
-                  >
-                    packages/api/schema/books.ts
-                  </span>
-                </figcaption>
-                <div
-                  class="home-code-sample__body"
-                >
-                  <Code
-                    code={booksSchemaCode}
-                    lang="ts"
-                    theme={codeTheme}
+                  <SapportaMark
+                    class="home-wordmark__mark home-wordmark__mark--hero"
+                    title=""
                   />
-                </div>
-              </figure>
-            </div>
-          </div>
-        </section>
-      </div>
+                  <span>{brand.label}</span>
+                </a>
+              </h1>
 
-      <div
-        class="home-layout home-layout--quick-start"
-      >
-        <section
-          class="home-quick-start"
-          aria-labelledby="get-started"
-        >
-          <div class="home-quick-start__content">
-            <h2
-              class="home-quick-start__title"
-              id="get-started"
-            >
-              Get started with your coding agent
-            </h2>
-            <p
-              class="home-quick-start__description"
-            >
-              Copy this starter prompt, then paste
-              it into your coding agent.
-            </p>
-            <button
-              class="home-quick-start__copy-button"
-              type="button"
-              data-copy-agent-prompt
-              aria-label="Copy starter prompt to clipboard"
-              title="Copy starter prompt to clipboard"
-            >
-              <Copy
-                aria-hidden="true"
-                size={17}
-                strokeWidth={2.25}
+              <HeroContent />
+
+              <HomepageActions
+                align="start"
+                compact
+                primaryHref="#get-started"
+                primaryLabel="Get Started"
+                primaryIcon="get-started"
               />
-              <span data-copy-agent-label
-                >Copy starter prompt</span
+            </div>
+          </article>
+        </div>
+
+        <div
+          class="home-layout home-layout--article home-layout--value"
+        >
+          <article
+            class="home-copy home-article home-article--value"
+          >
+            <div class="home-section-marker">
+              <span id="home-value-label"
+                >Features</span
               >
-            </button>
-            <span
-              class="home-quick-start__status"
-              data-copy-agent-status
-              aria-live="polite"></span>
-            <pre
-              class="home-quick-start__prompt"
-              data-agent-prompt>{createProjectAgentPrompt}</pre>
-          </div>
-        </section>
-      </div>
+            </div>
+
+            <section
+              class="home-article__section home-article__section--feature"
+            >
+              <DataGridExperience />
+            </section>
+            <section
+              class="home-article__section home-article__section--feature"
+            >
+              <BuiltForAgents />
+            </section>
+            <section
+              class="home-article__section home-article__section--feature"
+            >
+              <Reports />
+            </section>
+          </article>
+        </div>
+      </section>
+
+      <GettingStarted />
+
+      <section
+        class="home-stage home-stage--framework"
+        aria-labelledby="home-framework-label"
+      >
+        <div
+          class="home-layout home-layout--article home-layout--framework"
+        >
+          <article
+            class="home-copy home-article home-article--framework"
+          >
+            <div
+              class="home-section-marker home-section-marker--framework"
+            >
+              <span id="home-framework-label"
+                >Framework</span
+              >
+            </div>
+
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <RegularApplication />
+            </section>
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <StackDetails />
+            </section>
+          </article>
+        </div>
+      </section>
 
       <div
-        class="home-layout home-layout--article"
+        class="home-layout home-layout--article home-layout--supporting"
       >
-        <article class="home-copy home-article">
-          <section class="home-article__section">
-            <FeaturesInBrief />
-          </section>
-          <section class="home-article__section">
-            <BuiltForAgents />
-          </section>
-          <section class="home-article__section">
-            <DataGridExperience />
-          </section>
-          <section class="home-article__section">
-            <RegularApplication />
-          </section>
-          <section class="home-article__section">
-            <StackDetails />
-          </section>
-          <section class="home-article__section">
+        <article
+          class="home-copy home-article home-article--supporting"
+        >
+          <section
+            class="home-article__section home-article__section--faq"
+          >
             <FrequentlyAskedQuestions />
           </section>
-          <section class="home-article__section">
+          <section
+            class="home-article__section home-article__section--screenshots"
+          >
+            <Screenshots />
+          </section>
+          <section
+            class="home-article__section home-article__section--status"
+          >
             <StatusAndContributing />
           </section>
         </article>
@@ -536,154 +358,6 @@ export const books = sapportaTable({
     </dialog>
 
     <script>
-      const copyAgentPromptButton =
-        document.querySelector<HTMLButtonElement>(
-          "[data-copy-agent-prompt]",
-        );
-      const agentPrompt =
-        document.querySelector<HTMLElement>(
-          "[data-agent-prompt]",
-        );
-      const copyAgentStatus =
-        document.querySelector<HTMLElement>(
-          "[data-copy-agent-status]",
-        );
-      const copyAgentLabel =
-        document.querySelector<HTMLElement>(
-          "[data-copy-agent-label]",
-        );
-      let copyAgentStatusTimeout:
-        ReturnType<typeof setTimeout> | undefined;
-
-      copyAgentPromptButton?.addEventListener(
-        "click",
-        async () => {
-          const prompt = agentPrompt?.textContent;
-          if (!prompt) return;
-
-          try {
-            await navigator.clipboard.writeText(
-              prompt,
-            );
-            copyAgentPromptButton.dataset.copied =
-              "true";
-            copyAgentPromptButton.title =
-              "Copied";
-            if (copyAgentLabel) {
-              copyAgentLabel.textContent =
-                "Copied — paste it into your agent";
-            }
-            if (copyAgentStatus) {
-              copyAgentStatus.textContent =
-                "Prompt copied to clipboard";
-            }
-
-            clearTimeout(copyAgentStatusTimeout);
-            copyAgentStatusTimeout = setTimeout(
-              () => {
-                delete copyAgentPromptButton
-                  .dataset.copied;
-                copyAgentPromptButton.title =
-                  "Copy starter prompt to clipboard";
-                if (copyAgentLabel) {
-                  copyAgentLabel.textContent =
-                    "Copy starter prompt";
-                }
-                if (copyAgentStatus) {
-                  copyAgentStatus.textContent =
-                    "";
-                }
-              },
-              2000,
-            );
-          } catch {
-            if (copyAgentLabel) {
-              copyAgentLabel.textContent =
-                "Copy failed";
-            }
-            if (copyAgentStatus) {
-              copyAgentStatus.textContent =
-                "Could not copy prompt";
-            }
-          }
-        },
-      );
-
-      const demos =
-        document.querySelectorAll<HTMLElement>(
-          "[data-demo-tabs]",
-        );
-
-      for (const demo of demos) {
-        const tabs = Array.from(
-          demo.querySelectorAll<HTMLButtonElement>(
-            '[role="tab"]',
-          ),
-        );
-        const panels = Array.from(
-          demo.querySelectorAll<HTMLElement>(
-            '[role="tabpanel"]',
-          ),
-        );
-
-        const selectTab = (
-          selectedTab: HTMLButtonElement,
-          moveFocus = false,
-        ) => {
-          for (const tab of tabs) {
-            const isSelected =
-              tab === selectedTab;
-            tab.setAttribute(
-              "aria-selected",
-              String(isSelected),
-            );
-            tab.tabIndex = isSelected ? 0 : -1;
-          }
-
-          for (const panel of panels) {
-            panel.hidden =
-              panel.id !==
-              selectedTab.getAttribute(
-                "aria-controls",
-              );
-          }
-
-          if (moveFocus) selectedTab.focus();
-        };
-
-        tabs.forEach((tab, index) => {
-          tab.addEventListener("click", () => {
-            selectTab(tab);
-          });
-
-          tab.addEventListener(
-            "keydown",
-            (event) => {
-              let nextIndex: number | undefined;
-
-              if (event.key === "ArrowRight") {
-                nextIndex =
-                  (index + 1) % tabs.length;
-              } else if (
-                event.key === "ArrowLeft"
-              ) {
-                nextIndex =
-                  (index - 1 + tabs.length) %
-                  tabs.length;
-              } else if (event.key === "Home") {
-                nextIndex = 0;
-              } else if (event.key === "End") {
-                nextIndex = tabs.length - 1;
-              }
-
-              if (nextIndex === undefined) return;
-              event.preventDefault();
-              selectTab(tabs[nextIndex], true);
-            },
-          );
-        });
-      }
-
       const imageLightbox =
         document.querySelector<HTMLDialogElement>(
           "[data-image-lightbox]",

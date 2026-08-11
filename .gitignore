@@ -13,3 +13,4 @@ data
 .idea
 *.log
 .package-source-switch.json
+.claude

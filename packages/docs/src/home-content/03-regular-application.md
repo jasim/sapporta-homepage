@@ -1,12 +1,14 @@
 ## Sapporta projects are regular applications
 
-Sapporta projects are regular codebases that you fully own. Sapporta tries to be
-a small toolkit with many composable helpers that plugs into an otherwise
-conventional web application.
+When you create a new Sapporta project by running `sapporta init <project-name>`
+you get a complete, pre-wired project out of the box — API server, React
+frontend, auth, migrations, and a production Dockerfile, all set up and
+connected.
 
-### With a sprinkling of declarativeness
+Sapporta projects are regular TypeScript applications - you can add typed API
+endpoints, React screens, and build everything you need without constraints.
 
-The `sapportaTable` declaration is the only declarative configuration in a
+**With a sprinkling of declarativeness.** The `sapportaTable` declaration is the only declarative configuration in a
 Sapporta application.
 
 See the table declaration code here:
@@ -46,23 +48,17 @@ export const books = sapportaTable({
 });
 ```
 
-This declaration is used by Sapporta to:
+<div class="pt-6"></div>
 
-- Generate the list, get, create, update, delete, lookup, count, and CSV export
-  endpoints for each table.
-- Derive the Zod request and response schemas for those endpoints and publish
-  their table-specific contracts at `/api/openapi.json`.
-- Apply write rules and the declared `rowScope` on the server, including
-  supplying trusted workspace and user scope values.
-- Publish a browser-safe table model at `/api/meta/tables`, which the React
+This produces both the backend APIs and frontend UI for the table:
+
+- **Table APIs.** Sapporta generates list, get, create, update, delete, lookup,
+  count, and CSV export endpoints, then publishes them to `/api/openapi.json`
+  for agentic use. Row-level security from `rowScope` and role-based permissions
+  defined with CASL secure every call, so the APIs can be safely published on
+  the internet.
+- **Table Grid.** Sapporta publishes `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
-  child-table views.
-
-As you can see, this declarative configuration is what makes Sapporta truly
-useful for rapidly building database applications.
-
-I've found that coding agents routinely read the Sapporta library code, and
-understands the configuration and its runtime implications quite well. Unlike
-more complex multi-knob declarative systems (like say Kubernetes), the
-configuration here maps in a straightforward manner to their runtime, and is
-thus amenable to better understanding and control.
+  child-table views. The grids include filtering, sorting, searching,
+  exporting, nesting, and keyboard navigation. Because they use the table APIs,
+  they inherit the same authorization and permissions.

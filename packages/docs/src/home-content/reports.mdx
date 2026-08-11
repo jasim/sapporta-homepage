@@ -1,0 +1,25 @@
+## Lightweight Reporting System
+
+Sapporta ships with a light-weight reporting system. To create a new report, we need to create an API endpoint that
+returns JSON matching the `GridDataset` type. On the front-end, Sapporta provides a ReportGrid component that can render
+it using the Sapporta Grid.
+
+Typically, if an LLM write reporting code, it would generate HTML on the server-side, and then things like exporting,
+sorting, and filtering will be tangled up with the reporting and rendering logic. Each report would have to do all this
+ad hoc. Instead, specifying a common wire format for the reports allows us to cleanly separate these concerns.
+
+**Reports can have nested levels.** Sapporta Grid lets us render data with multiple levels, and that is useful for
+reports as well. For example, individual rows in an Account Ledger can expand to show their corresponding journal entry,
+and thus provide full context for each transaction without needing to leave the report.
+
+**URL deep-linking.** The parameters and deep-links in a report are all captured in the URL, and so we can share the URL
+freely and get to the same report configuration.
+
+**Built-in primitives.** Common reporting features like rollups, subtotals, opening rows, and closing rows are all
+first-class primitives.
+
+**Keyboard navigation**. The keyboard works fully: use Space to expand nested rows, Enter to follow the active cell's
+link.
+
+The reporting system is composable. Things like the inputs for report arguments, error display, summary stats etc. are
+all React components that your code can compose, extend, or even replace wholesale to create fully custom experiences.

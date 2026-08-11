@@ -13,15 +13,23 @@ brand:
 navigation:
   label: Main navigation
   links:
+    - label: Screenshots
+      href: "#screenshots"
     - label: Documentation
       href: /docs/getting-started/introduction/
     - label: GitHub
       href: https://github.com/jasim/sapporta
 ---
 
-Sapporta is a TypeScript framework for applications built around relational
-data &mdash; from personal databases and operational tools to vertical SaaS products.
+## Build database tools agentically
 
-It uses your Drizzle schema to provide permission-aware APIs, editable grids, forms, and reports. With this, your users get a rich spreadsheet-like experience to manage all their data. The APIs also make your applications agentic out of the box.
+Sapporta gives coding agents a reliable foundation for building database applications.
 
-But the codebase remains a regular TypeScript application -  you can add typed API endpoints, React screens, and build everything you need without constraints.
+It provides:
+
+- spreadsheet-grade grids available immediately for every table
+- reports with drill-down navigation
+- ability to agentically use these applications
+- skills, docs, backend, frontend -- all tuned together for agentic development
+- auth guardrails to ensure agentically written code is secure for public deployment  
+- a straightforward Hono + React + SQLite codebase
