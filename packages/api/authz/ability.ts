@@ -16,6 +16,10 @@ export function buildAbility(ctx: AppAuthFacts): AppAbility {
   can("read", "public_api_sample");
   can(["read", "create", "update", "export"], "books");
   can(["read", "create", "update", "export"], "quotes");
+  // The reset only restores the pristine demo snapshot, so letting the
+  // anonymous scheduler call it cannot leak or destroy anything a visitor
+  // couldn't already edit through the public table routes.
+  can("run", "demo_reset");
 
   if (ctx.principal.kind === "user") {
     can("read", "hello");

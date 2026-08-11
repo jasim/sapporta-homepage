@@ -14,6 +14,7 @@ import type {
   SapportaEnv,
   TsRestApi,
 } from "@sapporta/server";
+import demoResetApi from "./app/demo-reset.js";
 import helloApi from "./app/hello.js";
 import publicApiSample from "./app/public-api-sample.js";
 import type { SapportaMailer } from "./mailer.js";
@@ -27,6 +28,7 @@ export interface LoadAppOptions {
 export function loadApp(app: TsRestApi<SapportaEnv>, _options: LoadAppOptions) {
   app.route("/", helloApi);
   app.route("/", publicApiSample);
+  app.route("/", demoResetApi);
 }
 
 const publicTableNames = ["books", "quotes"] as const;
@@ -45,6 +47,9 @@ function publicTableRoutes(
 
 export const publicApiRoutes = [
   { method: "GET", path: "/api/public-api-sample" },
+  // Called unauthenticated by the demo-refresh cron; it can only restore the
+  // snapshot, never read or write anything else.
+  { method: "POST", path: "/api/demo-reset" },
   { method: "GET", path: "/api/meta/tables" },
   ...publicTableNames.flatMap((tableName) => publicTableRoutes(tableName)),
 ] satisfies readonly PublicRoutePattern[];

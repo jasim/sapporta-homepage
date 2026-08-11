@@ -2,5 +2,6 @@
 // `hello.ts` and re-export its router from here so `packages/shared/src/index.ts`
 // can pick everything up in one place.
 
+export { demoResetContract } from "./demo-reset.js";
 export { helloContract } from "./hello.js";
 export { publicApiSampleContract } from "./public-api-sample.js";
