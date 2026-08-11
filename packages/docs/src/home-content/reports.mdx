@@ -1,18 +1,19 @@
 ## Reports are one endpoint away
 
-Every database application eventually turns into a reporting application. And in
-a conventional stack each report is a small project of its own: a query, a
-bespoke table component, its own sorting, its own drill-downs, its own screen
-chrome. So reports get rationed, and most of the questions people have about
-their data never become screens.
+Every database application eventually turns into a reporting application. Once
+the data is in, most of what you want back out is answers: which customers
+matter, where the money went, what looks wrong. In a conventional stack each of
+those answers is a small project of its own — a query, a bespoke table
+component, its own sorting, its own drill-downs, its own screen chrome. Because
+each report costs that much, reports get rationed, and most of the questions
+you have about your data never become screens.
 
-In Sapporta, a report is an API endpoint that returns a value of one type:
-`GridDataset`. That's the whole contract. The frontend already knows how to
-render any `GridDataset` as a read-only result grid — the same [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid)
-that powers table screens, so sorting, column resizing, keyboard navigation,
-expanding nested rows, and copying cells or whole blocks as CSV (with or
-without headers) are already there. You write the query and describe its shape;
-the rest exists before you start.
+In Sapporta, a report costs what the query costs. You write an API endpoint
+that returns one value, a `GridDataset`, and that's the whole contract. The
+frontend already knows how to render any `GridDataset` as a read-only result
+grid — the same [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid)
+that powers table screens — so sorting, column resizing, keyboard navigation,
+and copying results as CSV exist before you write a line of UI.
 
 ```ts
 // packages/api/app/reports/top-customers.ts
@@ -51,34 +52,40 @@ api.register("topCustomers", contract.topCustomers, ({ c }) => {
 
 <div class="pt-6"></div>
 
-A `GridDataset` isn't limited to a flat list. Levels nest, so a report can carry
-its detail with it. The accounting app we build Sapporta against has an account
-ledger report with three levels: the account at the root, its transactions
-underneath with a running balance, and each transaction expandable into its
-individual journal entries. The dataset opens with an opening-balance row and
-closes with Closing Balance and Period Net footer rows — all just part of the
-returned value. Rollup, subtotal, opening, and closing rows are first-class row
-kinds, and columns cover text, numbers, booleans, dates, timestamps, currency,
-percentages, multiline text, and Markdown.
+A report can carry its detail with it, because levels nest. The accounting app
+we build Sapporta against has an account ledger report with three levels: the
+account at the root, its transactions underneath with a running balance, and
+each transaction expandable into its individual journal entries. Opening and
+closing balance rows are part of the same returned value — the endpoint decides
+what the report contains, and the grid renders whatever it's given.
 
-Links make reports navigable rather than terminal. Any column can declare
-drill-downs: to a record page, to another report with parameters bound from the
-row, to an application route, or to an external URL. Hidden columns carry the
-IDs those links need without cluttering the display. In that same accounting
-app, clicking an account name in the trial balance opens its ledger for the
-same date range. And it all works from the keyboard: Space expands a nested
-row, Enter follows the active cell's link — press it on a transaction and the
-underlying journal opens. Links are plain data in the dataset, validated
-against the columns when the grid binds them — a link that reads a column that
-doesn't exist fails loudly, not silently.
-
-The screen around the grid is assembled from stock parts: a page frame, a
-parameter toolbar, date-range fields, a run button, error display, and summary
-statistics. A finished report screen — inputs in the URL, results in the grid —
-is a few dozen lines of ordinary React.
+Links make reports navigable rather than terminal. To let a cell open a record,
+you declare a link on that column — to a record page, to another report with
+parameters bound from the row, to an application route, or to an external URL —
+and the grid handles the navigation. In that same accounting app, clicking an
+account name in the trial balance opens its ledger for the same date range, and
+pressing Enter on a transaction opens its underlying journal. A report stops
+being a dead end and becomes the place you start investigating from.
 
 Because each report is this cheap, they stop being rationed. The accounting app
 accumulated a trial balance, balance sheet, income statement, expense breakdown,
 monthly summary, net worth over time, and a handful of data-quality checks —
 duplicate detection, unreconciled accounts — each one an afternoon question
 that became a permanent, drillable screen.
+
+The finer points, for when you build one:
+
+- Rollup, subtotal, opening, and closing rows are first-class row kinds.
+- Columns cover text, numbers, booleans, dates, timestamps, currency,
+  percentages, multiline text, and Markdown.
+- Hidden columns (`visuallyHidden`) carry the IDs that links need without
+  cluttering the display.
+- Links are plain data, validated against the columns when the grid binds
+  them — a link that reads a nonexistent column fails loudly, not silently.
+- Everything works from the keyboard: Space expands a nested row, Enter follows
+  the active cell's link.
+- Cells or whole blocks copy as CSV, with or without headers.
+- The screen around the grid is assembled from stock parts — page frame,
+  parameter toolbar, date-range fields, run button, error display, summary
+  statistics. A finished report screen, inputs in the URL and results in the
+  grid, is a few dozen lines of ordinary React.
