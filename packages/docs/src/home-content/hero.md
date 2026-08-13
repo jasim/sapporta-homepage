@@ -21,11 +21,13 @@ navigation:
       href: https://github.com/jasim/sapporta
 ---
 
-## Build database tools agentically
+## Make coding agents good at database applications
 
-Sapporta gives coding agents a reliable foundation for building database applications.
+Sapporta provides an ERP-grade foundation for your software.
 
-It provides:
+It gives you:
+
+- 
 
 - spreadsheet-grade grids available immediately for every table
 - reports with drill-down navigation
