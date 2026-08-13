@@ -46,10 +46,20 @@ Sapporta provides a thoughtful integration between rapid development using AI an
 
 Agents produce screens quickly, but they do not build the shared layer
 underneath: one grid that filters and sorts, APIs that secure their own rows,
-forms that follow the schema. For example, each generated screen filters a
-little differently, and filtering exists only on the tables you happened to
-ask about. Due to this, you spend prompt after prompt on repetitive setup —
-specifying, checking, and correcting each screen by hand.
+forms that follow the schema.
+
+Ask for a filter on a list of tickets and the agent writes conditions for the
+fields you named — then it handles equals but not contains, and breaks when
+two conditions meet. Fixing it takes turns of specifying, checking,
+correcting, and waiting. Someone still has to build the UI that shows the
+filter is active, and clears it.
+
+Then you want the same on invoices, and the logic repeats. The agent will not
+stop and say filtering is a general idea; that kind of generalization exists
+only in systems designed around it. Prompting feature by feature never
+arrives at a shared architecture — each generated screen filters a little
+differently, and filtering exists only on the tables you happened to ask
+about.
 
 Sapporta is that shared layer, declared once and used by every table.
 
