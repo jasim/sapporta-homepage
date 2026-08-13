@@ -23,26 +23,27 @@ navigation:
 
 ## Make coding agents good at database applications
 
-Sapporta provides an ERP-grade foundation for your software.
+Sapporta is a TypeScript + SQLite framework where the data layer is generated
+from schema declarations, so agents spend their turns on your business logic
+instead of plumbing.
 
-When you use AI to write code for database applications, you often get inconsistent implementations of common patterns across different parts of your app. Sapporta solves this by providing a framework where data-related functionality is generated consistently from schema declarations.
+- **One declaration, the full surface.** Declare a `sapportaTable` and its
+  grid, forms, reports, and row-secured APIs exist. The next table you add
+  gets all of it without an extra prompt.
+- **Shared behavior written once.** Filtering, sorting, search, export, and
+  foreign-key lookups are implemented in the framework and used by every
+  screen — nothing to re-prompt, re-check, or re-fix table by table.
+- **Security built in, not prompted in.** Every generated API enforces
+  row-level security and the contracts are typed, so agent-written code is
+  safe for public deployment.
+- **A grid comfortable enough for a full day's work.** Arrow-key navigation,
+  composed filters, export, and opening a related record from a cell all come
+  with the declaration.
+- **Reports with drill-down** into the underlying records.
+- **A codebase you can read and own.** Plain Hono + React + SQLite, with
+  skills and docs tuned so agents work directly with the running application.
 
-Coding agents often fail to establish consistent, reusable infrastructure across the codebase.
-
-- Repetitive prompting for basic functionality
-- Inconsistent implementations of similar features
-- Security vulnerabilities in generated code
-- Constant correction of plumbing rather than business logic
-
-Sapporta solves this by providing a unified framework where:
-
-- Tables declared once automatically get grids, forms, reports, and secure APIs
-- Shared behaviors (filtering, sorting, exports) are implemented centrally
-- Security is built into the foundation - both in the framework and agent skills
-- The entire stack (Hono + React + SQLite) is transparent and maintainable
-
-Sapporta provides a thoughtful integration between rapid development using AI and professional software development practices.
-
+### Why a framework instead of more prompting
 
 Agents produce screens quickly, but they do not build the shared layer
 underneath: one grid that filters and sorts, APIs that secure their own rows,
@@ -58,31 +59,10 @@ Then you want the same on invoices, and the logic repeats. The agent will not
 stop and say filtering is a general idea; that kind of generalization exists
 only in systems designed around it. Prompting feature by feature never
 arrives at a shared architecture — each generated screen filters a little
-differently, and filtering exists only on the tables you happened to ask
-about.
+differently, filtering exists only on the tables you happened to ask about,
+and row checks exist only where someone remembered to prompt for them.
 
-Sapporta is that shared layer, declared once and used by every table.
-
-It gives you:
-
-- **Every table fully equipped from one declaration.** Declare a
-  `sapportaTable` and its grid, forms, reports, and row-secured APIs already
-  exist, so the next table you add gets all of it without a single extra
-  prompt.
-- **Shared behavior written once.** Filtering, sorting, search, export, and
-  foreign-key lookups are implemented once and shared by every screen, so you
-  never re-prompt, re-check, and re-fix them table by table.
-- **A grid comfortable enough for a full day's work.** Arrow-key navigation,
-  composed filters, export, and opening a related record from a cell all come
-  with the declaration; asking an agent to "build a table screen" does not
-  produce this.
-- **Reports with drill-down** into the underlying records.
-- **Security built in, not prompted in.** Every generated API enforces
-  row-level security and the contracts are typed, so agent-written code is
-  safe for public deployment instead of being one more thing to remember.
-- **Built for agentic development** — skills, docs, backend, and frontend are
-  tuned together, so agents can work directly with the running application.
-- **A codebase you can read and own** — plain Hono + React + SQLite.
-- **Your attention back on your own work** — the workflows of your clinic CRM,
-  your inspection tracker, or your vertical SaaS, rather than another round of
-  describing and fixing plumbing.
+Sapporta is that shared layer, declared once and used by every table. Your
+attention goes back to your own work — the workflows of your clinic CRM, your
+inspection tracker, your vertical SaaS — instead of another round of
+describing and fixing plumbing.
