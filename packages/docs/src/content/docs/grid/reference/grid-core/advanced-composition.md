@@ -46,5 +46,5 @@ runtime kernel.
 ## Related documentation
 
 - [Interaction configuration and presets](/grid/reference/interactions/configuration-and-presets/)
-- [GridRuntime](/grid/reference/base-grid/grid-runtime/)
-- [GridLevelRuntime](/grid/reference/base-grid/level-runtime/)
+- [GridRuntime](/grid/reference/grid-core/grid-runtime/)
+- [GridLevelRuntime](/grid/reference/grid-core/level-runtime/)

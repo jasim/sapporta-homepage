@@ -72,4 +72,4 @@ const unsubscribe = runtime.root.data.onReconcile((event) => {
 
 - [Editing and saving](/grid/guides/editing-and-saving/)
 - [Phantom rows and inserts](/grid/guides/advanced-rows/phantom-rows-and-inserts/)
-- [GridLevelRuntime](/grid/reference/base-grid/level-runtime/)
+- [GridLevelRuntime](/grid/reference/grid-core/level-runtime/)

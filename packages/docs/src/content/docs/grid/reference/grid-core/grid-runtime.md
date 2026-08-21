@@ -84,7 +84,7 @@ function createGridRuntime(args: RuntimeArgs): GridRuntime;
 
 Outside React, call `runtime.dispose()` from the owner's cleanup path. Repeated
 calls are safe. React screens should use
-[`useGridRuntimeEffect()`](/grid/reference/base-grid/react-api/) instead.
+[`useGridRuntimeEffect()`](/grid/reference/grid-core/react-api/) instead.
 
 ## Cross-path row operations
 
@@ -116,6 +116,6 @@ landing. A partial result contains removed, failed, and unattempted targets.
 
 ## Related documentation
 
-- [GridLevelRuntime](/grid/reference/base-grid/level-runtime/)
+- [GridLevelRuntime](/grid/reference/grid-core/level-runtime/)
 - [Row selection](/grid/reference/interactions/row-selection/)
-- [BaseGrid React APIs](/grid/reference/base-grid/react-api/)
+- [GridCore React APIs](/grid/reference/grid-core/react-api/)

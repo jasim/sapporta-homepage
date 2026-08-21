@@ -100,7 +100,7 @@ export default [
             ],
           },
           {
-            slug: "docs/guides/app-owned-features/bounded-basegrid-projections",
+            slug: "docs/guides/app-owned-features/bounded-gridcore-projections",
           },
           {
             label: "Custom forms",
@@ -569,25 +569,25 @@ export default [
             slug: "grid/reference",
           },
           {
-            label: "BaseGrid",
+            label: "GridCore",
             items: [
               {
-                slug: "grid/reference/base-grid",
+                slug: "grid/reference/grid-core",
               },
               {
-                slug: "grid/reference/base-grid/schema-rows-and-identity",
+                slug: "grid/reference/grid-core/schema-rows-and-identity",
               },
               {
-                slug: "grid/reference/base-grid/grid-runtime",
+                slug: "grid/reference/grid-core/grid-runtime",
               },
               {
-                slug: "grid/reference/base-grid/level-runtime",
+                slug: "grid/reference/grid-core/level-runtime",
               },
               {
-                slug: "grid/reference/base-grid/react-api",
+                slug: "grid/reference/grid-core/react-api",
               },
               {
-                slug: "grid/reference/base-grid/advanced-composition",
+                slug: "grid/reference/grid-core/advanced-composition",
               },
             ],
           },

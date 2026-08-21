@@ -128,17 +128,37 @@ Add realistic sample data, seeded under a user with email test@example.com and p
         </h2>
         <p class="home-quick-start__description">
           Copy the prompt and send it to your
-          coding agent. The default prompt asks
-          you what you want built; the examples
-          build a complete application directly.
+          coding agent.
         </p>
         <div
           class="home-quick-start__applications"
+          role="group"
+          aria-label="Choose a prompt"
         >
+          <button
+            class="home-quick-start__application-button home-quick-start__application-button--build"
+            type="button"
+            data-agent-prompt-option
+            data-agent-prompt-value={blankPrompt}
+            data-agent-prompt-label="Build your project"
+            aria-pressed="true"
+            data-selected="true"
+          >
+            <Hammer
+              aria-hidden="true"
+              size={15}
+              strokeWidth={2.25}
+            />
+            Build your project
+          </button>
+          <span
+            class="home-quick-start__applications-divider"
+            aria-hidden="true"
+          >
+            or, try an existing prompt
+          </span>
           <div
             class="home-quick-start__application-options"
-            role="group"
-            aria-label="Choose an application prompt"
           >
             {
               applicationPrompts.map(
@@ -163,20 +183,6 @@ Add realistic sample data, seeded under a user with email test@example.com and p
               )
             }
           </div>
-          <button
-            class="home-quick-start__clear-button"
-            type="button"
-            data-clear-agent-prompt
-            data-agent-prompt-value={blankPrompt}
-            aria-label="Select the build-your-project prompt"
-          >
-            <Hammer
-              aria-hidden="true"
-              size={15}
-              strokeWidth={2.25}
-            />
-            Build your project
-          </button>
         </div>
         <div
           class="home-quick-start__prompt-shell"
@@ -263,10 +269,6 @@ Add realistic sample data, seeded under a user with email test@example.com and p
     document.querySelectorAll<HTMLButtonElement>(
       "[data-agent-prompt-option]",
     );
-  const clearAgentPromptButton =
-    document.querySelector<HTMLButtonElement>(
-      "[data-clear-agent-prompt]",
-    );
   let copyAgentStatusTimeout:
     ReturnType<typeof setTimeout> | undefined;
 
@@ -283,7 +285,7 @@ Add realistic sample data, seeded under a user with email test@example.com and p
   };
 
   const selectAgentPromptOption = (
-    selectedOption?: HTMLButtonElement,
+    selectedOption: HTMLButtonElement,
   ) => {
     agentPromptOptions.forEach((option) => {
       const isSelected =
@@ -316,25 +318,6 @@ Add realistic sample data, seeded under a user with email test@example.com and p
       }
     });
   });
-
-  clearAgentPromptButton?.addEventListener(
-    "click",
-    () => {
-      const prompt =
-        clearAgentPromptButton.dataset
-          .agentPromptValue;
-      if (!agentPrompt || !prompt) return;
-
-      agentPrompt.textContent = prompt;
-      selectAgentPromptOption();
-      clearTimeout(copyAgentStatusTimeout);
-      resetCopyAgentFeedback();
-      if (copyAgentStatus) {
-        copyAgentStatus.textContent =
-          "Build your project prompt selected";
-      }
-    },
-  );
 
   copyAgentPromptButtons.forEach((button) => {
     button.addEventListener("click", async () => {

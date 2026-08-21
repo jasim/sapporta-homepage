@@ -42,4 +42,4 @@ Use `level.data.subscribe()` directly in non-React hosts.
 
 - [Data-source contracts and state](/grid/reference/data-sources/contracts-and-state/)
 - [Data-source writes and reconciliation](/grid/reference/data-sources/writes-and-reconciliation/)
-- [GridLevelRuntime](/grid/reference/base-grid/level-runtime/)
+- [GridLevelRuntime](/grid/reference/grid-core/level-runtime/)

@@ -6,7 +6,7 @@ description:
 
 ## Identity
 
-`@sapporta/grid/index.css` and public DOM state attributes. BaseGrid renders
+`@sapporta/grid/index.css` and public DOM state attributes. GridCore renders
 grid mechanics and stable DOM state. It does not own product visuals. Style
 rows, cells, nested levels, and editing state with `data-grid-part`,
 `data-row-*`, and `data-cell-*` selectors.

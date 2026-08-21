@@ -94,7 +94,7 @@ layout.
 - `context.runtime` contains grid-wide schema, events, registered levels,
   active-row state, and cross-path row operations.
 
-Direct BaseGrid and ColumnPreset contracts live in the standalone Grid
+Direct GridCore and ColumnPreset contracts live in the standalone Grid
 Reference.
 
 ## Related documentation

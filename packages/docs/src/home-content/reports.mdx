@@ -1,7 +1,21 @@
+import CapabilityStrip from "../components/CapabilityStrip.astro";
+import EvidenceShot from "../components/EvidenceShot.astro";
+
 ## Reports with drill-down
 
 A report is one API endpoint returning a common wire format — sorting,
 exporting, nesting, and deep links all come from the framework.
+
+<CapabilityStrip
+  items={[
+    "nested levels",
+    "rollups",
+    "subtotals",
+    "deep links",
+    "keyboard",
+    "composable",
+  ]}
+/>
 
 **One wire format instead of ad-hoc HTML.** When an LLM writes reporting code
 from scratch, exporting, sorting, and filtering get tangled into each
@@ -12,6 +26,12 @@ Sapporta Grid, so those concerns stay cleanly separated.
 **Nested levels.** Reports can render multiple levels: rows in an Account
 Ledger expand to show their journal entry, giving full context for each
 transaction without leaving the report.
+
+<EvidenceShot
+  src="/assets/home/screenshots/master-detail.png"
+  alt="People and their related tasks shown in a master-detail layout"
+  caption="Rows expand in place to show the records underneath each figure."
+/>
 
 **URL deep-linking.** A report's parameters and drill-downs are captured in
 the URL, so any report configuration can be shared as a link.

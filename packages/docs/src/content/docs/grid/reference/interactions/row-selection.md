@@ -119,7 +119,7 @@ has no row header.
 ## Cross-path operations
 
 Stored selection remains path-local. Use
-[`runtime.rowOperations`](/grid/reference/base-grid/grid-runtime/#cross-path-row-operations)
+[`runtime.rowOperations`](/grid/reference/grid-core/grid-runtime/#cross-path-row-operations)
 when one command intentionally spans the expanded hierarchy.
 
 ## Related documentation

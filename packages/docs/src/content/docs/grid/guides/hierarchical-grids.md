@@ -151,6 +151,6 @@ paths, database names, or backend resource names.
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
 Continue with
-[Schema, rows, paths, and identity](/grid/reference/base-grid/schema-rows-and-identity/)
+[Schema, rows, paths, and identity](/grid/reference/grid-core/schema-rows-and-identity/)
 and
 [Data-source contracts and state](/grid/reference/data-sources/contracts-and-state/).

@@ -1,3 +1,5 @@
+import EvidenceTranscript from "../components/EvidenceTranscript.astro";
+
 ## Why a framework instead of more prompting
 
 Agents produce screens quickly, but they do not build the shared layer
@@ -9,6 +11,17 @@ and the agent writes conditions for the fields you named — then it handles
 equals but not contains, and breaks when two conditions meet. Fixing it
 takes turns of specifying, checking, correcting, and waiting. Someone still
 has to build the UI that shows the filter is active, and clears it.
+
+<EvidenceTranscript
+  label="The prompting loop"
+  lines={[
+    { kind: "user", text: "add filtering to tickets" },
+    { kind: "agent", text: "\"contains\" doesn't work" },
+    { kind: "agent", text: "breaks with two conditions" },
+    { kind: "agent", text: "nothing shows a filter is active" },
+    { kind: "user", text: "now the same for invoices…" },
+  ]}
+/>
 
 **Prompting never generalizes.** Then you want the same on invoices, and the
 logic repeats. The agent will not stop and say filtering is a general idea;

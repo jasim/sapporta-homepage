@@ -6,7 +6,7 @@ description: "Find the standalone clipboard export boundary and the canonical co
 ## Identity
 
 Clipboard and copy-menu exports are available from `@sapporta/grid/grid`.
-`GridCopyContextMenu` adds the standard copy commands to a standalone BaseGrid
+`GridCopyContextMenu` adds the standard copy commands to a standalone GridCore
 composition. `ColumnSchema.copy` and the ColumnPreset `copy` option define the
 clipboard columns contributed by one visible column.
 

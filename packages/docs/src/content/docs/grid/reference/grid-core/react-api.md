@@ -1,5 +1,5 @@
 ---
-title: "BaseGrid React APIs"
+title: "GridCore React APIs"
 description: "Create, provide, render, and observe a GridRuntime from React."
 ---
 
@@ -59,6 +59,6 @@ changes.
 
 ## Related documentation
 
-- [GridRuntime](/grid/reference/base-grid/grid-runtime/)
-- [GridLevelRuntime](/grid/reference/base-grid/level-runtime/)
+- [GridRuntime](/grid/reference/grid-core/grid-runtime/)
+- [GridLevelRuntime](/grid/reference/grid-core/level-runtime/)
 - [Copying grid data](/grid/guides/copying-grid-data/)

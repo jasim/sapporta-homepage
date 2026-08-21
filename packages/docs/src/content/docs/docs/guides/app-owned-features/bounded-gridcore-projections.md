@@ -1,11 +1,11 @@
 ---
-title: "Bounded BaseGrid projections"
+title: "Bounded GridCore projections"
 description:
   "Render a small application-owned calculated row model without implying
   generated CRUD, completeness, or row security."
 ---
 
-Use BaseGrid when the application owns temporary, composite, calculated, or
+Use GridCore when the application owns temporary, composite, calculated, or
 browser-owned rows. The caller must bound every source and refuse to present a
 complete-looking result when a page is truncated.
 
@@ -157,4 +157,4 @@ server changes placement, not complexity.
 - [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 - [Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
 - [Route-based reports](/docs/guides/reports/route-based-reports/)
-- [BaseGrid](/grid/reference/base-grid/)
+- [GridCore](/grid/reference/grid-core/)

@@ -66,7 +66,7 @@ of that.
 
 When your requirement looks like that,
 [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
-lays out the options. It compares a generated table screen, TGrid, BaseGrid,
+lays out the options. It compares a generated table screen, TGrid, GridCore,
 and an app-owned screen on who controls the rows and the cache, so the surface
 you pick matches how people actually work.
 

@@ -23,9 +23,9 @@ Choose the reference that matches the coding task:
 
 Other interaction surfaces live with their owning APIs:
 
-- [GridRuntime](/grid/reference/base-grid/grid-runtime/) owns cross-path row
+- [GridRuntime](/grid/reference/grid-core/grid-runtime/) owns cross-path row
   operation targets.
-- [Advanced Grid composition](/grid/reference/base-grid/advanced-composition/)
+- [Advanced Grid composition](/grid/reference/grid-core/advanced-composition/)
   owns imperative cursor and controller access.
 - [Grid DOM state contract](/grid/reference/dom-and-styling-contract/) owns
   public interaction-state attributes.

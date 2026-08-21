@@ -37,7 +37,7 @@ state should not resize the page around the user.
 ## Choose the states your Grid uses
 
 Styling follows the interaction config. If the grid does not enable active rows,
-row selection, or cell range selection, BaseGrid will not render those states.
+row selection, or cell range selection, GridCore will not render those states.
 
 ```ts
 createGridRuntime({
@@ -63,7 +63,7 @@ for the available interaction models and keyboard behavior.
 
 ## Put a class on the Grid
 
-For a direct BaseGrid composition, put the class on a wrapper or supply it
+For a direct GridCore composition, put the class on a wrapper or supply it
 through your grid chrome:
 
 ```tsx
@@ -79,7 +79,7 @@ For Sapporta framework table-grid root styling, see
 
 ## Highlight the current row
 
-BaseGrid marks the current row with `data-row-active="true"`:
+GridCore marks the current row with `data-row-active="true"`:
 
 ```css
 .projectGrid [data-grid-part="row"][data-row-active="true"] {
@@ -99,7 +99,7 @@ BaseGrid marks the current row with `data-row-active="true"`:
 
 ## Style selected rows
 
-BaseGrid marks selected rows with `data-row-selected="true"`:
+GridCore marks selected rows with `data-row-selected="true"`:
 
 ```css
 .projectGrid [data-grid-part="row"][data-row-selected="true"] {
@@ -117,7 +117,7 @@ appropriate, but prefer `data-row-selected` for visual chrome.
 
 ## Style the active cell
 
-BaseGrid marks the active cell with `data-cell-status="focus"`:
+GridCore marks the active cell with `data-cell-status="focus"`:
 
 ```css
 .projectGrid [data-grid-part="cell"][data-cell-status="focus"] {

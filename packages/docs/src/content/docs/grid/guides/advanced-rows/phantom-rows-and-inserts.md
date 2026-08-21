@@ -40,7 +40,7 @@ capability and returns the resulting authoritative row.
 Typecheck the example and exercise its visible editing, saving, and failure
 states. Use only public `@sapporta/grid` export paths.
 
-See [GridLevelRuntime](/grid/reference/base-grid/level-runtime/) for the
+See [GridLevelRuntime](/grid/reference/grid-core/level-runtime/) for the
 complete draft API and
 [Data-source writes and reconciliation](/grid/reference/data-sources/writes-and-reconciliation/)
 for the persistence boundary.

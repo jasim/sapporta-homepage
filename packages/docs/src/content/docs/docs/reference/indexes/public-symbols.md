@@ -34,7 +34,7 @@ Package/export index checked against the linked Sapporta package export maps.
 - `@sapporta/frontend/layout` and `@sapporta/frontend/shell`: `AppPage`,
   `PageFrame`, `PageHeader`, `PageHeaderButton`, `PageBody`, `SidebarProvider`,
   `SidebarRegion`, `SidebarShell`, `SidebarToggle`, and `useSidebar()`.
-- `@sapporta/grid`: standalone BaseGrid runtime/React APIs, grid-wide active-row
+- `@sapporta/grid`: standalone GridCore runtime/React APIs, grid-wide active-row
   state, row-activation events, ColumnPreset, `parseNumericInput`, lookup, and
   CSS subpaths; see standalone Grid Reference.
 

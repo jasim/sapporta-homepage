@@ -1,0 +1,30 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="home-evidence home-evidence--shot">
+  <a
+    class="home-screenshot__link home-evidence__link"
+    href={src}
+    rel="noreferrer"
+    target="_blank"
+    aria-label={`Open full-size screenshot: ${alt}`}
+  >
+    <img
+      class="home-evidence__image"
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+  <figcaption class="home-evidence__caption">
+    {caption}
+  </figcaption>
+</figure>

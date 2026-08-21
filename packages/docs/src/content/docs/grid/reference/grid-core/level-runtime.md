@@ -94,4 +94,4 @@ for the source-side write contract.
 
 - [Row selection](/grid/reference/interactions/row-selection/)
 - [Phantom rows and inserts](/grid/guides/advanced-rows/phantom-rows-and-inserts/)
-- [GridRuntime](/grid/reference/base-grid/grid-runtime/)
+- [GridRuntime](/grid/reference/grid-core/grid-runtime/)

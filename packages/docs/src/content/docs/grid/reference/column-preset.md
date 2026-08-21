@@ -29,7 +29,7 @@ import {
 ## ColumnPreset API
 
 ColumnPreset helpers return ordinary `ColumnSchema` values. They are the
-recommended starting point for most BaseGrid columns.
+recommended starting point for most GridCore columns.
 
 ### Constructors
 

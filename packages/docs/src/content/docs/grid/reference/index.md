@@ -10,7 +10,7 @@ description: "Look up the standalone @sapporta/grid public surface."
 
 ## Reference groups
 
-- [BaseGrid](/grid/reference/base-grid/) — schema and identity, grid and level
+- [GridCore](/grid/reference/grid-core/) — schema and identity, grid and level
   runtimes, React APIs, row operations, drafts, and advanced composition.
 - [ColumnPreset](/grid/reference/column-preset/) — typed column constructors, editors, formatting, copy, and sizing.
 - [Data sources](/grid/reference/data-sources/) — custom contracts, runtime

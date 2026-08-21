@@ -15,7 +15,7 @@ Use the leaf that owns the behavior you are implementing:
   covers active-row projections, activation events, interaction configuration,
   column draft parsing, write behavior, and runtime context.
 
-Direct `BaseGrid`, ColumnPreset, clipboard, and lower-level interaction contracts
+Direct `GridCore`, ColumnPreset, clipboard, and lower-level interaction contracts
 remain in the standalone [Grid Reference](/grid/reference/).
 
 ## Related documentation

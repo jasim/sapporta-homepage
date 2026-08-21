@@ -1,7 +1,7 @@
 ---
 title: "Schema, rows, paths, and identity"
 description:
-  "Look up BaseGrid schema, source-row, path, coordinate, and row-id types."
+  "Look up GridCore schema, source-row, path, coordinate, and row-id types."
 ---
 
 Use this page when defining a Grid schema or translating host row identity into

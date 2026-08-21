@@ -108,4 +108,4 @@ during the runtime lifetime.
 
 - [Interaction configuration and presets](/grid/reference/interactions/configuration-and-presets/)
 - [Row selection](/grid/reference/interactions/row-selection/)
-- [BaseGrid React APIs](/grid/reference/base-grid/react-api/)
+- [GridCore React APIs](/grid/reference/grid-core/react-api/)

@@ -6,7 +6,7 @@ description:
 ---
 
 Use these contracts when implementing a custom source or adapting an application
-store to BaseGrid.
+store to GridCore.
 
 ## GridDataSource
 
@@ -105,6 +105,6 @@ remains a source or host concern.
 
 ## Related documentation
 
-- [Schema, rows, paths, and identity](/grid/reference/base-grid/schema-rows-and-identity/)
+- [Schema, rows, paths, and identity](/grid/reference/grid-core/schema-rows-and-identity/)
 - [Runtime data access](/grid/reference/data-sources/runtime-data-access/)
 - [Hierarchical grids](/grid/guides/hierarchical-grids/)

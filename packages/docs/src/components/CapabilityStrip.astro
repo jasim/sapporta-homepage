@@ -1,0 +1,15 @@
+---
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="home-strip" role="list">
+  {
+    items.map((item) => (
+      <li class="home-strip__chip">{item}</li>
+    ))
+  }
+</ul>

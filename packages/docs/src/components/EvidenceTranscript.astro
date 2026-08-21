@@ -1,0 +1,54 @@
+---
+interface Props {
+  label: string;
+  lines: {
+    kind: "user" | "agent" | "tool";
+    text: string;
+  }[];
+  caption?: string;
+}
+
+const { label, lines, caption } = Astro.props;
+
+const toolParts = (text: string) => {
+  const spaceIndex = text.indexOf(" ");
+  if (spaceIndex === -1) {
+    return { verb: text, rest: "" };
+  }
+  return {
+    verb: text.slice(0, spaceIndex),
+    rest: text.slice(spaceIndex),
+  };
+};
+---
+
+<figure class="home-evidence home-evidence--transcript">
+  <p class="home-evidence__label">{label}</p>
+  <div class="home-transcript" role="img" aria-label={`Illustration: ${label}`}>
+    {
+      lines.map((line) => (
+        <div
+          class={`home-transcript__line home-transcript__line--${line.kind}`}
+        >
+          {line.kind === "tool" ? (
+            <>
+              <span class="home-transcript__verb">
+                {toolParts(line.text).verb}
+              </span>
+              {toolParts(line.text).rest}
+            </>
+          ) : (
+            line.text
+          )}
+        </div>
+      ))
+    }
+  </div>
+  {
+    caption && (
+      <figcaption class="home-evidence__caption">
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>

@@ -4,14 +4,14 @@ import {
   frontmatter,
 } from "../home-content/hero.md";
 import { Content as DataGridExperience } from "../home-content/01-data-grid-experience.mdx";
-import { Content as RegularApplication } from "../home-content/03-regular-application.md";
-import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.md";
+import { Content as RegularApplication } from "../home-content/03-regular-application.mdx";
+import { Content as BuiltForAgents } from "../home-content/05-built-for-agents.mdx";
 import { Content as StatusAndContributing } from "../home-content/06-status-and-contributing.md";
 import { Content as FrequentlyAskedQuestions } from "../home-content/faq.markdown";
 import { Content as Reports } from "../home-content/reports.mdx";
 import { Content as Screenshots } from "../home-content/screenshots.md";
 import { Content as StackDetails } from "../home-content/stack.md";
-import { Content as WhyAFramework } from "../home-content/why-a-framework.md";
+import { Content as WhyAFramework } from "../home-content/why-a-framework.mdx";
 import GettingStarted from "../components/GettingStarted.astro";
 import HomepageActions from "../components/HomepageActions.astro";
 import HomepageDemo from "../components/HomepageDemo.astro";
@@ -30,18 +30,24 @@ const demoApplications = [
     description:
       "Double-entry accounts, balanced transactions, budgets, and ledger reports.",
     href: "/demos/bookkeeping/",
+    screenshot:
+      "/assets/home/screenshots/master-detail.png",
   },
   {
     label: "Calorie tracker",
     description:
       "Foods, logged meals, nutrition goals, and a daily progress dashboard.",
     href: "/demos/calorie-tracker/",
+    screenshot:
+      "/assets/home/screenshots/grid-view.png",
   },
   {
     label: "Maintenance tracker",
     description:
       "Assets, recurring schedules, work orders, and per-asset service history.",
     href: "/demos/maintenance-tracker/",
+    screenshot:
+      "/assets/home/screenshots/grid-filtering.png",
   },
 ];
 const homepageStructuredData = {
@@ -226,8 +232,12 @@ const homepageStructuredData = {
             aria-label="Complete applications built with Sapporta"
           >
             <p class="home-app-links__intro">
-              Or try complete applications built
-              with Sapporta:
+              Try complete applications built with
+              Sapporta
+            </p>
+            <p class="home-app-links__note">
+              Live demos, seeded with sample data
+              — open one and look around.
             </p>
             <ul class="home-app-links__list">
               {
@@ -237,17 +247,31 @@ const homepageStructuredData = {
                       class="home-app-link"
                       href={app.href}
                     >
-                      <span class="home-app-link__label">
-                        {app.label}
-                        <span
-                          class="home-app-link__arrow"
-                          aria-hidden="true"
-                        >
-                          →
-                        </span>
+                      <span class="home-app-link__media">
+                        <img
+                          class="home-app-link__screenshot"
+                          src={app.screenshot}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                        />
                       </span>
-                      <span class="home-app-link__description">
-                        {app.description}
+                      <span class="home-app-link__body">
+                        <span class="home-app-link__label">
+                          {app.label}
+                        </span>
+                        <span class="home-app-link__description">
+                          {app.description}
+                        </span>
+                        <span class="home-app-link__cta">
+                          Try the demo
+                          <span
+                            class="home-app-link__arrow"
+                            aria-hidden="true"
+                          >
+                            →
+                          </span>
+                        </span>
                       </span>
                     </a>
                   </li>

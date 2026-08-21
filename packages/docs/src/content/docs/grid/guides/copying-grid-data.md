@@ -4,11 +4,11 @@ description: "Control copied columns, headers, labeled values, and asynchronous 
 ---
 
 Clipboard and copy-menu exports are available from `@sapporta/grid/grid`. This
-guide owns the copy behavior shared by BaseGrid, framework table grids, TGrid,
+guide owns the copy behavior shared by GridCore, framework table grids, TGrid,
 and report grids.
 
 Every framework table grid, TGrid, and report grid has a right-click copy menu.
-Standalone BaseGrid surfaces get the same menu when they wrap the rendered
+Standalone GridCore surfaces get the same menu when they wrap the rendered
 levels in `GridCopyContextMenu`.
 
 The menu has two commands:
@@ -128,9 +128,9 @@ const statusColumn = columnPreset.select({
 For `select`, `foreignKey`, and `lookupValue`, a supplied `copy` replaces the
 raw-plus-label default for that column.
 
-## Customize BaseGrid Copy
+## Customize GridCore Copy
 
-BaseGrid columns use `ColumnSchema.copy` directly.
+GridCore columns use `ColumnSchema.copy` directly.
 
 ```ts
 const personColumn: ColumnSchema = {
@@ -150,7 +150,7 @@ const personColumn: ColumnSchema = {
 };
 ```
 
-Standalone BaseGrid screens also need the context menu wrapper:
+Standalone GridCore screens also need the context menu wrapper:
 
 ```tsx
 <GridRuntimeProvider runtime={runtime}>
@@ -160,7 +160,7 @@ Standalone BaseGrid screens also need the context menu wrapper:
 </GridRuntimeProvider>
 ```
 
-Without a `copy` function, BaseGrid falls back to one clipboard column using
+Without a `copy` function, GridCore falls back to one clipboard column using
 `column.id` and `row.columns[column.id]`.
 
 ## Header And Async Rules
