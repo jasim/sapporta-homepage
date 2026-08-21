@@ -1,25 +1,27 @@
-## Lightweight Reporting System
+## Reports with drill-down
 
-Sapporta ships with a light-weight reporting system. To create a new report, we need to create an API endpoint that
-returns JSON matching the `GridDataset` type. On the front-end, Sapporta provides a ReportGrid component that can render
-it using the Sapporta Grid.
+A report is one API endpoint returning a common wire format — sorting,
+exporting, nesting, and deep links all come from the framework.
 
-Typically, if an LLM write reporting code, it would generate HTML on the server-side, and then things like exporting,
-sorting, and filtering will be tangled up with the reporting and rendering logic. Each report would have to do all this
-ad hoc. Instead, specifying a common wire format for the reports allows us to cleanly separate these concerns.
+**One wire format instead of ad-hoc HTML.** When an LLM writes reporting code
+from scratch, exporting, sorting, and filtering get tangled into each
+report's rendering logic, ad hoc, every time. In Sapporta the endpoint
+returns a `GridDataset` and the ReportGrid component renders it with the
+Sapporta Grid, so those concerns stay cleanly separated.
 
-**Reports can have nested levels.** Sapporta Grid lets us render data with multiple levels, and that is useful for
-reports as well. For example, individual rows in an Account Ledger can expand to show their corresponding journal entry,
-and thus provide full context for each transaction without needing to leave the report.
+**Nested levels.** Reports can render multiple levels: rows in an Account
+Ledger expand to show their journal entry, giving full context for each
+transaction without leaving the report.
 
-**URL deep-linking.** The parameters and deep-links in a report are all captured in the URL, and so we can share the URL
-freely and get to the same report configuration.
+**URL deep-linking.** A report's parameters and drill-downs are captured in
+the URL, so any report configuration can be shared as a link.
 
-**Built-in primitives.** Common reporting features like rollups, subtotals, opening rows, and closing rows are all
-first-class primitives.
+**Built-in primitives.** Rollups, subtotals, opening rows, and closing rows
+are first-class.
 
-**Keyboard navigation**. The keyboard works fully: use Space to expand nested rows, Enter to follow the active cell's
-link.
+**Full keyboard.** Space expands nested rows; Enter follows the active
+cell's link.
 
-The reporting system is composable. Things like the inputs for report arguments, error display, summary stats etc. are
-all React components that your code can compose, extend, or even replace wholesale to create fully custom experiences.
+**Composable.** Argument inputs, error display, and summary stats are React
+components your code can compose, extend, or replace wholesale for fully
+custom experiences.

@@ -1,9 +1,8 @@
 ## Contact and contribute
 
-This is an early alpha release of Sapporta. It is built and maintained by me,
-Jasim A Basheer. You can email me
-at [jasim@protoship.io](mailto:jasm@protoship.io)
-or [open an issue in the Sapporta repository](https://github.com/jasim/sapporta/issues).
+Sapporta is an early alpha release, built and maintained by me, Jasim A
+Basheer — email [jasim@protoship.io](mailto:jasim@protoship.io) or
+[open an issue in the Sapporta repository](https://github.com/jasim/sapporta/issues).
 
 Use Sapporta for your personal and operational database systems, and tell me
 what you want to improve. Send me your use cases, concrete usage scenarios, and

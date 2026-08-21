@@ -1,17 +1,15 @@
 ## Sapporta projects are regular applications
 
-When you create a new Sapporta project by running `sapporta init <project-name>`
-you get a complete, pre-wired project out of the box — API server, React
-frontend, auth, migrations, and a production Dockerfile, all set up and
-connected.
+`sapporta init` gives you a complete, pre-wired project — API server, React
+frontend, auth, migrations, and a production Dockerfile — and all of it is
+plain TypeScript you can read and own.
 
-Sapporta projects are regular TypeScript applications - you can add typed API
-endpoints, React screens, and build everything you need without constraints.
+**A regular codebase, without constraints.** Add typed API endpoints, React
+screens, and whatever business logic your application needs, the way you
+would in any TypeScript project.
 
-**With a sprinkling of declarativeness.** The `sapportaTable` declaration is the
-only declarative configuration in a Sapporta application.
-
-See the table declaration code here:
+**With a sprinkling of declarativeness.** The `sapportaTable` declaration is
+the only declarative configuration in a Sapporta application:
 
 ```ts
 // packages/api/schema/books.ts

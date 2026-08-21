@@ -1,5 +1,8 @@
 ## Stack
 
+Best-in-class libraries wired into a conventional pnpm workspace — nothing
+proprietary, nothing hidden.
+
 - **[TypeScript](https://www.typescriptlang.org/) on
   [Node.js](https://nodejs.org/)** for the entire application. The generated
   project is a [`pnpm`](https://pnpm.io/) workspace with separate API, frontend,

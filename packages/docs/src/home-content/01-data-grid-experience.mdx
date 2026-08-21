@@ -1,35 +1,27 @@
 ## A datagrid for every table
 
-If you look at traditional ERP software, a large chunk of their interface is
-just forms, data grids, and reports. All of them heavily favour the keyboard.
-They are optimized for power-users and have high information density. Sapporta's
-goal is to bring the same experience to database applications on the web.
+Declare a table and a live, editable grid exists — the demo at the top of
+this page is exactly that, produced by one table declaration.
 
-It does this by leaning heavily into datagrids. Sapporta uses data grids as a
-universal surface for tabular data. You can put a lot of heart and soul into
-that single component, and it benefits the entire application.
+**The spreadsheet lesson.** People reach for spreadsheets because they can
+work with data without anticipating every requirement in advance. Sorting,
+searching, and filtering are available to every sheet, and together they form
+a partial but high-leverage algebra for changing and understanding data.
 
-That is also what makes spreadsheets beautiful. People use them because they can
-work with data without having to anticipate every requirement in advance.
-Operations like sorting, searching, and filtering, are available to all sheets,
-and together they form a partial but high-leverage algebra for changing and
-understanding data
+**One surface, polished deeply.** Traditional ERP interfaces are largely
+forms, data grids, and reports — keyboard-first, information-dense, built for
+power users. Sapporta brings that experience to the web by using the data
+grid as the universal surface for tabular data, so the heart and soul put
+into one component benefits the entire application.
 
-Building them as one-off features in a conventional web application, even with
-an LLM, requires defining them from scratch for every table. So we often focus
-on the central parts of the system that finds most use, adding features as users
-request them. The rest of the application's data becomes a second-class citizen.
+**No second-class tables.** Built as one-off features, grid behaviors have to
+be defined from scratch for every table — even with an LLM. So conventional
+systems polish the few central screens and the rest of the application's data
+becomes a second-class citizen. In Sapporta, like a spreadsheet, every table
+gets the full grid the moment it is created.
 
-But in Sapporta, just like a spreadsheet, you immediately get a live, editable
-data grid the moment you create a table — the demo at the top of this page is
-exactly that grid, produced by a single table declaration.
-
-The [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is a custom-built React component that can be deeply composed
-and extended. It brings a similar set of features and UX as Airtable, NocoDB,
-and similar collaborative databases. It is paginated, filterable, sortable, and
-searchable. It also supports nested master-detail relationships, with full
-keyboard support that works across levels.
-
-So when you use Sapporta to build a web application with a coding agent, you get
-a fully wired system with a front end for manipulating data, along with all the
-forms and workflows the application needs.
+**Built to be composed and extended.** The
+[Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is
+a custom-built React component with a feature set and UX similar to Airtable
+and NocoDB: paginated, filterable, sortable, and searchable, with nested
+master-detail relationships and keyboard support that works across levels.

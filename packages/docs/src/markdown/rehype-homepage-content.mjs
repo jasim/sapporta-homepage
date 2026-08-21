@@ -116,6 +116,9 @@ function classifyContentNode(node, parent, isHero, heroParagraphIndex) {
     case "h3":
     case "h4":
       addClass(node, "home-copy__heading", `home-copy__heading--level-${node.tagName.slice(1)}`);
+      if (isHero && node.tagName === "h2") {
+        addClass(node, "home-intro__title");
+      }
       break;
     case "p":
       addClass(node, "home-copy__paragraph");
@@ -239,6 +242,29 @@ export function rehypeHomepageContent() {
     let heroParagraphIndex = 0;
     for (const child of tree.children) {
       heroParagraphIndex = classifyContentNode(child, tree, isHeroContent(file), heroParagraphIndex);
+    }
+
+    if (isHeroContent(file)) {
+      return;
+    }
+
+    // The first paragraph after each h2 is the section's lede: the one-line
+    // summary a skimmer reads instead of the body.
+    for (let index = 0; index < tree.children.length; index += 1) {
+      const node = tree.children[index];
+      if (node?.type !== "element" || node.tagName !== "h2") {
+        continue;
+      }
+
+      let nextIndex = index + 1;
+      while (nextIndex < tree.children.length && isWhitespace(tree.children[nextIndex])) {
+        nextIndex += 1;
+      }
+
+      const next = tree.children[nextIndex];
+      if (next?.type === "element" && next.tagName === "p") {
+        addClass(next, "home-copy__lede");
+      }
     }
   };
 }
