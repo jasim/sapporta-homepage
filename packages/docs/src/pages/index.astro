@@ -11,8 +11,10 @@ import { Content as FrequentlyAskedQuestions } from "../home-content/faq.markdow
 import { Content as Reports } from "../home-content/reports.mdx";
 import { Content as Screenshots } from "../home-content/screenshots.md";
 import { Content as StackDetails } from "../home-content/stack.md";
+import { Content as WhyAFramework } from "../home-content/why-a-framework.md";
 import GettingStarted from "../components/GettingStarted.astro";
 import HomepageActions from "../components/HomepageActions.astro";
+import HomepageDemo from "../components/HomepageDemo.astro";
 import SapportaMark from "../components/SapportaMark.astro";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 import "../styles/sapporta.css";
@@ -22,6 +24,26 @@ const { page, brand, navigation } = frontmatter;
 const homepageUrl = `${gettingStartedEnv.docsCanonicalOrigin}/`;
 const llmsIndexUrl = `${gettingStartedEnv.docsCanonicalOrigin}/llms.txt`;
 const socialPreviewUrl = `${homepageUrl}og.png`;
+const demoApplications = [
+  {
+    label: "Bookkeeping",
+    description:
+      "Double-entry accounts, balanced transactions, budgets, and ledger reports.",
+    href: "/demos/bookkeeping/",
+  },
+  {
+    label: "Calorie tracker",
+    description:
+      "Foods, logged meals, nutrition goals, and a daily progress dashboard.",
+    href: "/demos/calorie-tracker/",
+  },
+  {
+    label: "Maintenance tracker",
+    description:
+      "Assets, recurring schedules, work orders, and per-asset service history.",
+    href: "/demos/maintenance-tracker/",
+  },
+];
 const homepageStructuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
@@ -89,7 +111,7 @@ const homepageStructuredData = {
     />
     <meta
       property="og:image:alt"
-      content="Sapporta — Build database tools agentically"
+      content="Sapporta — Build full database applications from table declarations"
     />
     <meta
       name="twitter:card"
@@ -109,7 +131,7 @@ const homepageStructuredData = {
     />
     <meta
       name="twitter:image:alt"
-      content="Sapporta — Build database tools agentically"
+      content="Sapporta — Build full database applications from table declarations"
     />
     <link
       rel="icon"
@@ -195,6 +217,47 @@ const homepageStructuredData = {
         </div>
 
         <div
+          class="home-layout home-layout--hero-demo"
+        >
+          <HomepageDemo />
+
+          <nav
+            class="home-app-links"
+            aria-label="Complete applications built with Sapporta"
+          >
+            <p class="home-app-links__intro">
+              Or try complete applications built
+              with Sapporta:
+            </p>
+            <ul class="home-app-links__list">
+              {
+                demoApplications.map((app) => (
+                  <li class="home-app-links__item">
+                    <a
+                      class="home-app-link"
+                      href={app.href}
+                    >
+                      <span class="home-app-link__label">
+                        {app.label}
+                        <span
+                          class="home-app-link__arrow"
+                          aria-hidden="true"
+                        >
+                          →
+                        </span>
+                      </span>
+                      <span class="home-app-link__description">
+                        {app.description}
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </div>
+
+        <div
           class="home-layout home-layout--article home-layout--value"
         >
           <article
@@ -245,6 +308,11 @@ const homepageStructuredData = {
               >
             </div>
 
+            <section
+              class="home-article__section home-article__section--technical"
+            >
+              <WhyAFramework />
+            </section>
             <section
               class="home-article__section home-article__section--technical"
             >

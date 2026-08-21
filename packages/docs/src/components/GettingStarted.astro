@@ -2,7 +2,7 @@
 import {
   Check,
   Copy,
-  Eraser,
+  Hammer,
 } from "lucide-react";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 
@@ -92,13 +92,16 @@ Add realistic sample data, seeded under a user with email test@example.com and p
 
 const blankPrompt = `${createProjectAgentPreamble}
 
-Using Sapporta, build ___.
+Using Sapporta, build a project for me.
 ${createProjectAgentUrl}
 
-Model ___.
+I have not described the project yet. Before doing anything else, ask me one
+or two questions to find out what I want to build and how I will use it. From
+my answers, infer the domain model — the tables, their relationships, and the
+key workflows — and show me that plan in a few short lines for confirmation
+before you build.
 
-Include:
-- ___
+Then build the complete application.
 
 Add realistic sample data, seeded under a user with email test@example.com and password test123. After the project is created, share these credentials with the user so they can access the demo data.`;
 ---
@@ -124,8 +127,10 @@ Add realistic sample data, seeded under a user with email test@example.com and p
           Get started with your coding agent
         </h2>
         <p class="home-quick-start__description">
-          Copy and change the prompt and then send
-          it to your agent.
+          Copy the prompt and send it to your
+          coding agent. The default prompt asks
+          you what you want built; the examples
+          build a complete application directly.
         </p>
         <div
           class="home-quick-start__applications"
@@ -163,14 +168,14 @@ Add realistic sample data, seeded under a user with email test@example.com and p
             type="button"
             data-clear-agent-prompt
             data-agent-prompt-value={blankPrompt}
-            aria-label="Clear the application prompt"
+            aria-label="Select the build-your-project prompt"
           >
-            <Eraser
+            <Hammer
               aria-hidden="true"
               size={15}
               strokeWidth={2.25}
             />
-            Clear
+            Build your project
           </button>
         </div>
         <div
@@ -326,7 +331,7 @@ Add realistic sample data, seeded under a user with email test@example.com and p
       resetCopyAgentFeedback();
       if (copyAgentStatus) {
         copyAgentStatus.textContent =
-          "Blank prompt selected";
+          "Build your project prompt selected";
       }
     },
   );
