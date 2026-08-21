@@ -5,11 +5,13 @@ description:
   up locally, and open the generated app shell."
 ---
 
-Sapporta projects use pnpm. If Node.js is installed but `pnpm` is not available,
-enable pnpm through Corepack:
+Sapporta projects require pnpm 11 or later.
+
+If Node.js is installed but `pnpm` is not available, or an older pnpm is
+installed, use Corepack:
 
 ```bash
-corepack enable pnpm
+corepack use pnpm@11
 ```
 
 Create a project named `my-app`:

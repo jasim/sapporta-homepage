@@ -3,7 +3,7 @@ title: "Copying grid data"
 description: "Control copied columns, headers, labeled values, and asynchronous clipboard values."
 ---
 
-Clipboard and copy-menu exports are available from `@sapporta/grid/grid`. This
+Clipboard and copy-menu exports are available from `@sapporta/grid`. This
 guide owns the copy behavior shared by GridCore, framework table grids, TGrid,
 and report grids.
 

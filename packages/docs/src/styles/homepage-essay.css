@@ -1184,6 +1184,51 @@
   margin-top: clamp(5rem, 9vw, 8rem);
 }
 
+/*
+ * "Why Sapporta": the argument band between the demonstrated features and the
+ * quick start. It stays on the page background — the quick-start band directly
+ * below is tinted, and two coloured bands in a row would muddy the sequence —
+ * so the section marker's ink rule carries the band change on its own.
+ */
+.home-layout--why {
+  margin-top: 0;
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+/*
+ * Both lists here are substantive claims rather than asides, so they take the
+ * rule-separated treatment used by the framework sections instead of bullets.
+ */
+.home-article__section--why .home-copy__list {
+  list-style: none;
+  margin: 1.1rem 0 1.8rem;
+  padding-inline-start: 0;
+}
+
+.home-article__section--why .home-copy__list-item {
+  border-top: 1px solid var(--rule);
+  padding: 0.8rem 0 0;
+  padding-inline-start: 0;
+}
+
+.home-article__section--why .home-copy__list-item + .home-copy__list-item {
+  margin-top: 0;
+}
+
+/*
+ * The closing line is the section's takeaway: it reads at lede weight so a
+ * skimmer who only reads the first and last line still gets the argument.
+ */
+.home-article__section--why > .home-copy__paragraph:last-child {
+  border-top: 1px solid var(--rule);
+  font-size: 1.15rem;
+  font-weight: 450;
+  line-height: 1.55;
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  text-wrap: pretty;
+}
+
 .home-article {
   max-width: var(--home-media-width);
   width: 100%;

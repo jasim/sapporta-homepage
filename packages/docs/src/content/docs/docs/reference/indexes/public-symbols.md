@@ -19,6 +19,11 @@ Package/export index checked against the linked Sapporta package export maps.
   `resolveExportQuery`, `resolveLookupQuery`, `resolveCountQuery`,
   `ResolvedCountQuery`, `ResolveRowsQueryOptions`, `TsRestApi`, `initContract`,
   migration readiness, and project loading.
+- `@sapporta/server/errors`: the whole error vocabulary — `ErrorCode`,
+  `ErrorCodeValue`, `OperationError`, `ValidationError`, `QueryParseError`, and
+  SQLite error classification.
+- `@sapporta/server/testing`: `createTestDb` and `createTestConnection`. Test
+  utilities live only here; they are not on the production root export.
 - `@sapporta/shared`: Temporal/filter/date-range/value helpers,
   `CountGroupValue`, `GroupCount`, `DEFAULT_COUNT_GROUP_LIMIT`,
   `MAX_COUNT_GROUPS`, `QueryParamValue`, `QueryParamRecord`,

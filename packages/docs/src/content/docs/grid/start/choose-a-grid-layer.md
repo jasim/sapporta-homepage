@@ -7,7 +7,7 @@ Standalone Grid exposes two layers. Sapporta applications add a third table-awar
 
 | Requirement | Layer | Import boundary |
 | --- | --- | --- |
-| Full control over schema, runtime, sources, and raw columns | GridCore | `@sapporta/grid/grid` |
+| Full control over schema, runtime, sources, and raw columns | GridCore | `@sapporta/grid` |
 | Standalone grid with typed column constructors and editors | GridCore + ColumnPreset | `@sapporta/grid` and `@sapporta/grid/column-preset` |
 | Sapporta table metadata, generated queries, lookups, saves, and record routes | TGrid | `@sapporta/frontend` |
 

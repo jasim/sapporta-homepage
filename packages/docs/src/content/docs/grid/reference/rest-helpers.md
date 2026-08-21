@@ -5,7 +5,7 @@ description: "Find the canonical in-memory and REST data-source reference."
 
 ## Identity
 
-REST data-source helpers are exported from `@sapporta/grid/grid`.
+REST data-source helpers are exported from `@sapporta/grid`.
 
 The canonical reference is
 [In-memory and REST data sources](/grid/reference/data-sources/in-memory-and-rest-sources/).

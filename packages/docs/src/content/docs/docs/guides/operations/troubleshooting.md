@@ -15,6 +15,7 @@ request semantics, authority, origin policy, or storage.
 | ------------------------------------ | --------------------------------------------------- | -------------------------------------------------- |
 | `APP_SERVER_UNREACHABLE`             | Resolved CLI URL, network path, and API output       | Restore reachability or fix `--api-url`            |
 | `Could not locate the bindings file` | Node version and installed `better-sqlite3` package | Rebuild the native addon in the API package        |
+| `sapporta init` rejects the pnpm version | `pnpm --version` on the machine running `init`      | Upgrade to pnpm 11 with `corepack use pnpm@11`     |
 | Migration readiness failure          | Startup output, migration files, and ledger          | Restore files or apply the reviewed migration      |
 | Structured 400 on a list route       | Column, operator, and semantic query value          | Fix the strict filter; keep the intended predicate |
 | `unauthenticated` or token error     | Target, active workspace, expiry, revocation        | Create or pass the correct scoped token            |
