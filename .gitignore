@@ -14,3 +14,4 @@ data
 *.log
 .package-source-switch.json
 .claude
+.playwright-mcp

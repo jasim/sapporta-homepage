@@ -26,21 +26,39 @@
 :root {
   color-scheme: light;
 
+  /*
+   * Neutrals all sit on one warm axis (hue ~75 deg, green one point above red,
+   * blue lowest). Mixing a warm bg with cool blue-grey rules is what made the
+   * old palette read as unconsidered; every neutral now shares the same hue.
+   */
   --bg: #fffffc;
-  --surface: #f6f8fa;
-  --surface-soft: #f3f4f6;
-  --ink: #000000;
-  --ink-soft: #444444;
-  --muted: #777777;
-  --faint: #999999;
-  --dim: #555555;
+  --surface: #f3f5ed;
+  --surface-soft: #edefe6;
+  --ink: #25271f;
+  --ink-soft: #45473d;
+  --muted: #73766a;
+  --faint: #73766a;
+  --dim: #5a5d52;
   --link: #20566f;
   --link-underline: #9cc8d6;
-  --rule: #edf0f2;
-  --rule-strong: #f2f4f5;
+  /*
+   * Two rule weights doing different structural jobs: --rule is the hairline
+   * inside components, --rule-strong divides rows and sections. The old values
+   * were inverted (--rule-strong was the *lighter* of the two) and both were
+   * so faint they read as nothing.
+   */
+  --rule: #d8dbcf;
+  --rule-strong: #b7baac;
   --accent: #4fb477;
-  --quote: #4a4a4a;
-  --highlight: #fde68a;
+  --quote: #45473d;
+  --highlight: #f2e7ad;
+
+  /*
+   * Two weights, and only two. Hierarchy comes from size, colour and rules;
+   * weight is reserved for the skim layer (headings and bold lead-ins).
+   */
+  --weight-text: 400;
+  --weight-emphasis: 500;
 
   --article-max: 42rem;
   --block-gap: 1.25rem;
@@ -92,21 +110,21 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0d1117;
-  --surface: #161b22;
-  --surface-soft: #1c2128;
-  --ink: #e6edf3;
-  --ink-soft: #b1bac4;
-  --muted: #6e7681;
-  --faint: #8b949e;
-  --dim: #8b949e;
+  --bg: #161713;
+  --surface: #21221c;
+  --surface-soft: #272822;
+  --ink: #e9ebe1;
+  --ink-soft: #b3b6aa;
+  --muted: #8b8e82;
+  --faint: #8b8e82;
+  --dim: #95988c;
   --link: #8bcdbb;
   --link-underline: #3c7d7188;
-  --rule: #252d35;
-  --rule-strong: #1b232c;
+  --rule: #3c3e35;
+  --rule-strong: #585a4f;
   --accent: #5fbf8d;
-  --quote: #b1bac4;
-  --highlight: #634d15;
+  --quote: #b3b6aa;
+  --highlight: #4a3f18;
 }
 
 @media (min-width: 50rem) {
@@ -133,6 +151,7 @@
 
   body {
     @apply bg-sap-bg text-sap-ink font-sans text-base leading-[1.55] tracking-normal;
+    font-weight: var(--weight-text);
     font-feature-settings:
       "kern" 1,
       "liga" 1,
@@ -142,6 +161,16 @@
   ::selection {
     background: var(--highlight);
     color: var(--ink);
+  }
+
+  /*
+   * The two-weight rule has to be enforced on the bare elements too, or the
+   * browser default (bolder) reintroduces a third weight wherever markdown
+   * emits <strong>/<b> outside a styled wrapper.
+   */
+  strong,
+  b {
+    font-weight: var(--weight-emphasis);
   }
 
   a {
@@ -183,7 +212,7 @@
 .site-title {
   color: var(--faint);
   font-size: 0.78rem;
-  font-weight: 780;
+  font-weight: var(--weight-emphasis);
   gap: 0.46rem;
   letter-spacing: 0;
   line-height: 1;
@@ -257,9 +286,9 @@ starlight-lang-select select:hover {
 #starlight__sidebar a[aria-current="page"],
 #starlight__sidebar a[aria-current="page"]:hover,
 #starlight__sidebar a[aria-current="page"]:focus {
-  font-weight: 620;
+  font-weight: var(--weight-emphasis);
   color: var(--sl-color-accent-high);
-  background-color: #f4faf6;
+  background-color: var(--surface);
 }
 
 #starlight__sidebar {
@@ -291,7 +320,7 @@ starlight-lang-select select:hover {
 #starlight__sidebar .large {
   color: var(--ink-soft);
   font-size: 0.78rem;
-  font-weight: 780;
+  font-weight: var(--weight-emphasis);
   letter-spacing: 0;
   line-height: 1.25;
   text-transform: uppercase;
@@ -301,12 +330,12 @@ starlight-lang-select select:hover {
 #starlight__sidebar summary {
   color: var(--dim);
   font-size: 0.90625rem;
-  font-weight: 480;
+  font-weight: var(--weight-text);
   line-height: 1.35;
 }
 
 #starlight__sidebar a {
-  border-radius: 4px;
+  border-radius: 0;
   padding-block: 0.28em;
 }
 
@@ -335,7 +364,7 @@ starlight-lang-select select:hover {
 #starlight__sidebar ul ul a {
   color: var(--dim);
   font-size: 0.86rem;
-  font-weight: 450;
+  font-weight: var(--weight-text);
 }
 
 #starlight__sidebar ul ul a[aria-current="page"] {
@@ -381,7 +410,7 @@ starlight-lang-select select:hover {
     color: var(--faint);
     margin-bottom: 0.55rem;
     font-size: 0.72rem;
-    font-weight: 780;
+    font-weight: var(--weight-emphasis);
     letter-spacing: 0;
     line-height: 1.25;
     text-transform: uppercase;
@@ -404,7 +433,7 @@ starlight-lang-select select:hover {
 
 .sl-markdown-content p {
   @apply mt-0 text-sap-ink;
-  font-weight: 430;
+  font-weight: var(--weight-text);
   line-height: 1.68;
   margin-bottom: var(--block-gap);
 }
@@ -440,7 +469,7 @@ starlight-lang-select select:hover {
 }
 
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
-  @apply text-sap-ink font-semibold tracking-normal;
+  @apply text-sap-ink font-medium tracking-normal;
 }
 
 .sl-markdown-content .sl-heading-wrapper {
@@ -480,28 +509,28 @@ starlight-lang-select select:hover {
 h1.page-title,
 h1#starlight__page-title {
   @apply mt-0 mb-8 text-[2.45rem] leading-none;
-  font-weight: 820;
+  font-weight: var(--weight-emphasis);
   letter-spacing: 0;
   max-width: 36rem;
 }
 
 .sl-markdown-content h2 {
   @apply mt-12 mb-4 text-[1.58rem] leading-tight;
-  font-weight: 720;
+  font-weight: var(--weight-emphasis);
 }
 
 .sl-markdown-content h3 {
   @apply mt-9 mb-3 text-[1.08rem] leading-tight;
-  font-weight: 700;
+  font-weight: var(--weight-emphasis);
 }
 
 .sl-markdown-content h4 {
   @apply mt-7 mb-2 text-[0.96rem] leading-tight;
-  font-weight: 700;
+  font-weight: var(--weight-emphasis);
 }
 
 .sl-markdown-content strong {
-  @apply text-sap-ink font-semibold;
+  @apply text-sap-ink font-medium;
 }
 
 .sl-markdown-content a {
@@ -509,7 +538,7 @@ h1#starlight__page-title {
 }
 
 .sl-markdown-content :not(pre) > code {
-  @apply rounded-[3px] border border-sap-rule bg-sap-code px-[0.35em] py-[0.12em] font-mono text-[0.875rem] font-normal text-sap-ink;
+  @apply rounded-none border border-sap-rule bg-sap-code px-[0.35em] py-[0.12em] font-mono text-[0.875rem] font-normal text-sap-ink;
 }
 
 .sl-markdown-content pre,
@@ -542,7 +571,7 @@ h1#starlight__page-title {
   --ec-frm-trmTtbBg: transparent;
   --ec-frm-edActTabBg: transparent;
   --ec-frm-tooltipSuccessBg: var(--bg);
-  @apply relative my-5 max-w-none overflow-hidden rounded-[6px] border border-sap-rule bg-sap-bg text-[0.875rem] shadow-[0_10px_28px_rgb(10_11_13_/_0.05)];
+  @apply relative my-5 max-w-none overflow-hidden rounded-none border border-sap-rule bg-sap-bg text-[0.875rem] shadow-none;
 }
 
 .expressive-code .frame,
@@ -558,7 +587,7 @@ h1#starlight__page-title {
 
 .expressive-code .frame.is-terminal .header,
 .expressive-code .frame .header {
-  @apply flex h-12 items-center border-b border-sap-rule bg-sap-surface px-3 text-[0.68rem] font-semibold text-sap-muted uppercase;
+  @apply flex h-12 items-center border-b border-sap-rule bg-sap-surface px-3 text-[0.68rem] font-medium text-sap-muted uppercase;
   letter-spacing: 0.04em;
 }
 
@@ -623,7 +652,7 @@ h1#starlight__page-title {
 }
 
 .expressive-code .copy button {
-  @apply relative inline-flex h-6 cursor-pointer items-center rounded-[4px] border border-transparent bg-transparent pr-[1.35rem] pl-[0.45rem] text-[0.68rem] leading-none font-medium text-sap-dim transition-colors;
+  @apply relative inline-flex h-6 cursor-pointer items-center rounded-none border border-transparent bg-transparent pr-[1.35rem] pl-[0.45rem] text-[0.68rem] leading-none font-medium text-sap-dim transition-colors;
   opacity: 1;
   width: auto;
 }
@@ -654,7 +683,7 @@ h1#starlight__page-title {
 }
 
 .expressive-code .copy .feedback {
-  @apply absolute top-[calc(100%+0.25rem)] right-0 rounded-[4px] border border-sap-rule bg-sap-bg px-2 py-1 text-[0.68rem] leading-none text-sap-dim shadow-sm;
+  @apply absolute top-[calc(100%+0.25rem)] right-0 rounded-none border border-sap-rule bg-sap-bg px-2 py-1 text-[0.68rem] leading-none text-sap-dim shadow-none;
 }
 
 .sl-markdown-content blockquote {
@@ -678,7 +707,7 @@ h1#starlight__page-title {
 }
 
 .sl-markdown-content .sap-doc-prompt {
-  @apply my-5 rounded-[6px] border border-sap-rule bg-sap-bg px-5 py-4 text-sap-ink shadow-[0_14px_44px_rgb(10_11_13_/_0.05)];
+  @apply my-5 rounded-none border border-sap-rule bg-sap-bg px-5 py-4 text-sap-ink shadow-none;
 }
 
 .sl-markdown-content .sap-doc-prompt p {
@@ -702,7 +731,7 @@ h1#starlight__page-title {
 }
 
 .sl-markdown-content .sap-doc-figure img {
-  @apply block w-full rounded-[6px] border border-sap-rule shadow-[0_18px_54px_rgb(10_11_13_/_0.08)];
+  @apply block w-full rounded-none border border-sap-rule shadow-none;
 }
 
 .sl-markdown-content .sap-doc-figure figcaption {
@@ -714,7 +743,7 @@ h1#starlight__page-title {
 }
 
 .sl-markdown-content table {
-  @apply mb-6 border-separate border-spacing-0 overflow-hidden rounded-[6px] border border-sap-rule text-[0.85rem] shadow-[0_14px_44px_rgb(10_11_13_/_0.04)];
+  @apply mb-6 border-separate border-spacing-0 overflow-hidden rounded-none border border-sap-rule text-[0.85rem] shadow-none;
 }
 
 .sl-markdown-content :is(th, td) {
@@ -722,7 +751,7 @@ h1#starlight__page-title {
 }
 
 .sl-markdown-content th {
-  @apply bg-sap-surface text-left text-sap-ink font-semibold;
+  @apply bg-sap-surface text-left text-sap-ink font-medium;
 }
 
 .content-panel {
@@ -739,7 +768,7 @@ h1#starlight__page-title {
 }
 
 .pagination-links a {
-  @apply rounded-[6px] border border-sap-rule bg-sap-bg px-3 py-3 text-sap-dim no-underline shadow-[0_14px_44px_rgb(10_11_13_/_0.04)];
+  @apply rounded-none border border-sap-rule bg-sap-bg px-3 py-3 text-sap-dim no-underline shadow-none;
 }
 
 .pagination-links a:hover {
