@@ -248,12 +248,12 @@ const actions = [
 
   .home3-action {
     align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--accent);
-    border-radius: 4px;
-    box-shadow: 0 2px 0 rgba(32, 86, 111, 0.18);
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    border-radius: 0;
+    box-shadow: none;
     box-sizing: border-box;
-    color: var(--link);
+    color: var(--ink);
     display: inline-flex;
     gap: 0.45rem;
     font-weight: var(--weight-emphasis);
@@ -265,45 +265,38 @@ const actions = [
     transition:
       background 180ms ease,
       border-color 180ms ease,
-      box-shadow 180ms ease,
-      color 180ms ease,
-      transform 180ms ease;
+      color 180ms ease;
   }
 
   .home3-action:hover {
-    background: color-mix(
-      in srgb,
-      var(--accent) 18%,
-      var(--surface)
-    );
-    border-color: color-mix(
-      in srgb,
-      var(--accent) 88%,
-      var(--link)
-    );
-    box-shadow: 0 4px 0 rgba(32, 86, 111, 0.24);
-    color: var(--link);
+    background: var(--surface);
+    border-color: var(--ink);
+    box-shadow: none;
+    color: var(--ink);
     text-decoration: none;
-    transform: translateY(-2px);
   }
 
   .home3-action:focus-visible {
-    outline: 3px solid rgba(15, 95, 196, 0.35);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 
+  /*
+   * Inversion is the loudest move in this system, so the primary action is a
+   * solid ink block rather than a brand colour on a raised card.
+   */
   .home3-action-primary {
-    background: #0f5fc4;
-    border-color: var(--accent);
-    box-shadow: 0 2px 0 rgba(2, 39, 94, 0.22);
-    color: #ffffff;
+    background: var(--ink);
+    border-color: var(--ink);
+    box-shadow: none;
+    color: var(--bg);
   }
 
   .home3-action-primary:hover {
-    background: #0d56b3;
-    border-color: var(--accent);
-    box-shadow: 0 4px 0 rgba(2, 39, 94, 0.28);
-    color: #ffffff;
+    background: var(--ink-soft);
+    border-color: var(--ink-soft);
+    box-shadow: none;
+    color: var(--bg);
   }
 
   .home3-action-icon {
@@ -529,7 +522,7 @@ const actions = [
     }
 
     .home3-action {
-      box-shadow: 0 1px 0 rgba(32, 86, 111, 0.18);
+      box-shadow: none;
       font-size: 0.88rem;
       gap: 0.38rem;
       flex: 0 0 auto;
@@ -539,8 +532,7 @@ const actions = [
     }
 
     .home3-action:hover {
-      box-shadow: 0 2px 0 rgba(32, 86, 111, 0.22);
-      transform: translateY(-1px);
+      box-shadow: none;
     }
 
     .home3-action-icon {
@@ -616,8 +608,8 @@ const actions = [
   .home3-action,
   .home3-actions-compact .home3-action {
     background: transparent;
-    border: 1px solid var(--rule);
-    border-radius: 2px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 0;
     box-shadow: none;
     color: var(--ink);
     font-size: 0.875rem;
@@ -635,18 +627,19 @@ const actions = [
     transform: none;
   }
 
+  /* Emphasis by inversion, not by brand colour. */
   .home3-action-primary,
   .home3-actions-compact .home3-action-primary {
-    background: var(--link);
-    border-color: var(--link);
+    background: var(--ink);
+    border-color: var(--ink);
     color: var(--bg);
   }
 
   .home3-action-primary:hover,
   .home3-actions-compact
     .home3-action-primary:hover {
-    background: var(--ink);
-    border-color: var(--ink);
+    background: var(--ink-soft);
+    border-color: var(--ink-soft);
     color: var(--bg);
   }
 
