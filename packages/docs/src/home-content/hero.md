@@ -13,8 +13,6 @@ brand:
 navigation:
   label: Main navigation
   links:
-    - label: Screenshots
-      href: "#screenshots"
     - label: Documentation
       href: /docs/getting-started/introduction/
     - label: GitHub

@@ -282,6 +282,18 @@
   padding: 0.08em 0.22em;
 }
 
+/*
+ * Tabular figures wherever digits sit in columns. Geist's default figures are
+ * strongly proportional -- a row of 1s measures barely half a row of 0s -- so
+ * numeric columns rag visibly without this. Free on the CDN build: tnum is one
+ * of the few features Google Fonts does not strip. Deliberately not applied to
+ * body prose, where proportional figures read better.
+ */
+.home-copy__table,
+.home-demo__panel--grid .homepage-grid {
+  font-variant-numeric: tabular-nums;
+}
+
 .home-copy__table {
   border: 0;
   border-top: 1px solid var(--ink);
