@@ -21,6 +21,8 @@ Open `http://localhost:12339`.
 - `pnpm exec sapporta describe` - inspect the running API
 - `pnpm generate:api-reference` - rebuild the generated Sapporta API reference
 - `pnpm check:api-reference` - fail if the committed API reference is stale
+- `pnpm generate:docs-index` - rebuild the `/docs` index from the documentation sidebar
+- `pnpm check:docs-index` - fail if the committed `/docs` index is stale
 
 ## Project layout
 

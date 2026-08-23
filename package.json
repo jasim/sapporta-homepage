@@ -19,6 +19,8 @@
     "generate:sapporta-cli-version": "node scripts/generate-sapporta-cli-version.mjs",
     "generate:api-reference": "pnpm --filter ./packages/api-reference generate",
     "check:api-reference": "pnpm --filter ./packages/api-reference check",
+    "generate:docs-index": "node scripts/generate-docs-index.mjs",
+    "check:docs-index": "node scripts/generate-docs-index.mjs --check",
     "test:build-scripts": "node --test scripts/*.test.mjs && pnpm --filter ./packages/api-reference test",
     "prebuild": "pnpm run clean-dist && pnpm run generate:sapporta-cli-version",
     "build": "pnpm --filter ./packages/shared build && pnpm --filter ./packages/docs build && pnpm --filter ./packages/api build && pnpm --filter ./packages/frontend build",

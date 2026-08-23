@@ -20,7 +20,8 @@ export function alternateMarkdownPath(pathname: string) {
   if (pathname.endsWith(".md")) return pathname;
 
   const slug = pathname.replace(/^\/+|\/+$/g, "");
-  if (slug === "docs" || slug === "grid") return undefined;
+  // The Grid overview is a hand-written marketing page with no Markdown form.
+  if (slug === "grid") return undefined;
   return `/${slug}.md`;
 }
 
@@ -32,6 +33,7 @@ export function markdownVariantPath(pathname: string) {
 function isDocumentationPath(pathname: string) {
   return (
     pathname === "/docs" ||
+    pathname === "/docs.md" ||
     pathname.startsWith("/docs/") ||
     pathname === "/grid" ||
     pathname.startsWith("/grid/")

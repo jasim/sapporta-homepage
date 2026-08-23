@@ -1,5 +1,8 @@
 export default [
   {
+    slug: "docs",
+  },
+  {
     label: "Getting Started",
     items: [
       {

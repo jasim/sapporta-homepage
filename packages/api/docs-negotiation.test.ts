@@ -39,12 +39,13 @@ describe("documentation Markdown paths", () => {
       "/docs/guides/security/authentication-and-abilities.md",
     ],
     ["/docs/guides", "/docs/guides.md"],
+    ["/docs", "/docs.md"],
     ["/grid/reference/", "/grid/reference.md"],
   ])("maps %s to %s", (pathname, expected) => {
     expect(markdownVariantPath(pathname)).toBe(expected);
   });
 
-  it.each(["/", "/docs", "/grid/", "/docs/llms.txt", "/docs/page.md"])(
+  it.each(["/", "/grid", "/grid/", "/docs/llms.txt", "/docs/page.md"])(
     "does not negotiate %s",
     (pathname) => {
       expect(markdownVariantPath(pathname)).toBeUndefined();
@@ -53,5 +54,6 @@ describe("documentation Markdown paths", () => {
 
   it("keeps an explicit Markdown URL as its own alternate", () => {
     expect(alternateMarkdownPath("/docs/guides.md")).toBe("/docs/guides.md");
+    expect(alternateMarkdownPath("/docs.md")).toBe("/docs.md");
   });
 });

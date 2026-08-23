@@ -58,6 +58,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     const isLlmsIndex = llmsIndexPaths.has(c.req.path);
     const isDocumentationSurface =
       c.req.path === "/docs" ||
+      c.req.path === "/docs.md" ||
       c.req.path.startsWith("/docs/") ||
       c.req.path === "/grid" ||
       c.req.path.startsWith("/grid/");
@@ -89,14 +90,15 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     }
   };
 
+  // A trailing wildcard also matches the bare path, so "/docs/*" covers "/docs"
+  // itself. "/docs.md" sits beside that group rather than under it.
   for (const pattern of [
     "/",
     "/index.html",
     "/llms.txt",
     "/.well-known/llms.txt",
-    "/docs",
+    "/docs.md",
     "/docs/*",
-    "/grid",
     "/grid/*",
   ]) {
     app.use(pattern, documentationDiscoveryHeaders);
@@ -155,6 +157,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
       cache: noCache,
     });
   }
+  serveStaticGet(app, "/docs.md", docsDist, { cache: noCache });
   serveStaticGet(app, "/docs", docsDist, {
     file: "docs/index.html",
     cache: noCache,
@@ -184,6 +187,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     "/llms.txt",
     "/.well-known/llms.txt",
     "/docs",
+    "/docs.md",
     "/docs/*",
     "/grid",
     "/grid/*",

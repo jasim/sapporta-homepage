@@ -16,8 +16,14 @@ describe("crawler-facing static routes", () => {
     const frontendDistDir = join(testRoot, "frontend");
     await mkdir(docsDistDir);
     await mkdir(frontendDistDir);
+    await mkdir(join(docsDistDir, "docs"));
     await Promise.all([
       writeFile(join(docsDistDir, "index.html"), "<h1>Homepage</h1>"),
+      writeFile(join(docsDistDir, "docs.md"), "# Documentation\n"),
+      writeFile(
+        join(docsDistDir, "docs", "index.html"),
+        "<h1>Documentation</h1>",
+      ),
       writeFile(
         join(docsDistDir, "robots.txt"),
         "User-agent: OAI-SearchBot\nAllow: /\n",
@@ -62,6 +68,40 @@ describe("crawler-facing static routes", () => {
       "application/xml; charset=utf-8",
     );
     expect(await response.text()).toContain("<sitemapindex>");
+  });
+
+  it("serves the documentation index as Markdown before the SPA fallback", async () => {
+    const response = await app.request("/docs.md");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/markdown; charset=utf-8",
+    );
+    expect(await response.text()).toContain("# Documentation");
+  });
+
+  it("advertises the Markdown form of the documentation index", async () => {
+    const response = await app.request("/docs");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Link")).toContain(
+      '</docs.md>; rel="alternate"; type="text/markdown"',
+    );
+    // One middleware pattern claims /docs, so Accept is appended to Vary once.
+    expect(response.headers.get("Vary")).toBe("Accept");
+    expect(await response.text()).toContain("<h1>Documentation</h1>");
+  });
+
+  it("serves the documentation index as Markdown when Accept asks for it", async () => {
+    const response = await app.request("/docs", {
+      headers: { Accept: "text/markdown" },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/markdown; charset=utf-8",
+    );
+    expect(await response.text()).toContain("# Documentation");
   });
 
   it("advertises the Markdown index from the homepage", async () => {

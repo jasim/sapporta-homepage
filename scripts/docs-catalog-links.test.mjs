@@ -65,23 +65,24 @@ test("documentation sidebar and sources stay bijective", async () => {
     "Markdown sources missing from the sidebar",
   );
 
-  const docsCount = sourceSlugs.filter((slug) =>
-    slug.startsWith("docs/"),
+  const docsCount = sourceSlugs.filter(
+    (slug) => slug === "docs" || slug.startsWith("docs/"),
   ).length;
   const gridCount = sourceSlugs.filter((slug) =>
     slug.startsWith("grid/"),
   ).length;
 
-  assert.equal(sidebarSlugs.length, 102);
-  assert.equal(sidebarSet.size, 102);
-  assert.equal(sourceSlugs.length, 102);
-  assert.equal(sourceSet.size, 102);
-  assert.equal(docsCount, 83);
-  assert.equal(gridCount, 19);
+  assert.equal(sidebarSlugs.length, 150);
+  assert.equal(sidebarSet.size, 150);
+  assert.equal(sourceSlugs.length, 150);
+  assert.equal(sourceSet.size, 150);
+  assert.equal(docsCount, 117);
+  assert.equal(gridCount, 33);
 });
 
 test("root agent retrieval keeps the approved direct entry pages", () => {
   assert.deepEqual(rootStartingSlugs(docsSidebar), [
+    "docs",
     "docs/getting-started/introduction",
     "docs/getting-started/create-a-project",
     "docs/getting-started/tour-the-generated-project",
