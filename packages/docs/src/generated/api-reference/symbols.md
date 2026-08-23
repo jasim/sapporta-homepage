@@ -1,0 +1,1194 @@
+# Sapporta symbol index
+
+> Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
+
+1186 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+
+Where a name lists more than one specifier, prefer the narrowest.
+
+- `AccountMenu` — @sapporta/frontend/shell, @sapporta/frontend
+- `AccountMenuAction` — @sapporta/frontend/shell, @sapporta/frontend
+- `AccountMenuProps` — @sapporta/frontend/shell, @sapporta/frontend
+- `AccountMenuSection` — @sapporta/frontend/shell, @sapporta/frontend
+- `AccountMenuTriggerRenderProps` — @sapporta/frontend/shell, @sapporta/frontend
+- `AccountProfilePage` — @sapporta/frontend/auth/profile, @sapporta/frontend/auth, @sapporta/frontend
+- `ActionError` — @sapporta/server/errors, @sapporta/server
+- `activationStartsOn` — @sapporta/grid
+- `AlertDialog` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogClose` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogContent` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogDescription` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogFooter` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogHeader` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogOverlay` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogPortal` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogTitle` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `AlertDialogTrigger` — @sapporta/ui/alert-dialog, @sapporta/ui
+- `allTime` — @sapporta/shared/daterange, @sapporta/shared
+- `anonymousPrincipal` — @sapporta/server
+- `API_ORIGIN` — @sapporta/frontend/platform, @sapporta/frontend
+- `ApiDoc` — @sapporta/honest, @sapporta/server
+- `ApiError` — @sapporta/frontend/platform, @sapporta/shared/contracts, @sapporta/shared/client, @sapporta/shared/error
+- `ApiProblem` — @sapporta/shared/validation, @sapporta/shared
+- `apiProblemFromBody` — @sapporta/shared/validation, @sapporta/shared
+- `ApiRequestError` — @sapporta/server/cli/http-client
+- `ApiWritePolicyError` — @sapporta/server
+- `apiWritePolicyIssues` — @sapporta/server
+- `appendQueryParam` — @sapporta/shared
+- `applyCursorContinuation` — @sapporta/grid/advanced
+- `applySchemaOverrides` — @sapporta/frontend
+- `AppPage` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `AppPageProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `AppRoute` — @sapporta/shared/contracts, @sapporta/server
+- `AppRouter` — @sapporta/shared/contracts, @sapporta/server
+- `AppShell` — @sapporta/frontend/shell, @sapporta/frontend/app, @sapporta/frontend
+- `AppShellProps` — @sapporta/frontend/shell, @sapporta/frontend/app, @sapporta/frontend
+- `assertAuthSchemaDefinitions` — @sapporta/server
+- `assertBoundedInteger` — @sapporta/shared/validation, @sapporta/shared
+- `assertDataAuthoritySupportsTable` — @sapporta/server
+- `assertMigrationsReady` — @sapporta/server
+- `assertSchemaDefinitions` — @sapporta/server
+- `AuthAccountMenu` — @sapporta/frontend/shell, @sapporta/frontend
+- `AuthAccountMenuProps` — @sapporta/frontend/shell, @sapporta/frontend
+- `AuthActiveWorkspace` — @sapporta/shared/contracts
+- `authActiveWorkspaceSchema` — @sapporta/shared/contracts
+- `AuthBootstrapStatus` — @sapporta/shared/contracts
+- `authBootstrapStatusSchema` — @sapporta/shared/contracts
+- `AuthContextResponse` — @sapporta/shared/contracts
+- `authContextResponseSchema` — @sapporta/shared/contracts
+- `AuthCurrentUser` — @sapporta/shared/contracts
+- `authCurrentUserSchema` — @sapporta/shared/contracts
+- `AuthGate` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `AuthMembership` — @sapporta/shared/contracts
+- `authMembershipSchema` — @sapporta/shared/contracts
+- `AuthoritySlots` — @sapporta/server
+- `AuthorizedMetaHandlersOptions` — @sapporta/server
+- `AuthorizedTableHandlersOptions` — @sapporta/server
+- `AuthRole` — @sapporta/shared/contracts
+- `authRoleSchema` — @sapporta/shared/contracts
+- `AuthSchemaIssue` — @sapporta/server
+- `AuthSchemaIssueCode` — @sapporta/server
+- `AuthSchemaValidationError` — @sapporta/server
+- `AuthSession` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `AuthState` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `AuthToken` — @sapporta/shared/contracts
+- `AuthTokenListResponse` — @sapporta/shared/contracts
+- `authTokenListResponseSchema` — @sapporta/shared/contracts
+- `authTokenSchema` — @sapporta/shared/contracts
+- `AuthWorkspace` — @sapporta/server
+- `AuthWorkspaceSummary` — @sapporta/shared/contracts
+- `authWorkspaceSummarySchema` — @sapporta/shared/contracts
+- `Badge` — @sapporta/ui/badge, @sapporta/ui
+- `BadgeProps` — @sapporta/ui/badge
+- `badgeVariants` — @sapporta/ui/badge, @sapporta/ui
+- `bool` — @sapporta/server/table, @sapporta/server
+- `boolean` — @sapporta/grid/column-preset
+- `BooleanPreset` — @sapporta/grid/column-preset
+- `BootLoader` — @sapporta/frontend/app, @sapporta/frontend
+- `BoundedIntegerErrorFactory` — @sapporta/shared/validation, @sapporta/shared
+- `BoundedIntegerOptions` — @sapporta/shared/validation, @sapporta/shared
+- `Brand` — @sapporta/grid
+- `BuildAbility` — @sapporta/server
+- `buildLookupSearchQuery` — @sapporta/frontend/lookup, @sapporta/frontend
+- `buildLookupValueQuery` — @sapporta/frontend/lookup, @sapporta/frontend
+- `buildRecordFormFields` — @sapporta/frontend
+- `BuildRowsRequest` — @sapporta/grid
+- `buildSchemaTGridConfig` — @sapporta/frontend
+- `buildSearchParams` — @sapporta/frontend/report, @sapporta/frontend
+- `buildSearchPredicate` — @sapporta/server
+- `buildTableRowsQuery` — @sapporta/frontend
+- `buildTableSearchParams` — @sapporta/frontend
+- `buildTableSelectionQuery` — @sapporta/frontend
+- `buildTGridColumnsForTable` — @sapporta/frontend
+- `BuiltInColumnPresetKind` — @sapporta/grid/column-preset
+- `Button` — @sapporta/ui/button, @sapporta/ui
+- `ButtonProps` — @sapporta/ui/button
+- `buttonVariants` — @sapporta/ui/button, @sapporta/ui
+- `CachedSearchLookup` — @sapporta/grid/lookup
+- `CachedValueLookup` — @sapporta/grid/lookup
+- `canonicalizeInstantString` — @sapporta/shared/temporal, @sapporta/shared
+- `capabilitiesFor` — @sapporta/grid
+- `capabilitiesOf` — @sapporta/grid
+- `catalogTableLabel` — @sapporta/frontend
+- `CELL_EDITING_GRID` — @sapporta/grid
+- `CELL_EDITING_NO_SELECTION_GRID` — @sapporta/grid
+- `CELL_GRID_WITH_ACTIVE_ROW` — @sapporta/grid
+- `CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION` — @sapporta/grid
+- `CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW` — @sapporta/grid
+- `CELL_PRIMARY_WITH_SIDE_PANEL_ROW` — @sapporta/grid
+- `CellActionApi` — @sapporta/grid
+- `CellActivation` — @sapporta/grid
+- `CellActivationButton` — @sapporta/grid
+- `CellActivationColumnContext` — @sapporta/grid
+- `CellActivationContext` — @sapporta/grid
+- `CellActivationDescription` — @sapporta/grid
+- `cellActivationFor` — @sapporta/grid/advanced
+- `CellActivationGesture` — @sapporta/grid
+- `CellActivationState` — @sapporta/grid
+- `CellActivationTrigger` — @sapporta/grid
+- `CellAvailability` — @sapporta/grid
+- `CellChange` — @sapporta/grid
+- `CellCursor` — @sapporta/grid
+- `CellEditBehavior` — @sapporta/grid
+- `CellEditGesture` — @sapporta/grid
+- `CellEditorProps` — @sapporta/grid
+- `CellEditorStart` — @sapporta/grid
+- `CellNavigationIntent` — @sapporta/grid
+- `CellRenderActivation` — @sapporta/grid
+- `CellRenderProps` — @sapporta/grid
+- `CellSelectionRectangle` — @sapporta/grid
+- `CellSelectionState` — @sapporta/grid/advanced, @sapporta/grid
+- `CellSelectionStatus` — @sapporta/grid
+- `cellToCsvString` — @sapporta/shared/csv, @sapporta/shared
+- `changePassword` — @sapporta/frontend/auth, @sapporta/frontend
+- `ChangePasswordInput` — @sapporta/frontend/auth, @sapporta/frontend
+- `ChangePasswordPage` — @sapporta/frontend/auth/profile, @sapporta/frontend/auth, @sapporta/frontend
+- `CharacterColumnSizing` — @sapporta/grid/column-preset
+- `checkAuthSchemaDefinitions` — @sapporta/server
+- `Checkbox` — @sapporta/ui/checkbox, @sapporta/ui
+- `checkOperatorApplicable` — @sapporta/shared/filter, @sapporta/shared
+- `ChildMeta` — @sapporta/server/table, @sapporta/server
+- `childPath` — @sapporta/grid
+- `ChildSchema` — @sapporta/shared/contracts
+- `childSchemaSchema` — @sapporta/shared/contracts
+- `ChildSearchPlan` — @sapporta/server
+- `chrome` — @sapporta/grid/column-preset
+- `clampColumnPixelWidth` — @sapporta/grid/column-preset
+- `ClassifiedSqliteError` — @sapporta/server/errors
+- `classifySqliteError` — @sapporta/server/errors
+- `clearTableSelection` — @sapporta/frontend
+- `CLI_COMMANDS` — @sapporta/server/cli/commands, @sapporta/server/cli
+- `CliCommandContext` — @sapporta/server/cli
+- `CliCommandResult` — @sapporta/server/cli
+- `CliCommandSpec` — @sapporta/server/cli
+- `ClientColumnOptions` — @sapporta/frontend
+- `ClientInferResponseBody` — @sapporta/shared/contracts
+- `ClientInferResponses` — @sapporta/shared/contracts, @sapporta/shared/client
+- `cn` — @sapporta/ui/cn, @sapporta/ui
+- `ColId` — @sapporta/grid
+- `ColPolicy` — @sapporta/grid
+- `column` — @sapporta/grid/column-preset
+- `ColumnAlign` — @sapporta/grid/column-preset
+- `columnBySqlName` — @sapporta/server
+- `ColumnHeaderMenuProps` — @sapporta/grid/column-preset
+- `ColumnHeaderProps` — @sapporta/grid/column-preset
+- `ColumnMeta` — @sapporta/shared/value-kind, @sapporta/server/table, @sapporta/server, @sapporta/shared
+- `columnPreset` — @sapporta/grid/column-preset
+- `ColumnPreset` — @sapporta/grid/column-preset
+- `ColumnPresetCellRenderRuntime` — @sapporta/grid/column-preset
+- `ColumnPresetCellView` — @sapporta/grid/column-preset
+- `ColumnPresetEditOption` — @sapporta/grid/column-preset
+- `ColumnPresetHeader` — @sapporta/grid/column-preset
+- `ColumnPresetHeaderBehavior` — @sapporta/grid/column-preset
+- `ColumnPresetKind` — @sapporta/grid/column-preset
+- `ColumnPresetLayout` — @sapporta/grid/column-preset
+- `ColumnPresetOptions` — @sapporta/grid/column-preset
+- `ColumnPresetResolvedEdit` — @sapporta/grid/column-preset
+- `ColumnPresetRuntime` — @sapporta/grid/column-preset
+- `ColumnPresetValueCodec` — @sapporta/grid/column-preset
+- `columnPresetWidthForSizing` — @sapporta/grid/column-preset
+- `columnPropertyName` — @sapporta/server
+- `ColumnSchema` — @sapporta/shared/contracts, @sapporta/grid
+- `columnSchemaSchema` — @sapporta/shared/contracts
+- `ColumnSizingOptions` — @sapporta/grid/column-preset
+- `ColumnSizingOverrides` — @sapporta/grid/column-preset
+- `ColumnSizingStorageKey` — @sapporta/grid/column-preset
+- `ColumnSizingStorageKeyContext` — @sapporta/grid/column-preset
+- `columnSizingTemplateColumns` — @sapporta/grid/column-preset
+- `ColumnValueZod` — @sapporta/server
+- `ColumnWidth` — @sapporta/grid/column-preset
+- `Combobox` — @sapporta/ui/combobox, @sapporta/ui
+- `comboboxClassNames` — @sapporta/ui/combobox, @sapporta/ui
+- `CommitTarget` — @sapporta/grid
+- `CompiledSearchPlans` — @sapporta/server
+- `compileSearchPlans` — @sapporta/server
+- `conditionContentEqual` — @sapporta/shared/filter, @sapporta/shared
+- `connectProject` — @sapporta/server
+- `ContentType` — @sapporta/honest, @sapporta/server
+- `ContextMenu` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuContent` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuGroup` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuItem` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuLabel` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuPortal` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuRadioGroup` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuSeparator` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuSub` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuSubContent` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuSubTrigger` — @sapporta/ui/context-menu, @sapporta/ui
+- `ContextMenuTrigger` — @sapporta/ui/context-menu, @sapporta/ui
+- `controllerFor` — @sapporta/grid/advanced
+- `ControllerState` — @sapporta/grid
+- `Coord` — @sapporta/grid
+- `coordsEqual` — @sapporta/grid
+- `CountGroupValue` — @sapporta/shared
+- `CountQuery` — @sapporta/shared/contracts
+- `countQuerySchema` — @sapporta/shared/contracts
+- `CountResponse` — @sapporta/shared/contracts
+- `countResponseSchema` — @sapporta/shared/contracts
+- `CountResult` — @sapporta/shared/contracts
+- `countResultSchema` — @sapporta/shared/contracts
+- `countRoute` — @sapporta/shared/contracts
+- `CountRowsByInput` — @sapporta/server
+- `CountRowsInput` — @sapporta/server
+- `CountRowsOptions` — @sapporta/server/cli/client
+- `createApiClient` — @sapporta/shared/client
+- `CreateApiClientOptions` — @sapporta/shared/client
+- `createAuthContext` — @sapporta/server
+- `CreateAuthContextInput` — @sapporta/server
+- `createAuthToken` — @sapporta/frontend/auth/runtime
+- `CreateAuthTokenBody` — @sapporta/shared/contracts
+- `createAuthTokenBodySchema` — @sapporta/shared/contracts
+- `CreateAuthTokenResponse` — @sapporta/shared/contracts
+- `createAuthTokenResponseSchema` — @sapporta/shared/contracts
+- `createAuthTokenRoute` — @sapporta/shared/contracts
+- `createCliProgram` — @sapporta/server/cli
+- `createColumnsBuilder` — @sapporta/frontend
+- `CreateDraftIssue` — @sapporta/frontend
+- `createGridRuntime` — @sapporta/grid
+- `createLookupStore` — @sapporta/frontend/lookup, @sapporta/frontend
+- `CreateNodeResult` — @sapporta/grid
+- `createPhantomChannel` — @sapporta/grid/advanced
+- `createPhantomRowLifecycle` — @sapporta/grid/advanced
+- `createProject` — @sapporta/server/create-project
+- `CreateProjectOptions` — @sapporta/server/create-project
+- `CreateProjectResult` — @sapporta/server/create-project
+- `createRecord` — @sapporta/frontend
+- `createRoute` — @sapporta/server
+- `createRowRoute` — @sapporta/shared/contracts
+- `createRowSecurity` — @sapporta/server
+- `CreateRowSecurityOptions` — @sapporta/server
+- `createSnapshotUrl` — @sapporta/frontend/report, @sapporta/frontend
+- `createTableCatalog` — @sapporta/server
+- `createTableLookupSource` — @sapporta/frontend/lookup, @sapporta/frontend
+- `createTableRow` — @sapporta/frontend
+- `createTestConnection` — @sapporta/server/testing
+- `createTestDb` — @sapporta/server/testing
+- `createTGridColumnMapper` — @sapporta/frontend
+- `createTGridColumnsBuilder` — @sapporta/frontend
+- `createTGridSession` — @sapporta/frontend
+- `CreateTGridSessionArgs` — @sapporta/frontend
+- `csvEscape` — @sapporta/shared/csv, @sapporta/shared
+- `csvRow` — @sapporta/shared/csv, @sapporta/shared
+- `currency` — @sapporta/grid/column-preset
+- `CurrencyPreset` — @sapporta/grid/column-preset
+- `CursorContinuation` — @sapporta/grid/advanced
+- `CursorManager` — @sapporta/grid/advanced
+- `cursorManagerFor` — @sapporta/grid/advanced
+- `CursorPlacement` — @sapporta/grid
+- `custom` — @sapporta/shared/daterange, @sapporta/shared
+- `CustomPreset` — @sapporta/grid/column-preset
+- `cycleSort` — @sapporta/grid
+- `date` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `DATE_RANGE_SELECT_KEYS` — @sapporta/shared
+- `DatePreset` — @sapporta/grid/column-preset
+- `DateRangeField` — @sapporta/frontend/report, @sapporta/frontend
+- `dateRangeFieldNames` — @sapporta/shared/daterange, @sapporta/shared
+- `DateRangeParseError` — @sapporta/shared/daterange, @sapporta/shared
+- `DateRangeQueryBounds` — @sapporta/shared/daterange, @sapporta/shared
+- `DateRangeSelectKey` — @sapporta/shared
+- `DateRangeState` — @sapporta/shared/daterange, @sapporta/shared
+- `DecodedTableRecordQueryArgs` — @sapporta/frontend/table/query, @sapporta/frontend
+- `DecodedTableRecordsPageQueryArgs` — @sapporta/frontend/table/query, @sapporta/frontend
+- `decodeFilters` — @sapporta/shared/filter, @sapporta/shared
+- `decodeTableValueDraft` — @sapporta/frontend
+- `decomposePath` — @sapporta/grid
+- `DEFAULT_CELL_EDIT_GESTURES` — @sapporta/grid
+- `DEFAULT_COLUMN_RESIZE_MIN_PX` — @sapporta/grid/column-preset
+- `DEFAULT_COUNT_GROUP_LIMIT` — @sapporta/shared
+- `DEFAULT_LOOKUP_LIMIT` — @sapporta/shared/contracts
+- `DEFAULT_PAGE` — @sapporta/shared/contracts
+- `DEFAULT_PAGE_SIZE` — @sapporta/shared/contracts
+- `defaultColumnLabel` — @sapporta/shared
+- `defaultGridLevelChrome` — @sapporta/grid
+- `defineSchemaTGrid` — @sapporta/frontend
+- `DefineSchemaTGridArgs` — @sapporta/frontend
+- `defineTableSchema` — @sapporta/frontend
+- `defineTGrid` — @sapporta/frontend
+- `deleteRoute` — @sapporta/server
+- `deleteRowRoute` — @sapporta/shared/contracts
+- `deleteSelectedTableRows` — @sapporta/frontend
+- `deleteTableRow` — @sapporta/frontend
+- `describeCellActivation` — @sapporta/grid
+- `Dialog` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogClose` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogContent` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogDescription` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogFooter` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogHeader` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogOverlay` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogPortal` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogTitle` — @sapporta/ui/dialog, @sapporta/ui
+- `DialogTrigger` — @sapporta/ui/dialog, @sapporta/ui
+- `DisplayedRowRef` — @sapporta/grid
+- `DisplayedRows` — @sapporta/grid
+- `DisplayedRowSequence` — @sapporta/grid
+- `EditingState` — @sapporta/grid
+- `editStartsOn` — @sapporta/grid
+- `encodeFilters` — @sapporta/shared/filter, @sapporta/shared
+- `encodeFilterValue` — @sapporta/shared/filter, @sapporta/shared
+- `encodePathSegment` — @sapporta/server/cli/client
+- `encodeTypedCondition` — @sapporta/shared/filter, @sapporta/shared
+- `encodeTypedFilters` — @sapporta/shared/filter, @sapporta/shared
+- `encodeTypedValue` — @sapporta/shared/filter, @sapporta/shared
+- `eqCondition` — @sapporta/shared/filter, @sapporta/shared
+- `ErrorBody` — @sapporta/shared/contracts
+- `errorBodySchema` — @sapporta/shared/contracts
+- `ErrorCode` — @sapporta/server/errors
+- `ErrorCodeValue` — @sapporta/server/errors
+- `errorMessage` — @sapporta/frontend/platform
+- `ExactOriginCorsOptions` — @sapporta/server
+- `ExpandableCellFrame` — @sapporta/grid
+- `exportCsvRoute` — @sapporta/server
+- `ExportRowsQuery` — @sapporta/shared/contracts
+- `exportRowsQuerySchema` — @sapporta/shared/contracts
+- `extractSchema` — @sapporta/server
+- `extractSchemas` — @sapporta/server
+- `FamilyOptions` — @sapporta/honest, @sapporta/server
+- `fetchApi` — @sapporta/frontend/platform
+- `fetchAuthBootstrapStatus` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `fetchAuthContext` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `fetchJson` — @sapporta/frontend/platform
+- `fetchLookup` — @sapporta/frontend/lookup, @sapporta/frontend
+- `fetchLookupEntriesForSearch` — @sapporta/frontend/lookup, @sapporta/frontend
+- `fetchLookupEntriesForValues` — @sapporta/frontend/lookup, @sapporta/frontend
+- `fetchLookupSearch` — @sapporta/frontend/lookup, @sapporta/frontend
+- `FetchPageRequest` — @sapporta/grid
+- `FetchPageResponse` — @sapporta/grid
+- `fetchProjectInfo` — @sapporta/frontend/schema
+- `fetchSchema` — @sapporta/frontend/schema
+- `fetchTableRow` — @sapporta/frontend
+- `fetchTableRows` — @sapporta/frontend
+- `FetchTableRowsParams` — @sapporta/frontend
+- `FieldIssue` — @sapporta/shared/validation, @sapporta/shared
+- `fieldIssuesForSubmissionError` — @sapporta/frontend/form, @sapporta/frontend
+- `fieldIssuesFromZodError` — @sapporta/shared/validation, @sapporta/shared
+- `fieldModelForColumn` — @sapporta/frontend
+- `FilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `FilterDraftCondition` — @sapporta/shared/filter, @sapporta/shared
+- `FilterDraftValue` — @sapporta/shared/filter, @sapporta/shared
+- `FilterParseError` — @sapporta/shared/filter, @sapporta/shared
+- `FilterParseErrorCode` — @sapporta/shared/filter, @sapporta/shared
+- `FilterQueryCapability` — @sapporta/grid
+- `filtersEqual` — @sapporta/shared/filter, @sapporta/shared
+- `filterSourceNodes` — @sapporta/grid
+- `FilterTableLike` — @sapporta/shared/filter, @sapporta/shared
+- `FindManyRowsInput` — @sapporta/server
+- `findProjectRootFrom` — @sapporta/server
+- `findRowLabelColumns` — @sapporta/server
+- `firstFocusableRow` — @sapporta/grid
+- `firstFormErrorMessage` — @sapporta/frontend/form, @sapporta/frontend
+- `FooterLevelRow` — @sapporta/grid
+- `FooterRow` — @sapporta/grid
+- `footerSourceForRow` — @sapporta/grid
+- `forbidUnless` — @sapporta/server
+- `foreignKey` — @sapporta/grid/column-preset
+- `foreignKeyFieldModelForColumn` — @sapporta/frontend
+- `ForeignKeyPreset` — @sapporta/grid/column-preset
+- `ForeignKeyRecordFormFieldModel` — @sapporta/frontend
+- `foreignKeyRefSchema` — @sapporta/shared/contracts
+- `ForeignKeyValidationOptions` — @sapporta/server
+- `ForgotPasswordPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
+- `formatAuthRole` — @sapporta/frontend/shell, @sapporta/frontend
+- `formatCanonicalInstant` — @sapporta/shared/temporal, @sapporta/shared
+- `formatInstantForDateTimeLocalInput` — @sapporta/shared/temporal, @sapporta/shared
+- `formatPlainDate` — @sapporta/shared/temporal, @sapporta/shared
+- `formatPlainDateForDateInput` — @sapporta/shared/temporal, @sapporta/shared
+- `formatTable` — @sapporta/server/cli/format
+- `FormField` — @sapporta/frontend
+- `FormSubmissionError` — @sapporta/frontend/form, @sapporta/frontend
+- `FrameworkRoutePolicyOptions` — @sapporta/server
+- `fromApiCodeDir` — @sapporta/server
+- `fromProjectRoot` — @sapporta/server
+- `GenerateOptions` — @sapporta/honest, @sapporta/server
+- `getAccountDisplayName` — @sapporta/frontend/shell, @sapporta/frontend
+- `getAccountInitials` — @sapporta/frontend/shell, @sapporta/frontend
+- `getAccountSecondaryLabel` — @sapporta/frontend/shell, @sapporta/frontend
+- `getApiBase` — @sapporta/frontend/platform, @sapporta/frontend
+- `getAuthBootstrapStatusRoute` — @sapporta/shared/contracts
+- `getAuthContextRoute` — @sapporta/shared/contracts
+- `getColumnEnumValues` — @sapporta/server
+- `getNavigate` — @sapporta/frontend/app, @sapporta/frontend
+- `getRoute` — @sapporta/server
+- `getRowRoute` — @sapporta/shared/contracts
+- `getTableRoute` — @sapporta/shared/contracts
+- `GRID_COLUMN_PRESET_RUNTIME` — @sapporta/grid/column-preset
+- `GridAction` — @sapporta/grid
+- `GridActiveRow` — @sapporta/grid
+- `GridChromeContext` — @sapporta/grid
+- `GridColumnCopyBehavior` — @sapporta/grid
+- `GridControllerPublic` — @sapporta/grid/advanced
+- `GridCopyColumn` — @sapporta/grid
+- `GridCopyContextMenu` — @sapporta/grid
+- `GridCopyContextMenuProps` — @sapporta/grid
+- `GridCopyCsvOptions` — @sapporta/grid
+- `GridCopyTarget` — @sapporta/grid
+- `GridDataset` — @sapporta/shared/grid-dataset
+- `GridDatasetColumn` — @sapporta/shared/grid-dataset
+- `GridDatasetColumnKind` — @sapporta/shared/grid-dataset
+- `gridDatasetColumnKindSchema` — @sapporta/shared/grid-dataset
+- `gridDatasetColumnSchema` — @sapporta/shared/grid-dataset
+- `GridDatasetFooterRow` — @sapporta/shared/grid-dataset
+- `gridDatasetFooterRowSchema` — @sapporta/shared/grid-dataset
+- `GridDatasetLevel` — @sapporta/shared/grid-dataset
+- `gridDatasetLevelSchema` — @sapporta/shared/grid-dataset
+- `gridDatasetLinkProblems` — @sapporta/shared/grid-dataset
+- `GridDatasetNode` — @sapporta/shared/grid-dataset
+- `gridDatasetNodeSchema` — @sapporta/shared/grid-dataset
+- `gridDatasetSchema` — @sapporta/shared/grid-dataset
+- `GridDataSource` — @sapporta/grid
+- `GridEffect` — @sapporta/grid
+- `GridEmptyContext` — @sapporta/grid
+- `GridEvents` — @sapporta/grid
+- `GridInteractionConfig` — @sapporta/grid
+- `GridLevel` — @sapporta/grid
+- `GridLevelChrome` — @sapporta/grid
+- `GridLevelCommands` — @sapporta/grid/column-preset
+- `GridLevelRuntime` — @sapporta/grid
+- `GridPath` — @sapporta/grid
+- `GridPointerInput` — @sapporta/grid
+- `GridPresentation` — @sapporta/grid
+- `GridRowActivatedEvent` — @sapporta/grid
+- `GridRuntime` — @sapporta/grid
+- `GridRuntimeProvider` — @sapporta/grid
+- `GridSchema` — @sapporta/grid
+- `GridSelectionSummaryContext` — @sapporta/grid
+- `GridStatusContext` — @sapporta/grid
+- `GridValueLookupColumn` — @sapporta/grid/lookup
+- `GroupCount` — @sapporta/shared/contracts, @sapporta/server, @sapporta/shared
+- `groupCountSchema` — @sapporta/shared/contracts
+- `handleResolvedLinkClick` — @sapporta/frontend
+- `hasRepeatedQueryParams` — @sapporta/shared
+- `HeaderColumn` — @sapporta/grid/column-preset
+- `HeaderLevelState` — @sapporta/grid/column-preset
+- `HealthPolicy` — @sapporta/server
+- `HomeRedirect` — @sapporta/frontend/app, @sapporta/frontend
+- `hostBackedRowQuery` — @sapporta/grid
+- `hrefPlaceholderColumns` — @sapporta/shared/contracts
+- `HttpMethod` — @sapporta/server/cli/http-client, @sapporta/honest, @sapporta/server
+- `httpRequest` — @sapporta/server/cli/http-client
+- `HttpRequestOptions` — @sapporta/server/cli/http-client
+- `humanizeIdentifier` — @sapporta/shared
+- `identifier` — @sapporta/grid/column-preset
+- `IdentifierPreset` — @sapporta/grid/column-preset
+- `ImmutableTableOperationError` — @sapporta/server
+- `index` — @sapporta/server/table
+- `initContract` — @sapporta/shared/contracts, @sapporta/server
+- `inMemoryGridDataSource` — @sapporta/grid
+- `InMemoryGridDataSourceOpts` — @sapporta/grid
+- `InMemoryLevelOpts` — @sapporta/grid
+- `Input` — @sapporta/ui/input, @sapporta/ui
+- `insertRow` — @sapporta/server
+- `InsertValuesOptions` — @sapporta/server
+- `installExactOriginCors` — @sapporta/server
+- `installFrameworkRoutePolicy` — @sapporta/server
+- `installRequestLogging` — @sapporta/server
+- `installSapportaDefaults` — @sapporta/server
+- `installSapportaErrorHandler` — @sapporta/server
+- `installSapportaRequestContext` — @sapporta/server
+- `integer` — @sapporta/server/table
+- `isAutoManagedTimestampColumn` — @sapporta/server/table
+- `isDisplayedPhantomRowId` — @sapporta/grid
+- `isExternalHref` — @sapporta/frontend
+- `isFetchNetworkError` — @sapporta/shared/client
+- `isFooterRow` — @sapporta/grid
+- `isLookupValue` — @sapporta/grid/lookup
+- `isNavigationItemActive` — @sapporta/frontend/shell, @sapporta/frontend
+- `isOperator` — @sapporta/shared/filter, @sapporta/shared
+- `isOperatorApplicable` — @sapporta/shared/value-kind, @sapporta/shared
+- `isQueryParamRecord` — @sapporta/shared
+- `isRelativeDuration` — @sapporta/shared/daterange, @sapporta/shared
+- `isRowScope` — @sapporta/server
+- `isSystemManagedScopeFieldName` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `isTreeBackedRow` — @sapporta/grid
+- `Kbd` — @sapporta/ui/kbd, @sapporta/ui
+- `KeyHint` — @sapporta/frontend
+- `kind` — @sapporta/grid/column-preset
+- `Label` — @sapporta/ui/label, @sapporta/ui
+- `lastFocusableRow` — @sapporta/grid
+- `LevelDataSource` — @sapporta/grid
+- `LevelOptions` — @sapporta/grid
+- `LevelQueryCapabilities` — @sapporta/grid
+- `LevelRow` — @sapporta/grid
+- `LevelRowKind` — @sapporta/grid
+- `LevelRowOfKind` — @sapporta/grid
+- `LevelSchema` — @sapporta/grid
+- `LevelSnapshot` — @sapporta/grid
+- `LevelSourceState` — @sapporta/grid
+- `LevelStatus` — @sapporta/grid
+- `LinkBind` — @sapporta/shared/contracts
+- `linkBindSchema` — @sapporta/shared/contracts
+- `LinkIcon` — @sapporta/shared/contracts
+- `LinkIconGlyph` — @sapporta/frontend
+- `linkIconSchema` — @sapporta/shared/contracts
+- `LinkMenuItems` — @sapporta/frontend
+- `linkRel` — @sapporta/frontend
+- `LinkResolutionContext` — @sapporta/frontend
+- `LinkTarget` — @sapporta/shared/contracts
+- `linkTargetSchema` — @sapporta/shared/contracts
+- `LIST_OPS` — @sapporta/shared/filter, @sapporta/shared
+- `listAuthTokens` — @sapporta/frontend/auth/runtime
+- `listAuthTokensRoute` — @sapporta/shared/contracts
+- `ListMeta` — @sapporta/shared/contracts
+- `listMetaSchema` — @sapporta/shared/contracts
+- `ListOp` — @sapporta/shared/filter, @sapporta/shared
+- `listRoute` — @sapporta/server
+- `ListRowsQuery` — @sapporta/shared/contracts
+- `listRowsQuerySchema` — @sapporta/shared/contracts
+- `listRowsRoute` — @sapporta/shared/contracts
+- `listTablesRoute` — @sapporta/shared/contracts
+- `loadAdminMetadata` — @sapporta/frontend/app
+- `loadColumnSizingOverrides` — @sapporta/grid/column-preset
+- `LoadedRowsBoundaryEvent` — @sapporta/grid
+- `loadPref` — @sapporta/frontend/platform
+- `loadProjectInfo` — @sapporta/frontend/schema, @sapporta/frontend
+- `loadSapportaProject` — @sapporta/server
+- `LoadSapportaProjectOptions` — @sapporta/server
+- `loadSchema` — @sapporta/frontend/schema, @sapporta/frontend
+- `loadSchemas` — @sapporta/server
+- `LoginPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
+- `lookupCapabilities` — @sapporta/grid/column-preset
+- `LookupCapabilities` — @sapporta/grid/column-preset, @sapporta/grid/lookup
+- `LookupColumnOptions` — @sapporta/grid/column-preset
+- `lookupEntriesFromResponse` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupEntry` — @sapporta/shared/contracts, @sapporta/grid/lookup
+- `lookupEntrySchema` — @sapporta/shared/contracts
+- `LookupForColumn` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupPicker` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupPickerItemDisplay` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupPickerItemProps` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupPickerProps` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupPreset` — @sapporta/grid/column-preset
+- `LookupQuery` — @sapporta/shared/contracts
+- `lookupQuerySchema` — @sapporta/shared/contracts
+- `LookupResponse` — @sapporta/shared/contracts
+- `lookupResponseSchema` — @sapporta/shared/contracts
+- `lookupRoute` — @sapporta/shared/contracts
+- `lookupRowAccessPredicate` — @sapporta/server
+- `LookupRowsByIdInput` — @sapporta/server
+- `LookupRowsBySearchInput` — @sapporta/server
+- `LookupRowsInput` — @sapporta/server
+- `LookupSearchPage` — @sapporta/grid/lookup
+- `LookupSearchRequest` — @sapporta/grid/lookup
+- `LookupStore` — @sapporta/frontend/lookup, @sapporta/frontend
+- `LookupSubscription` — @sapporta/grid/lookup
+- `lookupValue` — @sapporta/grid/column-preset
+- `LookupValue` — @sapporta/grid/lookup
+- `lookupValueEquals` — @sapporta/grid/lookup
+- `lookupValueKey` — @sapporta/grid/lookup
+- `makeAuthorizedTableHandlers` — @sapporta/server
+- `makeMetaHandlers` — @sapporta/server
+- `makeRowId` — @sapporta/grid
+- `makeSelection` — @sapporta/grid
+- `materializedChildren` — @sapporta/grid/advanced
+- `materializeFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `materializeTypedFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `MAX_COUNT_GROUPS` — @sapporta/shared
+- `MAX_LOOKUP_IDS` — @sapporta/shared/contracts
+- `MAX_LOOKUP_LIMIT` — @sapporta/shared/contracts
+- `MAX_PAGE` — @sapporta/shared/contracts
+- `MAX_PAGE_SIZE` — @sapporta/shared/contracts
+- `MaybePromise` — @sapporta/honest, @sapporta/server
+- `meta` — @sapporta/grid/column-preset
+- `MetaHandlers` — @sapporta/server
+- `MINIMUM_PNPM_MAJOR_VERSION` — @sapporta/server/create-project
+- `mintFilterId` — @sapporta/shared/filter, @sapporta/shared
+- `money` — @sapporta/server/table, @sapporta/server
+- `mountHealth` — @sapporta/server
+- `mountMeta` — @sapporta/server
+- `mountOpenApi` — @sapporta/server
+- `mountSapportaFramework` — @sapporta/server
+- `MountSapportaFrameworkOptions` — @sapporta/server
+- `mountTables` — @sapporta/server
+- `NARROW_TABLE_PAGE_MAX_WIDTH` — @sapporta/frontend
+- `navigateToNewRecord` — @sapporta/frontend
+- `navigateToTable` — @sapporta/frontend/app, @sapporta/frontend
+- `Navigation` — @sapporta/frontend/shell, @sapporta/frontend
+- `NavigationDirection` — @sapporta/grid
+- `NavigationIcon` — @sapporta/frontend/shell, @sapporta/frontend
+- `NavigationItem` — @sapporta/frontend/shell, @sapporta/frontend
+- `navigationItems` — @sapporta/frontend/shell, @sapporta/frontend
+- `NavigationSection` — @sapporta/frontend/shell, @sapporta/frontend
+- `NavLink` — @sapporta/shared/contracts
+- `navLinkSchema` — @sapporta/shared/contracts
+- `NewFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `NewRecordPage` — @sapporta/frontend
+- `NewRecordRoute` — @sapporta/frontend/routes/new-record, @sapporta/frontend
+- `nextFocusableRow` — @sapporta/grid
+- `NonTypedCellEditGesture` — @sapporta/grid
+- `NormalizedTableSearch` — @sapporta/server
+- `normalizeFilters` — @sapporta/shared/filter, @sapporta/shared
+- `normalizeForeignKeyScalarFilters` — @sapporta/frontend
+- `normalizeOptions` — @sapporta/grid/column-preset
+- `normalizeTableSearch` — @sapporta/server
+- `normalizeTableViewPreference` — @sapporta/frontend
+- `NotFoundView` — @sapporta/frontend/app, @sapporta/frontend
+- `NULL_OPS` — @sapporta/shared/filter, @sapporta/shared
+- `NullOp` — @sapporta/shared/filter, @sapporta/shared
+- `number` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `NumberColorRule` — @sapporta/grid/column-preset
+- `NumberColumnOptions` — @sapporta/grid/column-preset
+- `NumberDisplay` — @sapporta/grid/column-preset
+- `NumberPreset` — @sapporta/grid/column-preset
+- `NumericInputParseResult` — @sapporta/grid/column-preset
+- `OPENAPI_PATH` — @sapporta/server
+- `OpenApiPolicy` — @sapporta/server
+- `openResolvedLink` — @sapporta/frontend
+- `OperationError` — @sapporta/server/errors
+- `Operator` — @sapporta/shared/filter, @sapporta/shared
+- `OPERATOR_APPLICABILITY` — @sapporta/shared/value-kind, @sapporta/shared
+- `OPERATORS` — @sapporta/shared/filter, @sapporta/shared
+- `OptionalBoundedIntegerOptions` — @sapporta/shared/validation, @sapporta/shared
+- `OutputFormat` — @sapporta/server/cli/format
+- `PageBody` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageBodyProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageFrame` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageFrameProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageHeader` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageHeaderButton` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageHeaderProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `PageRowsInput` — @sapporta/server
+- `PageRowsResult` — @sapporta/server
+- `PaginatedRows` — @sapporta/shared/contracts
+- `paginatedRowsSchema` — @sapporta/shared/contracts
+- `PaginationRangeItem` — @sapporta/frontend
+- `ParamPill` — @sapporta/ui/param-pill, @sapporta/ui
+- `ParamPillProps` — @sapporta/ui/param-pill, @sapporta/ui
+- `parse` — @sapporta/grid/column-preset
+- `parseBoundedInteger` — @sapporta/shared/validation, @sapporta/shared
+- `parseCanonicalInstant` — @sapporta/shared/temporal, @sapporta/shared
+- `parseChildPath` — @sapporta/grid
+- `parseCreateDraft` — @sapporta/frontend
+- `ParseCreateDraftResult` — @sapporta/frontend
+- `parseDateInputToPlainDateString` — @sapporta/shared/temporal, @sapporta/shared
+- `parseDateRange` — @sapporta/shared/daterange, @sapporta/shared
+- `parseDateTimeLocalInputToCanonicalInstantString` — @sapporta/shared/temporal, @sapporta/shared
+- `parseErrorBody` — @sapporta/frontend/platform
+- `parseFilterForTable` — @sapporta/shared/filter, @sapporta/shared
+- `parseFilters` — @sapporta/shared/filter, @sapporta/shared
+- `parseFiltersForTable` — @sapporta/shared/filter, @sapporta/shared
+- `parseFilterValue` — @sapporta/shared/filter, @sapporta/shared
+- `parseNumericInput` — @sapporta/grid/column-preset
+- `parseOptionalBoundedInteger` — @sapporta/shared/validation, @sapporta/shared
+- `parsePlainDate` — @sapporta/shared/temporal, @sapporta/shared
+- `parseSortString` — @sapporta/grid
+- `parseTablePatchValueDraft` — @sapporta/frontend
+- `parseTableSearchParams` — @sapporta/frontend
+- `parseTableWrite` — @sapporta/server
+- `PatchCellResponse` — @sapporta/grid
+- `PathDecomposition` — @sapporta/grid
+- `PathEdge` — @sapporta/grid
+- `pathOfRowId` — @sapporta/grid
+- `percentage` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `PercentagePreset` — @sapporta/grid/column-preset
+- `PhantomChannel` — @sapporta/grid/advanced, @sapporta/grid
+- `phantomKeyFromDisplayedRowId` — @sapporta/grid
+- `PhantomRow` — @sapporta/grid/advanced, @sapporta/grid
+- `PhantomRowLifecycle` — @sapporta/grid/advanced
+- `PhantomRowLifecycleDeps` — @sapporta/grid/advanced
+- `PhantomRowsConfig` — @sapporta/grid
+- `PhantomRowState` — @sapporta/grid
+- `planCursorContinuationForRowRemoval` — @sapporta/grid/advanced
+- `Polarity` — @sapporta/shared/filter, @sapporta/shared
+- `Popover` — @sapporta/ui/popover, @sapporta/ui
+- `PopoverAnchor` — @sapporta/ui/popover
+- `PopoverContent` — @sapporta/ui/popover, @sapporta/ui
+- `PopoverTrigger` — @sapporta/ui/popover, @sapporta/ui
+- `preset` — @sapporta/grid/column-preset
+- `PresetChromeOptions` — @sapporta/grid/column-preset
+- `presetRuntime` — @sapporta/grid/column-preset
+- `Principal` — @sapporta/server
+- `PROJECT_MARKER` — @sapporta/server
+- `ProjectDbConnection` — @sapporta/server
+- `ProjectInfo` — @sapporta/shared/contracts
+- `projectInfoRoute` — @sapporta/shared/contracts
+- `projectInfoSchema` — @sapporta/shared/contracts
+- `projectPath` — @sapporta/server
+- `projectRoot` — @sapporta/server
+- `projectRootFromDbPath` — @sapporta/server
+- `PublicOnlyGate` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `QueryParamRecord` — @sapporta/shared
+- `queryParamRecordToSearchParams` — @sapporta/shared
+- `QueryParamValue` — @sapporta/shared
+- `QueryParseError` — @sapporta/server/errors, @sapporta/server
+- `QueryParseErrorCode` — @sapporta/server/errors
+- `ReconcileEvent` — @sapporta/grid
+- `RecordFormFieldModel` — @sapporta/frontend
+- `RecordId` — @sapporta/shared/record-id, @sapporta/shared
+- `RecordValueLookup` — @sapporta/grid/lookup
+- `ReferenceResolutionResult` — @sapporta/server
+- `ReferenceRule` — @sapporta/server
+- `ReferenceSource` — @sapporta/server
+- `registerTGridSession` — @sapporta/frontend
+- `relatedRowsTableHref` — @sapporta/frontend
+- `RelatedRowsTableHrefInput` — @sapporta/frontend
+- `relative` — @sapporta/shared/daterange, @sapporta/shared
+- `RELATIVE_DURATIONS` — @sapporta/shared/daterange, @sapporta/shared
+- `RelativeDuration` — @sapporta/shared/daterange, @sapporta/shared
+- `reloadTGridRows` — @sapporta/frontend
+- `renderCommandError` — @sapporta/server/cli/render
+- `renderCommandResult` — @sapporta/server/cli/render
+- `ReportCellLink` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportCellLinkContext` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportCellLinkResolvers` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportError` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportGridDataset` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportGridDatasetProps` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportRowLinkContext` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportRunButton` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportRunButtonProps` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportScreenFrame` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportScreenFrameProps` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportStat` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportSummaryStats` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportSummaryStatsProps` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportToolbar` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportToolbarProps` — @sapporta/frontend/report, @sapporta/frontend
+- `requestDataAuthority` — @sapporta/server
+- `RequestDataAuthority` — @sapporta/server
+- `RequestRowAuthorityRecord` — @sapporta/server
+- `RequiredBoundedIntegerOptions` — @sapporta/shared/validation, @sapporta/shared
+- `requireResolvedTableReferences` — @sapporta/server
+- `resetPageTitles` — @sapporta/frontend/layout, @sapporta/frontend/shell
+- `ResetPasswordPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
+- `resolveCellSelectionRectangle` — @sapporta/grid
+- `resolveColumnSizing` — @sapporta/grid/column-preset
+- `resolveCountQuery` — @sapporta/server
+- `resolveDateRange` — @sapporta/shared/daterange, @sapporta/shared
+- `resolveDateRangeQueryBounds` — @sapporta/shared/daterange, @sapporta/shared
+- `ResolvedColumnSizing` — @sapporta/grid/column-preset
+- `ResolvedCountQuery` — @sapporta/server
+- `ResolvedDateRange` — @sapporta/shared/daterange, @sapporta/shared
+- `ResolvedLink` — @sapporta/frontend
+- `ResolvedReferenceFact` — @sapporta/server
+- `ResolvedRoute` — @sapporta/honest, @sapporta/server
+- `resolveExportQuery` — @sapporta/server
+- `resolveLink` — @sapporta/frontend
+- `resolveLinks` — @sapporta/frontend
+- `resolveLookupQuery` — @sapporta/server
+- `resolvePageQuery` — @sapporta/server
+- `ResolveRowsQueryOptions` — @sapporta/server
+- `resolveTableGridPresentation` — @sapporta/frontend
+- `resolveTablePageMode` — @sapporta/frontend
+- `resolveTableReferences` — @sapporta/server
+- `resolveTGridCellLinks` — @sapporta/frontend
+- `resolveTGridRowLinks` — @sapporta/frontend
+- `RestEndpointFactory` — @sapporta/grid
+- `restGridDataSource` — @sapporta/grid
+- `RestGridDataSourceOpts` — @sapporta/grid
+- `revokeAuthToken` — @sapporta/frontend/auth/runtime
+- `revokeAuthTokenRoute` — @sapporta/shared/contracts
+- `rootPath` — @sapporta/grid
+- `RouteHandler` — @sapporta/honest, @sapporta/server
+- `Row` — @sapporta/shared/contracts
+- `ROW_MULTISELECT_LIST` — @sapporta/grid
+- `ROW_PRIMARY_MASTER_DETAIL` — @sapporta/grid
+- `ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` — @sapporta/grid
+- `RowActivationConfig` — @sapporta/grid
+- `RowActivationGesture` — @sapporta/grid
+- `RowActivationTrigger` — @sapporta/grid
+- `RowCapabilities` — @sapporta/grid
+- `RowCursor` — @sapporta/grid
+- `RowDirection` — @sapporta/grid
+- `rowExpansionActivation` — @sapporta/grid
+- `RowFieldName` — @sapporta/frontend
+- `RowHeaderColumn` — @sapporta/grid
+- `RowId` — @sapporta/grid
+- `RowInteractionSnapshot` — @sapporta/grid
+- `RowInteractionStatus` — @sapporta/grid
+- `rowInteractionStatusFor` — @sapporta/grid
+- `RowKey` — @sapporta/grid
+- `rowKeyOfRowId` — @sapporta/grid
+- `rowLabeller` — @sapporta/server
+- `RowLabeller` — @sapporta/server
+- `RowListOptions` — @sapporta/server/cli/client
+- `RowNavigationIntent` — @sapporta/grid
+- `RowNotFoundError` — @sapporta/server
+- `RowOperationTarget` — @sapporta/grid
+- `RowQuery` — @sapporta/grid
+- `RowQueryChange` — @sapporta/grid
+- `RowQueryState` — @sapporta/grid
+- `RowRemovalRef` — @sapporta/grid/advanced
+- `RowRemovalResult` — @sapporta/grid
+- `rowSchema` — @sapporta/shared/contracts
+- `RowScope` — @sapporta/server
+- `RowScopePolicyError` — @sapporta/server
+- `rowScopes` — @sapporta/server
+- `RowSecurity` — @sapporta/server
+- `RowSelection` — @sapporta/grid
+- `rowSelectionColumn` — @sapporta/grid/column-preset
+- `RowSelectionColumnOptions` — @sapporta/grid/column-preset
+- `RowSelectionGesture` — @sapporta/grid
+- `rowsInSelection` — @sapporta/grid
+- `RowsOrderBy` — @sapporta/server
+- `RowsQuery` — @sapporta/server
+- `RuntimeArgs` — @sapporta/grid
+- `RuntimeLevelDataSource` — @sapporta/grid
+- `sanitizeColumnSizingOverrides` — @sapporta/grid/column-preset
+- `sanitizeSortDescriptors` — @sapporta/frontend
+- `SapportaAbility` — @sapporta/server
+- `SapportaAuthContext` — @sapporta/server
+- `SapportaAuthGuard` — @sapporta/server
+- `SapportaAuthUser` — @sapporta/server
+- `SapportaCliClient` — @sapporta/server/cli/client, @sapporta/server/cli
+- `SapportaEnv` — @sapporta/server
+- `SapportaFrameworkApi` — @sapporta/server
+- `SapportaMark` — @sapporta/frontend/shell, @sapporta/frontend
+- `SapportaMeta` — @sapporta/server/table, @sapporta/server
+- `SapportaProject` — @sapporta/server
+- `sapportaTable` — @sapporta/server/table, @sapporta/server
+- `SapportaTableInputMeta` — @sapporta/server/table, @sapporta/server
+- `saveColumnSizingOverrides` — @sapporta/grid/column-preset
+- `savePipeline` — @sapporta/server
+- `savePref` — @sapporta/frontend/platform
+- `SCALAR_OPS` — @sapporta/shared/filter, @sapporta/shared
+- `ScalarOp` — @sapporta/shared/filter, @sapporta/shared
+- `scanTableRows` — @sapporta/server
+- `schemaApi` — @sapporta/server
+- `SchemaIssue` — @sapporta/server
+- `SchemaLoadResult` — @sapporta/server
+- `SchemaTableGridSource` — @sapporta/frontend
+- `SchemaTableGridView` — @sapporta/frontend
+- `SchemaTableGridViewProps` — @sapporta/frontend
+- `SchemaTableGridViewSource` — @sapporta/frontend
+- `SchemaTableRelatedRowsOptions` — @sapporta/frontend
+- `SchemaTableRootRowsOptions` — @sapporta/frontend
+- `SchemaTableRowsByLevel` — @sapporta/frontend
+- `SchemaTGridConfigInput` — @sapporta/frontend
+- `SchemaValidationError` — @sapporta/server
+- `scopeColumnFact` — @sapporta/server
+- `ScopeColumnFact` — @sapporta/server
+- `scopeColumnNames` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `SCOPED_TO_USER_ID_SQL_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `SCOPED_TO_USER_ID_TS_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `scopedRows` — @sapporta/server
+- `ScopedRows` — @sapporta/server
+- `scopedToUserScopeColumn` — @sapporta/server
+- `SearchLookup` — @sapporta/grid/lookup
+- `SearchPlan` — @sapporta/server
+- `SearchPlanIssue` — @sapporta/server
+- `SearchPlanValidationError` — @sapporta/server
+- `SearchPlanWarning` — @sapporta/server
+- `SearchSelf` — @sapporta/server/table, @sapporta/server
+- `SearchValuePlan` — @sapporta/server
+- `select` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `SelectColumnOptions` — @sapporta/grid/column-preset
+- `selectedTableDeleteTargets` — @sapporta/frontend
+- `selectionContainsCoord` — @sapporta/grid
+- `selectionFocus` — @sapporta/grid
+- `selectionIsSingleCell` — @sapporta/grid
+- `SelectOption` — @sapporta/grid/column-preset
+- `selectOptionsSchema` — @sapporta/shared/contracts
+- `SelectPreset` — @sapporta/grid/column-preset
+- `selectRowAccessPredicate` — @sapporta/server
+- `sendBody` — @sapporta/honest, @sapporta/server
+- `serializeDateRange` — @sapporta/shared/daterange, @sapporta/shared
+- `serializeGridCopyTargetToCsv` — @sapporta/grid
+- `serializeTypedValue` — @sapporta/shared/filter, @sapporta/shared
+- `ServerInferRequest` — @sapporta/shared/contracts, @sapporta/server
+- `ServerInferResponseBody` — @sapporta/shared/contracts, @sapporta/server
+- `ServerInferResponses` — @sapporta/shared/contracts, @sapporta/server
+- `setNavigate` — @sapporta/frontend/app, @sapporta/frontend
+- `setProjectRoot` — @sapporta/server
+- `Sheet` — @sapporta/ui/sheet, @sapporta/ui
+- `SheetClose` — @sapporta/ui/sheet
+- `SheetContent` — @sapporta/ui/sheet, @sapporta/ui
+- `SheetDescription` — @sapporta/ui/sheet, @sapporta/ui
+- `SheetHeader` — @sapporta/ui/sheet, @sapporta/ui
+- `SheetOverlay` — @sapporta/ui/sheet
+- `SheetPortal` — @sapporta/ui/sheet
+- `SheetTitle` — @sapporta/ui/sheet, @sapporta/ui
+- `SheetTrigger` — @sapporta/ui/sheet
+- `SIDEBAR_DESKTOP_MEDIA_QUERY` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SIDEBAR_EXPANDED_PREF_KEY` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarController` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarProvider` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarProviderOptions` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarProviderProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarRegion` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarRegionProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarShell` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarToggle` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `SidebarToggleProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `signOut` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `SignupPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
+- `SingleRow` — @sapporta/shared/contracts
+- `singleRowSchema` — @sapporta/shared/contracts
+- `sliceSourceNodes` — @sapporta/grid
+- `snapshotDateRange` — @sapporta/shared/daterange, @sapporta/shared
+- `SortDescriptor` — @sapporta/grid
+- `sortOrderEqual` — @sapporta/grid
+- `SortQueryCapability` — @sapporta/grid
+- `sortSourceNodes` — @sapporta/grid
+- `SourceLoadResult` — @sapporta/grid
+- `sourceOwnedRowQuery` — @sapporta/grid
+- `SqlExecuteOptions` — @sapporta/server/cli/client
+- `SqliteErrorContext` — @sapporta/server/errors
+- `sqliteTable` — @sapporta/server/table
+- `SqlQueryOptions` — @sapporta/server/cli/client
+- `sqlRoute` — @sapporta/shared/contracts
+- `StartEditAction` — @sapporta/grid
+- `startLoadingValueLookupEntriesForGridRows` — @sapporta/grid/lookup
+- `startTGridLookupLoading` — @sapporta/frontend
+- `StaticSearchLookup` — @sapporta/grid/lookup
+- `StaticValueLookup` — @sapporta/grid/lookup
+- `StatusBar` — @sapporta/frontend/shell, @sapporta/frontend
+- `storeDbPath` — @sapporta/server
+- `stringifySortOrder` — @sapporta/grid
+- `substituteHrefPlaceholders` — @sapporta/shared/contracts
+- `Switch` — @sapporta/ui/switch, @sapporta/ui
+- `switchActiveWorkspace` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `SwitchActiveWorkspaceBody` — @sapporta/shared/contracts
+- `switchActiveWorkspaceBodySchema` — @sapporta/shared/contracts
+- `switchActiveWorkspaceRoute` — @sapporta/shared/contracts
+- `SystemGlobalDataAuthority` — @sapporta/server
+- `systemGlobalOnlyAuthority` — @sapporta/server
+- `SystemGlobalOnlyAuthority` — @sapporta/server
+- `systemManagedScopeFieldNames` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `systemRows` — @sapporta/server
+- `tableApiZod` — @sapporta/server
+- `TableCatalog` — @sapporta/server
+- `TableColumn` — @sapporta/server
+- `TableColumnName` — @sapporta/frontend
+- `TableColumnOptions` — @sapporta/frontend
+- `tableColumnPresetWidth` — @sapporta/frontend
+- `TableDef` — @sapporta/server/table, @sapporta/server
+- `TableDeleteTarget` — @sapporta/frontend
+- `TableFamilyHandler` — @sapporta/server
+- `TableFetchOptions` — @sapporta/frontend
+- `tableFilteredByUrl` — @sapporta/frontend
+- `TableGridActionsProps` — @sapporta/frontend
+- `TableGridBinding` — @sapporta/frontend
+- `TableGridNavigate` — @sapporta/frontend
+- `TableGridOptionsByTable` — @sapporta/frontend/routes/table, @sapporta/frontend
+- `TableGridRoute` — @sapporta/frontend
+- `tableGridUrlForQueryState` — @sapporta/frontend
+- `TableGridUrlStateBinding` — @sapporta/frontend
+- `TableGridView` — @sapporta/frontend
+- `TableGridViewProps` — @sapporta/frontend
+- `TableHandlers` — @sapporta/server
+- `tableIndexesRoute` — @sapporta/shared/contracts
+- `TableLevelPager` — @sapporta/frontend
+- `TableLevelQuery` — @sapporta/frontend
+- `tableLoadErrorMessage` — @sapporta/frontend
+- `TableLookupSource` — @sapporta/frontend/lookup, @sapporta/frontend
+- `TableObjectZod` — @sapporta/server
+- `TableOptions` — @sapporta/server/table, @sapporta/server
+- `TablePage` — @sapporta/frontend
+- `TablePageGridOptions` — @sapporta/frontend
+- `TablePageMode` — @sapporta/frontend
+- `TablePageProps` — @sapporta/frontend
+- `TablePatchValueDraftParseResult` — @sapporta/frontend
+- `tableQueryKeys` — @sapporta/frontend/table/query, @sapporta/frontend
+- `tableQuerySeedFromUrlState` — @sapporta/frontend
+- `TableRecordQueryArgs` — @sapporta/frontend/table/query, @sapporta/frontend
+- `TableRecordQueryKey` — @sapporta/frontend/table/query, @sapporta/frontend
+- `tableRecordQueryOptions` — @sapporta/frontend/table/query, @sapporta/frontend
+- `TableRecordsPage` — @sapporta/frontend/table/query, @sapporta/frontend
+- `TableRecordsPageQueryKey` — @sapporta/frontend/table/query, @sapporta/frontend
+- `tableRecordsPageQueryOptions` — @sapporta/frontend/table/query, @sapporta/frontend
+- `TableRoute` — @sapporta/frontend/routes/table, @sapporta/frontend
+- `TableRouteProps` — @sapporta/frontend/routes/table, @sapporta/frontend
+- `TableRow` — @sapporta/server
+- `TableRowDecoder` — @sapporta/frontend/table/query, @sapporta/frontend
+- `TableRowScanInput` — @sapporta/server
+- `TableRowScanOrder` — @sapporta/server
+- `TableRowsClient` — @sapporta/frontend
+- `TableRowSecurity` — @sapporta/server
+- `TableRowsSelectionParams` — @sapporta/frontend
+- `tableSampleRoute` — @sapporta/shared/contracts
+- `TableSchema` — @sapporta/shared/contracts
+- `tableSchemaSchema` — @sapporta/shared/contracts
+- `TablesDocContext` — @sapporta/server
+- `TableSearch` — @sapporta/server/table, @sapporta/server
+- `TableSelection` — @sapporta/frontend
+- `TableSelectionSession` — @sapporta/frontend
+- `TableUrlState` — @sapporta/frontend
+- `TableValidation` — @sapporta/server/table, @sapporta/server
+- `TableValidationContext` — @sapporta/server/table, @sapporta/server
+- `TableValidationField` — @sapporta/server/table, @sapporta/server
+- `TableValidationValue` — @sapporta/server/table, @sapporta/server
+- `TableValueDraftDecodeResult` — @sapporta/frontend
+- `TableViewPreference` — @sapporta/frontend
+- `tableViewPreferenceKey` — @sapporta/frontend
+- `TableWriteParseResult` — @sapporta/server
+- `tableWriteZod` — @sapporta/server
+- `templateColumns` — @sapporta/grid/column-preset
+- `Temporal` — @sapporta/shared/temporal, @sapporta/shared
+- `text` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `TextColumnOptions` — @sapporta/grid/column-preset
+- `TextDisplayMode` — @sapporta/grid/column-preset
+- `TextPreset` — @sapporta/grid/column-preset
+- `TGrid` — @sapporta/frontend
+- `TGridActiveRow` — @sapporta/frontend
+- `TGridAnyTableColumnSpec` — @sapporta/frontend
+- `TGridCellActivation` — @sapporta/frontend
+- `TGridCellActivationContext` — @sapporta/frontend
+- `tgridCellContext` — @sapporta/frontend
+- `TGridCellContext` — @sapporta/frontend
+- `tgridCellEditorContext` — @sapporta/frontend
+- `TGridCellEditorContext` — @sapporta/frontend
+- `TGridCellWriteContext` — @sapporta/frontend
+- `TGridCellWriteHandler` — @sapporta/frontend
+- `TGridCellWriteResult` — @sapporta/frontend
+- `TGridClientColumnSpec` — @sapporta/frontend
+- `TGridColumnBuildArgs` — @sapporta/frontend
+- `TGridColumnBuildResult` — @sapporta/frontend
+- `TGridColumnContext` — @sapporta/frontend
+- `TGridColumnCopyBehavior` — @sapporta/frontend
+- `TGridColumnMapper` — @sapporta/frontend
+- `TGridColumnsBuilder` — @sapporta/frontend
+- `TGridColumnSpec` — @sapporta/frontend
+- `TGridColumnSpecBuilder` — @sapporta/frontend
+- `TGridDefinition` — @sapporta/frontend
+- `TGridFilter` — @sapporta/frontend
+- `TGridLevelConfig` — @sapporta/frontend
+- `TGridLevelId` — @sapporta/frontend
+- `TGridLevelInfo` — @sapporta/frontend
+- `TGridLevelQueryConfig` — @sapporta/frontend
+- `TGridLevelQueryState` — @sapporta/frontend
+- `TGridLevelsConfigMap` — @sapporta/frontend
+- `TGridLoadedRowsBoundaryHandler` — @sapporta/frontend
+- `TGridPresentation` — @sapporta/frontend
+- `TGridQueryState` — @sapporta/frontend
+- `TGridRemainingTableColumnSpec` — @sapporta/frontend
+- `TGridRouteQuerySeed` — @sapporta/frontend
+- `TGridRowActivatedEvent` — @sapporta/frontend
+- `TGridRowsByLevel` — @sapporta/frontend
+- `TGridRuntimeCellWriteHandler` — @sapporta/frontend
+- `TGridRuntimeCellWriteResult` — @sapporta/frontend
+- `TGridRuntimeLevel` — @sapporta/frontend
+- `TGridSession` — @sapporta/frontend
+- `tgridSessionContext` — @sapporta/frontend
+- `TGridSessionContext` — @sapporta/frontend
+- `TGridSourceStatus` — @sapporta/frontend
+- `TGridTableColumnMeta` — @sapporta/frontend
+- `TGridTableColumnSpec` — @sapporta/frontend
+- `TGridTableRow` — @sapporta/frontend
+- `TGridTableSchemaInput` — @sapporta/frontend
+- `TGridTableSchemaOverrides` — @sapporta/frontend
+- `ThemeMode` — @sapporta/frontend
+- `ThrowingClient` — @sapporta/shared/client
+- `timestamp` — @sapporta/server/table, @sapporta/server
+- `Tooltip` — @sapporta/ui/tooltip, @sapporta/ui
+- `TooltipContent` — @sapporta/ui/tooltip, @sapporta/ui
+- `TooltipProvider` — @sapporta/ui/tooltip, @sapporta/ui
+- `TooltipTrigger` — @sapporta/ui/tooltip, @sapporta/ui
+- `toRecordId` — @sapporta/shared/record-id, @sapporta/shared
+- `trackForColumn` — @sapporta/grid/column-preset
+- `trailingEdge` — @sapporta/grid
+- `TreeBackedLevelRow` — @sapporta/grid
+- `TreeNode` — @sapporta/grid
+- `treeNodeForRow` — @sapporta/grid
+- `truncateValues` — @sapporta/server/cli/format
+- `trustedInsertValuesForDataAuthority` — @sapporta/server
+- `TrustedInsertValuesForDataAuthority` — @sapporta/server
+- `TsRestApi` — @sapporta/honest, @sapporta/server
+- `TypedFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `TypedFilterParseCode` — @sapporta/shared/filter, @sapporta/shared
+- `TypedFilterParseError` — @sapporta/shared/filter, @sapporta/shared
+- `TypedValue` — @sapporta/shared/filter, @sapporta/shared
+- `uiClient` — @sapporta/frontend
+- `uiContract` — @sapporta/shared/contracts
+- `UiContract` — @sapporta/shared/contracts
+- `uniqueIndex` — @sapporta/server/table
+- `unregisterTGridSession` — @sapporta/frontend
+- `updateRoute` — @sapporta/server
+- `updateRow` — @sapporta/server
+- `updateRowRoute` — @sapporta/shared/contracts
+- `updateTableRow` — @sapporta/frontend
+- `updateTypedFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `UploadedFiles` — @sapporta/honest, @sapporta/server
+- `UrlQueryObject` — @sapporta/frontend/report, @sapporta/frontend
+- `UrlQueryValue` — @sapporta/frontend/report, @sapporta/frontend
+- `useActiveCell` — @sapporta/grid
+- `useActiveCellForPath` — @sapporta/grid
+- `useActiveRow` — @sapporta/grid
+- `useAuthStore` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
+- `useCellSelection` — @sapporta/grid
+- `useCellSelectionRectangle` — @sapporta/grid
+- `useCurrentTGridSession` — @sapporta/frontend
+- `useDebounce` — @sapporta/ui/use-debounce, @sapporta/ui
+- `useDisplayedRow` — @sapporta/grid
+- `useDisplayedRowSequence` — @sapporta/grid
+- `useGridActiveRow` — @sapporta/grid
+- `useGridRuntime` — @sapporta/grid
+- `useGridRuntimeEffect` — @sapporta/grid
+- `useHintsStore` — @sapporta/frontend
+- `useKeyHints` — @sapporta/frontend
+- `useLevelSnapshot` — @sapporta/grid
+- `useLookupOptions` — @sapporta/grid/lookup/react
+- `useLookupSearchResults` — @sapporta/grid/lookup/react
+- `useLookupStore` — @sapporta/frontend/lookup, @sapporta/frontend
+- `useLookupValueEntries` — @sapporta/grid/lookup/react
+- `useLookupValueLabels` — @sapporta/grid/lookup/react
+- `usePageTitle` — @sapporta/frontend/layout, @sapporta/frontend/shell
+- `usePhantoms` — @sapporta/grid
+- `useRowInteractionSnapshot` — @sapporta/grid
+- `userPrincipal` — @sapporta/server
+- `useSchemaStore` — @sapporta/frontend/schema, @sapporta/frontend
+- `useSchemaTableGrid` — @sapporta/frontend
+- `UseSchemaTableGridArgs` — @sapporta/frontend
+- `useSelectedRowIds` — @sapporta/grid
+- `useSelectedRows` — @sapporta/grid
+- `useSidebar` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
+- `useTableGrid` — @sapporta/frontend
+- `UseTableGridArgs` — @sapporta/frontend
+- `useTableGridUrlState` — @sapporta/frontend
+- `UseTableGridUrlStateArgs` — @sapporta/frontend
+- `useTableLevelPager` — @sapporta/frontend
+- `useTableLevelQuery` — @sapporta/frontend
+- `useTableLookup` — @sapporta/frontend/lookup, @sapporta/frontend
+- `useTablePageMode` — @sapporta/frontend
+- `useTableSelection` — @sapporta/frontend
+- `useTableViewPreference` — @sapporta/frontend
+- `useTGridActiveRow` — @sapporta/frontend
+- `useTGridCell` — @sapporta/frontend
+- `useTGridCellEditor` — @sapporta/frontend
+- `useTGridLifecycle` — @sapporta/frontend
+- `UseTGridLifecycleArgs` — @sapporta/frontend
+- `useTGridQueryState` — @sapporta/frontend
+- `UseTGridQueryStateArgs` — @sapporta/frontend
+- `useTGridSession` — @sapporta/frontend
+- `UseTGridSessionArgs` — @sapporta/frontend
+- `useTGridSourceField` — @sapporta/frontend
+- `useTGridSourceStateField` — @sapporta/frontend
+- `useTGridSourceStatus` — @sapporta/frontend
+- `useThemeStore` — @sapporta/frontend
+- `useUrlQueryState` — @sapporta/frontend/report, @sapporta/frontend
+- `validateApiWriteInput` — @sapporta/server
+- `validateColumnName` — @sapporta/server
+- `validateForeignKeyReferences` — @sapporta/server
+- `validateLevelRowHeaderColumn` — @sapporta/grid
+- `validateTableName` — @sapporta/server
+- `ValidationError` — @sapporta/server/errors, @sapporta/server
+- `ValidationErrorDetail` — @sapporta/server
+- `ValueKind` — @sapporta/shared/value-kind, @sapporta/shared
+- `ValueLookup` — @sapporta/grid/lookup
+- `VerifyEmailPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
+- `ViewRelatedRowsContext` — @sapporta/frontend
+- `ViewRelatedRowsOption` — @sapporta/frontend
+- `visiblePaginationItems` — @sapporta/frontend
+- `WATCHABLE_SUBDIRS` — @sapporta/server
+- `whereObjectToFilterParams` — @sapporta/server/cli/client
+- `width` — @sapporta/grid/column-preset
+- `wireKey` — @sapporta/shared/filter, @sapporta/shared
+- `withRowExpansionColumn` — @sapporta/grid
+- `withTGridCellLinks` — @sapporta/frontend
+- `withTGridSessionContext` — @sapporta/frontend
+- `WORKSPACE_ID_SQL_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `WORKSPACE_ID_TS_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
+- `WorkspaceGlobalDataAuthority` — @sapporta/server
+- `workspaceGlobalOnlyAuthority` — @sapporta/server
+- `WorkspaceGlobalOnlyAuthority` — @sapporta/server
+- `WorkspaceMembership` — @sapporta/server
+- `WorkspaceRole` — @sapporta/server
+- `workspaceRows` — @sapporta/server
+- `workspaceScopeColumn` — @sapporta/server
+- `WorkspaceUserDataAuthority` — @sapporta/server
+- `workspaceUserRows` — @sapporta/server
+- `workspaceUserScopedAuthority` — @sapporta/server
+- `WorkspaceUserScopedAuthority` — @sapporta/server
+- `WriteCapability` — @sapporta/grid
+- `ZeroDisplay` — @sapporta/grid/column-preset
+- `zodForColumnValue` — @sapporta/server

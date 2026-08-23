@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { visit } from "unist-util-visit";
 import docsSidebar from "../../sidebar.mjs";
+import { apiReferenceIndexUrl } from "./api-reference";
 import { gettingStartedEnv, replaceGettingStartedEnvTokens } from "./getting-started-env.mjs";
 
 const CANONICAL_SITE_ORIGIN = gettingStartedEnv.docsCanonicalOrigin;
@@ -96,6 +97,15 @@ export async function renderScopedIndex(scope: DocScope) {
     "Use the linked Markdown pages for retrieval. HTML versions are the canonical human-readable pages.",
   ];
 
+  if (isDocs) {
+    lines.push(
+      "",
+      "## API reference",
+      "",
+      `- [Sapporta API reference](${apiReferenceIndexUrl()}): Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration. The pages below explain behaviour; this names the surface.`,
+    );
+  }
+
   for (const section of sections) {
     lines.push("", `## ${section.label}`, "");
     for (const doc of section.docs) {
@@ -129,6 +139,10 @@ export async function renderRootIndex() {
     "",
     `- [Sapporta application framework](${RETRIEVAL_SITE_ORIGIN}/docs/llms.txt): Guides and reference for building and operating Sapporta applications.`,
     `- [Sapporta Grid](${RETRIEVAL_SITE_ORIGIN}/grid/llms.txt): Guides and reference for the standalone React data grid.`,
+    "",
+    "## API reference",
+    "",
+    `- [Sapporta API reference](${apiReferenceIndexUrl()}): Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration. Read this instead of opening declaration files under \`node_modules\`.`,
     "",
     "## Start here",
     "",

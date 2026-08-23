@@ -1,51 +1,46 @@
 ---
 title: "Public symbols"
-description: "Find canonical reference owners for Sapporta package exports."
+description:
+  "Find any Sapporta export, the specifier to import it from, and its exact
+  declaration."
 ---
 
 ## Identity
 
-Package/export index checked against the linked Sapporta package export maps.
+Entry point to the generated symbol reference, and the package boundaries that
+decide which package owns a symbol.
 
-## Contract
+## Complete symbol reference
 
-- `@sapporta/server`: `sapportaTable`, `tableApiZod`, `tableWriteZod`,
-  `zodForColumnValue`, `parseTableWrite`, `columnBySqlName`,
-  `columnPropertyName`, schema/auth helpers, `scopedRows`, `ScopedRows`,
-  `TableRow`, `TableColumn`, `RowsQuery`, `RowsOrderBy`, `FindManyRowsInput`,
-  `PageRowsInput`, `PageRowsResult`, the `LookupRows*Input` family,
-  `CountRowsInput`, `CountRowsByInput`, `GroupCount`, `scanTableRows`,
-  `TableRowScanInput`, `TableRowScanOrder`, `resolvePageQuery`,
-  `resolveExportQuery`, `resolveLookupQuery`, `resolveCountQuery`,
-  `ResolvedCountQuery`, `ResolveRowsQueryOptions`, `TsRestApi`, `initContract`,
-  migration readiness, and project loading.
-- `@sapporta/server/errors`: the whole error vocabulary — `ErrorCode`,
-  `ErrorCodeValue`, `OperationError`, `ValidationError`, `QueryParseError`, and
-  SQLite error classification.
-- `@sapporta/server/testing`: `createTestDb` and `createTestConnection`. Test
-  utilities live only here; they are not on the production root export.
-- `@sapporta/shared`: Temporal/filter/date-range/value helpers,
-  `CountGroupValue`, `GroupCount`, `DEFAULT_COUNT_GROUP_LIMIT`,
-  `MAX_COUNT_GROUPS`, `QueryParamValue`, `QueryParamRecord`,
-  `appendQueryParam()`, `queryParamRecordToSearchParams()`,
-  `isQueryParamRecord()`, `hasRepeatedQueryParams()`, and browser-safe subpaths
-  for contracts, clients, grid datasets, errors, and validation, including table
-  query schemas and bounds, `FieldIssue`, `fieldIssuesFromZodError()`, and
-  `apiProblemFromBody()`.
-- `@sapporta/shared/record-id`: `RecordId` and `toRecordId()`, the address
-  boundary for a primary key in a URL segment, query key, or grid row key.
-- `@sapporta/frontend`: app shell, auth, generated record surfaces,
-  metadata-derived form fields, submission-error helpers, generated table query
-  options and keys, `buildTableSelectionQuery()`, `buildTableRowsQuery()`,
-  TGrid, report components, lookups, and platform helpers.
-- `@sapporta/frontend/lookup`: `useLookupStore()`, `useTableLookup()`, and
-  `LookupPicker`, generic over the target table's primary-key type.
-- `@sapporta/frontend/layout` and `@sapporta/frontend/shell`: `AppPage`,
-  `PageFrame`, `PageHeader`, `PageHeaderButton`, `PageBody`, `SidebarProvider`,
-  `SidebarRegion`, `SidebarShell`, `SidebarToggle`, and `useSidebar()`.
-- `@sapporta/grid`: standalone GridCore runtime/React APIs, grid-wide active-row
-  state, row-activation events, ColumnPreset, `parseNumericInput`, lookup, and
-  CSS subpaths; see standalone Grid Reference.
+Every symbol the Sapporta packages publish is generated from their shipped
+declaration files and served as Markdown:
+
+- [Sapporta API reference](/api-reference/llms.txt)
+
+Start there for any "what can I import, and what is its type" question. It
+carries the exact declaration of every export, states the package version it
+describes, and includes a symbol index that maps a name to the specifier that
+publishes it. Read it instead of opening declaration files under
+`node_modules` — the reference names the specifier, which a file path does not.
+
+The pages below explain behavior that a signature cannot express. The generated
+reference names the surface; these describe what it does.
+
+## Package boundaries
+
+`@sapporta/server` owns server schema, auth, row helpers, and route
+registration. `@sapporta/shared` owns browser-safe contracts and wire values.
+`@sapporta/frontend` owns the app shell, generated record surfaces, TGrid, and
+report rendering. Standalone `@sapporta/grid` has its own
+[Grid Reference](/grid/reference/).
+
+Test utilities live only on `@sapporta/server/testing`; they are not on the
+production root export.
+
+Prefer the narrowest specifier that publishes a symbol. Root barrels re-export
+their own subpaths, so `@sapporta/frontend/layout` and `@sapporta/frontend` may
+both resolve `AppPage` — importing from the narrower one keeps the dependency
+honest and the import readable.
 
 ## Related documentation
 

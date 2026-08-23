@@ -17,7 +17,9 @@
     "package-sources:use-local": "node scripts/package-source-switch.mjs use:local",
     "package-sources:verify": "node scripts/package-source-switch.mjs verify",
     "generate:sapporta-cli-version": "node scripts/generate-sapporta-cli-version.mjs",
-    "test:build-scripts": "node --test scripts/*.test.mjs",
+    "generate:api-reference": "pnpm --filter ./packages/api-reference generate",
+    "check:api-reference": "pnpm --filter ./packages/api-reference check",
+    "test:build-scripts": "node --test scripts/*.test.mjs && pnpm --filter ./packages/api-reference test",
     "prebuild": "pnpm run clean-dist && pnpm run generate:sapporta-cli-version",
     "build": "pnpm --filter ./packages/shared build && pnpm --filter ./packages/docs build && pnpm --filter ./packages/api build && pnpm --filter ./packages/frontend build",
     "start": "pnpm --filter ./packages/api start"

@@ -10,6 +10,8 @@ APIs, auth-aware row access, and a React app shell.
 - `pnpm build` compiles the shared package, API, and frontend.
 - `pnpm start` runs the production server after `pnpm build`.
 - `pnpm exec sapporta describe` inspects the running API.
+- `pnpm generate:api-reference` rebuilds the generated Sapporta API reference.
+- `pnpm check:api-reference` fails if the committed API reference is stale.
 
 Prefer the project-local CLI form: `pnpm exec sapporta ...`.
 
@@ -23,6 +25,10 @@ Prefer the project-local CLI form: `pnpm exec sapporta ...`.
 - Browser API calls: add typed clients in `packages/frontend/src/api.ts`.
 - Auth and permissions: start in `packages/api/authz/`. Read the auth docs before
   changing row access rules.
+- Sapporta API reference: the pages under `packages/docs/src/generated/api-reference/`
+  are generated — never edit them. Change `packages/api-reference/` and run
+  `pnpm generate:api-reference`. Bump the `@sapporta/*` versions in
+  `packages/api-reference/package.json` to document a newer release.
 
 ## Schema and migrations
 

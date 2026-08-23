@@ -21,6 +21,7 @@ const explicitRoutes = new Set([
   "/grid/",
   "/llms.txt",
   "/.well-known/llms.txt",
+  "/api-reference/llms.txt",
   "/docs/llms.txt",
   "/docs/llms-full.txt",
   "/grid/llms.txt",

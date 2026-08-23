@@ -28,6 +28,7 @@ RUN apt-get update \
 FROM toolchain AS build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/api/package.json packages/api/package.json
+COPY packages/api-reference/package.json packages/api-reference/package.json
 COPY packages/docs/package.json packages/docs/package.json
 COPY packages/frontend/package.json packages/frontend/package.json
 COPY packages/shared/package.json packages/shared/package.json
@@ -41,6 +42,7 @@ RUN pnpm build
 FROM toolchain AS prod-deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/api/package.json packages/api/package.json
+COPY packages/api-reference/package.json packages/api-reference/package.json
 COPY packages/docs/package.json packages/docs/package.json
 COPY packages/frontend/package.json packages/frontend/package.json
 COPY packages/shared/package.json packages/shared/package.json

@@ -19,16 +19,38 @@ Open `http://localhost:12339`.
 - `pnpm build` - compile the shared package, API, and frontend
 - `pnpm start` - run the production server after `pnpm build`
 - `pnpm exec sapporta describe` - inspect the running API
+- `pnpm generate:api-reference` - rebuild the generated Sapporta API reference
+- `pnpm check:api-reference` - fail if the committed API reference is stale
 
 ## Project layout
 
 ```
-sapporta.json       project marker used by the Sapporta CLI
-data/               application SQLite database
-packages/api/       backend entry point, schema, migrations, and app routes
-packages/frontend/  React app, routes, styles, and browser API clients
-packages/shared/    API contracts and types shared by backend and frontend
+sapporta.json           project marker used by the Sapporta CLI
+data/                   application SQLite database
+packages/api/           backend entry point, schema, migrations, and app routes
+packages/frontend/      React app, routes, styles, and browser API clients
+packages/shared/        API contracts and types shared by backend and frontend
+packages/docs/          Astro + Starlight documentation site
+packages/api-reference/ generates the agent-facing Sapporta symbol reference
 ```
+
+## API reference
+
+`/api-reference/` serves a generated index of every symbol the `@sapporta/*`
+packages publish, so coding agents can look up a signature and its import
+specifier instead of reading declaration files out of `node_modules`.
+
+It is generated from the `@sapporta/*` versions installed in
+`packages/api-reference/`, and the generated Markdown is committed under
+`packages/docs/src/generated/api-reference/`. Rebuild it after changing those
+versions:
+
+```bash
+pnpm generate:api-reference
+```
+
+See [packages/api-reference/README.md](packages/api-reference/README.md) for how
+it works and how to document newer package versions.
 
 ## Environment
 
