@@ -79,8 +79,9 @@ Use an isolated fixture and verify:
 
 - a valid parent and every detail commit together;
 - an invisible referenced row follows the declared concealed-not-found branch;
-- caller-supplied ownership and parent keys are rejected or ignored according to
-  the contract;
+- caller-supplied ownership fields are rejected, and a caller-supplied parent
+  key is rejected only where the detail table declares that reference
+  `apiSettable: false`;
 - a failure on any detail insert leaves no parent or earlier detail rows; and
 - returned IDs and server-authored values match authoritative read-back.
 

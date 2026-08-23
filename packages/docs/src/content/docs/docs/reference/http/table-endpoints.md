@@ -20,6 +20,10 @@ Generated HTTP routes under `/api/tables/<table>`.
   master-with-`$details` body. It returns HTTP `201` with `{ data: row }`,
   `{ data: row[] }`, or `{ data: { master: row, details: row[] } }`,
   respectively.
+- Detail rows omit the `$details` foreign key; the server stamps it from the
+  created master. A row that carries it is rejected `422 VALIDATION_FAILED`
+  when the child declares that reference `apiSettable: false`, and silently
+  overwritten otherwise.
 - `PUT /api/tables/<table>/<id>` accepts a strict partial object containing any
   writable subset. Omitted fields remain unchanged. It returns `{ data: row }`.
 - `DELETE /api/tables/<table>/<id>` returns the deleted row as `{ data: row }`.

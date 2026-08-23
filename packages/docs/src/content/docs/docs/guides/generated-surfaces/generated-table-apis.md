@@ -47,9 +47,6 @@ default-generated primary keys, managed scope fields, `apiWritable: false`
 columns, and references with `apiSettable: false`. Client-assigned primary keys
 remain writable when the table permits them.
 
-Create a parent first, take its key from the `201` response, and use that key for
-child foreign keys. Do not assume a fresh database starts at ID `1`.
-
 Generated request bodies preserve semantic JSON values. Numbers and booleans
 stay primitives, foreign keys retain the target key type, and dates and
 timestamps use canonical strings. Row security merges trusted scope and
@@ -59,6 +56,52 @@ parses, canonicalizes, validates, and writes.
 Once the caller has action permission, a generated single-row read, update, or
 delete uses the same `404 ROW_NOT_FOUND` for a missing row and a row hidden by
 scope. Possessing an ID is not authority.
+
+## Create a master and its details together
+
+One `POST` to the master table creates the parent and its dependent rows in a
+single transaction:
+
+```http
+POST /api/tables/invoices
+```
+
+```json
+{
+  "number": "INV-1042",
+  "customer_id": 7,
+  "$details": {
+    "table": "invoice_lines",
+    "fk": "invoice_id",
+    "rows": [
+      { "description": "Design", "amount": 1200 },
+      { "description": "Build", "amount": 4800 }
+    ]
+  }
+}
+```
+
+The response is `201` with `{ "data": { "master": row, "details": row[] } }`.
+The caller needs create permission on both tables, and any failure rolls back
+every write.
+
+Detail rows omit the foreign key; the server stamps it from the created master.
+Declare the relationship on both sides — children on the master so the form
+reaches OpenAPI and generated clients, and a server-owned reference on the child
+so a caller who sends the key gets `422 VALIDATION_FAILED` rather than a silent
+overwrite:
+
+```ts
+// invoices
+meta: { children: [{ table: "invoice_lines", foreignKey: "invoice_id" }] }
+
+// invoice_lines
+meta: { references: { invoice_id: { table: "invoices", apiSettable: false } } }
+```
+
+Two round-trips still apply when the details are not known up front: create the
+parent, read its key from the `201`, then post children. Do not assume a fresh
+database starts at ID `1`.
 
 ## Continue with specialized generated operations
 
