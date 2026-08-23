@@ -18,6 +18,10 @@ the generated `/api/tables/:tableName` routes, so server-side row visibility
 still applies. The custom endpoint owns completion because it changes both task
 status and history.
 
+`projectRowSchema` and `taskRowSchema` are
+[row projections](/docs/guides/app-owned-features/cached-table-reads-and-refresh/):
+the columns this screen reads.
+
 ```tsx
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,45 +34,21 @@ import {
 import { ApiError } from "@sapporta/shared/client";
 import { Button } from "@sapporta/ui";
 import { Link } from "react-router-dom";
+import type { Row } from "@sapporta/shared/contracts";
 import {
+  projectRowSchema,
   taskCompletionErrorSchema,
+  taskRowSchema,
+  type ProjectRow,
+  type TaskRow,
   type TaskCompletionErrorBody,
 } from "task-app-shared";
 import { taskActionsApi } from "./api";
 
-type Project = { id: number; name: string };
-type Task = {
-  id: number;
-  project_id: number;
-  title: string;
-  status: string;
-};
-
 const TABLE_ROW_CAP = 100;
 
-function decodeProject(row: Record<string, unknown>): Project {
-  if (typeof row.id === "number" && typeof row.name === "string") {
-    return { id: row.id, name: row.name };
-  }
-  throw new Error("Unexpected project row");
-}
-
-function decodeTask(row: Record<string, unknown>): Task {
-  if (
-    typeof row.id === "number" &&
-    typeof row.project_id === "number" &&
-    typeof row.title === "string" &&
-    typeof row.status === "string"
-  ) {
-    return {
-      id: row.id,
-      project_id: row.project_id,
-      title: row.title,
-      status: row.status,
-    };
-  }
-  throw new Error("Unexpected task row");
-}
+const decodeProject = (row: Row): ProjectRow => projectRowSchema.parse(row);
+const decodeTask = (row: Row): TaskRow => taskRowSchema.parse(row);
 
 function taskActionFailure(
   error: unknown,
@@ -121,7 +101,7 @@ export function ProjectProgress() {
   }
 
   const completeTask = useMutation({
-    mutationFn: async (task: Task) => {
+    mutationFn: async (task: TaskRow) => {
       await taskActionsApi.completeTask({
         params: { id: task.id },
         body: {},
@@ -151,7 +131,7 @@ export function ProjectProgress() {
     (tasksQuery.data?.meta.total ?? 0) > (tasksQuery.data?.data.length ?? 0);
 
   const tasksByProject = useMemo(() => {
-    const grouped = new Map<number, Task[]>();
+    const grouped = new Map<number, TaskRow[]>();
     for (const task of tasks) {
       const projectTasks = grouped.get(task.project_id) ?? [];
       projectTasks.push(task);

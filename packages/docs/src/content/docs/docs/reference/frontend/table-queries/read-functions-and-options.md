@@ -114,9 +114,11 @@ Without `decodeRow`, both builders return generic `Row` values. Supplying
 `decodeRow(row)` changes the inferred query data to the application row type.
 Each page row is decoded independently. Decoder failures reject the query.
 Sapporta does not infer an application domain type from a generic table
-response. The page decoder uses ordinary array mapping, so one thrown decoder
-error fails the whole query rather than publishing a shorter page. Partial
-results require a separate wire contract and visible diagnostics.
+response; the application declares it as a
+[row projection](/docs/guides/app-owned-features/cached-table-reads-and-refresh/).
+The page decoder uses ordinary array mapping, so one thrown decoder error fails
+the whole query rather than publishing a shorter page. Partial results require a
+separate wire contract and visible diagnostics.
 
 Both query functions consume TanStack Query's request signal. When TanStack
 Query aborts that signal, the generated table request receives the abort.

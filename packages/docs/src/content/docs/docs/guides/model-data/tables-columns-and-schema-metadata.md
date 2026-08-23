@@ -140,8 +140,12 @@ Semantic column factories attach wire and value semantics to the Drizzle column.
 The tuple passed to `select()` drives TypeScript inference, structural
 validation, OpenAPI, choice controls, and enum filters. Raw primary and foreign
 keys still receive a semantic `kind` when Sapporta extracts browser metadata.
-Derive row types with `$inferSelect` and `$inferInsert`; a handwritten row
-interface can drift from the table.
+Derive server row types with `$inferSelect` and `$inferInsert`; a handwritten
+row interface can drift from the table. Both describe the row as Drizzle
+hydrates it, not the wire row: `due_date` is a `Temporal.PlainDate` there, while
+the generated route sends `"2026-04-18"`. Browser code declares the columns it
+reads separately, as a
+[row projection](/docs/guides/app-owned-features/cached-table-reads-and-refresh/).
 
 `workspace_id` is required by `workspaceGlobal`, but it is a server-managed
 value. Generated clients and forms must not submit it. The default

@@ -17,6 +17,10 @@ shared package may contain Zod schemas, contracts, wire types, constants, and
 pure serializers. It remains a leaf package: React components, Hono handlers,
 Drizzle queries, database handles, and file I/O stay in their owning packages.
 
+[Row projections](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
+— the columns a screen reads from a generated table route — belong here too.
+They are application-declared wire shapes, not browser-private types.
+
 Suppose one operation must change a task and record a history event together.
 The contract for that bounded slice lives in
 `packages/shared/src/contracts/complete-task.ts`:
@@ -103,8 +107,9 @@ contract schemas before it invokes the handler. The numeric coercion above turns
 the path segment `"12"` into `request.params.id === 12`. A non-numeric ID fails
 at the boundary, so domain code does not need another parser.
 
-Run the task app, then compare a valid and invalid request. Take `SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev`
-prints it as the API URL when it starts.
+Run the task app, then compare a valid and invalid request. Take
+`SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev` prints it
+as the API URL when it starts.
 
 ```bash
 curl -i -X POST "http://localhost:$SAPPORTA_API_PORT/api/tasks/12/complete" \

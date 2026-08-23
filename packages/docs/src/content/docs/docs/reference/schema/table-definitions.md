@@ -25,11 +25,12 @@ description:
 - `meta.rowLabelColumns` is a non-empty list of real SQL column names on the
   current table. Runtime labels concatenate their non-empty row values and fall
   back to the primary key only when every configured label value is empty.
-- Generated API writes use canonical date and timestamp strings. Direct Drizzle
-  code uses `Temporal.PlainDate` and `Temporal.Instant`, and database reads
-  return those Temporal values.
+- Generated API reads and writes use canonical date and timestamp strings.
+  Direct Drizzle code uses `Temporal.PlainDate` and `Temporal.Instant`, and
+  database reads return those Temporal values.
 - Select and insert types come from `$inferSelect` and `$inferInsert` on the raw
-  table.
+  table. They describe the hydrated Drizzle row, so they are server types, not
+  the wire row.
 - Sapporta's public table boundaries use SQL column names. Drizzle property
   names are translated immediately around database calls.
 
