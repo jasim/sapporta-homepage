@@ -68,11 +68,11 @@ and proves the connection with a read-only command. In a sandboxed agent, that
 final check may require explicit network permission for the application URL.
 
 Against a local development server, `endpoints list` succeeds without a
-credential and therefore reports reachability rather than the token. Read one
-workspace-scoped value to confirm the token itself:
+credential and therefore reports reachability rather than the token. Read the
+auth context to confirm the token itself:
 
 ```bash
-pnpm exec sapporta rows count tasks
+pnpm exec sapporta api get '/api/auth-context'
 ```
 
 The generated setup prompt contains the raw credential by design, so treat the
