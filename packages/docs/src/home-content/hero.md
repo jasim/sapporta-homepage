@@ -21,15 +21,13 @@ navigation:
 
 ## Build full database applications from table declarations
 
-Sapporta is a TypeScript + SQLite framework. Declare a table and its entire
-surface exists — an editable grid, forms, reports, and secure APIs. Your
-coding agent skips the plumbing and builds only what makes your application
-yours.
+Sapporta is a TypeScript + SQLite framework. Declare a table and you get an
+editable grid, forms, reports, and secure APIs for it. Your coding agent
+skips the plumbing and writes only the parts specific to your application.
 
-- **Spreadsheet-grade grids for every table, immediately.** Filtering,
+- **Every table gets a spreadsheet-grade grid right away.** Filtering,
   sorting, search, export, and full keyboard navigation — comfortable enough
-  for a full day's work.
-- **Reports with drill-down navigation** into the underlying records,
-  shareable by URL.
-- **Auth that is secure for production.** Row-level security and typed
-  contracts on every generated API, safe to deploy on the public internet.
+  to use all day.
+- **Reports that drill down** into the underlying records, shareable by URL.
+- **Auth you can ship.** Row-level security and typed contracts on every
+  generated API, safe to run on the public internet.

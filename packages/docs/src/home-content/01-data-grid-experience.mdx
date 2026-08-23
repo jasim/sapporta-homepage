@@ -3,8 +3,8 @@ import EvidenceShot from "../components/EvidenceShot.astro";
 
 ## A datagrid for every table
 
-Declare a table and a live, editable grid exists — the demo at the top of
-this page is exactly that, produced by one table declaration.
+Declare a table and you get a live, editable grid. The demo at the top of
+this page came from one table declaration.
 
 <CapabilityStrip
   items={[
@@ -18,30 +18,29 @@ this page is exactly that, produced by one table declaration.
   ]}
 />
 
-**The spreadsheet lesson.** People reach for spreadsheets because they can
-work with data without anticipating every requirement in advance. Sorting,
-searching, and filtering are available to every sheet, and together they form
-a partial but high-leverage algebra for changing and understanding data.
+**Why spreadsheets work.** People reach for spreadsheets because they can
+work with data without deciding every requirement in advance. Sorting,
+searching, and filtering are available on every sheet, and that small set of
+operations covers much of what you need to change and understand data.
 
-**One surface, polished deeply.** Traditional ERP interfaces are largely
-forms, data grids, and reports — keyboard-first, information-dense, built for
-power users. Sapporta brings that experience to the web by using the data
-grid as the universal surface for tabular data, so the heart and soul put
-into one component benefits the entire application.
+**One component, done well.** Traditional ERP interfaces are mostly forms,
+data grids, and reports — keyboard-first, information-dense, built for power
+users. Sapporta brings that to the web by using one data grid for all tabular
+data, so the work put into that component benefits the whole application.
 
 <EvidenceShot
   src="/assets/home/screenshots/grid-filtering.png"
   alt="A task grid filtering interface with description and assignee filters"
-  caption="Filters compose directly above the grid while matching rows stay visible."
+  caption="Filters combine directly above the grid while matching rows stay visible."
 />
 
-**No second-class tables.** Built as one-off features, grid behaviors have to
-be defined from scratch for every table — even with an LLM. So conventional
-systems polish the few central screens and the rest of the application's data
-becomes a second-class citizen. In Sapporta, like a spreadsheet, every table
-gets the full grid the moment it is created.
+**No second-class tables.** When grid behavior is built per feature, you
+write it again for every table, even with an LLM. So conventional systems
+polish a few central screens and leave the rest of the application's data
+poorly served. In Sapporta, like in a spreadsheet, every table gets the full
+grid the moment it is created.
 
-**Built to be composed and extended.** The
+**The grid itself.** The
 [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is
 a custom-built React component with a feature set and UX similar to Airtable
 and NocoDB: paginated, filterable, sortable, and searchable, with nested

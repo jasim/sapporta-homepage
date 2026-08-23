@@ -3,8 +3,8 @@ import CapabilityStrip from "../components/CapabilityStrip.astro";
 ## Sapporta projects are regular applications
 
 `sapporta init` gives you a complete, pre-wired project — API server, React
-frontend, auth, migrations, and a production Dockerfile — and all of it is
-plain TypeScript you can read and own.
+frontend, auth, migrations, and a production Dockerfile — all of it plain
+TypeScript that you can read and own.
 
 <CapabilityStrip
   items={[
@@ -17,12 +17,12 @@ plain TypeScript you can read and own.
   ]}
 />
 
-**A regular codebase, without constraints.** Add typed API endpoints, React
-screens, and whatever business logic your application needs, the way you
-would in any TypeScript project.
+**A regular codebase.** Add typed API endpoints, React screens, and whatever
+business logic your application needs, the way you would in any TypeScript
+project.
 
-**With a sprinkling of declarativeness.** The `sapportaTable` declaration is
-the only declarative configuration in a Sapporta application:
+**One declarative piece.** The `sapportaTable` declaration is the only
+declarative configuration in a Sapporta application:
 
 ```ts
 // packages/api/schema/books.ts
@@ -66,10 +66,10 @@ This produces both the backend APIs and frontend UI for the table:
 - **Table APIs.** Sapporta generates list, get, create, update, delete, lookup,
   count, and CSV export endpoints, then publishes them to `/api/openapi.json`
   for agentic use. Row-level security from `rowScope` and role-based permissions
-  defined with CASL secure every call, so the APIs can be safely published on
-  the internet.
+  defined with CASL apply to every call, so the APIs are safe to publish on the
+  internet.
 - **Table Grid.** Sapporta publishes `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
   child-table views. The grids include filtering, sorting, searching, exporting,
-  nesting, and keyboard navigation. Because they use the table APIs, they
-  inherit the same authorization and permissions.
+  nesting, and keyboard navigation. Because they use the table APIs, they get
+  the same authorization and permissions.

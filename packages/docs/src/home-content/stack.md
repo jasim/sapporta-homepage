@@ -1,6 +1,6 @@
 ## Stack
 
-Best-in-class libraries wired into a conventional pnpm workspace — nothing
+Well-established libraries wired into a conventional pnpm workspace. Nothing
 proprietary, nothing hidden.
 
 - **[TypeScript](https://www.typescriptlang.org/) on
@@ -22,8 +22,8 @@ proprietary, nothing hidden.
   [ts-rest](https://ts-rest.com/), and Sapporta's
   **[Honest](https://github.com/jasim/sapporta/tree/main/packages/honest#readme)**
   [Hono](https://hono.dev/) adapter for contract-first APIs. You define an
-  APIs signature once in the shared package. The backend uses that contract to parse and type each
-  request. The frontend uses the same contract to serialize requests, parse and
+  API's signature once in the shared package. The backend uses that contract to
+  parse and type each request, and the frontend uses it to serialize requests,
   validate responses, and expose a fully typed API client. There is no second
   set of parsers, serializers, or request and response interfaces to keep in
   sync. The contract also becomes the

@@ -1,25 +1,18 @@
 ## Consistency across an AI-written codebase
 
-When you use AI to write code for database applications, you often get
-inconsistent implementations of common patterns across different parts of your
-app. Sapporta solves this by providing a framework where data-related
-functionality is generated consistently from schema declarations.
+When you use AI to write a database application, common patterns often end up
+implemented differently in different parts of the app. Coding agents rarely
+build shared, reusable infrastructure, so you get:
 
-Coding agents often fail to establish consistent, reusable infrastructure
-across the codebase. For example:
+- Repeated prompting for basic functionality
+- Similar features implemented in different ways
+- Security lapses, such as forgetting to scope data to the user
+- Time spent correcting plumbing instead of writing business logic
 
-- Repetitive prompting for basic functionality
-- Inconsistent implementations of similar features
-- Security lapses: forget to enforce user scoping of data in generated code
-- Constant correction of plumbing rather than business logic
+Sapporta generates data-related functionality from schema declarations
+instead:
 
-Sapporta solves this by providing a unified framework where:
-
-- Tables declared once automatically get grids, forms, reports, and secure APIs
-- Shared behaviors (filtering, sorting, exports) are implemented centrally
-- Security is built into the foundation — both in the framework and agent
-  skills
-- The entire stack (Hono + React + SQLite) is transparent and maintainable
-
-Sapporta provides a thoughtful integration between rapid development using AI
-and professional software development practices.
+- Declare a table once and it gets grids, forms, reports, and secure APIs
+- Shared behaviors — filtering, sorting, exports — are written in one place
+- Security is built into the framework and the agent skills
+- The whole stack (Hono + React + SQLite) stays visible and maintainable

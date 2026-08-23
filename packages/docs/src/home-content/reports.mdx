@@ -3,7 +3,7 @@ import EvidenceShot from "../components/EvidenceShot.astro";
 
 ## Reports with drill-down
 
-A report is one API endpoint returning a common wire format — sorting,
+A report is one API endpoint returning a common wire format. Sorting,
 exporting, nesting, and deep links all come from the framework.
 
 <CapabilityStrip
@@ -18,13 +18,13 @@ exporting, nesting, and deep links all come from the framework.
 />
 
 **One wire format instead of ad-hoc HTML.** When an LLM writes reporting code
-from scratch, exporting, sorting, and filtering get tangled into each
-report's rendering logic, ad hoc, every time. In Sapporta the endpoint
+from scratch, exporting, sorting, and filtering end up mixed into each
+report's rendering code, differently every time. In Sapporta the endpoint
 returns a `GridDataset` and the ReportGrid component renders it with the
-Sapporta Grid, so those concerns stay cleanly separated.
+Sapporta Grid, so rendering stays separate from those concerns.
 
 **Nested levels.** Reports can render multiple levels: rows in an Account
-Ledger expand to show their journal entry, giving full context for each
+Ledger expand to show their journal entry, so you get the full context of a
 transaction without leaving the report.
 
 <EvidenceShot
@@ -33,15 +33,14 @@ transaction without leaving the report.
   caption="Rows expand in place to show the records underneath each figure."
 />
 
-**URL deep-linking.** A report's parameters and drill-downs are captured in
-the URL, so any report configuration can be shared as a link.
+**URL deep-linking.** A report's parameters and drill-downs are kept in the
+URL, so you can share any report configuration as a link.
 
 **Built-in primitives.** Rollups, subtotals, opening rows, and closing rows
-are first-class.
+are supported directly.
 
 **Full keyboard.** Space expands nested rows; Enter follows the active
 cell's link.
 
 **Composable.** Argument inputs, error display, and summary stats are React
-components your code can compose, extend, or replace wholesale for fully
-custom experiences.
+components your code can reuse, extend, or replace entirely.

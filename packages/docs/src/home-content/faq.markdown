@@ -10,56 +10,51 @@ then manage the agent so it doesn't create duplicate sources of truth and comple
 when something doesn't fit what we want, we have to correct the agent, and between all this is lots of waiting and
 uncertainty. So the value of a well-integrated well-curated system never goes away.
 
-Sapporta helps agentic development because it provides a robust infrastructure within which the agents can build in a
-predictable manner. It gets working table APIs, grids, forms, and row security, then spends its time on the
-domain-specific parts of the product.
+Sapporta gives agents infrastructure to build within, so they behave predictably. The agent starts with working table
+APIs, grids, forms, and row security, and spends its time on the parts specific to your product.
 
 ### What kinds of products can I build?
 
-Sapporta is a great fit for any web application that you want to build with a TypeScript backend and rich React
-single-page applications. It wires best in class libraries into a pnpm workspace: a package for shared code between
-front-end and back-end code, which includes ts-rest for typed APIs, and a front-end setup with state management, forms,
-queries, and UI.
+Sapporta suits any web application you want to build with a TypeScript backend and a rich React single-page frontend. It
+wires best in class libraries into a pnpm workspace: a package for code shared between frontend and backend, including
+ts-rest for typed APIs, and a frontend set up with state management, forms, queries, and UI.
 
-It is especially well suited to database tools: personal software, internal/operationl tools, and vertical SaaS.
-
-Examples include personal software such as calorie and fitness trackers, personal bookkeeping systems, and
-home-management databases, as well as internal tools like CRMs, case trackers, and inspection/audit systems.
+It fits database tools especially well: personal software, internal and operational tools, and vertical SaaS. Examples
+include calorie and fitness trackers, personal bookkeeping systems, and home-management databases, as well as internal
+tools like CRMs, case trackers, and inspection or audit systems.
 
 These applications need purpose-built workflows, but they also need a flexible way to work with the underlying data.
-Sooner or later, you will want to correct old entries, investigate a discrepancy, reorganize records, or explore a
-question the original interface never anticipated. Sapporta's table grids let you do all that, with the freedom of a
-spreadsheet rather than a static CRUD scaffold. And because the entire system is queryable and scriptable through typed
-APIs, you can also drive it agentically, letting agents work with the same data and workflows your users do.
+Sooner or later you will want to correct old entries, investigate a discrepancy, reorganize records, or answer a
+question the original interface never anticipated. Sapporta's table grids let you do that with the freedom of a
+spreadsheet rather than a static CRUD scaffold. And because the whole system is queryable and scriptable through typed
+APIs, agents can work with the same data and workflows your users do.
 
-It is less opinionated about products whose main surface is not relational data, such as forum software, social
-networks, media editors or real-time multiplayer experiences. You can still build those features in the same TypeScript
-application, but the generated grids and table APIs will provide less leverage there.
+It gives you less for products whose main content is not relational data, such as forum software, social networks, media
+editors, or real-time multiplayer experiences. You can still build those features in the same TypeScript application,
+but the generated grids and table APIs will not help much there.
 
 ### Can I build customer-facing SaaS applications with it?
 
 Yes, especially vertical SaaS products whose users work with structured, relational data. Sapporta includes
-authentication, workspaces, roles, and row-scoped data access. A workspace in a Sapporta project can be treated as a
-Tenant, and the integrated CASL bindings can let you serve serve different users across tenants with full authentication
-and authorization boundaries.
+authentication, workspaces, roles, and row-scoped data access. You can treat a workspace as a tenant, and the integrated
+CASL bindings let you serve users across tenants with full authentication and authorization boundaries.
 
-Sapporta is currently an early alpha and supports SQLite. That makes the deployment model a good fit for small
-applications and focused SaaS products, but it is a constraint to evaluate against your expected workload. However there
-is nothing inherent about the architecture that binds the system to SQLite; adding Postgres, for example, is just
-effort.
+Sapporta is currently an early alpha and supports SQLite. That deployment model fits small applications and focused SaaS
+products, but check it against the workload you expect. Nothing in the architecture ties the system to SQLite; adding
+Postgres, for example, is just effort.
 
 ### Can I add custom business logic beyond generated CRUD?
 
-Yes. Generated CRUD is only a starting surface. You can add typed contracts in the shared package, Hono handlers and
+Yes. The generated CRUD is only a starting point. You can add typed contracts in the shared package, Hono handlers and
 domain modules in the API, transactions around multi-table changes, and custom React routes in the frontend.
 
-Those custom features live beside Sapporta's generated routes in a regular TypeScript codebase. They can also use the
-same authentication context, row-scoped data helpers, mailer, and typed client conventions.
+That code sits beside Sapporta's generated routes in a regular TypeScript codebase, and it can use the same
+authentication context, row-scoped data helpers, mailer, and typed client conventions.
 
 ### How are authentication, permissions, and tenant isolation handled?
 
-Sapporta has baked-in conventions that let you build not only personal software, but also multi-tenant applications with
-row-level security and fine-grained permissions. The model has three axes:
+Sapporta's built-in conventions cover personal software as well as multi-tenant applications with row-level security and
+fine-grained permissions. There are three parts:
 
 **Who is making the request?** Every request to an application or generated API route passes through auth middleware
 before its handler runs. The middleware accepts either a browser session managed by Better Auth or an agent access
@@ -90,20 +85,19 @@ columns the table must contain and which SQL predicate Sapporta adds to its quer
 | `workspaceGlobal`               | `workspace_id`                      | Rows in the active workspace                   |
 | `workspaceUserScoped` (default) | `workspace_id`, `scoped_to_user_id` | Rows in the active workspace owned by the user |
 
-The scope columns are server-managed. Sapporta validates that they exist on the table, hides them from ordinary table
-presentation, and does not allow API callers to set them directly.
+The server manages the scope columns: Sapporta checks that they exist on the table, hides them from ordinary table
+presentation, and does not let API callers set them directly.
 
-These checks work together. For example, a workspace member might have permission to update invoices, but that
-permission does not grant access to every invoice in the database. The update is allowed only when the CASL ability
-permits the action **and** the invoice is inside the member's row scope.
+Both checks apply together. A workspace member may have permission to update invoices, but that permission does not give
+them every invoice in the database. The update goes through only when the CASL ability permits the action **and** the
+invoice is inside the member's row scope.
 
 For [generated table routes](/docs/guides/generated-surfaces/generated-table-apis/), Sapporta applies both checks
-automatically before a query reaches Drizzle. Collection operations—including lists, lookups, counts, and exports—simply
-leave out rows beyond the caller's scope. A read, update, or delete for one record returns the same `404 ROW_NOT_FOUND`
-whether the record does not exist or exists outside that scope, so the response does not reveal records from another
-tenant.
+automatically before a query reaches Drizzle. Lists, lookups, counts, and exports leave out rows beyond the caller's
+scope. Reading, updating, or deleting one record returns the same `404 ROW_NOT_FOUND` whether the record does not exist
+or exists outside that scope, so the response does not reveal records from another tenant.
 
-Creates are protected in the other direction: the client cannot choose a workspace or owner by submitting a scope field.
+Creates are protected in the other direction: a client cannot choose a workspace or owner by submitting a scope field.
 Sapporta rejects caller-supplied scope values, derives the correct values from the authenticated request, and checks
 that referenced records are visible under the same rules. Tenant ownership therefore comes from trusted server context
 rather than a form field, JSON property, or URL parameter.
@@ -115,15 +109,15 @@ that need joins, transactions, or custom result shapes can use
 [a per-table row-security guard](/docs/reference/server/row-scoped-data/table-row-security-guards/) around direct
 Drizzle operations instead.
 
-The important distinction is that raw Drizzle queries do not apply these rules automatically. A custom route must check
-its CASL ability and use Sapporta's scoped data helpers or row-security guards. This keeps the real security boundary on
-the server, where the authenticated identity, permitted action, and visible rows can be evaluated together.
+Raw Drizzle queries do not apply any of these rules automatically. A custom route must check its CASL ability and use
+Sapporta's scoped data helpers or row-security guards, which keeps the security boundary on the server, where the
+authenticated identity, permitted action, and visible rows are evaluated together.
 
 ### Is Sapporta a library, framework, or hosted platform?
 
 Sapporta is an open-source TypeScript framework made of installable libraries and project tooling. It initializes a
 conventional pnpm workspace, then runs as part of the application you own.
 
-It is not a hosted platform or external control plane. It is a framework just like Rails and Django, but built with
-TypeScript using a curated set of libraries, and providing more specific conveniences for database applications and
-agentic coding.
+It is not a hosted platform and runs nothing outside your application. It is a framework in the same sense as Rails and
+Django, but built with TypeScript using a curated set of libraries, and with more specific conveniences for database
+applications and agentic coding.
