@@ -29,8 +29,10 @@ remain the authoritative grammar for the installed version.
 
 ## Target the running app
 
-API-backed commands target `http://localhost:3000` by default. Set an explicit
-URL when that default is not unquestionably the intended application. A
+Run from inside a project and API-backed commands need no URL: the CLI reads
+`SAPPORTA_API_PORT` from the project's `.env.development` and targets that port
+on localhost. Outside a project it falls back to `http://localhost:3000`. Set an
+explicit URL when the target is not unquestionably the intended application. A
 protected app also needs a bearer token.
 
 ```bash

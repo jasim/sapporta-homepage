@@ -5,7 +5,9 @@ description:
   up locally, and open the generated app shell."
 ---
 
-Sapporta projects require pnpm 11 or later.
+Sapporta projects require pnpm 11 or later. The generated workspace declares its
+settings in `pnpm-workspace.yaml`, which pnpm 10 and earlier ignore, so
+`sapporta init` checks the version and stops on an older one.
 
 If Node.js is installed but `pnpm` is not available, or an older pnpm is
 installed, use Corepack:
@@ -41,23 +43,22 @@ cd my-app
 pnpm dev
 ```
 
-The console prints the local browser URL. This is the Vite frontend server. It
-serves `index.html` and the React application, usually at:
+Each project gets its own ports, so `pnpm dev` prints them as it starts:
 
 ```text
-http://localhost:5173
+Development servers for this project, on ports set in .env.development:
+
+  App   http://localhost:5385   open this in a browser
+  API   http://localhost:3212   call directly from scripts and coding agents
 ```
 
-The backend API runs at:
-
-```text
-http://localhost:3000
-```
+The two numbers differ in every project. Read them from this output, or from
+`.env.development`.
 
 ## Sign up locally
 
-Open the local browser URL printed by `pnpm dev`. A new project opens at the
-signup screen when no signed-in session exists.
+Open the App URL printed by `pnpm dev`. A new project opens at the signup
+screen when no signed-in session exists.
 
 ![Generated Sapporta signup screen](/assets/getting-started/generated-app-signup.jpg)
 
@@ -69,7 +70,7 @@ and can be customized locally.
 
 Sapporta creates the first workspace and assigns the first user as its owner.
 The app shell shows project navigation, generated table surfaces, the account
-workspace, and the starter welcome screen.
+workspace, and the starter home screen at `/`.
 
 ![Generated Sapporta app after signup](/assets/getting-started/generated-app-welcome.jpg)
 

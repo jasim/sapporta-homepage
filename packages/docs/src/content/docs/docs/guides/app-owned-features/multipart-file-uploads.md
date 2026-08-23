@@ -87,10 +87,11 @@ it. Check declared size and type before buffering. Production also needs an
 upstream body limit, content inspection where required, external byte storage
 where appropriate, and scoped storage metadata.
 
-Exercise the mounted route:
+Exercise the mounted route. Take `SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev`
+prints it as the API URL when it starts.
 
 ```bash
-curl -i -X POST http://localhost:3000/api/tasks/1/attachment-inspection \
+curl -i -X POST "http://localhost:$SAPPORTA_API_PORT/api/tasks/1/attachment-inspection" \
   -H "Authorization: Bearer $SAPPORTA_API_TOKEN" \
   -F 'label=Completion evidence' \
   -F 'file=@./fixtures/evidence.txt;type=text/plain'

@@ -11,6 +11,10 @@ Generated project root; scaffold contract from `@sapporta/server` 0.2.7.
 
 - `sapporta.json` marks the project root for Sapporta tooling.
 - `package.json` and `pnpm-workspace.yaml` own workspace scripts and package membership.
+- `pnpm typecheck` runs `tsc --noEmit` in `packages/shared`, `packages/api`, and
+  `packages/frontend`. It is the check that reports TypeScript errors in
+  frontend code. `vite build` transpiles with esbuild and erases types without
+  checking them, so it completes on a type-broken `.tsx`.
 - `AGENTS.md` and `CLAUDE.md` are project-local coding-agent instructions.
 - `CODING-PRINCIPLES.md` and `VISUAL-DESIGN-GUIDELINES.md` define the generated
   project's implementation and interface guidance.

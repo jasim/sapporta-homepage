@@ -16,6 +16,7 @@ request semantics, authority, origin policy, or storage.
 | `APP_SERVER_UNREACHABLE`             | Resolved CLI URL, network path, and API output       | Restore reachability or fix `--api-url`            |
 | `Could not locate the bindings file` | Node version and installed `better-sqlite3` package | Rebuild the native addon in the API package        |
 | `sapporta init` rejects the pnpm version | `pnpm --version` on the machine running `init`      | Upgrade to pnpm 11 with `corepack use pnpm@11`     |
+| Frontend type error reaches the browser  | Root `typecheck` script and `tsc --noEmit` output   | Run `pnpm typecheck`; a green `vite build` is not a type check |
 | Migration readiness failure          | Startup output, migration files, and ledger          | Restore files or apply the reviewed migration      |
 | Structured 400 on a list route       | Column, operator, and semantic query value          | Fix the strict filter; keep the intended predicate |
 | `unauthenticated` or token error     | Target, active workspace, expiry, revocation        | Create or pass the correct scoped token            |
@@ -25,8 +26,8 @@ request semantics, authority, origin policy, or storage.
 Start by preserving the full error and running read-only discovery:
 
 ```bash
-pnpm exec sapporta --api-url http://localhost:3000 endpoints list
-pnpm exec sapporta --api-url http://localhost:3000 tables show tasks
+pnpm exec sapporta endpoints list
+pnpm exec sapporta tables show tasks
 pnpm --filter ./packages/api db:check
 ```
 
@@ -37,6 +38,20 @@ rebuild the addon where the API package installed it:
 pnpm --filter ./packages/api rebuild better-sqlite3
 pnpm build
 ```
+
+For a frontend type error that a build did not report, run the type checker
+directly:
+
+```bash
+pnpm typecheck
+```
+
+`vite build` transpiles with esbuild, which erases types without checking them,
+so a successful build says nothing about whether the frontend compiles. Grid and
+lookup generics fail at the type level and nowhere else. A project generated
+before the root `typecheck` script existed runs
+`pnpm --filter ./packages/frontend exec tsc --noEmit` and should add the script
+to its root `package.json`.
 
 For a bad filter, inspect the generated endpoint and keep an explicit operator:
 

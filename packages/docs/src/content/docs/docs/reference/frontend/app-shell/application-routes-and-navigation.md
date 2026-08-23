@@ -12,9 +12,10 @@ Generated `packages/frontend/src/App.tsx` and
 
 ## App-owned contributions
 
-The generated `App.tsx` exports four values:
+The generated `App.tsx` exports five values:
 
 ```tsx
+import type { ReactElement } from "react";
 import { Navigate, Route } from "react-router-dom";
 import type { Navigation } from "@sapporta/frontend/shell";
 
@@ -29,6 +30,8 @@ export const appHomeRoute = (
   <Route index element={<Navigate to="/projects/progress" replace />} />
 );
 
+export const appPublicHomeRoute: ReactElement | null = null;
+
 export const appPublicRoutes = (
   <Route path="status" element={<PublicStatus />} />
 );
@@ -40,8 +43,13 @@ export const appProtectedRoutes = (
 
 - `appNavigation` is a readonly array of labeled sections. Each item has a
   `label`, an absolute `to`, and an optional icon.
-- `appHomeRoute` is one index-route contribution. Its destination may be public
-  or protected.
+- `appHomeRoute` is the index route at `/`. It renders inside `AuthGate`, so it
+  opens for a signed-in session and is where sign-in returns.
+- `appPublicHomeRoute` is an optional index route at `/` for a visitor without a
+  session. It is `null` in a generated project. A non-null value takes `/` in
+  place of `appHomeRoute`, so an app that needs both an anonymous landing page
+  and a signed-in home screen gives the signed-in screen its own path in
+  `appProtectedRoutes`.
 - `appPublicRoutes` and `appProtectedRoutes` are JSX route fragments, not route
   object arrays.
 
@@ -58,9 +66,14 @@ router. `SapportaApp.tsx` then composes routes in this order:
 1. Sapporta's framework public routes, outside application bootstrap.
 2. `BootLoader`, which restores the browser session and loads table metadata for
    an authenticated session before rendering the shell.
-3. `appHomeRoute` and `appPublicRoutes`, inside `AppShell` but outside
+3. `appPublicHomeRoute` and `appPublicRoutes`, inside `AppShell` and outside
    `AuthGate`.
-4. `appProtectedRoutes` and Sapporta's protected routes, inside `AuthGate`.
+4. `appHomeRoute`, `appProtectedRoutes`, and Sapporta's protected routes, inside
+   `AuthGate`. `appHomeRoute` is mounted only while `appPublicHomeRoute` is
+   `null`.
+
+`SapportaApp.tsx` owns that composition. A screen changes where it renders by
+moving between the `App.tsx` slots, not by editing `SapportaApp.tsx`.
 
 An app-owned public route can render for a guest, but it still participates in
 the application bootstrap and shell. Put it in `appPublicRoutes` only when its

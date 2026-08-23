@@ -44,6 +44,7 @@ report rendering. Standalone `@sapporta/grid` has its own
 - [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
 - [App shell layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
+- [Table lookups and record ids](/docs/reference/frontend/lookups/)
 - [Table read functions and query options](/docs/reference/frontend/table-queries/read-functions-and-options/)
 - [Table query cache keys and ownership](/docs/reference/frontend/table-queries/cache-keys-and-ownership/)
 - [TGrid definitions, sessions, and queries](/docs/reference/frontend/tgrid/definitions-sessions-and-queries/)

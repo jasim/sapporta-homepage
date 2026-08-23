@@ -23,8 +23,13 @@ exports.
   supply `/api`.
 - `z.object({}).strict()` represents an action with a required empty JSON body
   and rejects extra caller fields.
-- `errorBodySchema` is the browser-safe generic HTTP error envelope. Export a
-  separate strict feature schema when exact codes drive typed client recovery.
+- `errorBodySchema` is the browser-safe generic HTTP error envelope, with
+  `ErrorBody` as its type. Export a separate strict feature schema when exact
+  codes drive typed client recovery.
+- The error envelope and `ApiError` come from the framework packages, at
+  `@sapporta/shared/contracts` and `@sapporta/shared/client`. The project's own
+  shared package does not re-export them, so a contract that declares a non-2xx
+  response imports `errorBodySchema` from `@sapporta/shared/contracts` directly.
 - Project contracts, schemas, and wire types are re-exported through `.js` ESM
   barrels under `packages/shared/src/contracts/index.ts`, then from
   `packages/shared/src/index.ts`.

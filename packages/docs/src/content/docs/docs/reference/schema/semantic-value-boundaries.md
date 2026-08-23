@@ -16,6 +16,11 @@ implementing:
   covers authoritative prepared writes, structural schemas, Temporal
   conversion helpers, app-owned contracts, and public SQL names.
 
+A primary key in an address position — a URL segment, a query key, a grid row
+key — is a `RecordId`, and
+[Table lookups and record ids](/docs/reference/frontend/lookups/) owns that
+crossing.
+
 For table declaration syntax, start with
 [Table definitions](/docs/reference/schema/table-definitions/). For
 operation-aware application issues, use

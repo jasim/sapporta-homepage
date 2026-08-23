@@ -29,10 +29,11 @@ GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][in]=open&q=launch&
   to 50.
 
 Bracket characters may need URL encoding in a shell or client. This `curl` form
-keeps the query readable while encoding it correctly:
+keeps the query readable while encoding it correctly. Take `SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev`
+prints it as the API URL when it starts.
 
 ```bash
-curl --get "http://localhost:3000/api/tables/tasks" \
+curl --get "http://localhost:$SAPPORTA_API_PORT/api/tables/tasks" \
   --data-urlencode "filter[project_id][eq]=1" \
   --data-urlencode "filter[status][in]=open" \
   --data-urlencode "q=launch" \

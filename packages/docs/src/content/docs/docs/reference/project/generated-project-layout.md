@@ -13,6 +13,13 @@ Generated pnpm workspace with `packages/api`, `packages/shared`, and `packages/f
 - Shared owns browser-safe contracts, wire types, parsers, serializers, and constants.
 - Frontend owns typed clients, navigation, routes, screens, and generated table integration.
 - API and frontend may import shared; shared must not import either I/O package.
+- Each workspace package declares the framework packages it imports, and the
+  workspace root declares none. `packages/api` declares `@sapporta/server` and
+  `@sapporta/honest`; `packages/frontend` declares `@sapporta/frontend`,
+  `@sapporta/ui`, and `@sapporta/grid`; all three declare `@sapporta/shared` and
+  `@sapporta/rest-core`. A framework package therefore resolves from the
+  workspace package that imports it, and a generated project has no root
+  `node_modules/@sapporta` directory.
 - The frontend installs `@tanstack/react-form` and
   `@tanstack/react-query`. The workspace-owned `query-client.ts` creates the
   application `QueryClient`. The framework-owned `main.tsx` mounts

@@ -19,6 +19,12 @@ Generated API env parser, Vite build environment, and Sapporta CLI runtime.
   environment-based email-verification default. An empty or absent value uses
   the `NODE_ENV` policy.
 - `SAPPORTA_HEALTH_POLICY` configures health behavior.
+- `SAPPORTA_OPENAPI_POLICY` accepts `public`, `authenticated`, or `disabled`,
+  and sets who may read the application contract at `/api/openapi.json`. An
+  absent value means `authenticated`. The generated `.env.development` sets
+  `public`, so `sapporta endpoints list` and `endpoints show` work against a
+  local development server with no access token. Deployments leave it unset or
+  set `authenticated`, and endpoint discovery there needs a token.
 - `SAPPORTA_MAIL_TRANSPORT` accepts `stream`, `smtp`, or `disabled`;
   `SAPPORTA_MAIL_FROM` supplies the sender.
 - `VITE_API_URL` is public build-time configuration for a split API origin.
@@ -28,6 +34,11 @@ Generated API env parser, Vite build environment, and Sapporta CLI runtime.
   accepted when it is absent; both values must match when set together. The API
   defaults to `3000` when neither is set.
 - `SAPPORTA_FRONTEND_PORT` selects the Vite development port.
+- `sapporta init` picks both development ports for the new project and writes
+  them into `.env.development`, so that several Sapporta projects run on one
+  machine without being reconfigured. A generated project's development ports
+  are therefore per-project, not the defaults above. `pnpm dev` prints both as
+  URLs when it starts.
 
 `SAPPORTA_REQUIRE_VERIFIED_EMAIL` accepts only the literal values `true` and
 `false` when set.

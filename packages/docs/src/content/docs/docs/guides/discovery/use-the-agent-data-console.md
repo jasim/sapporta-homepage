@@ -47,13 +47,16 @@ and which input values the server owns. Passing one boundary does not prove the
 next.
 
 ```bash
-export SAPPORTA_API_URL=http://localhost:3000
 read -s SAPPORTA_API_TOKEN
 export SAPPORTA_API_TOKEN
 
 pnpm exec sapporta endpoints list
 pnpm exec sapporta tables list
 ```
+
+Run from inside the project and the CLI finds the application on its own, from
+`SAPPORTA_API_PORT` in `.env.development`. Export `SAPPORTA_API_URL` only when
+the target is some other deployment.
 
 A rejected harmless read is a boundary result. For example, revocation is
 identified by HTTP `401` and code `token_revoked`; branch on the status/code,

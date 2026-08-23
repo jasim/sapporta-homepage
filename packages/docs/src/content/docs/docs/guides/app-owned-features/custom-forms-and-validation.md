@@ -83,6 +83,35 @@ Workflow values that are not table columns remain ordinary TanStack Form fields.
 Application-specific controls can consume a Sapporta field model without using
 `FormField` when the default rendering does not fit.
 
+## Name the form instance's type
+
+`ReturnType<typeof useForm<MealDraft>>` and `ReactFormExtendedApi<MealDraft>`
+both fail — twelve type parameters, no defaults. Every `form.Field` under the
+bad annotation then degrades to `any`. Wrap `useForm` in one hook per form and
+name its return type:
+
+```ts
+function useMealDraftForm(defaults: MealDraft) {
+  return useForm({/* ... */});
+}
+
+type MealForm = ReturnType<typeof useMealDraftForm>;
+```
+
+Keep validators and `onSubmit` inside the hook so `MealForm` covers them. Reach
+for `createFormHook`/`withForm` only when pieces are shared across forms.
+
+## Validate with a Standard Schema
+
+`validators: { onChange: schema }` checks the schema's **input** type and
+discards the transformed output — `z.coerce`, `.trim()` and friends report the
+draft valid and leave the form value exactly as typed. Re-parse inside
+`onSubmit` when the server needs the transformed value.
+
+Where fields come from table metadata, prefer no schema at all:
+`parseCreateDraft()` already reports required and invalid columns from the live
+`TableSchema`.
+
 ## Decode creates at submit time
 
 For an ordinary one-table create, keep raw form text until submit and call
@@ -117,13 +146,38 @@ recognized Sapporta API validation details. Nested paths remain names such as
 `lines.0.quantity`. Application code maps server fields when its form uses a
 different field vocabulary.
 
-Inside `onSubmit`, convert those issues into TanStack Form's `{ form, fields }`
-error map. Keep a form-level fallback for transport failures and details that do
-not name one field. Clear stale submit errors at the next attempt, and catch the
-promise returned by `form.handleSubmit()` after the errors have been rendered.
+Inside `onSubmit`, catch the rejection, convert the issues, and call
+`formApi.setErrorMap({ onSubmit: { form, fields } })`. Keep a form-level
+fallback for transport failures and details that do not name one field. Clear
+stale errors from one form-level `listeners.onChange` rather than per-field
+handlers, and catch the promise returned by `form.handleSubmit()` after the
+errors have been rendered.
+
+Never write from `validators.onSubmitAsync` — the row exists by the time the
+validator reports failure. Use it only for read-only pre-write checks such as a
+uniqueness probe.
+
+## TanStack Form idioms
+
+Sapporta composes TanStack Form with no wrapper or adapter, so the
+[upstream React guides](https://tanstack.com/form/latest/docs/framework/react/guides/)
+apply directly. Non-obvious points:
+
+- `useSelector(form.store, selector)` in logic, `form.Subscribe` in JSX.
+  `useStore` is deprecated.
+- `isDirty` never resets — use `!isDefaultValue` to stop nagging once values
+  match what was loaded.
+- Dependent fields: field `listeners.onChange` + `validators.onChangeListenTo`,
+  never `useEffect`.
+- `validationLogic: revalidateLogic()` — validate on submit, then live.
+- Submit button: `aria-disabled`, not `disabled`; gate on
+  `!canSubmit || isPristine`.
+- Also: `onSubmitInvalid`, `formOptions()`.
 
 ## Related reference
 
+- [Stage multi-row drafts in a Grid](/docs/guides/app-owned-features/staged-multi-row-drafts/)
+- [Table lookups and record ids](/docs/reference/frontend/lookups/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
 - [Cached table reads and refresh](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
 - [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)

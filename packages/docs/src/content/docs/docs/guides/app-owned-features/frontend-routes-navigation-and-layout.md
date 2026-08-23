@@ -62,6 +62,14 @@ render after the application loads the authenticated session and active
 workspace. Put a route in `appPublicRoutes` only when both the page and every
 data operation it calls are intentionally anonymous.
 
+`appHomeRoute` is the index route at `/` and renders inside `AuthGate`, so the
+screen it opens is a protected screen and is where a user arrives after signing
+in. An app that opens `/` to visitors without a session fills
+`appPublicHomeRoute` instead; a non-null value there takes `/` in place of
+`appHomeRoute`. The
+[application routes reference](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
+records the full bootstrap order.
+
 Use absolute application URLs such as `/projects/progress` in navigation and
 nested paths such as `projects/progress` in `appProtectedRoutes`.
 

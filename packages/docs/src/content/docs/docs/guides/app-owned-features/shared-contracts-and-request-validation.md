@@ -103,14 +103,15 @@ contract schemas before it invokes the handler. The numeric coercion above turns
 the path segment `"12"` into `request.params.id === 12`. A non-numeric ID fails
 at the boundary, so domain code does not need another parser.
 
-Run the task app, then compare a valid and invalid request:
+Run the task app, then compare a valid and invalid request. Take `SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev`
+prints it as the API URL when it starts.
 
 ```bash
-curl -i -X POST http://localhost:3000/api/tasks/12/complete \
+curl -i -X POST "http://localhost:$SAPPORTA_API_PORT/api/tasks/12/complete" \
   -H 'Content-Type: application/json' \
   -d '{}'
 
-curl -i -X POST http://localhost:3000/api/tasks/not-a-number/complete \
+curl -i -X POST "http://localhost:$SAPPORTA_API_PORT/api/tasks/not-a-number/complete" \
   -H 'Content-Type: application/json' \
   -d '{}'
 ```

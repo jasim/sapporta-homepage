@@ -32,10 +32,14 @@ Package/export index checked against the linked Sapporta package export maps.
   for contracts, clients, grid datasets, errors, and validation, including table
   query schemas and bounds, `FieldIssue`, `fieldIssuesFromZodError()`, and
   `apiProblemFromBody()`.
+- `@sapporta/shared/record-id`: `RecordId` and `toRecordId()`, the address
+  boundary for a primary key in a URL segment, query key, or grid row key.
 - `@sapporta/frontend`: app shell, auth, generated record surfaces,
   metadata-derived form fields, submission-error helpers, generated table query
   options and keys, `buildTableSelectionQuery()`, `buildTableRowsQuery()`,
   TGrid, report components, lookups, and platform helpers.
+- `@sapporta/frontend/lookup`: `useLookupStore()`, `useTableLookup()`, and
+  `LookupPicker`, generic over the target table's primary-key type.
 - `@sapporta/frontend/layout` and `@sapporta/frontend/shell`: `AppPage`,
   `PageFrame`, `PageHeader`, `PageHeaderButton`, `PageBody`, `SidebarProvider`,
   `SidebarRegion`, `SidebarShell`, `SidebarToggle`, and `useSidebar()`.

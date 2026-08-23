@@ -114,6 +114,9 @@ export default [
               {
                 slug: "docs/guides/app-owned-features/cached-table-reads-and-refresh",
               },
+              {
+                slug: "docs/guides/app-owned-features/staged-multi-row-drafts",
+              },
             ],
           },
           {
@@ -400,6 +403,9 @@ export default [
           },
           {
             slug: "docs/reference/frontend/generated-record-surfaces",
+          },
+          {
+            slug: "docs/reference/frontend/lookups",
           },
           {
             label: "Table queries",

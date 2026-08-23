@@ -29,12 +29,14 @@ them.
 ## Configure the common topologies
 
 Local development uses the Vite origin as the public app URL. Vite proxies
-relative `/api/*` requests to Hono.
+relative `/api/*` requests to Hono. `sapporta init` picks both ports for the new
+project and writes them into `.env.development`, so the numbers below are an
+example rather than a default.
 
 ```ini
-SAPPORTA_API_PORT=3000
-SAPPORTA_FRONTEND_PORT=5173
-SAPPORTA_PUBLIC_APP_URL=http://localhost:5173
+SAPPORTA_API_PORT=3212
+SAPPORTA_FRONTEND_PORT=5385
+SAPPORTA_PUBLIC_APP_URL=http://localhost:5385
 SAPPORTA_MAIL_TRANSPORT=stream
 SAPPORTA_MAIL_FROM=Task App <no-reply@example.com>
 ```
@@ -80,7 +82,7 @@ deployments resolve to the absolute API host through `getApiBase()`.
 
 ```bash
 pnpm dev
-pnpm exec sapporta --api-url http://localhost:3000 endpoints list
+pnpm exec sapporta endpoints list
 ```
 
 `VITE_API_URL` is embedded in browser code at build time. `SAPPORTA_API_URL`
