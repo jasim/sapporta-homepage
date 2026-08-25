@@ -589,57 +589,67 @@
 }
 
 /*
- * One enclosure for the whole demo. The caption and tab row share the card's
- * light "chrome" surface; the panel is white and sits flush inside. A single
- * hairline under the tabs is the only internal divider, and the active tab
- * docks onto it as a folder tab so the tabs read as attached to the panel.
+ * The caption is page furniture, not chrome: "DEMO" is a section marker in the
+ * same idiom as FEATURES and FRAMEWORK. Nothing is inverted -- a filled ink
+ * block is the primary action's alone. The enclosure starts at the tab row, so
+ * the grid sits on one unbroken white field.
  */
 .home-demo {
-  background: var(--surface);
-  border: 1px solid var(--sap-border-strong);
+  background: transparent;
   border-radius: 0;
   min-width: 0;
-  overflow: hidden;
   width: 100%;
 }
 
 .home-demo__heading {
-  align-items: center;
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
-  padding: clamp(1rem, 2.2vw, 1.35rem) clamp(1.1rem, 2.6vw, 1.6rem) 0.9rem;
+  gap: 0.35rem 1.5rem;
+  justify-content: space-between;
+  padding: 0.8rem 0 1.15rem;
 }
 
 .home-demo__label {
-  background: var(--ink);
-  color: var(--bg);
-  display: inline-block;
+  color: var(--ink);
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.8125rem;
   font-weight: var(--weight-display-label);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.045em;
+  line-height: 1.4;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.home-demo__hint {
+  color: var(--dim);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 46rem;
+}
+
+/* The hint names a physical key, so it gets a keycap, not bold prose. */
+.home-demo__key {
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: var(--weight-emphasis);
   line-height: 1;
-  margin: 0;
-  padding: 0.5rem 0.66rem;
+  padding: 0.28em 0.42em;
+  white-space: nowrap;
 }
 
-.home-demo__subtitle {
-  color: var(--ink-soft);
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin: 0;
-  max-width: 42rem;
-}
-
+/* The demo's only chrome: this carries the box's top and side edges. */
 .home-demo__tabs {
-  /*
-   * Editor-style tab row. No filled band — the row shares the caption's light
-   * chrome and is separated from the panel by a single hairline that the
-   * active tab docks onto.
-   */
   align-items: flex-end;
-  border-bottom: 1px solid var(--sap-border);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-bottom-color: var(--rule);
   display: flex;
   gap: 0.25rem;
   margin: 0;
@@ -672,13 +682,10 @@
   color: var(--ink);
 }
 
-/*
- * The active tab is a folder tab: panel-colored fill, framed on three sides,
- * and pulled down 1px so its open bottom edge docks onto the panel below.
- */
+/* Folder tab: pulled down 1px so its open bottom edge docks onto the panel. */
 .home-demo__tab[aria-selected="true"] {
   background: var(--bg);
-  border-color: var(--sap-border);
+  border-color: var(--rule);
   border-bottom-color: var(--bg);
   color: var(--ink);
   margin-bottom: -1px;
@@ -691,6 +698,12 @@
 
 .home-demo__tab-icon {
   flex: 0 0 auto;
+}
+
+.home-demo__panel {
+  background: var(--bg);
+  border: 1px solid var(--rule-strong);
+  border-top: 0;
 }
 
 .home-demo__panel[hidden] {
@@ -1932,8 +1945,10 @@
     width: 100%;
   }
 
-  .home-demo__tab[aria-selected="true"]::after {
-    bottom: -1px;
+  /* Stacked, there is nothing below to dock onto. */
+  .home-demo__tab[aria-selected="true"] {
+    border-bottom-color: var(--rule);
+    margin-bottom: 0;
   }
 
   .home-demo__panel--grid .homepage-grid,
