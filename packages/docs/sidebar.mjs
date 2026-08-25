@@ -9,6 +9,9 @@ export default [
         slug: "docs/getting-started/introduction",
       },
       {
+        slug: "docs/technical-overview",
+      },
+      {
         slug: "docs/getting-started/create-a-project",
       },
       {

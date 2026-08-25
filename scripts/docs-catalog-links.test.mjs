@@ -72,11 +72,11 @@ test("documentation sidebar and sources stay bijective", async () => {
     slug.startsWith("grid/"),
   ).length;
 
-  assert.equal(sidebarSlugs.length, 150);
-  assert.equal(sidebarSet.size, 150);
-  assert.equal(sourceSlugs.length, 150);
-  assert.equal(sourceSet.size, 150);
-  assert.equal(docsCount, 117);
+  assert.equal(sidebarSlugs.length, 151);
+  assert.equal(sidebarSet.size, 151);
+  assert.equal(sourceSlugs.length, 151);
+  assert.equal(sourceSet.size, 151);
+  assert.equal(docsCount, 118);
   assert.equal(gridCount, 33);
 });
 
@@ -84,6 +84,7 @@ test("root agent retrieval keeps the approved direct entry pages", () => {
   assert.deepEqual(rootStartingSlugs(docsSidebar), [
     "docs",
     "docs/getting-started/introduction",
+    "docs/technical-overview",
     "docs/getting-started/create-a-project",
     "docs/getting-started/tour-the-generated-project",
     "docs/guides/discovery/develop-with-a-coding-agent",

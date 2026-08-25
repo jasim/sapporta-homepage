@@ -15,6 +15,8 @@ navigation:
   links:
     - label: Documentation
       href: /docs/getting-started/introduction/
+    - label: Technical Overview
+      href: /docs/technical-overview/
     - label: GitHub
       href: https://github.com/jasim/sapporta
 ---

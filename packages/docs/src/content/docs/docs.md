@@ -18,6 +18,7 @@ index for the whole site.
 ## Getting Started
 
 - [Welcome to Sapporta](/docs/getting-started/introduction/)
+- [Technical overview](/docs/technical-overview/)
 - [Create a Sapporta project](/docs/getting-started/create-a-project/)
 - [Tour the generated project](/docs/getting-started/tour-the-generated-project/)
 - [Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/)
