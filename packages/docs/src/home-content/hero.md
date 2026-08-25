@@ -30,4 +30,4 @@ Sapporta is a TypeScript + SQLite web framework for building database applicatio
 - **Reports that drill down** into the underlying records, shareable by URL.
 - **Auth you can ship.** Row-level security and typed contracts on every
   generated API, safe to run on the public internet.
-- **Default agentic.**  In a calorie tracker built with Sapporta, you can tell an agent to log "2 eggs, toast, black coffee", and it'll match them against your food records, create the missing ones, and link them.
+- **Default agentic.**  You can operate Sapporta applications fully agentically. In a Calorie Tracker, you could say "log 2 eggs, toast, black coffee", and it'll find the right food entries, create them if needed, and log them accurately.
