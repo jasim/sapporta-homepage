@@ -792,17 +792,21 @@
   border-radius: 0;
 }
 
+/*
+ * The current cell is a tint of the page's own blue rather than a solid fill of
+ * it. Reversed white-on-#1f6fb0 dropped a four-line serif quote to about 5:1
+ * and thinned its strokes; ink on the tint clears 12:1 and keeps the quote
+ * reading as text instead of as a coloured block. The tint still has to beat
+ * the active-row wash, so the row drops to a third of the same colour.
+ */
 .home-demo__panel--grid .homepage-grid {
-  --homepage-grid-active-cell-background: var(--sap-link);
-  --homepage-grid-active-cell-foreground: #ffffff;
-  --homepage-grid-active-row-background: var(--sap-drill-down-link-soft);
+  --homepage-grid-active-cell-background: var(--highlight);
+  --homepage-grid-active-cell-foreground: var(--ink);
+  --homepage-grid-active-cell-edge: var(--link);
+  --homepage-grid-active-row-background: color-mix(in srgb, var(--highlight) 34%, transparent);
 
   background: var(--sap-surface);
   height: clamp(30rem, 58vw, 44rem);
-}
-
-:root[data-theme="dark"] .home-demo__panel--grid .homepage-grid {
-  --homepage-grid-active-cell-foreground: #0e0f0b;
 }
 
 /*
@@ -819,17 +823,30 @@
 .home-demo__panel--grid .homepage-grid [data-grid-part="root"] {
   --homepage-grid-current-cell-background: var(--homepage-grid-active-cell-background);
   --homepage-grid-current-cell-foreground: var(--homepage-grid-active-cell-foreground);
+  --homepage-grid-current-cell-edge: var(--homepage-grid-active-cell-edge);
 }
 
+/*
+ * Every current-cell colour is redeclared here, not just the ones that differ:
+ * the active nested level sits inside the inactive root, so anything left out
+ * would inherit the inactive value straight through it.
+ */
 .home-demo__panel--grid .homepage-grid [data-grid-part="root"][data-active="false"] {
-  --homepage-grid-current-cell-background: var(--sap-selection);
-  --homepage-grid-current-cell-foreground: var(--sap-fg);
+  --homepage-grid-current-cell-background: var(--surface-soft);
+  --homepage-grid-current-cell-foreground: var(--ink-soft);
+  --homepage-grid-current-cell-edge: var(--rule-strong);
 }
 
+/*
+ * A tint alone is too close to the row wash to mark the cell the arrow keys
+ * are on, so the fill carries a hairline edge -- the spreadsheet idiom, and
+ * the one place a box earns its keep on this page.
+ */
 .home-demo__panel--grid .homepage-grid [data-grid-part="cell"][data-cell-status="focus"] {
   --grid-cell-background: var(--homepage-grid-current-cell-background);
 
   background: var(--homepage-grid-current-cell-background);
+  box-shadow: inset 0 0 0 1px var(--homepage-grid-current-cell-edge);
   color: var(--homepage-grid-current-cell-foreground);
 }
 
@@ -905,15 +922,65 @@
   padding-inline: 0;
 }
 
-.home-demo__panel--grid .homepage-quote-cell {
+/*
+ * Both homes for quote type: the grid cell inside the demo panel, and the
+ * dialog, which Base UI portals out to the body and so never inherited the
+ * serif the cell it opened from was set in.
+ */
+.home-demo__panel--grid .homepage-quote-cell,
+.homepage-quote-dialog .homepage-quote-cell {
   font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
+/*
+ * The quote is the one cell on the page that is prose rather than data, so it
+ * gets the essay's measure instead of the grid's: a step up in size, the
+ * looser leading long serif lines need, and an opening mark hung in the gutter
+ * the way the quote dialog hangs its own. The mark is drawn with ::before so it
+ * never enters the text the copy button and the editor read.
+ */
 .home-demo__panel--grid .homepage-quote-grid-text {
-  color: var(--sap-fg);
-  font-size: 1.04rem;
-  line-height: 1.625;
-  padding: 0.5rem 0.75rem;
+  --homepage-quote-leading: 1.72;
+  --homepage-quote-lines: 5;
+  --homepage-quote-pad-start: 0.85rem;
+  --homepage-quote-pad-end: 0.95rem;
+
+  /* The closing gap is a transparent border, not padding, because overflow is
+     clipped at the padding edge: as padding it is a band the sixth line of a
+     collapsed quote paints into, as a border it stays empty. */
+  border-block-end: var(--homepage-quote-pad-end) solid transparent;
+  color: var(--quote);
+  /* The narrow card layout gives the quote about six words a line, so the step
+     up in size is spent only where there is width to carry it. */
+  font-size: clamp(1.02rem, 0.94rem + 0.42vw, 1.14rem);
+  line-height: var(--homepage-quote-leading);
+  padding: var(--homepage-quote-pad-start) 1.1rem 0 1.85rem;
+  position: relative;
+  text-wrap: pretty;
+}
+
+/*
+ * A collapsed quote ends on a whole line. The flat 12rem cap it replaces fell
+ * near a baseline at this size and shaved the last line's descenders, which
+ * read as a rendering fault rather than as "there is more here"; the cut
+ * sentence and the expand control carry that message instead.
+ */
+.home-demo__panel--grid .homepage-quote-grid-text--clamped {
+  max-height: calc(
+    var(--homepage-quote-lines) * var(--homepage-quote-leading) * 1em + var(--homepage-quote-pad-start) +
+      var(--homepage-quote-pad-end)
+  );
+  overflow: hidden;
+}
+
+.home-demo__panel--grid .homepage-quote-grid-text:not(.homepage-quote-editor)::before {
+  color: color-mix(in srgb, currentcolor 26%, transparent);
+  content: "\201C";
+  font-size: 2.4rem;
+  inset-block-start: 0.5rem;
+  inset-inline-start: 0.15rem;
+  line-height: 1;
+  position: absolute;
 }
 
 .home-demo__panel--grid
@@ -928,7 +995,10 @@
   min-height: 8rem;
   outline: none;
   overflow-wrap: normal;
-  padding: 0.5rem 0.75rem;
+  /* Inline padding is inherited from the display cell so the text does not
+     shift when the editor opens over it; the closing gap comes back as padding
+     because the editor drops the border. */
+  padding-block-end: var(--homepage-quote-pad-end);
   resize: none;
   white-space: pre-wrap;
   width: 100%;
@@ -1417,33 +1487,78 @@
 }
 
 /*
- * Capability strip: a one-glance mono readout of a section's surface,
- * placed under the lede as a decorative spec line.
- */
-/*
- * Was a row of bordered chips. Now a specification line: one rule above, mono
- * terms separated by space rather than by boxes.
+ * Capability strip: a one-glance mono readout of a section's surface, placed
+ * under the lede.
+ *
+ * It was a row of bordered chips, then a bare mono line under one rule, which
+ * read as a stray caption rather than as a readout. It is now a flat tape: a
+ * --surface band closed by hairlines, terms set in small mono caps and divided
+ * by rules instead of by whitespace. The fill and the dividers are what give
+ * it edges — still no radius, no shadow, nothing elevated.
  */
 .home-strip {
-  border-top: 1px solid var(--rule-strong);
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5ch 2.5ch;
   list-style: none;
   margin: 0 0 1.6rem;
   max-width: var(--home-copy-width);
-  padding: 1ch 0 0;
+  padding: 0.55rem 1rem;
+  row-gap: 0.35rem;
 }
 
-.home-strip__chip {
-  border: 0;
-  color: var(--muted);
+.home-strip__item {
+  color: var(--dim);
   font-family: var(--font-mono);
-  font-size: 0.76rem;
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  padding: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.045em;
+  line-height: 1.5;
+  padding-right: 1.4ch;
+  text-transform: uppercase;
   white-space: nowrap;
+}
+
+.home-strip__item + .home-strip__item {
+  border-left: 1px solid var(--rule-strong);
+  padding-left: 1.4ch;
+}
+
+/*
+ * Narrow screens: the terms wrap, and a wrapped line would open with a stray
+ * divider. Below 40rem the tape becomes the table it is already imitating —
+ * two columns, one rule between them, one between rows.
+ */
+@media (max-width: 40rem) {
+  .home-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+    row-gap: 0;
+  }
+
+  .home-strip__item {
+    padding: 0.4rem 1ch;
+  }
+
+  .home-strip__item + .home-strip__item {
+    border-left: 0;
+    padding-left: 1ch;
+  }
+
+  .home-strip__item:nth-child(2n) {
+    border-left: 1px solid var(--rule-strong);
+  }
+
+  .home-strip__item:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+
+  /* An odd final term takes the whole row so the tape closes on a full rule. */
+  .home-strip__item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
 }
 
 .home-article__section--technical {

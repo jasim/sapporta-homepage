@@ -113,7 +113,9 @@ export function QuoteDetailsCell() {
             &rdquo;
           </div>
           <figure className="relative z-10">
-            <blockquote className="homepage-quote-cell whitespace-pre-wrap text-[1.25rem] leading-[1.52] text-sap-fg sm:text-[1.6rem]">
+            {/* The measure is capped so serif lines stay readable and clear of
+                the quotation mark hanging in the top corner. */}
+            <blockquote className="homepage-quote-cell max-w-[54ch] whitespace-pre-wrap text-pretty text-[1.25rem] leading-[1.52] text-sap-fg sm:text-[1.6rem]">
               {quoteText}
             </blockquote>
             <figcaption className="mt-5 border-t border-sap-border-soft pt-3 text-right text-[1.18rem] font-medium leading-snug sm:text-[1.28rem]">

@@ -25,7 +25,9 @@ export function QuoteTextCell() {
       data-quote-row={quote?.quoteRowKey}
       className={[
         quoteTextBaseClassName,
-        expanded ? "max-h-none overflow-visible whitespace-pre-wrap" : "max-h-48 overflow-hidden",
+        // The collapsed height is a whole number of quote lines, so it is
+        // measured from the type in the stylesheet rather than set here.
+        expanded ? "max-h-none overflow-visible whitespace-pre-wrap" : "homepage-quote-grid-text--clamped",
       ].join(" ")}
     >
       {String(value ?? "")}
