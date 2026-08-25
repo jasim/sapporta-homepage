@@ -88,7 +88,14 @@ layout.
   remains `""`.
 - Invalid editor text remains available to the editor and reaches the
   authoritative server validation boundary.
-- Select-backed columns preserve exact option identity.
+- Select-backed columns preserve exact option identity, and render their value
+  as plain text.
+- `date` and `timestamp` are separate presets, chosen from the column's declared
+  kind. A date cell renders `2026-08-23`; a timestamp cell renders
+  `2026-08-23 16:38` in the active workspace's time zone and describes the full
+  moment on hover.
+- The timestamp preset offers no date-picker editor. An `<input type="date">`
+  has nowhere to put the time component and would drop it on commit.
 - Cell renderers, activations, editors, copy handlers, and write handlers
   receive a path-bound `GridLevelRuntime` as `context.level`.
 - `context.runtime` contains grid-wide schema, events, registered levels,
@@ -101,5 +108,6 @@ Reference.
 
 - [Definitions, sessions, and queries](/docs/reference/frontend/tgrid/definitions-sessions-and-queries/)
 - [Generated and client values](/docs/reference/schema/semantic-values/generated-and-client-values/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Grid interactions](/grid/reference/interactions/)
 - [ColumnPreset](/grid/reference/column-preset/)

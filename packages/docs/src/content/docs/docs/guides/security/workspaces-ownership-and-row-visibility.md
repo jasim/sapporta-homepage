@@ -115,6 +115,19 @@ A missing row and a row hidden by scope return the same generated result:
 `404 ROW_NOT_FOUND`. That concealment prevents callers from probing other
 workspaces' primary keys.
 
+## The workspace also carries a calendar
+
+A workspace is a boundary for rows and the answer to which day an instant falls
+on. `AuthWorkspace.timeZone` holds an IANA identifier, and
+`workspaceTimeZone(auth)` is what a handler reads it with. A new workspace
+starts on the zone the browser sends at sign-up; after that the workspace owns
+its own, and an owner changes it on the Workspace settings screen.
+
+One value per workspace keeps a shared result shared: two members reading the
+same dashboard group the same rows under the same day.
+[Days and time zones](/docs/reference/server/days-and-time-zones/) owns the
+contract.
+
 ## Test two principals and two workspaces
 
 Use an isolated fixture rather than tutorial IDs:
@@ -132,5 +145,6 @@ Use an isolated fixture rather than tutorial IDs:
 ## Related documentation
 
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
 - [Authentication and abilities](/docs/guides/security/authentication-and-abilities/)

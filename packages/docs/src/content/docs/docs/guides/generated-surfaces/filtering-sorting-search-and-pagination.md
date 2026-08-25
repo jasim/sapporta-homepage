@@ -96,6 +96,22 @@ Drizzle enum declaration. Chosen values appear as removable chips, and only
 those chosen values enter the filter draft. Search text itself never becomes a
 filter value.
 
+## Filter a timestamp column by day
+
+A date control on a `timestamp` column names a calendar day in the active
+workspace's time zone, and the operator picks which edge of that day the bound
+sits on. `on or after` and `before` read the day's first instant; `after` and
+`on or before` read its last.
+
+`on` and `not on` are not offered for a timestamp column. A day is a range of
+instants, and the condition grammar expresses one comparison per condition, so
+either operator would match only the rows sitting at exactly local midnight. A
+`date` column offers both, because a stored day and a named day are the same
+value.
+
+Filters on a `date` column compare calendar days directly and are unaffected by
+the workspace zone.
+
 ## Let invalid queries fail
 
 Unknown columns, unsupported operators, malformed semantic values, `q` on a
@@ -131,3 +147,5 @@ must not become a valid broad query.
 - [Use table search](/docs/guides/model-data/use-table-search/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
+- [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)

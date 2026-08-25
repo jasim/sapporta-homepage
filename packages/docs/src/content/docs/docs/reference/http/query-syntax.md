@@ -21,6 +21,13 @@ counts.
   `lt`, `lte`, `in`, `nin`, and `is`. Booleans accept `eq`, `neq`, and `is`.
 - `in` and `nin` use a non-empty comma-separated list with no empty item. `is`
   accepts only `null` or `notnull`.
+- A timestamp column compares canonical instants. A date-shaped value such as
+  `2026-08-24` is a string boundary in that ordering rather than a day: every
+  instant stored on the 24th begins `2026-08-24T`, which sorts after it. Asking
+  a day-shaped question of a timestamp column means naming the pair of instants
+  the day occupies, `gte` the first and `lt` the first instant of the next day.
+  The generated filter UI and `resolveDateRangeQueryBounds()` both produce that
+  pair from a calendar day and the workspace time zone.
 - The same filter key may appear more than once. Every value is preserved in
   order and becomes a separate AND condition. For example,
   `filter[name][contains]=left&filter[name][contains]=right` requires both

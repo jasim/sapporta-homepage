@@ -166,6 +166,12 @@ due date, and that date is before `asOf`. The mapper does not read the database,
 auth context, HTTP request, or `Temporal.Now`, so the same inputs always produce
 the same dataset.
 
+A time zone is one of those inputs. A mapper that turns an instant into a day
+takes the zone as an argument, the same way it takes `asOf`; the route reads it
+from the request with `workspaceTimeZone(auth)` and passes it down. Reading an
+ambient zone inside the mapper would make the same rows produce two datasets on
+two machines.
+
 The `name` remains `project-progress`; the renderer uses it with the level name
 for persisted column-sizing identity. The `label` can vary because it is display
 text. Render that label as the screen heading above `ReportGridDataset`.
@@ -185,7 +191,13 @@ counts, not pixels; `minWidth: 40` is a reasonable starting point for a project
 name.
 
 Wire dates use canonical strings. Decode them to Temporal values at the domain
-boundary, then use Temporal for comparison and arithmetic.
+boundary, then use Temporal for comparison and arithmetic. A `date` column
+renders as `2026-08-23` and a `timestamp` column as `2026-08-23 16:38` in the
+active workspace's zone, from the same canonical string the response carries.
+
+A report whose numbers depend on a zone names it. `ReportTimeZoneNote` from
+`@sapporta/frontend/report` renders `Asia/Kolkata UTC+05:30` in the toolbar,
+including when the zone is UTC.
 
 For hierarchical reports, add named child levels, put source values in each
 node's `columns`, put computed parent values in `rollup`, and attach child
@@ -275,3 +287,4 @@ validity alone does not prove that a hierarchy is coherent.
 - [GridDataset](/docs/reference/reports/grid-dataset/)
 - [Column sizing](/docs/reference/column-sizing/)
 - [Route-based reports](/docs/guides/reports/route-based-reports/)
+- [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)

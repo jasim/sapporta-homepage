@@ -530,7 +530,19 @@ comparison. Compare `2026-08-24T10:00:00Z` with `2026-08-24T10:00:00.5Z` as
 strings: `.` sorts before `Z`, so the later instant sorts first, and anything
 relying on string order is then wrong for exactly the rows that happen to carry
 a fraction. Time zones are passed as arguments throughout rather than read
-ambiently; the one documented ambient reader is `deviceTimeZone()`.
+ambiently; the one documented ambient reader is `deviceTimeZone()`, called by
+the sign-up request.
+
+**A day belongs to the workspace, not to the reader.** The workspace row carries
+an IANA time zone, and every day-shaped decision resolves against it: the bounds
+of a day-ranged filter, the buckets of a grouped report, the wall clock a
+timestamp cell is printed on. A handler reads it with
+`workspaceTimeZone(c.get("auth"))` and a screen with `appTimeZone()`. "Revenue
+for August 24" therefore names one set of rows for everyone looking at one
+dashboard. Grouping by local day in SQLite goes through `to_tz_date(col, zone)`,
+a function the driver registers on every project connection, because SQLite
+ships no time zone database and `date(col, 'localtime')` would resolve against
+whichever process opened the file.
 
 **A date range travels as a state, not as a pair of dates.** `DateRangeState`
 is a union of all-time, relative (a duration such as the last 30 days), and
@@ -538,10 +550,14 @@ custom absolute bounds. Two things follow. The application cannot reach a hybrid
 partial-custom-while-relative state, because the union has no such arm. And a
 user's "Last 30 days" stays semantically that through every layer, instead of
 being flattened at the first opportunity into two dates that then silently age.
-Flattening to concrete `{from, to}` bounds happens where the query is built,
-with "today" supplied by the caller. Freezing is available on purpose:
-`snapshotDateRange` converts a relative range to absolute bounds, for
-copy-a-snapshot-link workflows.
+Flattening happens where the query is built, from a zone and a moment the caller
+supplies, and it produces both shapes a column can be compared against at once:
+inclusive calendar days for a `date` column, and a half-open window of UTC
+instants for a `timestamp` column. Half-open, because an inclusive upper bound
+compared against a timestamp drops its own last day, and a bound built from a
+local `23:59:59` loses an hour on the day a zone leaves daylight saving.
+Freezing is available on purpose: `snapshotDateRange` converts a relative range
+to absolute bounds, for copy-a-snapshot-link workflows.
 
 **CSV export reads one statement, one row at a time.** Quote escaping to RFC
 4180, null and boolean and date coercion, and row assembly are defined once in
@@ -678,8 +694,12 @@ a persisted sort is best-effort UI state rather than query input to be trusted.
 Filter authoring reads the operator table from the shared package. Every column
 is coarsened into one of six filter types — text, number, date, boolean, enum,
 foreign key — and the catalog maps each to its operator set, default operator,
-value shape, and input component. Date inputs translate through the application's
-display zone rather than being compared as UTC midnight.
+value shape, and input component. A date control on a timestamp column names a
+calendar day in the workspace's zone, and the operator picks which edge of that
+day the bound sits on: `on or after` and `before` read its first instant, `after`
+and `on or before` its last. `on` and `not on` are not offered for such a
+column, because a day is a range of instants and one condition expresses one
+comparison.
 
 **Reports render through the same grid, readonly**, so grouping, expansion,
 footers, conditional colouring, and keyboard navigation are the engine's
@@ -818,8 +838,20 @@ application routes; the generated auth routes are rate-limited through Better
 Auth. Bulk CSV import; export is provided. Feature flags. Transactional email
 beyond the auth flows — the mail transport abstraction exists, templates and
 sending policy for application email do not. File and blob storage; multipart
-parsing is provided, persistence is not. Database seeding utilities. Scheduled
-or PDF reports. Paste into the grid; copy out is provided.
+parsing is provided, persistence is not. Scheduled or PDF reports. Paste into
+the grid; copy out is provided.
+
+**A script opens the application without HTTP.** `openScriptRuntime()` in the
+generated project opens the database, signs in with an address and password, and
+returns `rows(table)` carrying that person's row access — the same validation,
+column defaults, and ownership stamping a browser request gets. `pnpm seed` is
+that call with the sample-data account wired in, and `packages/api/seed.ts` is
+where a developer writes rows. The account is proved rather than named: signing
+in there means holding the password, so a script holds nothing a browser does
+not, and there is no act-as-anyone primitive sitting in the project for a route
+to borrow. Creating the sample-data account is the one capability that needs a
+permission, because its password is in the source, and it checks that permission
+itself.
 
 **Optimistic UI is not concurrency control.** The grid's optimistic mutations
 reconcile one client's edits against server responses. There is no

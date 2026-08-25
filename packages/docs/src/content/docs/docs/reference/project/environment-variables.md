@@ -27,6 +27,14 @@ Generated API env parser, Vite build environment, and Sapporta CLI runtime.
   set `authenticated`, and endpoint discovery there needs a token.
 - `SAPPORTA_MAIL_TRANSPORT` accepts `stream`, `smtp`, or `disabled`;
   `SAPPORTA_MAIL_FROM` supplies the sender.
+- `SAPPORTA_ALLOW_SAMPLE_DATA_SEEDING=true` permits `pnpm seed` to create the
+  sample-data account named in `packages/api/seed.ts`, and it also requires
+  `NODE_ENV` to be anything other than `production`. The generated
+  `.env.development` sets it. The permission is granted rather than merely not
+  withheld: an environment that never heard of the setting is refused, so a
+  staging box, a systemd unit, or CI against a restored snapshot is not taken
+  for a developer's machine. The account's password is written in the source,
+  so no deployment carries this setting.
 - `VITE_API_URL` is public build-time configuration for a split API origin.
 - `SAPPORTA_API_URL`, `SAPPORTA_API_TOKEN`, and `SAPPORTA_OUTPUT_FORMAT`
   configure CLI calls.
@@ -46,3 +54,4 @@ Generated API env parser, Vite build environment, and Sapporta CLI runtime.
 ## Related documentation
 
 - [Application configuration](/docs/guides/operations/application-configuration/)
+- [Sample data and command-line scripts](/docs/guides/operations/sample-data-and-scripts/)

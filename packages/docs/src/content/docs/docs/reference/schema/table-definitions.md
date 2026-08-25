@@ -18,6 +18,9 @@ description:
 - `select(name, options)` stores its allowed string values on the Drizzle text
   column. The same tuple drives TypeScript inference, structural validation,
   OpenAPI, metadata, forms, grids, and filters.
+- Each factory is generic in its column name and preserves the name literal, so
+  a row read through `TableRow` keys each column by its database name and keeps
+  its own value type. `select()` keeps its enum values as a union.
 - Primary keys may be numeric or string-valued. A foreign-key column must use
   the same value/storage type as its target; lookup values preserve that type.
   Sapporta does not promise a separate runtime diagnostic for every mismatched

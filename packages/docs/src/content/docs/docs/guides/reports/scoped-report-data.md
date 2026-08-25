@@ -109,6 +109,23 @@ a store module and build explicit guarded base-row CTEs before joining or
 grouping. Raw SQL bypasses row helpers, so its review and negative tests are
 part of the security boundary.
 
+A grouped store query that buckets rows by day uses `to_tz_date(column, :zone)`
+with the zone the route resolved, inside the scoped base relation and after the
+range is bounded:
+
+```sql
+SELECT to_tz_date(created_at, :zone) AS day, count(*) AS n
+FROM   visible_txns
+WHERE  (:from  IS NULL OR created_at >= :from)
+  AND  (:until IS NULL OR created_at <  :until)
+GROUP  BY day
+```
+
+The zone is a report input, not a row predicate, so it changes which day a row
+is counted under and never which rows are visible.
+[Group and filter by day](/docs/guides/reports/group-and-filter-by-day/) owns
+the function's cost and constraints.
+
 ## Prove the absence of cross-workspace input
 
 Use a local test fixture that creates its own records:
@@ -131,6 +148,7 @@ rows contributed zero values.
 ## Related documentation
 
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
+- [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)

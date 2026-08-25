@@ -17,6 +17,7 @@ The generated project mounts these app auth contracts under `/api`:
 | `GET /api/auth-bootstrap`                 | Public                                                       | `200` bootstrap state                | —                                 |
 | `GET /api/auth-context`                   | Browser session or bearer token                              | `200` current user/workspace context | `401`, `403`                      |
 | `POST /api/auth-context/active-workspace` | Interactive browser session                                  | `200` new active context             | `400`, `401`, `403`, `404`, `422` |
+| `PUT /api/auth-context/workspace/time-zone` | Interactive browser session, workspace owner                 | `200` fresh auth context             | `401`, `403`, `422`               |
 | `GET /api/auth-tokens`                    | Interactive browser session with `read/agent_access_token`   | `200` token metadata list            | `401`, `403`                      |
 | `POST /api/auth-tokens`                   | Interactive browser session with `create/agent_access_token` | `201` token plus one-time plaintext  | `400`, `401`, `403`, `422`        |
 | `DELETE /api/auth-tokens/:id`             | Interactive browser session with `delete/agent_access_token` | `204`                                | `401`, `403`, `404`               |
@@ -25,6 +26,20 @@ Bearer tokens are valid for ordinary protected application APIs. They are
 rejected by list/create/revoke token-management routes with `403 forbidden`. The
 `agent_access_token` ability subject authorizes those interactive management
 routes; it is not a set of scopes stored in the credential.
+
+## Workspace time zone
+
+`PUT /api/auth-context/workspace/time-zone` takes `{ "timeZone": "<IANA id>" }`
+and answers with the same auth-context body `GET /api/auth-context` returns, so
+a browser publishes the new calendar from the response it already knows how to
+read. The server checks the identifier against its own time zone database and
+refuses one it cannot render.
+
+The route is owner-only. The zone belongs to the workspace, so changing it
+changes what "August 24" means for every member, not for whoever asked. The
+handler resolves the request again rather than patching the context it holds: a
+request carries its workspace in more than one place, and one path to the answer
+costs one extra resolution on an action an owner performs rarely.
 
 ## Token record and one-time secret
 
@@ -83,4 +98,5 @@ operations; it does not describe application ability rules or row policy.
 
 - [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Error catalogue and diagnostics](/docs/reference/operations/error-catalogue-and-diagnostics/)

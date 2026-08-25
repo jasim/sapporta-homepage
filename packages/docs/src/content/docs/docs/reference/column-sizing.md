@@ -17,11 +17,15 @@ space, and add `maxWidth` when long text should stop growing.
 - Project, person, or lookup name: `24`–`48`
 - Status, priority, or other short controlled value: `12`–`24`
 - Date: `12`–`16`
+- Timestamp: `18`–`22`
 - Labels or tags: `24`–`40`
 
 Size for the formatted value people need to scan, not the longest value the
-database can store. Leave numeric and date report columns unsized when their
-built-in defaults are sufficient.
+database can store. A date cell reads `2026-08-23` and a timestamp cell reads
+`2026-08-23 16:38`, so size for those rather than for the stored
+`2026-08-23T11:08:00Z`. Leave numeric, date, and timestamp report columns
+unsized when their built-in defaults are sufficient: each preset carries its own
+width, and schema-declared sizing wins where it is present.
 
 ## Examples
 
@@ -43,6 +47,7 @@ columns: [
   { id: "project", label: "Project", kind: "text", minWidth: 40 },
   { id: "status", label: "Status", kind: "text", minWidth: 20 },
   { id: "dueDate", label: "Due date", kind: "date" },
+  { id: "updatedAt", label: "Updated", kind: "timestamp" },
 ]
 ```
 
@@ -50,4 +55,5 @@ columns: [
 
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [GridDataset](/docs/reference/reports/grid-dataset/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [ColumnPreset](/grid/reference/column-preset/)

@@ -14,6 +14,7 @@ config.
 
 - Origins/auth: `NODE_ENV`, `SAPPORTA_PUBLIC_APP_URL`,
   `SAPPORTA_FRONTEND_ORIGINS`, `SAPPORTA_REQUIRE_VERIFIED_EMAIL`.
+- Development-only: `SAPPORTA_ALLOW_SAMPLE_DATA_SEEDING`.
 - Runtime: `SAPPORTA_API_PORT`, hosting-platform `PORT`,
   `SAPPORTA_HEALTH_POLICY`, mail transport/from and SMTP variables.
 - Frontend: `VITE_API_URL`, `SAPPORTA_FRONTEND_PORT`.

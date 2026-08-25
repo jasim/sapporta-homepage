@@ -216,6 +216,9 @@ export default [
             slug: "docs/guides/reports/scoped-report-data",
           },
           {
+            slug: "docs/guides/reports/group-and-filter-by-day",
+          },
+          {
             slug: "docs/guides/reports/report-datasets-and-formatting",
           },
           {
@@ -245,6 +248,9 @@ export default [
         items: [
           {
             slug: "docs/guides/operations/application-configuration",
+          },
+          {
+            slug: "docs/guides/operations/sample-data-and-scripts",
           },
           {
             slug: "docs/guides/operations/email-and-runtime-services",
@@ -347,6 +353,9 @@ export default [
           },
           {
             slug: "docs/reference/server/auth-and-row-security",
+          },
+          {
+            slug: "docs/reference/server/days-and-time-zones",
           },
           {
             label: "Row-scoped data",

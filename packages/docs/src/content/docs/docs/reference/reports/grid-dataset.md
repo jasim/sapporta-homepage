@@ -80,6 +80,15 @@ Keep node values semantic: numbers remain numbers, percentage values are ratios
 such as `0.4`, booleans remain booleans, and date/timestamp values use their
 canonical boundary representation. Presentation metadata controls rendering.
 
+`kind` selects the column preset, and `"date"` and `"timestamp"` are separate
+presets with separate default widths. A `date` column renders `2026-08-23`; a
+`timestamp` column renders `2026-08-23 16:38` in the active workspace's time
+zone, and names the moment it leaves out — `2026-08-24 02:00:00 (UTC+05:30)` —
+when a reader hovers the cell. The declared `kind` decides which of the two
+shapes a column reads in, so a column reads the same way in every row even where
+the values underneath it vary. A value in neither canonical shape is rendered as
+the text it arrived as.
+
 ## Node
 
 Required fields:

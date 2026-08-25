@@ -33,6 +33,14 @@ Drizzle expressions and numeric bounds, while generated HTTP handlers translate
 the public string query into those inputs. It also does not perform an ability
 check. A custom route must authorize the action before calling it.
 
+`TableRow<TTable>` keys a row by database column name and gives each column its
+own type, for columns declared with the Sapporta semantic factories and with
+Drizzle's own builders alike. A table whose Drizzle property differs from its
+column name returns the column name: `findMany()` returns database-named keys.
+These are `expectTypeOf` assertions in the framework, so `pnpm typecheck`
+(`tsc --noEmit`) is what reports a mismatch — `vite build` erases types without
+checking them.
+
 `ScopedRows` exposes the following CRUD and row-read methods:
 
 ```ts

@@ -78,5 +78,22 @@ The project name and table list in the app shell come from the project on disk.
 As tables are added to `packages/api/schema/`, the table navigation and
 generated record screens update with the running application.
 
+## Fill the database with sample data
+
+Once the project has tables, `packages/api/seed.ts` holds the rows a development
+database starts with:
+
+```bash
+pnpm seed
+```
+
+The run opens the database directly, with no server and no access token, and
+writes through the application's own save path. It creates the sample-data
+account named at the top of `seed.ts` on the first run and signs in as it after
+that; sign in as that account to see the rows.
+[Sample data and command-line scripts](/docs/guides/operations/sample-data-and-scripts/)
+covers writing the rows and the permission that keeps seeding on a development
+machine.
+
 Continue with
 [Tour the generated project](/docs/getting-started/tour-the-generated-project/).

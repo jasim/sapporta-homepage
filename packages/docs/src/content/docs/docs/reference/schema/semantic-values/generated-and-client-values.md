@@ -92,7 +92,8 @@ in the submit handler:
 
 - commas and surrounding whitespace are accepted as numeric editor syntax;
 - finite numeric text becomes a number;
-- date and timestamp text becomes a canonical wire string;
+- date and timestamp text becomes a canonical wire string, resolved in the
+  active workspace's time zone;
 - select, lookup, and boolean controls retain their already-typed values;
 - optional empty non-text controls are omitted;
 - optional empty text remains `""`;
@@ -101,6 +102,11 @@ in the submit handler:
 
 A failed decode returns issues separately and does not mutate the form draft.
 Editing one field clears only that field's stale issue.
+
+`parseCreateDraft()`, the table-draft decoders, and the filter-day codecs read
+`appTimeZone()` themselves. A date or timestamp control takes no zone option:
+the zone is published once per page load from the auth-context response, so
+every call site would otherwise pass the same expression.
 
 TGrid composes the same leaf decoder with patch rules at cell commit. Clearing a
 non-text cell is an explicit `null`; leaving a field out of the surrounding
@@ -114,4 +120,5 @@ return local field issues.
 - [TGrid](/docs/reference/frontend/tgrid/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Server write values and contracts](/docs/reference/schema/semantic-values/server-write-values-and-contracts/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [ColumnPreset](/grid/reference/column-preset/)

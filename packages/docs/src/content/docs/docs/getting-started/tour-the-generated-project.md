@@ -25,6 +25,10 @@ my-app/
       migrations/
       project-auth/
       schema/
+      runtime.ts
+      script-runtime.ts
+      seed-runtime.ts
+      seed.ts
     frontend/
       src/
         query-client.ts
@@ -45,6 +49,7 @@ The main extension points are:
 - `packages/api/migrations/` for generated SQL
 - `packages/api/app.ts` for mounting project routes
 - `packages/api/authz/` for abilities and request authority
+- `packages/api/seed.ts` for sample rows, run with `pnpm seed`
 - `packages/frontend/src/App.tsx` for navigation and public or protected routes
 - `packages/frontend/src/query-client.ts` for application-wide TanStack Query
   defaults

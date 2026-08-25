@@ -12,6 +12,7 @@ description:
 - `SapportaAuthContext`, `SapportaAbility`, and `forbidUnless`;
 - `RequestDataAuthority` and the authority-slot types and constructors;
 - `RowSecurity`, `TableRowSecurity`, and `InsertValuesOptions`;
+- `Principal`, `UserPrincipal`, `AuthWorkspace`, and `workspaceTimeZone`;
 - row-scope names, constants, predicates, and validation errors.
 
 The generated project owns `buildAbility(...)`,
@@ -32,6 +33,16 @@ infrastructure, not additional `@sapporta/server` exports.
 
 `forbidUnless(c, allowed)` throws the generated project-auth `403 forbidden`
 response when `allowed` is false. It does not add a row predicate.
+
+`workspaceTimeZone(auth)` returns the calendar this request works in, read from
+the workspace the request already resolved. It throws for a request with no
+workspace — an anonymous public route, or one holding only `systemGlobalOnly`
+authority. `AuthWorkspace` carries `timeZone` as a checked IANA identifier.
+[Days and time zones](/docs/reference/server/days-and-time-zones/) owns that
+contract.
+
+`userPrincipal()` returns `UserPrincipal`, the narrowed form of `Principal` for
+a caller that has already established there is a user.
 
 ## Generated table action matrix
 
@@ -139,5 +150,6 @@ Status and code are stable integration points. Message wording is illustrative.
 
 - [Authentication and abilities](/docs/guides/security/authentication-and-abilities/)
 - [Workspaces, ownership, and row visibility](/docs/guides/security/workspaces-ownership-and-row-visibility/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
 - [Error catalogue and diagnostics](/docs/reference/operations/error-catalogue-and-diagnostics/)

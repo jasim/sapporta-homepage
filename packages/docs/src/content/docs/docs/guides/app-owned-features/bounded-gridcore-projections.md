@@ -57,6 +57,13 @@ const schema = {
 } satisfies GridSchema;
 ```
 
+A `date` or `timestamp` column takes no `zone` option. The zone is published
+once, before the first grid renders, through `setDisplayTimeZone` from
+`@sapporta/grid/column-preset`. A screen inside a generated application already
+has it: the boot sequence publishes the active workspace's zone before any route
+renders, and `appTimeZone()` from `@sapporta/frontend/platform` reads it back. An
+application driving `@sapporta/grid` on its own publishes it itself.
+
 Check completeness before calculating:
 
 ```tsx

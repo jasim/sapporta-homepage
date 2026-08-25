@@ -51,6 +51,12 @@ and name the nearest existing schema, route, screen, or configuration file. When
 an outcome crosses schema, authorization, API, and frontend boundaries, ask for
 a short plan before edits so each responsibility has an explicit owner.
 
+The generated `AGENTS.md` covers the conventions an agent would otherwise
+invent: where each kind of change belongs, sample data through `pnpm seed` and
+`openScriptRuntime()` for any other script, and the rule that a day is resolved
+in the workspace's time zone rather than read from the host clock. An agent that
+starts there writes the project's conventions rather than its own.
+
 ## Keep authority at its owning layer
 
 Only include the layers the outcome needs:

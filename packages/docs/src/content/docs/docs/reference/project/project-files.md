@@ -20,9 +20,16 @@ Generated project root; scaffold contract from `@sapporta/server` 0.2.7.
   project's implementation and interface guidance.
 - `packages/frontend/src/query-client.ts` is workspace-owned. It configures the
   TanStack Query client mounted by the framework-owned `main.tsx`.
+- `packages/api/seed.ts` is workspace-owned. It holds the sample rows `pnpm seed`
+  writes. `runtime.ts`, `script-runtime.ts`, `seed-runtime.ts`,
+  `project-auth/sample-data.ts`, and `project-auth/user.ts` are framework-owned.
+- `pnpm seed` runs `packages/api/seed.ts` against the development database with
+  no server running. It requires applied migrations and
+  `SAPPORTA_ALLOW_SAMPLE_DATA_SEEDING=true`.
 - `DEPLOYMENT.md`, `Dockerfile`, and environment examples define the generated runtime handoff.
 
 
 ## Related documentation
 
 - [Generated project layout](/docs/reference/project/generated-project-layout/)
+- [Sample data and command-line scripts](/docs/guides/operations/sample-data-and-scripts/)

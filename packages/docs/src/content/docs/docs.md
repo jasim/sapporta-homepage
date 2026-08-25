@@ -91,6 +91,7 @@ index for the whole site.
 
 - [Route-based reports](/docs/guides/reports/route-based-reports/)
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
+- [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
 - [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
 - [Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
 - [Drill-through and cross-report links](/docs/guides/reports/drill-through-and-cross-report-links/)
@@ -104,6 +105,7 @@ index for the whole site.
 ### Configure and ship
 
 - [Application configuration](/docs/guides/operations/application-configuration/)
+- [Sample data and command-line scripts](/docs/guides/operations/sample-data-and-scripts/)
 - [Email and runtime services](/docs/guides/operations/email-and-runtime-services/)
 - [Run migrations in deployed environments](/docs/guides/operations/run-migrations-in-deployed-environments/)
 - [Production builds and deployment](/docs/guides/operations/production-builds-and-deployment/)
@@ -144,6 +146,7 @@ index for the whole site.
 
 - [TsRestApi and route registration](/docs/reference/server/ts-rest-api-and-route-registration/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - **Row-scoped data**
   - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
   - [Scoped CRUD and bounded reads](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/)

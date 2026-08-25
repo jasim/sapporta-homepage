@@ -49,6 +49,12 @@ serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
 - `apiWritable: false` removes a column from generated write schemas and forms,
   and generated table APIs reject callers that submit it. Reference-level
   `apiSettable: false` applies the same policy to a server-authored foreign key.
+- A table declaring `meta.children` declares the child's foreign key
+  non-writable, through either `references: { fk: { apiSettable: false } }` on
+  the child or `columns: { fk: { apiWritable: false } }`. Either removes the key
+  from the child insert shape, which is what the master-with-`$details` create
+  branch is built on. Without one of them a `$details` row carrying that key is
+  accepted and the value is silently replaced by the created master's key.
 - Browser `TableSchema` contains `name`, `label`, `immutable`, `columns`,
   `children`, optional `rowLinks`, `rowLabelColumns`, optional `rowCount`, and
   `searchable`. It does not serialize row scope, abilities, request authority,

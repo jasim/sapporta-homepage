@@ -10,6 +10,16 @@ Generated pnpm workspace with `packages/api`, `packages/shared`, and `packages/f
 ## Contract
 
 - API owns schema, migrations, auth adapters, app routes, boot, mail, and database I/O.
+- `packages/api/runtime.ts` owns `openProjectRuntime()`, which opens the
+  database, loads the table schema, and configures auth and mail. `boot.ts`
+  mounts Hono on top of it and `script-runtime.ts` opens it directly; both call
+  the `close()` it returns, so the HTTP server and a command-line script cannot
+  drift apart. It defaults mail off for a script, and takes the anonymous-route
+  list as an option rather than importing `app.ts`.
+- `packages/api/script-runtime.ts` owns `openScriptRuntime()`, which signs in
+  with an address and password and returns that person's `rows(table)`.
+  `seed-runtime.ts` is the same call with the sample-data account wired in, and
+  `seed.ts` is the workspace-owned file where sample rows are written.
 - Shared owns browser-safe contracts, wire types, parsers, serializers, and constants.
 - Frontend owns typed clients, navigation, routes, screens, and generated table integration.
 - API and frontend may import shared; shared must not import either I/O package.
@@ -39,4 +49,5 @@ second client for one screen.
 ## Related documentation
 
 - [Develop with a coding agent](/docs/guides/discovery/develop-with-a-coding-agent/)
+- [Sample data and command-line scripts](/docs/guides/operations/sample-data-and-scripts/)
 - [Table query options](/docs/reference/frontend/table-query-options/)

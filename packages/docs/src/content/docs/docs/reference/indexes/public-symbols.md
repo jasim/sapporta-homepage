@@ -23,6 +23,12 @@ describes, and includes a symbol index that maps a name to the specifier that
 publishes it. Read it instead of opening declaration files under
 `node_modules` — the reference names the specifier, which a file path does not.
 
+The reference is generated from the declaration files of the **published**
+packages, so it describes a release rather than the Sapporta working tree. The
+two drift between publishes. Check the version the page states against the
+`@sapporta/*` versions a project installs before trusting a symbol's presence or
+its exact signature.
+
 The pages below explain behavior that a signature cannot express. The generated
 reference names the surface; these describe what it does.
 

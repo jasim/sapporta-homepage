@@ -69,14 +69,18 @@ already-visible rows, calculates one date baseline, and calls the pure mapper:
 
 ```ts
 import type { Temporal } from "@sapporta/shared/temporal";
-import { TsRestApi, type SapportaEnv } from "@sapporta/server";
+import {
+  TsRestApi,
+  workspaceTimeZone,
+  type SapportaEnv,
+} from "@sapporta/server";
 import { projectProgressContract } from "task-app-shared";
 import { requireAuthorizedWorkspaceData } from "../project-auth/index.js";
 import { projectProgressDataset } from "../modules/reports/project-progress.js";
 import { readProjectProgressRows } from "../stores/project-progress.js";
 
 type ProjectProgressRouteOptions = {
-  today(): Temporal.PlainDate;
+  now(): Temporal.Instant;
 };
 
 export function createProjectProgressApi(
@@ -97,7 +101,10 @@ export function createProjectProgressApi(
         auth,
         projectId: request.query.project_id,
       });
-      const asOf = options.today();
+      const asOf = options
+        .now()
+        .toZonedDateTimeISO(workspaceTimeZone(auth))
+        .toPlainDate();
 
       return {
         status: 200,
@@ -114,6 +121,16 @@ Grant the intended roles `read` on the application-owned `project-progress`
 subject. The frontend's protected route is a UX boundary; this server check and
 the row predicates remain authoritative.
 
+`workspaceTimeZone(auth)` is the calendar this request works in. A report that
+names a day — a baseline, a bucket, a range — resolves that day in the active
+workspace's zone, so every member of one workspace reads the same number off
+one dashboard. The handler reads the zone from the authorized context it has
+already resolved, and the route carries no time zone parameter. See
+[Group and filter by day](/docs/guides/reports/group-and-filter-by-day/) for
+day-bounded filters and day buckets, and
+[Days and time zones](/docs/reference/server/days-and-time-zones/) for the
+contract.
+
 The application clock is injected where the route is assembled:
 
 ```ts
@@ -121,7 +138,7 @@ import { Temporal } from "@sapporta/shared/temporal";
 import { createProjectProgressApi } from "./app/project-progress.js";
 
 const projectProgressApi = createProjectProgressApi({
-  today: () => Temporal.Now.plainDateISO(),
+  now: () => Temporal.Now.instant(),
 });
 
 export function loadApp(app: TsRestApi<SapportaEnv>, options: LoadAppOptions) {
@@ -137,10 +154,17 @@ both calls before the combined OpenAPI document is generated. The general
 registration contract belongs in
 [TsRestApi and route registration](/docs/reference/server/ts-rest-api-and-route-registration/).
 
-The mapper never calls `Temporal.Now`. Tests inject a fixed
-`Temporal.PlainDate`; production wiring decides what “today” means. A product
-that needs shareable historical results should add a validated `as_of` query and
-include it in URL state instead.
+The injected clock returns a `Temporal.Instant`, which names a moment and
+carries no zone. `Temporal.Now.plainDateISO()` with no argument names a day, and
+the day it names comes from the host's `TZ`, so a container started with
+`TZ=UTC` and one started with `TZ=Asia/Kolkata` return different rows for the
+same report. The zone that turns the instant into a day is the workspace's, and
+it arrives with the request.
+
+The mapper never calls `Temporal.Now`. It receives the resolved baseline as an
+input, and the zone too where it turns instants into days of its own; tests pass
+a fixed instant. A product that needs shareable historical results should add a
+validated `as_of` query and include it in URL state instead.
 
 After the route and dataset are in place, continue with
 [Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
@@ -181,6 +205,8 @@ queries.
 - [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
+- [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
+- [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
 - [Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
 - [Report routes and registration](/docs/reference/reports/report-routes-and-registration/)
