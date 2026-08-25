@@ -1,7 +1,7 @@
 ---
 title: "HTTP endpoints"
 description:
-  "Find canonical owners for generated, auth, report, and app-owned routes."
+  "Find canonical owners for generated, auth, report, and application routes."
 ---
 
 ## Identity
@@ -18,7 +18,7 @@ document.
 - Auth context, workspace, and token families are owned by Authentication and
   token endpoints.
 - Task completion and project progress are project examples owned by the
-  [domain workflow](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+  [domain workflow](/docs/guides/application-code/domain-workflows-and-transactions/)
   and [route-based report](/docs/guides/reports/route-based-reports/) guides.
 
 ## Related documentation

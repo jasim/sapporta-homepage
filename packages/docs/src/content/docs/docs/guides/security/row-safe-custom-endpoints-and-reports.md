@@ -1,12 +1,12 @@
 ---
 title: "Row-safe custom endpoints and reports"
 description:
-  "Choose the row-safe data path for an app-owned table operation, workflow,
+  "Choose the row-safe data path for an application table operation, workflow,
   report, immutable table, or trusted raw query."
 ---
 
 Generated table routes apply action checks and row visibility automatically.
-App-owned code must choose those boundaries explicitly.
+Application code must choose those boundaries explicitly.
 
 | Boundary | Question | Mechanism |
 | --- | --- | --- |
@@ -25,7 +25,7 @@ filter, report link, or Grid state never grants authority.
 - [Scoped table reads and writes](/docs/guides/security/scoped-table-reads-and-writes/)
   covers `scopedRows()`, table guards, bounded reads, counts, and trusted insert
   preparation.
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)
   covers multi-table state transitions and rollback.
 - [Scoped report data](/docs/guides/reports/scoped-report-data/) covers
   per-table report predicates, aggregation, and cross-workspace proof.

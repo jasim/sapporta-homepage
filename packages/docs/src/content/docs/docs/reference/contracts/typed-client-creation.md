@@ -36,5 +36,5 @@ from `@sapporta/frontend/platform`.
 
 ## Related documentation
 
-- [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+- [Typed API clients](/docs/guides/application-code/typed-api-clients/)
 - [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)

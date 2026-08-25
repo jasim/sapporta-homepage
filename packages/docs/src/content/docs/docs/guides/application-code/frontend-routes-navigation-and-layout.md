@@ -1,7 +1,7 @@
 ---
 title: "Frontend routes, navigation, and layout"
 description:
-  "Register an app-owned screen in the generated shell with deliberate route
+  "Register an application screen in the generated shell with deliberate route
   protection, navigation, and page-scrolling behavior."
 ---
 
@@ -86,7 +86,7 @@ Verify that:
 
 ## Related documentation
 
-- [Custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
+- [Custom workflow screens](/docs/guides/application-code/custom-workflow-screens/)
 - [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
 - [App shell layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
 - [Authentication and abilities](/docs/guides/security/authentication-and-abilities/)

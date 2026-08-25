@@ -67,7 +67,7 @@ of that.
 When your requirement looks like that,
 [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 lays out the options. It compares a generated table screen, TGrid, GridCore,
-and an app-owned screen on who controls the rows and the cache, so the surface
+and an application screen on who controls the rows and the cache, so the surface
 you pick matches how people actually work.
 
 ## Add processes that span records
@@ -76,11 +76,11 @@ Sapporta's generated CRUD takes care of the everyday single-record moves, but
 business work frequently reaches across several records at once: an approval
 that updates three tables, a transaction that must succeed or fail as a unit,
 a step that calls an external system in the middle. For operations like that,
-Sapporta lets you write an app-owned endpoint that owns the whole process, and
+Sapporta lets you write an application endpoint that owns the whole process, and
 reach it from the browser through a shared contract.
 
 When CRUD is not enough to hold the process together,
-[Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+[Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 is the guide. The shared contract defines the request and response that cross
 the browser boundary, and it ties a typed React caller on one side to the
 server endpoint on the other.

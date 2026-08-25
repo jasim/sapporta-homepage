@@ -106,7 +106,7 @@ auth boundary rather than copied into every feature response map.
 
 ## Related documentation
 
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [Typed client creation](/docs/reference/contracts/typed-client-creation/)

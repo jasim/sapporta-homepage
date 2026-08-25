@@ -28,22 +28,6 @@ export default defineConfig({
   base: "/",
   output: "static",
   trailingSlash: "ignore",
-  // The grid engine layer was renamed BaseGrid -> GridCore; keep old URLs alive.
-  redirects: {
-    "/grid/reference/base-grid": "/grid/reference/grid-core",
-    "/grid/reference/base-grid/schema-rows-and-identity":
-      "/grid/reference/grid-core/schema-rows-and-identity",
-    "/grid/reference/base-grid/grid-runtime":
-      "/grid/reference/grid-core/grid-runtime",
-    "/grid/reference/base-grid/level-runtime":
-      "/grid/reference/grid-core/level-runtime",
-    "/grid/reference/base-grid/react-api":
-      "/grid/reference/grid-core/react-api",
-    "/grid/reference/base-grid/advanced-composition":
-      "/grid/reference/grid-core/advanced-composition",
-    "/docs/guides/app-owned-features/bounded-basegrid-projections":
-      "/docs/guides/app-owned-features/bounded-gridcore-projections",
-  },
   markdown: {
     processor: unified({
       remarkPlugins: [injectGettingStartedEnv],

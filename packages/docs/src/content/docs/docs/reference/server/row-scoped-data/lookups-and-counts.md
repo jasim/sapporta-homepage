@@ -70,7 +70,7 @@ column belonging to the bound table. It defaults to descending count order and
 `50` groups, accepts limits from `1` through `1000`, and orders equal counts by
 the group value ascending. `null` remains an ordinary group value.
 
-These server inputs are transport-free. App-owned code supplies Drizzle
+These server inputs are transport-free. Application code supplies Drizzle
 expressions and a table column; the generated HTTP and CLI adapters translate
 canonical filter parameters and a column name into the same operations.
 

@@ -49,7 +49,7 @@ defaulted create field preserves normal insert rules. Text `""`, explicit
 
 The generic generated-table client accepts rows as `Record<string, unknown>`
 because the table name is chosen at runtime. Per-table OpenAPI schemas still
-describe concrete column types. App-owned workflows should use shared ts-rest
+describe concrete column types. Application workflows should use shared ts-rest
 and Zod contracts when they need a statically typed domain value.
 
 ## Select-backed text

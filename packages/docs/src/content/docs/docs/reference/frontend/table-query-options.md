@@ -21,5 +21,5 @@ screen-local provider.
 ## Related documentation
 
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
-- [Custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
+- [Custom frontend routes and screens](/docs/guides/application-code/custom-frontend-routes-and-screens/)
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)

@@ -99,6 +99,6 @@ prevents.
 
 - [Relationships and lookup behavior](/docs/guides/model-data/relationships-and-lookup-behavior/)
 - [Generated lookups and CSV export](/docs/guides/generated-surfaces/generated-lookups-and-csv-export/)
-- [Custom forms and validation](/docs/guides/app-owned-features/custom-forms-and-validation/)
+- [Custom forms and validation](/docs/guides/application-code/custom-forms-and-validation/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [Server write values and contracts](/docs/reference/schema/semantic-values/server-write-values-and-contracts/)

@@ -17,6 +17,9 @@ describe("crawler-facing static routes", () => {
     await mkdir(docsDistDir);
     await mkdir(frontendDistDir);
     await mkdir(join(docsDistDir, "docs"));
+    await mkdir(join(docsDistDir, "api-reference", "server"), {
+      recursive: true,
+    });
     await Promise.all([
       writeFile(join(docsDistDir, "index.html"), "<h1>Homepage</h1>"),
       writeFile(join(docsDistDir, "docs.md"), "# Documentation\n"),
@@ -33,6 +36,22 @@ describe("crawler-facing static routes", () => {
         '<?xml version="1.0"?><sitemapindex></sitemapindex>',
       ),
       writeFile(join(frontendDistDir, "index.html"), "<h1>SPA fallback</h1>"),
+      writeFile(
+        join(docsDistDir, "api-reference", "index.md"),
+        "# Sapporta API reference\n",
+      ),
+      writeFile(
+        join(docsDistDir, "api-reference", "symbols.md"),
+        "# Every symbol\n",
+      ),
+      writeFile(
+        join(docsDistDir, "api-reference", "server", "index.md"),
+        "# @sapporta/server\n",
+      ),
+      writeFile(
+        join(docsDistDir, "api-reference", "llms.txt"),
+        "# Sapporta API reference\n",
+      ),
     ]);
 
     app = new Hono<SapportaEnv>();
@@ -102,6 +121,59 @@ describe("crawler-facing static routes", () => {
       "text/markdown; charset=utf-8",
     );
     expect(await response.text()).toContain("# Documentation");
+  });
+
+  it("serves an API reference page as Markdown before the SPA fallback", async () => {
+    const response = await app.request("/api-reference/symbols.md");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/markdown; charset=utf-8",
+    );
+    expect(await response.text()).toContain("# Every symbol");
+  });
+
+  it("serves a nested API reference page as Markdown", async () => {
+    const response = await app.request("/api-reference/server/index.md");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/markdown; charset=utf-8",
+    );
+    expect(await response.text()).toContain("# @sapporta/server");
+  });
+
+  it("reads the API reference index from every form of its path", async () => {
+    for (const path of [
+      "/api-reference",
+      "/api-reference/",
+      "/api-reference.md",
+      "/api-reference/index.md",
+    ]) {
+      const response = await app.request(path);
+
+      expect(response.status, path).toBe(200);
+      expect(response.headers.get("Content-Type"), path).toBe(
+        "text/markdown; charset=utf-8",
+      );
+      expect(await response.text(), path).toContain("# Sapporta API reference");
+    }
+  });
+
+  it("serves the API reference llms.txt index as plain text", async () => {
+    const response = await app.request("/api-reference/llms.txt");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/plain; charset=utf-8",
+    );
+  });
+
+  it("404s a missing API reference page instead of the SPA shell", async () => {
+    const response = await app.request("/api-reference/no-such-package.md");
+
+    expect(response.status).toBe(404);
+    expect(await response.text()).not.toContain("SPA fallback");
   });
 
   it("advertises the Markdown index from the homepage", async () => {

@@ -31,6 +31,6 @@ headers, body, and cancellation behavior.
 
 ## Related documentation
 
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 - [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)

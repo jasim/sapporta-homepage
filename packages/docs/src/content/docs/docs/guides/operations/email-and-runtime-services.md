@@ -1,7 +1,7 @@
 ---
 title: "Email and runtime services"
 description:
-  "Inject configured runtime services into app-owned routes and workflows."
+  "Inject configured runtime services into application routes and workflows."
 ---
 
 Generated projects construct long-lived services during boot and pass them into
@@ -74,7 +74,7 @@ SAPPORTA_MAIL_FROM=Task App <no-reply@example.com>
 
 ```bash
 pnpm dev
-# Trigger the workflow from the browser or its app-owned endpoint.
+# Trigger the workflow from the browser or its application endpoint.
 pnpm exec sapporta api post /api/tasks/1/complete --body '{}'
 ```
 

@@ -11,9 +11,9 @@ Table query builders are exported from `@sapporta/frontend/table/query` and from
 the main `@sapporta/frontend` entry point. They compose the generated table HTTP
 client with TanStack Query.
 
-New Sapporta projects install `@tanstack/react-query`. The workspace-owned
+New Sapporta projects install `@tanstack/react-query`.
 `packages/frontend/src/query-client.ts` exports one application `QueryClient`,
-and the framework entry point mounts it with `QueryClientProvider`. A feature
+and `main.tsx` mounts it with `QueryClientProvider`. A feature
 should reuse that provider and the public table query builders.
 
 ## Read functions
@@ -115,7 +115,7 @@ Without `decodeRow`, both builders return generic `Row` values. Supplying
 Each page row is decoded independently. Decoder failures reject the query.
 Sapporta does not infer an application domain type from a generic table
 response; the application declares it as a
-[row projection](/docs/guides/app-owned-features/cached-table-reads-and-refresh/).
+[row projection](/docs/guides/application-code/cached-table-reads-and-refresh/).
 The page decoder uses ordinary array mapping, so one thrown decoder error fails
 the whole query rather than publishing a shorter page. Partial results require a
 separate wire contract and visible diagnostics.

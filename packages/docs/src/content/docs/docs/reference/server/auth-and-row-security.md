@@ -15,10 +15,10 @@ description:
 - `Principal`, `UserPrincipal`, `AuthWorkspace`, and `workspaceTimeZone`;
 - row-scope names, constants, predicates, and validation errors.
 
-The generated project owns `buildAbility(...)`,
-`resolveRequestDataAuthority(...)`, `publicApiRoutes`, and helpers such as
-`requireAuthorizedWorkspaceData(...)`. Those helpers are application
-infrastructure, not additional `@sapporta/server` exports.
+`buildAbility(...)`, `resolveRequestDataAuthority(...)`, `publicApiRoutes`, and
+helpers such as `requireAuthorizedWorkspaceData(...)` are source files in your
+project, not `@sapporta/server` exports. Edit them to change what this
+application permits.
 
 ## Request context
 
@@ -64,7 +64,7 @@ through a broader rule such as the starter owner's `can("manage", "all")`. That
 broad grant remains the owner policy; narrower named owner grants shown
 alongside it are illustrative and redundant.
 
-App-owned actions use an application subject, for example
+Actions you write use their own subject, for example
 `can("run", "task_completion")`, and call `forbidUnless(...)` or an authorized
 generated-project helper before touching data.
 
@@ -87,7 +87,7 @@ If the request does not carry the authority slot required by a table,
 row-security construction fails closed with `403 row_scope_forbidden`.
 Membership roles affect `buildAbility(...)`; they do not widen `dataAuthority`.
 
-Generated routes apply ability checks and row scope automatically. App-owned
+Generated routes apply ability checks and row scope automatically. Application
 routes explicitly select action, authority, and row enforcement. Project helpers
 such as `requireAuthorizedWorkspaceData(...)` both check their action/subject
 requirement and narrow `dataAuthority` and `rowSecurity` to the validated slot.

@@ -2,7 +2,7 @@
 title: "Generated table APIs"
 description:
   "Use generated CRUD routes for ordinary record work and identify when an
-  app-owned operation is required."
+  application operation is required."
 ---
 
 Every registered table receives one HTTP surface for ordinary record work. The
@@ -116,11 +116,11 @@ database starts at ID `1`.
 
 Generated routes fit one-table record operations. Completing a task may need to
 update `tasks`, append a `task_events` row, and return one domain result in a
-transaction. That is one app-owned endpoint, not two client-coordinated CRUD
+transaction. That is one application endpoint, not two client-coordinated CRUD
 calls.
 
 Use generated routes while the operation means “read or change this table.”
-Use an app-owned endpoint when it has its own name, transaction, external
+Use an application endpoint when it has its own name, transaction, external
 effect, or response.
 
 ## Related reference

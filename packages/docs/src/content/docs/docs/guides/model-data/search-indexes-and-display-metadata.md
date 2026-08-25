@@ -14,7 +14,7 @@ the page that owns the part you are changing.
   covers default search, selected root columns, foreign-key labels, recursive
   child paths, disabling search, and configuration validation.
 - [Use table search](/docs/guides/model-data/use-table-search/) covers the
-  generated UI, HTTP, export, CLI, frontend, and app-owned server callers.
+  generated UI, HTTP, export, CLI, frontend, and application server callers.
 - [Relational search semantics and security](/docs/guides/model-data/relational-search-semantics-and-security/)
   explains literal term matching, predicate composition, generated SQL, and
   authorization on every relationship branch.

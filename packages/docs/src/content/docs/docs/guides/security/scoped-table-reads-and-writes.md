@@ -1,7 +1,7 @@
 ---
 title: "Scoped table reads and writes"
 description:
-  "Use scopedRows and per-table guards for bounded app-owned reads, counts,
+  "Use scopedRows and per-table guards for bounded application reads, counts,
   updates, and trusted insert values."
 ---
 
@@ -88,6 +88,6 @@ prove hidden rows were excluded.
 ## Related documentation
 
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
-- [Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)
+- [Parent-detail transactions](/docs/guides/application-code/parent-detail-transactions/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)

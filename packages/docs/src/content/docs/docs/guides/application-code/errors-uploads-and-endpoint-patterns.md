@@ -8,13 +8,13 @@ description:
 These endpoint patterns share the contract boundary but solve different
 problems. Read only the page required by the operation:
 
-- [Expected errors and HTTP mapping](/docs/guides/app-owned-features/expected-errors-and-http-mapping/)
+- [Expected errors and HTTP mapping](/docs/guides/application-code/expected-errors-and-http-mapping/)
   covers one typed domain-error family, declared status/code pairs, adapter
   mapping, and browser parsing.
-- [Multipart file uploads](/docs/guides/app-owned-features/multipart-file-uploads/)
+- [Multipart file uploads](/docs/guides/application-code/multipart-file-uploads/)
   covers contract declaration, the handler `files` argument, row-safe target
   checks, file limits, and multipart exercise.
-- [Non-JSON and raw responses](/docs/guides/app-owned-features/non-json-and-raw-responses/)
+- [Non-JSON and raw responses](/docs/guides/application-code/non-json-and-raw-responses/)
   covers typed text/CSV responses and the narrow cases that require a raw
   `Response`.
 
@@ -24,6 +24,6 @@ on the application's central error path.
 
 ## Related documentation
 
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
-- [Custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
+- [Custom API endpoints](/docs/guides/application-code/custom-api-endpoints/)
 - [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)

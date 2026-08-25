@@ -2,7 +2,7 @@
 title: "Welcome to Sapporta"
 description:
   "Understand Sapporta as a TypeScript database app toolkit with generated
-  tables, APIs, grids, OpenAPI, and app-owned features."
+  tables, APIs, grids, OpenAPI, and application features."
 ---
 
 Welcome to Sapporta.

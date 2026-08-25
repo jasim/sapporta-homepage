@@ -93,7 +93,7 @@ That second request applies the target table's own `read` ability and row scope.
 Do not replace the grouped key with an unscoped join or assume every returned
 key has a label visible to the caller.
 
-## Count in app-owned server code
+## Count in application server code
 
 `scopedRows()` exposes transport-free `count()` and `countBy()` operations.
 Their `where` values are Drizzle expressions, and `countBy()` takes a column
@@ -119,13 +119,13 @@ const byProject = await rows.countBy({
 ```
 
 Both operations add the request's row predicate before executing SQL.
-`scopedRows()` does not check a route ability, so an app-owned handler still
+`scopedRows()` does not check a route ability, so an application handler still
 authorizes its action before counting.
 
 ## Know when the count operation is too small
 
 The generated operation answers filtered totals and one-column groups over one
-table. Use an app-owned report or domain endpoint when the question combines
+table. Use an application report or domain endpoint when the question combines
 tables, calculates a business state, needs reusable labels or measures, or
 already has a named application meaning. Do not retrieve complete rows merely to
 count them.

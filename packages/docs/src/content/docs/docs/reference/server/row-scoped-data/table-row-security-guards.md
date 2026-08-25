@@ -118,4 +118,4 @@ patches when applicable, and preserve the intended immutable policy.
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Scoped report helpers](/docs/reference/reports/scoped-report-helpers/)
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)

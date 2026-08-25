@@ -10,14 +10,14 @@ owns draft and submit state. TanStack Query owns loaded server state. Sapporta
 metadata and generated clients connect both owners to the registered table
 without creating a second schema or cache.
 
-- [Custom forms and validation](/docs/guides/app-owned-features/custom-forms-and-validation/)
+- [Custom forms and validation](/docs/guides/application-code/custom-forms-and-validation/)
   covers metadata-derived fields, create versus patch decoding, and local or
   remote field issues.
-- [Cached table reads and refresh](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
+- [Cached table reads and refresh](/docs/guides/application-code/cached-table-reads-and-refresh/)
   covers record and page queries, row decoding, cancellation, query
   invalidation, and TGrid reload boundaries.
 
-Use an app-owned typed endpoint when one submit changes several tables or runs a
+Use an application typed endpoint when one submit changes several tables or runs a
 named domain action. Form still owns the draft; the shared contract owns the
 request; the server owns authorization and the transaction.
 
@@ -25,4 +25,4 @@ request; the server owns authorization and the transaction.
 
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
-- [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+- [Typed API clients](/docs/guides/application-code/typed-api-clients/)

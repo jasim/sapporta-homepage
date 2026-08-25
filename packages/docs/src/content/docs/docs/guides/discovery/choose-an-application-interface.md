@@ -19,8 +19,8 @@ where authorization, validation, and confirmation belong.
 | Outcome                                       | Owning operation                        | Suitable callers                                               | Confirmation                                                         |
 | --------------------------------------------- | --------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
 | Inspect or edit an ordinary registered record | Generated record screen or table API    | Browser, `rows` CLI command, or data-console agent             | Read the affected row through the same visible table surface         |
-| Answer an ad hoc total or one-column group    | Generated table count                   | `rows count`, direct HTTP, or app-owned server code            | State the filter meaning, row boundary, grouping, and result bound   |
-| Apply a named business transition             | App-owned endpoint                      | Typed browser client, `api` CLI command, or data-console agent | Read the declared domain result and the affected state               |
+| Answer an ad hoc total or one-column group    | Generated table count                   | `rows count`, direct HTTP, or application server code            | State the filter meaning, row boundary, grouping, and result bound   |
+| Apply a named business transition             | Application endpoint                      | Typed browser client, `api` CLI command, or data-console agent | Read the declared domain result and the affected state               |
 | Reuse an aggregate or read model              | Protected report route and screen       | Browser, `api` CLI command, or data-console agent              | Check the returned dataset or aggregate against its scoped base rows |
 | Change repository behavior                    | Source code and tests                   | Coding agent with the Sapporta skill                           | Review the diff and focused verification                             |
 | Perform exceptional administration            | Ability-gated unrestricted SQL endpoint | Explicitly authorized operator using `sql`                     | Bound the query or mutation and inspect the resulting state          |
@@ -28,7 +28,7 @@ where authorization, validation, and confirmation belong.
 A custom screen does not automatically require a custom data operation. It can
 call the generated table API when one registered table still owns the record.
 Conversely, putting a multi-table transition behind a custom button does not
-make a sequence of table updates atomic; that rule belongs in one app-owned
+make a sequence of table updates atomic; that rule belongs in one application
 endpoint.
 
 The generated count operation is narrower than a report. It counts visible rows
@@ -50,7 +50,7 @@ workspace, ownership, role, audit, and row-scope fields unless the owning
 contract explicitly accepts them.
 
 The shared authentication boundary can reject a request before a generated or
-app-owned operation runs. Endpoint discovery shows the operation's HTTP
+application operation runs. Endpoint discovery shows the operation's HTTP
 contract; it does not prove the caller's ability or row visibility.
 
 ## Discover, call, and confirm

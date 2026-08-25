@@ -36,7 +36,7 @@ Drizzle index does. Generate, review, and apply that migration through the
 normal schema workflow.
 
 For a large document corpus, language-aware ranking, stemming, or tokenized
-matching, use an app-owned search endpoint backed by FTS or an external index.
+matching, use an application search endpoint backed by FTS or an external index.
 Generated table search intentionally remains literal, relational, and attached
 to ordinary table reads.
 

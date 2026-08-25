@@ -53,29 +53,29 @@ index for the whole site.
   - [Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
   - [Table-aware grids and customization](/docs/guides/generated-surfaces/table-aware-grids-and-customization/)
   - [Low-level TGrid sessions](/docs/guides/generated-surfaces/low-level-tgrid-sessions/)
-- [Bounded GridCore projections](/docs/guides/app-owned-features/bounded-gridcore-projections/)
+- [Bounded GridCore projections](/docs/guides/application-code/bounded-gridcore-projections/)
 - **Custom forms**
-  - [Custom forms and cached table reads](/docs/guides/app-owned-features/custom-forms-and-table-queries/)
-  - [Custom forms and validation](/docs/guides/app-owned-features/custom-forms-and-validation/)
-  - [Cached table reads and refresh](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
-  - [Stage multi-row drafts in a Grid](/docs/guides/app-owned-features/staged-multi-row-drafts/)
+  - [Custom forms and cached table reads](/docs/guides/application-code/custom-forms-and-table-queries/)
+  - [Custom forms and validation](/docs/guides/application-code/custom-forms-and-validation/)
+  - [Cached table reads and refresh](/docs/guides/application-code/cached-table-reads-and-refresh/)
+  - [Stage multi-row drafts in a Grid](/docs/guides/application-code/staged-multi-row-drafts/)
 - **Custom screens**
-  - [Custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
-  - [Custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
-  - [Frontend routes, navigation, and layout](/docs/guides/app-owned-features/frontend-routes-navigation-and-layout/)
+  - [Custom frontend routes and screens](/docs/guides/application-code/custom-frontend-routes-and-screens/)
+  - [Custom workflow screens](/docs/guides/application-code/custom-workflow-screens/)
+  - [Frontend routes, navigation, and layout](/docs/guides/application-code/frontend-routes-navigation-and-layout/)
 
 ### Build domain workflows
 
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
-- [Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/)
-- [Custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)
+- [Parent-detail transactions](/docs/guides/application-code/parent-detail-transactions/)
+- [Custom API endpoints](/docs/guides/application-code/custom-api-endpoints/)
 - **Endpoint patterns**
-  - [Errors, uploads, and endpoint patterns](/docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns/)
-  - [Expected errors and HTTP mapping](/docs/guides/app-owned-features/expected-errors-and-http-mapping/)
-  - [Multipart file uploads](/docs/guides/app-owned-features/multipart-file-uploads/)
-  - [Non-JSON and raw responses](/docs/guides/app-owned-features/non-json-and-raw-responses/)
-- [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+  - [Errors, uploads, and endpoint patterns](/docs/guides/application-code/errors-uploads-and-endpoint-patterns/)
+  - [Expected errors and HTTP mapping](/docs/guides/application-code/expected-errors-and-http-mapping/)
+  - [Multipart file uploads](/docs/guides/application-code/multipart-file-uploads/)
+  - [Non-JSON and raw responses](/docs/guides/application-code/non-json-and-raw-responses/)
+- [Typed API clients](/docs/guides/application-code/typed-api-clients/)
 
 ### Secure actions and data
 
@@ -117,10 +117,8 @@ index for the whole site.
 
 ### Project and configuration
 
-- [Project files](/docs/reference/project/project-files/)
-- [Generated project layout](/docs/reference/project/generated-project-layout/)
+- [Project file map](/docs/reference/project/project-files/)
 - [Environment variables](/docs/reference/project/environment-variables/)
-- [Application configuration](/docs/reference/project/application-configuration/)
 
 ### Schema and tables
 

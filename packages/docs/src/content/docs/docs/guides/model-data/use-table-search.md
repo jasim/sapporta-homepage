@@ -2,7 +2,7 @@
 title: "Use table search"
 description:
   "Call an existing table search from generated UI, HTTP, CLI, frontend code, or
-  an app-owned server operation."
+  an application server operation."
 ---
 
 Once a table has a valid search plan, the generated surface exposes the same
@@ -23,9 +23,9 @@ to the browser. The recursive plan remains on the server.
 Generated handlers retrieve the compiled plan from the loaded table catalog.
 They own the `q` HTTP parameter; `scopedRows()` deliberately does not.
 
-## Search in app-owned server code
+## Search in application server code
 
-When an app-owned contract accepts a search term, compile the plan into a
+When an application contract accepts a search term, compile the plan into a
 Drizzle predicate and pass it to the bounded read that fits the result:
 
 ```ts

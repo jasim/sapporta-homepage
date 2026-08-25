@@ -133,6 +133,49 @@ http {
             add_header Vary "Accept" always;
         }
 
+        # The generated symbol reference. Every page is Markdown written for
+        # coding agents; there is no HTML form of an API reference page, so
+        # nothing under this prefix is content-negotiated. `/api-reference`,
+        # with or without a trailing slash, and `/api-reference.md` all read
+        # the index page, the way `/docs` and `/docs.md` both read the
+        # documentation index.
+        location = /api-reference {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /api-reference/index.md =404;
+            default_type text/markdown;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location = /api-reference/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /api-reference/index.md =404;
+            default_type text/markdown;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location = /api-reference.md {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /api-reference/index.md =404;
+            default_type text/markdown;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        location ~ ^/api-reference/.+\.txt$ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            default_type text/plain;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        # Everything else under the prefix is a generated .md page. `=404`
+        # keeps a mistyped page a real 404 rather than the application shell.
+        location /api-reference/ {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files $uri =404;
+            default_type text/markdown;
+            add_header Cache-Control "no-cache" always;
+        }
+
         location = /llms.txt {
             root /var/www/sapporta-homepage-app/packages/docs/dist;
             try_files /llms.txt =404;

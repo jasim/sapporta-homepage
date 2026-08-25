@@ -6,56 +6,19 @@ description:
 ---
 
 A Sapporta app is a pnpm workspace with a Hono API, a React frontend, and a
-shared package for API contracts and wire types.
+shared package for API contracts and wire types. The API and frontend can import
+the shared package. The shared package contains browser-safe contracts and wire
+types, with no server, database, or React I/O.
 
-```text
-my-app/
-  sapporta.json
-  package.json
-  pnpm-workspace.yaml
-  AGENTS.md
-  CODING-PRINCIPLES.md
-  VISUAL-DESIGN-GUIDELINES.md
-  .env.development
-  data/
-  packages/
-    api/
-      app/
-      authz/
-      migrations/
-      project-auth/
-      schema/
-      runtime.ts
-      script-runtime.ts
-      seed-runtime.ts
-      seed.ts
-    frontend/
-      src/
-        query-client.ts
-    shared/
-      src/
-        contracts/
-  scripts/
-  Dockerfile
-  DEPLOYMENT.md
-```
-
-The API and frontend can import the shared package. The shared package contains
-browser-safe contracts and wire types, with no server, database, or React I/O.
-
-The main extension points are:
-
-- `packages/api/schema/` for table definitions
-- `packages/api/migrations/` for generated SQL
-- `packages/api/app.ts` for mounting project routes
-- `packages/api/authz/` for abilities and request authority
-- `packages/api/seed.ts` for sample rows, run with `pnpm seed`
-- `packages/frontend/src/App.tsx` for navigation and public or protected routes
-- `packages/frontend/src/query-client.ts` for application-wide TanStack Query
-  defaults
+Every generated file, who owns it, and the file to edit for a given change are
+listed in the
+[project file map](/docs/reference/project/project-files/). The changes a first
+outcome usually needs are table definitions in `packages/api/schema/`, route
+mounting in `packages/api/app.ts`, and navigation in
+`packages/frontend/src/App.tsx`.
 
 The frontend already mounts TanStack Query and includes TanStack Form. Public
-Sapporta query options and form helpers connect app-owned screens to generated
+Sapporta query options and form helpers connect application screens to generated
 table routes. `AGENTS.md`, `CODING-PRINCIPLES.md`, and
 `VISUAL-DESIGN-GUIDELINES.md` tell a coding agent how to work in this generated
 workspace.
@@ -78,10 +41,10 @@ Start with one result that has an obvious owner:
 
 - Add a table and its ordinary CRUD surface with
   [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/).
-- Change how registered or application-owned rows are presented with
+- Change how registered or application rows are presented with
   [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/).
 - Add a named action that coordinates several records with
-  [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/).
+  [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/).
 - If the result belongs to an already-running application rather than the
   repository, first
   [choose the application interface](/docs/guides/discovery/choose-an-application-interface/).

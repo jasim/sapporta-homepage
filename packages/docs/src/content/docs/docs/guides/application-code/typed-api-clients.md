@@ -1,7 +1,7 @@
 ---
 title: "Typed API clients"
 description:
-  "Call app-owned endpoints from the browser using the shared contract."
+  "Call application endpoints from the browser using the shared contract."
 ---
 
 A typed client turns a shared contract into browser methods. Each method accepts
@@ -12,7 +12,7 @@ error paths.
 
 ## Create one application client module
 
-Keep app-owned clients in `packages/frontend/src/api.ts`. The module imports
+Keep application clients in `packages/frontend/src/api.ts`. The module imports
 browser-safe contracts and contains no handler or database code.
 
 ```ts
@@ -134,7 +134,7 @@ TGrid sessions use a separate cache. Call `reloadTGridRows("tasks")` or
 affected mounted TGrid. See
 [Table query cache keys and ownership](/docs/reference/frontend/table-queries/cache-keys-and-ownership/) for the
 cache-key hierarchy. The
-[custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
+[custom workflow screens](/docs/guides/application-code/custom-workflow-screens/)
 guide owns the full mutation pattern.
 
 ## Observe the inferred request

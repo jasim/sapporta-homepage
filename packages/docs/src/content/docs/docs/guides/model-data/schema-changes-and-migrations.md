@@ -63,7 +63,7 @@ export default taskEvents;
 `immutable: true` blocks generated update and delete operations on enforcing
 paths. It does not grant create permission, choose who may read the row, or
 constrain trusted raw database access. Keep ordinary clients from authoring
-history by reserving event creation for an app-owned workflow. The
+history by reserving event creation for an application workflow. The
 [security guide](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 owns those enforcement details.
 

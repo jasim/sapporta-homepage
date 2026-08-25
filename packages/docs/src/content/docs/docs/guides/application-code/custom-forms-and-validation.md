@@ -8,7 +8,7 @@ description:
 A custom form composes live `TableSchema` metadata, TanStack Form draft state,
 and the server write path. It should not create a second schema. Load existing
 records through the focused
-[cached table reads guide](/docs/guides/app-owned-features/cached-table-reads-and-refresh/).
+[cached table reads guide](/docs/guides/application-code/cached-table-reads-and-refresh/).
 
 ## Keep state ownership explicit
 
@@ -135,7 +135,7 @@ Update forms need an explicit patch transform. Create omission and patch
 omission have different meanings. A create omission permits a default; a patch
 omission leaves the stored field unchanged.
 
-Use an app-owned typed endpoint when one submit changes several tables or
+Use an application typed endpoint when one submit changes several tables or
 performs a named domain action. TanStack Form still owns the draft, but the
 application contract owns the request shape and the server owns the transaction.
 
@@ -176,8 +176,8 @@ apply directly. Non-obvious points:
 
 ## Related reference
 
-- [Stage multi-row drafts in a Grid](/docs/guides/app-owned-features/staged-multi-row-drafts/)
+- [Stage multi-row drafts in a Grid](/docs/guides/application-code/staged-multi-row-drafts/)
 - [Table lookups and record ids](/docs/reference/frontend/lookups/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
-- [Cached table reads and refresh](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
-- [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+- [Cached table reads and refresh](/docs/guides/application-code/cached-table-reads-and-refresh/)
+- [Typed API clients](/docs/guides/application-code/typed-api-clients/)

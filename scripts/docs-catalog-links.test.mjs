@@ -72,11 +72,11 @@ test("documentation sidebar and sources stay bijective", async () => {
     slug.startsWith("grid/"),
   ).length;
 
-  assert.equal(sidebarSlugs.length, 151);
-  assert.equal(sidebarSet.size, 151);
-  assert.equal(sourceSlugs.length, 151);
-  assert.equal(sourceSet.size, 151);
-  assert.equal(docsCount, 118);
+  assert.equal(sidebarSlugs.length, 152);
+  assert.equal(sidebarSet.size, 152);
+  assert.equal(sourceSlugs.length, 152);
+  assert.equal(sourceSet.size, 152);
+  assert.equal(docsCount, 119);
   assert.equal(gridCount, 33);
 });
 

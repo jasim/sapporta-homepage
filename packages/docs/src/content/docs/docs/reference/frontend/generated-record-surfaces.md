@@ -23,7 +23,7 @@ integration points.
 - There is no generated `/tables/:tableName/:id` browser route. The separate
   HTTP operation `GET /api/tables/<table>/<id>` returns one row but does not
   create a frontend page. Use the table workflow/expanded row or add an
-  app-owned detail route.
+  application detail route.
 - `NewRecordPage` renders a metadata-derived create form for one `TableSchema`.
 - `FormField` renders one `RecordFormFieldModel`. It accepts `field`, `value`,
   `issue`, and `onChange` values and supplies the matching label, input,

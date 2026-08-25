@@ -99,7 +99,7 @@ revealing related rows outside the caller's scope.
 A child match decides that its parent belongs in the root result. Expanding that
 parent runs the child grid's own query and shows all child rows visible there;
 the root `q` is not inherited. Use an explicit child-table filter or an
-app-owned result when a workflow needs match provenance.
+application result when a workflow needs match provenance.
 
 ## Related documentation
 

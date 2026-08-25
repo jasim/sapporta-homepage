@@ -92,7 +92,7 @@ cannot make an inaccessible task reveal its project.
 
 Expanding the matching project runs the child grid's own query and shows all
 visible tasks. The parent term is not inherited as a hidden child filter. Use an
-explicit task-table link or an app-owned result when the workflow needs to show
+explicit task-table link or an application result when the workflow needs to show
 only the matching children.
 
 ## Exercise both directions

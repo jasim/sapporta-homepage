@@ -7,10 +7,11 @@ description:
 
 ## Identity
 
-Generated `packages/frontend/src/App.tsx` and
-`packages/frontend/src/SapportaApp.tsx`.
+Generated `packages/frontend/src/App.tsx`,
+`packages/frontend/src/SapportaApp.tsx`, and
+`packages/frontend/src/SapportaRoutes.tsx`.
 
-## App-owned contributions
+## Application contributions
 
 The generated `App.tsx` exports five values:
 
@@ -72,10 +73,10 @@ router. `SapportaApp.tsx` then composes routes in this order:
    `AuthGate`. `appHomeRoute` is mounted only while `appPublicHomeRoute` is
    `null`.
 
-`SapportaApp.tsx` owns that composition. A screen changes where it renders by
-moving between the `App.tsx` slots, not by editing `SapportaApp.tsx`.
+`SapportaApp.tsx` performs that composition. The ordinary way to change where a
+screen renders is to move it between the `App.tsx` slots.
 
-An app-owned public route can render for a guest, but it still participates in
+An application public route can render for a guest, but it still participates in
 the application bootstrap and shell. Put it in `appPublicRoutes` only when its
 page and data are intentionally anonymous. A protected contribution renders only
 after session bootstrap has settled and an authenticated workspace is available.
@@ -83,6 +84,20 @@ after session bootstrap has settled and an authenticated workspace is available.
 Feature modules reuse the starter's QueryClient. A nested provider would split
 cache invalidation, error handling, and DevTools state from the rest of the
 application.
+
+## Screens from `@sapporta/frontend`
+
+`SapportaRoutes.tsx` mounts the screens the library ships. Each page is lazily
+imported from `@sapporta/frontend`, so a screen's code loads when its URL is
+first visited, and `SapportaApp.tsx` composes what the file exports.
+
+- `sapportaPublicRoutes` — `login`, `signup`, `verify-email`, `forgot-password`,
+  and `reset-password`. `login` and `signup` render inside `PublicOnlyGate`,
+  which sends a session that already exists to the application instead.
+- `sapportaProtectedRoutes` — `account/profile`, `account/password`,
+  `workspace/settings`, `tables/:tableName`, and `tables/:tableName/new`. The
+  workspace settings screen is where an owner changes the workspace time zone.
+- `sapportaNotFoundRoute` — `*`, rendering `NotFoundView`.
 
 ## Generated table navigation
 
@@ -103,7 +118,7 @@ redirects an unverified session when the project's email-verification policy is
 enabled. That protected-route boundary is application UX. It does not authorize
 an API operation or enforce row visibility.
 
-Generated table handlers and app-owned API routes must still enforce their
+Generated table handlers and application API routes must still enforce their
 server-side ability, authority, row-scope, and write-integrity rules. Navigation
 visibility, hidden fields, fixed filters, route parameters, and client cache
 keys are not authorization.
@@ -113,7 +128,7 @@ screens; neither changes that server boundary.
 
 ## Related documentation
 
-- [Frontend routes, navigation, and layout](/docs/guides/app-owned-features/frontend-routes-navigation-and-layout/)
+- [Frontend routes, navigation, and layout](/docs/guides/application-code/frontend-routes-navigation-and-layout/)
 - [Layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Table query options](/docs/reference/frontend/table-query-options/)

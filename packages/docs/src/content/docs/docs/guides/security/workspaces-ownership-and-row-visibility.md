@@ -96,14 +96,14 @@ scopedToUserId
 Other names such as `owner_id`, `role`, or `approved_by` are not automatically
 protected because they sound authoritative. Use `apiWritable: false` for a
 server-owned column, `apiSettable: false` for a server-owned reference, or an
-app-owned workflow that supplies the value through `serverValues`.
+application workflow that supplies the value through `serverValues`.
 
 Filters, hidden inputs, lookup choices, URL parameters, record IDs, and Grid
 state are presentation or query inputs. None of them grants authority.
 
 ## Generated and custom routes enforce the same rule
 
-Generated table routes apply row policy automatically. App-owned routes must
+Generated table routes apply row policy automatically. Application routes must
 choose one of the row-safe paths explicitly:
 
 - `scopedRows(...)` for generated-style operations on one table;
@@ -120,8 +120,9 @@ workspaces' primary keys.
 A workspace is a boundary for rows and the answer to which day an instant falls
 on. `AuthWorkspace.timeZone` holds an IANA identifier, and
 `workspaceTimeZone(auth)` is what a handler reads it with. A new workspace
-starts on the zone the browser sends at sign-up; after that the workspace owns
-its own, and an owner changes it on the Workspace settings screen.
+starts on the zone the browser sends at sign-up, and a seeded one on the zone of
+the machine that ran `pnpm seed`; after that the workspace owns its own, and an
+owner changes it on the workspace settings screen at `/workspace/settings`.
 
 One value per workspace keeps a shared result shared: two members reading the
 same dashboard group the same rows under the same day.

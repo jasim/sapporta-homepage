@@ -147,4 +147,4 @@ Unlike `scopedRows().scan()`, `scanTableRows()` does not add row scope. Compose
 - [Lookups and counts](/docs/reference/server/row-scoped-data/lookups-and-counts/)
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)

@@ -1,7 +1,7 @@
 ---
 title: "Bounded GridCore projections"
 description:
-  "Render a small application-owned calculated row model without implying
+  "Render a small application calculated row model without implying
   generated CRUD, completeness, or row security."
 ---
 

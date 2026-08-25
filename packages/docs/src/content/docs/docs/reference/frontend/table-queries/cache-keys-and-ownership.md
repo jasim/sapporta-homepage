@@ -50,14 +50,14 @@ TGrid sessions do not read TanStack Query's cache. `reloadTGridRows(tableName)`
 sends a fire-and-forget reload command to the mounted, registered TGrid session
 for that root table; it is a no-op when no such session exists. Invalidate the
 relevant TanStack Query prefix separately when the same mutation affects
-app-owned cached screens. These are different server-state consumers.
+application cached screens. These are different server-state consumers.
 
 ## Query ownership invariants
 
-- The generated project owns one `QueryClient`. Feature modules compose query
+- A generated project has one `QueryClient`. Feature modules compose query
   options; they do not mount nested providers or create parallel clients.
-- Query keys describe generated table reads. App-owned endpoint results use an
-  application-owned key namespace.
+- Query keys describe generated table reads. Application endpoint results use an
+  application key namespace.
 - The server remains the authorization boundary. Query keys, decoders, fixed
   filters, and hidden columns do not enforce row access.
 - A decoder validates the browser wire value. It does not replace server

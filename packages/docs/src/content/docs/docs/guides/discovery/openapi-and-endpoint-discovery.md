@@ -6,7 +6,7 @@ description:
 ---
 
 The running Sapporta API publishes an OpenAPI 3.1 document for its documented
-generated and app-owned routes. Treat that protected live document as the
+generated and application routes. Treat that protected live document as the
 deployed contract inventory, then verify runtime behavior separately. Raw Hono
 routes and contracts deliberately excluded from OpenAPI can still be mounted
 without appearing here.

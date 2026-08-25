@@ -1,7 +1,7 @@
 ---
 title: "Server write values and contracts"
 description:
-  "Look up authoritative table-write parsing, conversion helpers, app-owned
+  "Look up authoritative table-write parsing, conversion helpers, application
   value contracts, and public SQL-name boundaries."
 ---
 
@@ -43,7 +43,7 @@ timestamp groups use canonical strings; and `null` remains an explicit group.
 
 - `parsePlainDate`, `formatPlainDate`, `parseCanonicalInstant`, and
   `formatCanonicalInstant` from `@sapporta/shared/temporal` convert domain
-  Temporal values at app-owned boundaries.
+  Temporal values at application boundaries.
 - `formatPlainDateForDateInput`, `parseDateInputToPlainDateString`,
   `formatInstantForDateTimeLocalInput`, and
   `parseDateTimeLocalInputToCanonicalInstantString` connect browser inputs to
@@ -62,9 +62,9 @@ timestamp groups use canonical strings; and `null` remains an explicit group.
 - `LookupPicker` and table lookup helpers preserve string or number primary-key
   values through selection and lookup caches.
 
-## App-owned contracts
+## Application contracts
 
-An app-owned endpoint defines its domain value at the shared contract. Parse a
+An application endpoint defines its domain value at the shared contract. Parse a
 date or timestamp there when service code should receive Temporal values. Keep
 the route wire schema and database schema distinct when their runtime types
 differ.
@@ -80,7 +80,7 @@ const createPlanBody = z.object({
 });
 ```
 
-The ts-rest adapter consumes the transformed app-owned request schema, so its
+The ts-rest adapter consumes the transformed application request schema, so its
 route handler receives `Temporal.PlainDate`. This is separate from generated
 table validation, whose top-level `validate()` callback receives canonical
 prepared write values and adds issues without transforming them.

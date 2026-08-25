@@ -76,7 +76,7 @@ hierarchy expansion. Custom configurations use `activeRow.activation.startsOn`.
 
 `SchemaTableGridView` accepts an interaction configuration but does not expose
 active-row state or activation callbacks as props. Use `useSchemaTableGrid()`,
-then render `TGrid` with the returned session inside the application-owned
+then render `TGrid` with the returned session inside the application
 layout.
 
 ## Column and write behavior

@@ -20,7 +20,7 @@ Project auth resolves a browser session or agent bearer token into
 4. `rowSecurity` turns those authority slots into table predicates and trusted
    write values.
 
-Generated table handlers and app-owned handlers use the same context. A typed
+Generated table handlers and application handlers use the same context. A typed
 client or protected React route can improve the caller experience, but neither
 one authorizes a server request.
 
@@ -30,7 +30,7 @@ Generated table handlers authorize against the registered table's SQL name.
 List, get, lookup, and count require `read`; CSV download requires `export`; the
 write routes require `create`, `update`, or `delete`.
 
-App-owned workflows use their own action and subject. For example, completing a
+Application workflows use their own action and subject. For example, completing a
 task is a domain transition rather than another spelling of generated update:
 
 ```ts
@@ -73,7 +73,7 @@ return completeTask(context, taskId);
 The workflow still needs a scoped read and row-scoped writes. An owner-only
 action does not imply cross-workspace database access.
 
-App-owned feature contracts declare their feature-owned responses, such as
+Application feature contracts declare their feature-owned responses, such as
 validation, not-found, and conflict branches. The shared infrastructure
 `401`/`403` envelopes are documented once in
 [Auth and row security](/docs/reference/server/auth-and-row-security/) instead
@@ -81,7 +81,7 @@ of being copied into every feature contract.
 
 ## Keep private routes private
 
-App-owned routes are private unless their mounted path is intentionally added to
+Application routes are private unless their mounted path is intentionally added to
 `publicApiRoutes` in `packages/api/app.ts`:
 
 ```ts

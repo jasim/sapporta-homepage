@@ -12,6 +12,11 @@ the temporal codecs that project a stored instant onto a calendar.
 
 ## Contract
 
+- Temporal is the time and date library. Parsing, arithmetic, comparison, and
+  formatting all go through it; `Date`, `dayjs`, and `date-fns` are not used for
+  any of the four. `@sapporta/shared/temporal` re-exports `Temporal` from
+  `@js-temporal/polyfill` beside the codecs below, so one specifier carries both
+  the runtime and the helpers built on it.
 - Timestamps are stored in UTC as fixed-width canonical text. A time zone
   decides which calendar day one of those instants falls on, and what wall
   clock it is read on.
@@ -43,14 +48,18 @@ the temporal codecs that project a stored instant onto a calendar.
   value. `isValidTimeZone()` narrows, for a stored identifier that may have
   gone stale and whose answer is a fallback. `supportedTimeZones()` lists the
   identifiers a picker offers.
-- `deviceTimeZone()` reports what the runtime says about itself, and has one
-  caller: the sign-up request, which carries the browser's zone so that the
-  first workspace an account creates starts on the calendar its owner keeps.
+- `deviceTimeZone()` reports what the runtime says about itself, and is called
+  only where that is the answer being asked for: the sign-up request, which
+  carries the browser's zone so that the first workspace an account creates
+  starts on the calendar its owner keeps, and `pnpm seed`, which has no request
+  to take a zone from and puts the seeded workspace on the clock of the machine
+  that ran it.
 - `Temporal.Now.timeZoneId()` and `Temporal.Now.plainDateISO()` with no
   argument read the host's `TZ`. A framework test fails the build for any
   reader of an ambient zone other than `deviceTimeZone()`.
-- An owner changes the workspace zone through
-  `PUT /api/auth-context/workspace/time-zone`, which answers with a fresh auth
+- An owner changes the workspace zone on the workspace settings screen at
+  `/workspace/settings`, which calls
+  `PUT /api/auth-context/workspace/time-zone` and answers with a fresh auth
   context. Every member of the workspace reads the new calendar.
 - CSV export and grid clipboard copy emit the stored UTC instant with its
   trailing `Z`. A column a downstream program keys on stays self-describing.

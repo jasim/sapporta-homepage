@@ -134,7 +134,7 @@ The generated project destination is the filtered table route:
 `URLSearchParams` percent-encodes the bracket characters, but it represents the
 same strict filter grammar. Sapporta generates `/tables/:tableName` and
 `/tables/:tableName/new`; it does not generate `/tables/:tableName/:id`. An
-app-owned `/projects/:id` route is valid only when the application explicitly
+application `/projects/:id` route is valid only when the application explicitly
 registers it.
 
 Task links use the same generated query syntax:

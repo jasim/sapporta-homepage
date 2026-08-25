@@ -2,7 +2,7 @@
 title: "Semantic value boundaries"
 description:
   "Choose the exact reference for generated/client values or server write
-  values and app-owned contracts."
+  values and application contracts."
 ---
 
 Sapporta preserves semantic table values across generated forms, HTTP,
@@ -14,7 +14,7 @@ implementing:
   and Grid editor decoding.
 - [Server write values and contracts](/docs/reference/schema/semantic-values/server-write-values-and-contracts/)
   covers authoritative prepared writes, structural schemas, Temporal
-  conversion helpers, app-owned contracts, and public SQL names.
+  conversion helpers, application contracts, and public SQL names.
 
 A primary key in an address position — a URL segment, a query key, a grid row
 key — is a `RecordId`, and

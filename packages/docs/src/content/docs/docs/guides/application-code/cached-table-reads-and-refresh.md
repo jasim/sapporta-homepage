@@ -143,9 +143,9 @@ transactions.
 
 ## Related documentation
 
-- [Custom forms and validation](/docs/guides/app-owned-features/custom-forms-and-validation/)
-- [Custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Custom forms and validation](/docs/guides/application-code/custom-forms-and-validation/)
+- [Custom workflow screens](/docs/guides/application-code/custom-workflow-screens/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
 - [TGrid](/docs/reference/frontend/tgrid/)

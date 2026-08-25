@@ -7,7 +7,7 @@ description:
 
 Generated table screens and endpoints remain the shortest path for ordinary
 record work. As soon as one result joins rows or calculates totals for more than
-one caller, it becomes an app-owned read model. A report route gives the
+one caller, it becomes an application read model. A report route gives the
 browser, CLI, and typed clients one authoritative result.
 
 That boundary centralizes reuse and authorization, but it does not make an
@@ -117,7 +117,7 @@ export function createProjectProgressApi(
 }
 ```
 
-Grant the intended roles `read` on the application-owned `project-progress`
+Grant the intended roles `read` on the application `project-progress`
 subject. The frontend's protected route is a UX boundary; this server check and
 the row predicates remain authoritative.
 
@@ -202,7 +202,7 @@ queries.
 
 ## Related documentation
 
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
 - [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)

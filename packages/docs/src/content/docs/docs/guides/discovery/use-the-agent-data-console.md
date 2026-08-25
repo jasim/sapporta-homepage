@@ -79,7 +79,7 @@ Do not guess an ID or foreign key. If the visible result contains zero or
 multiple plausible rows, stop and ask for disambiguation. If it contains exactly
 one intended row, retain that returned ID for the operation.
 
-Inspect app-owned operations before using them:
+Inspect application operations before using them:
 
 ```bash
 pnpm exec sapporta endpoints list
@@ -106,7 +106,7 @@ pnpm exec sapporta --output json rows get books "$BOOK_ID"
 
 The payload omits IDs, timestamps, workspace, ownership, role, audit, and
 row-scope fields controlled by the server. When a transition spans records or
-preserves a domain invariant, use its discovered app-owned endpoint instead of
+preserves a domain invariant, use its discovered application endpoint instead of
 reproducing it with several row commands.
 
 For a read-only question, first use an existing scoped report when it defines
@@ -121,7 +121,7 @@ pnpm exec sapporta --output json rows count tasks \
 State how terms such as “pending” map to stored values. Use `--group-by`,
 `--order`, and `--limit` for grouped counts, and resolve foreign-key labels with
 a separate target-table lookup. If the count surface cannot express the
-question, use an app-owned report or read endpoint. Privileged `sql query` is an
+question, use an application report or read endpoint. Privileged `sql query` is an
 explicitly authorized administrative fallback, not an escape from application
 visibility.
 

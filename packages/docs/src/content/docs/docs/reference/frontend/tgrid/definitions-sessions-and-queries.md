@@ -20,7 +20,7 @@ runtime primitives come from `@sapporta/grid`.
   owner must call `dispose()`.
 - `TGrid` renders a configured session. `TableRoute` and `SchemaTableGridView`
   connect standard table routes.
-- `useSchemaTableGrid()` exposes the session when an application-owned
+- `useSchemaTableGrid()` exposes the session when an application
   composition needs schema-derived defaults plus active-row or activation
   behavior.
 
@@ -62,7 +62,7 @@ subscriptions must clean up on `null`. The parameter is also available through
 
 Loaded-row reads are not database queries. Use generated table reads, public
 [table read functions and options](/docs/reference/frontend/table-queries/read-functions-and-options/),
-or an app-owned endpoint when the row may not be loaded on the current page.
+or an application endpoint when the row may not be loaded on the current page.
 
 Host-owned query state supplies visible controls and URL state. Source-owned
 query state belongs to a relationship source. `fixedFilters` affect row loads

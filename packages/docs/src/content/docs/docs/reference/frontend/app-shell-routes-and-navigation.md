@@ -10,7 +10,8 @@ shell layout. Use the leaf that matches the change:
 
 - [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
   covers `App.tsx` contributions, bootstrap order, public/protected routes,
-  generated table navigation, and the frontend authorization boundary.
+  `SapportaRoutes.tsx` and the framework screens it mounts, generated table
+  navigation, and the frontend authorization boundary.
 - [Layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
   covers responsive sidebar primitives, `AppPage`, page headers, bounded
   workspaces, height, and scrolling.
@@ -20,6 +21,6 @@ Project screens use these public extension points rather than replacing
 
 ## Related documentation
 
-- [Custom frontend routes and screens](/docs/guides/app-owned-features/custom-frontend-routes-and-screens/)
+- [Custom frontend routes and screens](/docs/guides/application-code/custom-frontend-routes-and-screens/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
 - [Table query options](/docs/reference/frontend/table-query-options/)

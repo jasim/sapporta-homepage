@@ -1,7 +1,7 @@
 ---
 title: "Shared contracts and request validation"
 description:
-  "Start here for an app-owned workflow: define the browser-safe wire shape
+  "Start here for an application workflow: define the browser-safe wire shape
   before the transaction, endpoint, and typed client."
 ---
 
@@ -17,7 +17,7 @@ shared package may contain Zod schemas, contracts, wire types, constants, and
 pure serializers. It remains a leaf package: React components, Hono handlers,
 Drizzle queries, database handles, and file I/O stay in their owning packages.
 
-[Row projections](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
+[Row projections](/docs/guides/application-code/cached-table-reads-and-refresh/)
 — the columns a screen reads from a generated table route — belong here too.
 They are application-declared wire shapes, not browser-private types.
 

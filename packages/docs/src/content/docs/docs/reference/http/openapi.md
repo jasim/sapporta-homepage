@@ -10,7 +10,7 @@ Protected `GET /api/openapi.json` on the running application.
 ## Contract
 
 - The document includes registered framework table, metadata, auth, report, and
-  app-owned routes.
+  application routes.
 - Path parameters appear with OpenAPI braces, such as
   `/api/tasks/{id}/complete`.
 - The document reflects mounted routes; unmounted route modules are absent.

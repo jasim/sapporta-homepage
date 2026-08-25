@@ -109,7 +109,7 @@ Use an isolated fixture and verify:
 
 ## Related documentation
 
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)
 - [Scoped table reads and writes](/docs/guides/security/scoped-table-reads-and-writes/)
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)

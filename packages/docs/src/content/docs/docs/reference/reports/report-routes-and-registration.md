@@ -80,7 +80,7 @@ separately.
 ## Related documentation
 
 - [Route-based reports](/docs/guides/reports/route-based-reports/)
-- [Shared contracts and request validation](/docs/guides/app-owned-features/shared-contracts-and-request-validation/)
+- [Shared contracts and request validation](/docs/guides/application-code/shared-contracts-and-request-validation/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
 - [TsRestApi and route registration](/docs/reference/server/ts-rest-api-and-route-registration/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)

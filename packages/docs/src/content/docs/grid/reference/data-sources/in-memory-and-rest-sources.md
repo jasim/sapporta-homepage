@@ -41,7 +41,7 @@ request construction:
 - `buildRowsRequest` adds fixed filters, parent-row constraints, or transport
   defaults before a fetch runs.
 - `sourceOwnedRowQuery(initial)` keeps query state inside a level source.
-- `hostBackedRowQuery(state)` adapts application-owned query state to the same
+- `hostBackedRowQuery(state)` adapts application query state to the same
   source command contract.
 
 Use source-owned query state for embedded levels and child levels without

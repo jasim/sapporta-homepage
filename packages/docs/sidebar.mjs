@@ -106,22 +106,22 @@ export default [
             ],
           },
           {
-            slug: "docs/guides/app-owned-features/bounded-gridcore-projections",
+            slug: "docs/guides/application-code/bounded-gridcore-projections",
           },
           {
             label: "Custom forms",
             items: [
               {
-                slug: "docs/guides/app-owned-features/custom-forms-and-table-queries",
+                slug: "docs/guides/application-code/custom-forms-and-table-queries",
               },
               {
-                slug: "docs/guides/app-owned-features/custom-forms-and-validation",
+                slug: "docs/guides/application-code/custom-forms-and-validation",
               },
               {
-                slug: "docs/guides/app-owned-features/cached-table-reads-and-refresh",
+                slug: "docs/guides/application-code/cached-table-reads-and-refresh",
               },
               {
-                slug: "docs/guides/app-owned-features/staged-multi-row-drafts",
+                slug: "docs/guides/application-code/staged-multi-row-drafts",
               },
             ],
           },
@@ -129,13 +129,13 @@ export default [
             label: "Custom screens",
             items: [
               {
-                slug: "docs/guides/app-owned-features/custom-frontend-routes-and-screens",
+                slug: "docs/guides/application-code/custom-frontend-routes-and-screens",
               },
               {
-                slug: "docs/guides/app-owned-features/custom-workflow-screens",
+                slug: "docs/guides/application-code/custom-workflow-screens",
               },
               {
-                slug: "docs/guides/app-owned-features/frontend-routes-navigation-and-layout",
+                slug: "docs/guides/application-code/frontend-routes-navigation-and-layout",
               },
             ],
           },
@@ -145,36 +145,36 @@ export default [
         label: "Build domain workflows",
         items: [
           {
-            slug: "docs/guides/app-owned-features/shared-contracts-and-request-validation",
+            slug: "docs/guides/application-code/shared-contracts-and-request-validation",
           },
           {
-            slug: "docs/guides/app-owned-features/domain-workflows-and-transactions",
+            slug: "docs/guides/application-code/domain-workflows-and-transactions",
           },
           {
-            slug: "docs/guides/app-owned-features/parent-detail-transactions",
+            slug: "docs/guides/application-code/parent-detail-transactions",
           },
           {
-            slug: "docs/guides/app-owned-features/custom-api-endpoints",
+            slug: "docs/guides/application-code/custom-api-endpoints",
           },
           {
             label: "Endpoint patterns",
             items: [
               {
-                slug: "docs/guides/app-owned-features/errors-uploads-and-endpoint-patterns",
+                slug: "docs/guides/application-code/errors-uploads-and-endpoint-patterns",
               },
               {
-                slug: "docs/guides/app-owned-features/expected-errors-and-http-mapping",
+                slug: "docs/guides/application-code/expected-errors-and-http-mapping",
               },
               {
-                slug: "docs/guides/app-owned-features/multipart-file-uploads",
+                slug: "docs/guides/application-code/multipart-file-uploads",
               },
               {
-                slug: "docs/guides/app-owned-features/non-json-and-raw-responses",
+                slug: "docs/guides/application-code/non-json-and-raw-responses",
               },
             ],
           },
           {
-            slug: "docs/guides/app-owned-features/typed-api-clients",
+            slug: "docs/guides/application-code/typed-api-clients",
           },
         ],
       },
@@ -281,13 +281,7 @@ export default [
             slug: "docs/reference/project/project-files",
           },
           {
-            slug: "docs/reference/project/generated-project-layout",
-          },
-          {
             slug: "docs/reference/project/environment-variables",
-          },
-          {
-            slug: "docs/reference/project/application-configuration",
           },
         ],
       },

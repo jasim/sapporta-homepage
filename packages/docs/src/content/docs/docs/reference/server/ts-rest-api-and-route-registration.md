@@ -49,5 +49,5 @@ shared package remains browser-safe.
 
 ## Related documentation
 
-- [Custom API endpoints](/docs/guides/app-owned-features/custom-api-endpoints/)
+- [Custom API endpoints](/docs/guides/application-code/custom-api-endpoints/)
 - [Contract helpers and wire types](/docs/reference/contracts/contract-helpers-and-wire-types/)

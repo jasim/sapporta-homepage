@@ -1,7 +1,7 @@
 ---
 title: "Grid-first record workflows"
 description:
-  "Choose a generated table screen, table-aware Grid, GridCore, or app-owned
+  "Choose a generated table screen, table-aware Grid, GridCore, or application
   screen from who owns the rows and the work."
 ---
 
@@ -15,14 +15,14 @@ cache owner first, then read the focused implementation guide.
 | --- | --- | --- |
 | Ordinary CRUD, filters, lookups, child collections, and export | Generated table screen | Generated table surface and server |
 | Registered table with custom columns, renderers, hierarchy, or Grid composition | TGrid, normally through `TableGridView` | Table-aware Grid session |
-| Temporary, composite, calculated, or browser-owned rows | GridCore, usually with `ColumnPreset` | App-owned source and runtime |
-| Custom route, layout, workflow, URL state, commands, or non-grid controls | App-owned React screen | Screen coordinates query, Grid, and action owners |
-| Reusable, authoritative scoped aggregate | App-owned report route and screen | Server route plus typed client and query |
+| Temporary, composite, calculated, or browser-owned rows | GridCore, usually with `ColumnPreset` | Application source and runtime |
+| Custom route, layout, workflow, URL state, commands, or non-grid controls | Application React screen | Screen coordinates query, Grid, and action owners |
+| Reusable, authoritative scoped aggregate | Application report route and screen | Server route plus typed client and query |
 
 The generated route is the default because it already has table metadata,
 lookups, generated clients, URL query state, record links, and row-safe writes.
 TGrid retains those table services while the application chooses the
-composition. GridCore starts from an application-owned schema and data source.
+composition. GridCore starts from a schema and data source you supply.
 `ColumnPreset` can add standard editors and codecs to GridCore, but it does not
 turn application rows into registered table rows.
 
@@ -38,10 +38,10 @@ record while adding one focused projection or command beside them.
   keeps one registered table's query, lookup, URL, and save behavior.
 - [Low-level TGrid sessions](/docs/guides/generated-surfaces/low-level-tgrid-sessions/)
   owns explicit hierarchy, session lifecycle, and external reload registration.
-- [Bounded GridCore projections](/docs/guides/app-owned-features/bounded-gridcore-projections/)
-  renders small application-owned calculated rows.
-- [Custom workflow screens](/docs/guides/app-owned-features/custom-workflow-screens/)
-  coordinates generated reads and app-owned actions without making Grid own the
+- [Bounded GridCore projections](/docs/guides/application-code/bounded-gridcore-projections/)
+  renders small application calculated rows.
+- [Custom workflow screens](/docs/guides/application-code/custom-workflow-screens/)
+  coordinates generated reads and application actions without making Grid own the
   workflow.
 - [Route-based reports](/docs/guides/reports/route-based-reports/) owns reusable
   or authoritative aggregates.
@@ -50,7 +50,7 @@ record while adding one focused projection or command beside them.
 
 The host or data source supplies stable row keys. Grid owns focus, editing
 state, selection, hierarchy, drafts, and subscriptions. A generated table route
-or app-owned endpoint owns authentication, row scope, domain validation,
+or application endpoint owns authentication, row scope, domain validation,
 conflicts, and transactions. Hidden columns, fixed filters, row keys, and
 selection state are presentation, not authorization.
 

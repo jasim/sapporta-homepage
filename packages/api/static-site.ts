@@ -173,6 +173,42 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   });
   serveStaticUse(app, "/grid/*", docsDist, { cache: noCache });
 
+  // The generated symbol reference. Every page under /api-reference is
+  // Markdown written for coding agents; there is no HTML form of an API
+  // reference page, so nothing here is content-negotiated. Hono's static
+  // handler has no media type for the .md extension, so name the media type
+  // here rather than letting these responses go out untyped. The llms.txt
+  // index is the one file under the prefix that is not Markdown.
+  const apiReferenceContentType: MiddlewareHandler<SapportaEnv> = async (
+    c,
+    next,
+  ) => {
+    await next();
+    if (c.res.status < 200 || c.res.status >= 400) return;
+    c.res.headers.set(
+      "Content-Type",
+      c.req.path.endsWith(".txt") ? plainTextContentType : markdownContentType,
+    );
+  };
+
+  app.use("/api-reference.md", apiReferenceContentType);
+  app.use("/api-reference/*", apiReferenceContentType);
+
+  // `/api-reference`, with or without a trailing slash, and `/api-reference.md`
+  // all read the index page, the way `/docs` and `/docs.md` both read the
+  // documentation index.
+  for (const path of [
+    "/api-reference",
+    "/api-reference/",
+    "/api-reference.md",
+  ]) {
+    serveStaticGet(app, path, docsDist, {
+      file: "api-reference/index.md",
+      cache: noCache,
+    });
+  }
+  serveStaticUse(app, "/api-reference/*", docsDist, { cache: noCache });
+
   // A missing file under an Astro-owned path is a real 404. Claim these paths
   // before the React fallback so a typo in a documentation or asset URL cannot
   // return the unrelated application shell with a misleading 200 response.
@@ -191,6 +227,10 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     "/docs/*",
     "/grid",
     "/grid/*",
+    "/api-reference",
+    "/api-reference/",
+    "/api-reference.md",
+    "/api-reference/*",
     "/_astro/*",
     "/assets/*",
     "/pagefind/*",

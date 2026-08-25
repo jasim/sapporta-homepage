@@ -85,6 +85,6 @@ screens use `PageHeader` and `PageHeaderButton`.
 ## Related documentation
 
 - [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
-- [Frontend routes, navigation, and layout](/docs/guides/app-owned-features/frontend-routes-navigation-and-layout/)
+- [Frontend routes, navigation, and layout](/docs/guides/application-code/frontend-routes-navigation-and-layout/)
 - [TGrid](/docs/reference/frontend/tgrid/)
 - [Column sizing](/docs/reference/column-sizing/)

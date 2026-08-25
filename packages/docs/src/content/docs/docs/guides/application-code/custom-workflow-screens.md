@@ -1,14 +1,14 @@
 ---
 title: "Custom workflow screens"
 description:
-  "Compose bounded generated reads and app-owned actions around one human
+  "Compose bounded generated reads and application actions around one human
   workflow."
 ---
 
-A custom workflow screen composes generated reads and app-owned actions around
+A custom workflow screen composes generated reads and application actions around
 one human workflow. It does not replace generated tables that still own ordinary
 record work. Register the completed component through
-[Frontend routes, navigation, and layout](/docs/guides/app-owned-features/frontend-routes-navigation-and-layout/).
+[Frontend routes, navigation, and layout](/docs/guides/application-code/frontend-routes-navigation-and-layout/).
 
 ## Build the workflow screen
 
@@ -19,7 +19,7 @@ still applies. The custom endpoint owns completion because it changes both task
 status and history.
 
 `projectRowSchema` and `taskRowSchema` are
-[row projections](/docs/guides/app-owned-features/cached-table-reads-and-refresh/):
+[row projections](/docs/guides/application-code/cached-table-reads-and-refresh/):
 the columns this screen reads.
 
 ```tsx
@@ -310,7 +310,7 @@ guide's seed data or fixed IDs. Cover these states and boundaries:
 10. Negative API tests still prove server ability and row-scope enforcement.
 
 Route reload and responsive shell checks belong to the
-[routing and layout guide](/docs/guides/app-owned-features/frontend-routes-navigation-and-layout/).
+[routing and layout guide](/docs/guides/application-code/frontend-routes-navigation-and-layout/).
 
 This screen intentionally reads at most 100 records from each table. It is for a
 small, screen-local projection. Put reusable or complete authoritative totals
@@ -322,4 +322,4 @@ datasets need scoped SQL grouping or another store-level implementation.
 - [App shell layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
 - [Generated record surfaces](/docs/reference/frontend/generated-record-surfaces/)
 - [Table query options](/docs/reference/frontend/table-query-options/)
-- [Cached table reads and refresh](/docs/guides/app-owned-features/cached-table-reads-and-refresh/)
+- [Cached table reads and refresh](/docs/guides/application-code/cached-table-reads-and-refresh/)

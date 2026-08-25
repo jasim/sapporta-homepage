@@ -48,6 +48,6 @@ recovery branch.
 
 ## Related documentation
 
-- [Domain workflows and transactions](/docs/guides/app-owned-features/domain-workflows-and-transactions/)
-- [Typed API clients](/docs/guides/app-owned-features/typed-api-clients/)
+- [Domain workflows and transactions](/docs/guides/application-code/domain-workflows-and-transactions/)
+- [Typed API clients](/docs/guides/application-code/typed-api-clients/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)

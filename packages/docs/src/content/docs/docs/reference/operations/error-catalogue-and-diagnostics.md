@@ -11,7 +11,7 @@ Error code casing identifies different owners. Do not normalize it:
 
 - generated project auth uses lowercase codes;
 - framework generated-table handlers use uppercase codes;
-- app-owned feature contracts define and export their own codes.
+- application feature contracts define and export their own codes.
 
 Status and code are the integration contract. Message text is illustrative
 unless a feature explicitly pins it.
@@ -74,5 +74,5 @@ credential, then read back through a scoped operation.
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)
 - [Authentication and token endpoints](/docs/reference/http/authentication-and-token-endpoints/)
 - [Row-scoped data helpers](/docs/reference/server/row-scoped-data-helpers/)
-- [Expected errors and HTTP mapping](/docs/guides/app-owned-features/expected-errors-and-http-mapping/)
+- [Expected errors and HTTP mapping](/docs/guides/application-code/expected-errors-and-http-mapping/)
 - [Troubleshooting](/docs/guides/operations/troubleshooting/)

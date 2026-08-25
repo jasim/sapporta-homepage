@@ -59,17 +59,10 @@ starts there writes the project's conventions rather than its own.
 
 ## Keep authority at its owning layer
 
-Only include the layers the outcome needs:
-
-| Concern                                 | Expected location                                         |
-| --------------------------------------- | --------------------------------------------------------- |
-| Stored row shape and generated behavior | `packages/api/schema/` and a reviewed generated migration |
-| Ability, data authority, and row policy | `packages/api/authz/` and server-side row-scoped helpers  |
-| Browser-safe wire shape                 | `packages/shared/src/contracts/`                          |
-| Business invariant and atomic changes   | an API domain module and transaction                      |
-| HTTP adapter and mount                  | `packages/api/app/` and `packages/api/app.ts`             |
-| Typed caller and interaction state      | `packages/frontend/src/api.ts` and the owning screen      |
-| Runtime or release behavior             | project configuration and deployment files                |
+Name the boundary the outcome belongs to and let the agent find the file. The
+[project file map](/docs/reference/project/project-files/) lists every path,
+its owner, and what to do after the edit; its "Where a change goes" table is the
+lookup an agent performs.
 
 The client must not choose workspace, owner, role, or scope merely because a
 field appears in a form or payload. Ask the agent to keep those values and the
@@ -84,7 +77,7 @@ artifacts that apply:
 - Schema changes have named migration SQL that was reviewed before application.
 - Shared contracts remain browser-safe and contract paths rely on the parent
   `/api` mount.
-- App-owned handlers are registered and mounted. When they should appear in
+- Application handlers are registered and mounted. When they should appear in
   OpenAPI, their documentation surface is composed as well.
 - Abilities, data authority, row scope, and server-owned values remain on the
   server.
@@ -140,5 +133,5 @@ live-operation guides.
 - [Choose an application interface](/docs/guides/discovery/choose-an-application-interface/)
 - [Use the agent data console](/docs/guides/discovery/use-the-agent-data-console/)
 - [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
-- [Generated project layout](/docs/reference/project/generated-project-layout/)
+- [Project file map](/docs/reference/project/project-files/)
 - [Project and discovery commands](/docs/reference/cli/project-and-discovery-commands/)

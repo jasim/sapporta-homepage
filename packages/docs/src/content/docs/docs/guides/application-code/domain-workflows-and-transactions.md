@@ -15,8 +15,11 @@ family the same way.
 The route resolves auth and passes a small context to the domain module. The
 module does not receive a Hono `Context`, parse JSON, or mount a URL. This keeps
 the transaction callable from a route, job, or test without reconstructing a
-request. The HTTP-aware error family is a deliberate application convention, not
-a Sapporta framework requirement.
+request. A command-line script holds the same pair, because
+`openScriptRuntime()` returns `db` and `auth`, so
+[a job or a seed run calls the workflow itself](/docs/guides/operations/sample-data-and-scripts/).
+The HTTP-aware error family is a deliberate application convention, not a
+Sapporta framework requirement.
 
 Create `packages/api/modules/tasks/complete-task.ts`:
 
@@ -168,7 +171,7 @@ with an external system usually needs a durable outbox or job record rather than
 a long database transaction.
 
 For an atomic parent plus line-item create, continue with
-[Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/).
+[Parent-detail transactions](/docs/guides/application-code/parent-detail-transactions/).
 
 ## Prove atomic behavior
 
@@ -207,4 +210,4 @@ central error path.
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
 - [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 - [Serialization and API errors](/docs/reference/contracts/serialization-and-api-errors/)
-- [Parent-detail transactions](/docs/guides/app-owned-features/parent-detail-transactions/)
+- [Parent-detail transactions](/docs/guides/application-code/parent-detail-transactions/)

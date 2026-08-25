@@ -23,13 +23,11 @@ navigation:
 
 ## Build custom database software for power users
 
-Sapporta is a TypeScript + SQLite framework. Declare a table and you get an
-editable grid, forms, reports, and secure APIs for it. Your coding agent
-skips the plumbing and writes only the parts specific to your application.
+Sapporta is a TypeScript + SQLite web framework for building database applications. 
 
 - **Every table gets a spreadsheet-grade grid right away.** Filtering,
-  sorting, search, export, and full keyboard navigation — comfortable enough
-  to use all day.
+  sorting, search, export, and full keyboard navigation.
 - **Reports that drill down** into the underlying records, shareable by URL.
 - **Auth you can ship.** Row-level security and typed contracts on every
   generated API, safe to run on the public internet.
+- **Default agentic.**  In a calorie tracker built with Sapporta, you can tell an agent to log "2 eggs, toast, black coffee", and it'll match them against your food records, create the missing ones, and link them.
