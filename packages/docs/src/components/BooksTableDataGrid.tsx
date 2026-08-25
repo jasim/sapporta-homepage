@@ -21,6 +21,7 @@ import { QuoteDetailsCell } from "./quote-details-cell";
 import { QuoteTextCell, quoteTextIsClipped } from "./quote-text-cell";
 import { QuoteTextEditor } from "./quote-text-editor";
 import { quoteAt, quoteDialogUrl, sameQuote } from "./quote-deep-link";
+import { useDefaultExpandedBooks } from "./use-default-expanded-books";
 import { useQuoteDeepLink } from "./use-quote-deep-link";
 import { useQuoteExpansion } from "./use-quote-expansion";
 
@@ -83,6 +84,7 @@ function BooksGrid({
   const [session, setSession] = useState<TGridSession<SchemaTableRowsByLevel> | null>(null);
   const quoteExpansion = useQuoteExpansion();
   useQuoteDeepLink(session, searchParams);
+  useDefaultExpandedBooks(session);
 
   // Resolved live by the grid on every interaction; see BooksGridServices.
   const services: BooksGridServices = {

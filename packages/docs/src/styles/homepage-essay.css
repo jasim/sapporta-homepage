@@ -36,12 +36,6 @@
   box-sizing: inherit;
 }
 
-:root:not([data-theme="dark"]) .home-page {
-  --bg: #ffffff;
-  --surface: #f6f8fa;
-  --surface-soft: #f3f4f6;
-}
-
 .home-page__main {
   min-width: 0;
   width: 100%;
@@ -131,7 +125,8 @@
   align-items: center;
   color: var(--ink);
   display: inline-flex;
-  font-weight: var(--weight-emphasis);
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
   line-height: 1.3;
   text-decoration: none;
   width: fit-content;
@@ -144,9 +139,7 @@
  * carries it.
  */
 .home-wordmark--hero {
-  font-family: var(--font-sans);
   font-size: clamp(1.5rem, 2.4vw, 2rem);
-  font-weight: var(--weight-emphasis);
   gap: clamp(0.5rem, 0.9vw, 0.7rem);
   letter-spacing: -0.02em;
   line-height: 1;
@@ -200,15 +193,21 @@
   max-width: var(--home-copy-width);
 }
 
+/*
+ * Everything in the title layer -- headings, wordmark, section markers, the
+ * small uppercase labels -- addresses the display tokens rather than the body
+ * ones, so the whole skim layer retunes from a single place.
+ */
 .home-copy__heading {
   color: var(--ink);
-  letter-spacing: normal;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--display-tracking);
   text-wrap: balance;
 }
 
 .home-copy__heading--level-2 {
   font-size: clamp(1.6rem, 2.6vw, 2rem);
-  font-weight: var(--weight-emphasis);
   letter-spacing: -0.022em;
   line-height: 1.14;
   margin: 0 0 0.9rem;
@@ -229,7 +228,6 @@
 
 .home-copy__heading--level-3 {
   font-size: 1.05rem;
-  font-weight: var(--weight-emphasis);
   line-height: 1.4;
   margin: 2rem 0 0.6rem;
 }
@@ -283,11 +281,11 @@
 }
 
 /*
- * Tabular figures wherever digits sit in columns. Geist's default figures are
- * strongly proportional -- a row of 1s measures barely half a row of 0s -- so
- * numeric columns rag visibly without this. Free on the CDN build: tnum is one
- * of the few features Google Fonts does not strip. Deliberately not applied to
- * body prose, where proportional figures read better.
+ * Tabular figures wherever digits sit in columns. Inter's default figures are
+ * proportional -- a row of 1s measures visibly narrower than a row of 0s -- so
+ * numeric columns rag without this. Free on the CDN build: tnum is one of the
+ * few features Google Fonts does not strip. Deliberately not applied to body
+ * prose, where proportional figures read better.
  */
 .home-copy__table,
 .home-demo__panel--grid .homepage-grid {
@@ -352,12 +350,27 @@
   margin: 0 0 clamp(1.5rem, 3vw, 2rem);
 }
 
+/*
+ * The hero headline tops out at 40px (2.5rem) rather than growing with the
+ * viewport; it reaches the cap around 836px and floors at 1.9rem on phones.
+ * 600 is a step below --weight-display on purpose: at this size 700 reads as
+ * shout.
+ *
+ * The 24ch measure is cut to the copy: "Build custom database software" is
+ * 22.6ch, and the next word would push past 24ch -- so desktop breaks after
+ * "software" and the headline lands in two lines. The inherited
+ * `text-wrap: balance` has to come off for that; balance would even the two
+ * lines out and break after "database" instead. Both values are load-bearing
+ * against this headline -- recheck them if the copy changes.
+ */
 .home-intro__title {
-  font-size: clamp(2.05rem, 4.4vw, 3.35rem);
-  font-weight: var(--weight-emphasis);
-  letter-spacing: -0.028em;
-  line-height: 1.06;
+  font-size: clamp(1.9rem, 1.35rem + 2.2vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.03;
   margin: 0 0 1.4rem;
+  max-width: 24ch;
+  text-wrap: pretty;
 }
 
 .home-intro__headline,
@@ -380,8 +393,9 @@
 
 .home-capabilities__label {
   color: var(--dim);
+  font-family: var(--font-display);
   font-size: 0.75rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   letter-spacing: 0.06em;
   margin: 0;
   padding: 0.75rem 0 0.9rem;
@@ -412,8 +426,9 @@
 
 .home-capabilities__title {
   color: var(--ink);
+  font-family: var(--font-display);
   font-size: 0.875rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
   line-height: 1.35;
 }
 
@@ -460,8 +475,10 @@
 
 .home-app-links__intro {
   color: var(--ink);
+  font-family: var(--font-display);
   font-size: 1.15rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--display-tracking);
   line-height: 1.35;
   margin: 0 0 0.35rem;
 }
@@ -533,8 +550,9 @@
 
 .home-app-link__label {
   color: var(--ink);
+  font-family: var(--font-display);
   font-size: 1rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
   line-height: 1.35;
 }
 
@@ -597,8 +615,9 @@
   background: var(--ink);
   color: var(--bg);
   display: inline-block;
+  font-family: var(--font-display);
   font-size: 0.95rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   letter-spacing: 0.05em;
   line-height: 1;
   margin: 0;
@@ -950,9 +969,10 @@
 
 .home-quick-start__title {
   color: inherit;
+  font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: var(--weight-emphasis);
-  letter-spacing: -0.01em;
+  font-weight: var(--weight-display);
+  letter-spacing: -0.018em;
   line-height: 1.2;
   margin: 0;
   scroll-margin-top: 2rem;
@@ -1268,8 +1288,9 @@
   border-top: 1px solid var(--ink);
   color: var(--ink);
   display: flex;
+  font-family: var(--font-display);
   font-size: 0.8125rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   gap: 1rem;
   letter-spacing: 0.045em;
   line-height: 1.4;
@@ -1310,8 +1331,9 @@
 .home-evidence__label {
   border-top: 1px solid var(--ink);
   color: var(--dim);
+  font-family: var(--font-display);
   font-size: 0.72rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   letter-spacing: 0.09em;
   margin: 0 0 0.85rem;
   padding-top: 0.55rem;
@@ -1502,8 +1524,9 @@
 .home-agent-example__speaker {
   color: var(--dim);
   display: block;
+  font-family: var(--font-display);
   font-size: 0.6875rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   letter-spacing: 0.08em;
   line-height: 1.3;
   margin-bottom: 0.4rem;
@@ -1858,7 +1881,7 @@
     line-height: 1.65;
   }
 
-  .home-copy__heading--level-2 {
+  .home-copy__heading--level-2:not(.home-intro__title) {
     font-size: 1.28rem;
   }
 

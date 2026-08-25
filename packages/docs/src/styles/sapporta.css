@@ -4,8 +4,9 @@
 @import "@sapporta/frontend/index.css";
 
 @theme {
-  --font-sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
 
   --color-sap-bg: var(--bg);
   --color-sap-surface: var(--surface);
@@ -27,18 +28,19 @@
   color-scheme: light;
 
   /*
-   * Neutrals all sit on one warm axis (hue ~75 deg, green one point above red,
-   * blue lowest). Mixing a warm bg with cool blue-grey rules is what made the
-   * old palette read as unconsidered; every neutral now shares the same hue.
+   * One neutral axis, cool (hue ~210 deg), anchored on --ink #212529. The page
+   * ground is plain #ffffff -- no cream, no paper tint, nothing amber. Surfaces
+   * and rules are greys off the same hue, so nothing in the neutral ramp reads
+   * as a colour.
    */
-  --bg: #fffffc;
-  --surface: #f3f5ed;
-  --surface-soft: #edefe6;
-  --ink: #25271f;
-  --ink-soft: #45473d;
-  --muted: #73766a;
-  --faint: #73766a;
-  --dim: #5a5d52;
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface-soft: #eef0f3;
+  --ink: #212529;
+  --ink-soft: #3e4349;
+  --muted: #6b7179;
+  --faint: #6b7179;
+  --dim: #52585e;
   --link: #20566f;
   --link-underline: #9cc8d6;
   /*
@@ -47,11 +49,11 @@
    * were inverted (--rule-strong was the *lighter* of the two) and both were
    * so faint they read as nothing.
    */
-  --rule: #d8dbcf;
-  --rule-strong: #b7baac;
+  --rule: #d1d5d9;
+  --rule-strong: #adb5bd;
   --accent: #4fb477;
-  --quote: #45473d;
-  --highlight: #f2e7ad;
+  --quote: #3e4349;
+  --highlight: #cfe3ee;
 
   /*
    * Two weights, and only two. Hierarchy comes from size, colour and rules;
@@ -59,6 +61,14 @@
    */
   --weight-text: 400;
   --weight-emphasis: 500;
+  /*
+   * The title layer is the one place past two weights is allowed. 700 carries
+   * titles; the small uppercase labels drop to 600, which holds its counters at
+   * 11-13px where 700 starts closing up.
+   */
+  --weight-display: 700;
+  --weight-display-label: 600;
+  --display-tracking: -0.018em;
 
   --article-max: 42rem;
   --block-gap: 1.25rem;
@@ -110,21 +120,21 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #161713;
-  --surface: #21221c;
-  --surface-soft: #272822;
-  --ink: #e9ebe1;
-  --ink-soft: #b3b6aa;
-  --muted: #8b8e82;
-  --faint: #8b8e82;
-  --dim: #95988c;
+  --bg: #131517;
+  --surface: #1d1f22;
+  --surface-soft: #222528;
+  --ink: #e9ecef;
+  --ink-soft: #b2b7bd;
+  --muted: #868c93;
+  --faint: #868c93;
+  --dim: #90959c;
   --link: #8bcdbb;
   --link-underline: #3c7d7188;
-  --rule: #3c3e35;
-  --rule-strong: #585a4f;
+  --rule: #35393e;
+  --rule-strong: #4e545b;
   --accent: #5fbf8d;
-  --quote: #b3b6aa;
-  --highlight: #4a3f18;
+  --quote: #b2b7bd;
+  --highlight: #24404d;
 }
 
 @media (min-width: 50rem) {
@@ -225,10 +235,11 @@
 
 .site-title {
   color: var(--faint);
+  font-family: var(--font-display);
   font-size: 0.78rem;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display-label);
   gap: 0.46rem;
-  letter-spacing: 0;
+  letter-spacing: 0.04em;
   line-height: 1;
   text-decoration: none;
   text-transform: uppercase;
@@ -333,9 +344,10 @@ starlight-lang-select select:hover {
 
 #starlight__sidebar .large {
   color: var(--ink-soft);
+  font-family: var(--font-display);
   font-size: 0.78rem;
-  font-weight: var(--weight-emphasis);
-  letter-spacing: 0;
+  font-weight: var(--weight-display-label);
+  letter-spacing: 0.03em;
   line-height: 1.25;
   text-transform: uppercase;
 }
@@ -423,9 +435,10 @@ starlight-lang-select select:hover {
   .right-sidebar-panel h2 {
     color: var(--faint);
     margin-bottom: 0.55rem;
+    font-family: var(--font-display);
     font-size: 0.72rem;
-    font-weight: var(--weight-emphasis);
-    letter-spacing: 0;
+      font-weight: var(--weight-display-label);
+    letter-spacing: 0.04em;
     line-height: 1.25;
     text-transform: uppercase;
   }
@@ -482,8 +495,16 @@ starlight-lang-select select:hover {
   @apply text-sap-dim;
 }
 
+/*
+ * The title layer -- and only the title layer -- runs in the display face.
+ * Body copy stays Inter, so the contrast between the two is what marks a
+ * heading, not a jump in size alone.
+ */
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
-  @apply text-sap-ink font-medium tracking-normal;
+  @apply text-sap-ink;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--display-tracking);
 }
 
 .sl-markdown-content .sl-heading-wrapper {
@@ -523,24 +544,25 @@ starlight-lang-select select:hover {
 h1.page-title,
 h1#starlight__page-title {
   @apply mt-0 mb-8 text-[2.45rem] leading-none;
-  font-weight: var(--weight-emphasis);
-  letter-spacing: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  letter-spacing: -0.02em;
   max-width: 36rem;
 }
 
 .sl-markdown-content h2 {
   @apply mt-12 mb-4 text-[1.58rem] leading-tight;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
 }
 
 .sl-markdown-content h3 {
   @apply mt-9 mb-3 text-[1.08rem] leading-tight;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
 }
 
 .sl-markdown-content h4 {
   @apply mt-7 mb-2 text-[0.96rem] leading-tight;
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-display);
 }
 
 .sl-markdown-content strong {

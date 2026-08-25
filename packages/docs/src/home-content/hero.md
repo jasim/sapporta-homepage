@@ -19,7 +19,7 @@ navigation:
       href: https://github.com/jasim/sapporta
 ---
 
-## Build full database applications from table declarations
+## Build custom database software for power users
 
 Sapporta is a TypeScript + SQLite framework. Declare a table and you get an
 editable grid, forms, reports, and secure APIs for it. Your coding agent
