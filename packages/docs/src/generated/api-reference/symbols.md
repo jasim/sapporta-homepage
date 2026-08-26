@@ -2,7 +2,7 @@
 
 > Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
 
-1206 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+1214 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
 
 Where a name lists more than one specifier, prefer the narrowest.
 
@@ -43,6 +43,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `AppRouter` — @sapporta/shared/contracts, @sapporta/server
 - `AppShell` — @sapporta/frontend/shell, @sapporta/frontend/app, @sapporta/frontend
 - `AppShellProps` — @sapporta/frontend/shell, @sapporta/frontend/app, @sapporta/frontend
+- `appTimeZone` — @sapporta/frontend/platform, @sapporta/frontend
 - `assertAuthSchemaDefinitions` — @sapporta/server
 - `assertBoundedInteger` — @sapporta/shared/validation, @sapporta/shared
 - `assertDataAuthoritySupportsTable` — @sapporta/server
@@ -325,6 +326,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `DisplayedRowRef` — @sapporta/grid
 - `DisplayedRows` — @sapporta/grid
 - `DisplayedRowSequence` — @sapporta/grid
+- `displayTimeZone` — @sapporta/grid/column-preset
 - `EditingState` — @sapporta/grid
 - `editStartsOn` — @sapporta/grid
 - `encodeFilters` — @sapporta/shared/filter, @sapporta/shared
@@ -754,6 +756,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ReportStat` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportSummaryStats` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportSummaryStatsProps` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportTimeZoneNote` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportToolbar` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportToolbarProps` — @sapporta/frontend/report, @sapporta/frontend
 - `requestDataAuthority` — @sapporta/server
@@ -900,6 +903,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ServerInferRequest` — @sapporta/shared/contracts, @sapporta/server
 - `ServerInferResponseBody` — @sapporta/shared/contracts, @sapporta/server
 - `ServerInferResponses` — @sapporta/shared/contracts, @sapporta/server
+- `setAppTimeZone` — @sapporta/frontend/platform
+- `setDisplayTimeZone` — @sapporta/grid/column-preset
 - `setNavigate` — @sapporta/frontend/app, @sapporta/frontend
 - `setProjectRoot` — @sapporta/server
 - `Sheet` — @sapporta/ui/sheet, @sapporta/ui
@@ -1083,7 +1088,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TGridTableSchemaOverrides` — @sapporta/frontend
 - `ThemeMode` — @sapporta/frontend
 - `ThrowingClient` — @sapporta/shared/client
-- `timestamp` — @sapporta/server/table, @sapporta/server
+- `timestamp` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `TimestampPreset` — @sapporta/grid/column-preset
 - `TimeZone` — @sapporta/shared/temporal, @sapporta/shared
 - `Tooltip` — @sapporta/ui/tooltip, @sapporta/ui
 - `TooltipContent` — @sapporta/ui/tooltip, @sapporta/ui
@@ -1113,6 +1119,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `updateRowRoute` — @sapporta/shared/contracts
 - `updateTableRow` — @sapporta/frontend
 - `updateTypedFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `updateWorkspaceTimeZone` — @sapporta/frontend/auth, @sapporta/frontend
 - `UpdateWorkspaceTimeZoneBody` — @sapporta/shared/contracts
 - `updateWorkspaceTimeZoneBodySchema` — @sapporta/shared/contracts
 - `updateWorkspaceTimeZoneRoute` — @sapporta/shared/contracts
@@ -1204,6 +1211,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `WorkspaceRole` — @sapporta/server
 - `workspaceRows` — @sapporta/server
 - `workspaceScopeColumn` — @sapporta/server
+- `WorkspaceSettingsPage` — @sapporta/frontend/auth/profile, @sapporta/frontend/auth, @sapporta/frontend
 - `workspaceTimeZone` — @sapporta/server
 - `WorkspaceUserDataAuthority` — @sapporta/server
 - `workspaceUserRows` — @sapporta/server

@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend/report"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend/report"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/report
 
-Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-22 symbols documented here.
+23 symbols documented here.
 
 ## Types (12)
 
@@ -135,7 +135,7 @@ type UrlQueryObject = Record<string, UrlQueryValue>;
 type UrlQueryValue = string | number | boolean | null | undefined;
 ```
 
-## Functions and components (10)
+## Functions and components (11)
 
 ### buildSearchParams
 
@@ -187,6 +187,14 @@ Opt-in 4-up (or N-up) summary strip for reports — the one place a report UI "s
 
 ```ts
 function ReportSummaryStats({ stats }: ReportSummaryStatsProps): import("react").JSX.Element;
+```
+
+### ReportTimeZoneNote
+
+The calendar this report's days are counted in.
+
+```ts
+function ReportTimeZoneNote(): import("react").JSX.Element;
 ```
 
 ### ReportToolbar

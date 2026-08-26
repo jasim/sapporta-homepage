@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend — Values, classes, and namespaces"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Values, classes, and namespaces
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 7 of 189 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md).
 
@@ -76,6 +76,7 @@ const uiClient: import('@sapporta/shared/client').ThrowingClient<{
                     id: import('zod').ZodString;
                     name: import('zod').ZodString;
                     slug: import('zod').ZodString;
+                    timeZone: import('zod').ZodString;
                     isOwner: import('zod').ZodBoolean;
                 }, import('zod/v4/core').$strip>;
                 memberships: import('zod').ZodArray<import('zod').ZodObject<{
@@ -84,6 +85,7 @@ const uiClient: import('@sapporta/shared/client').ThrowingClient<{
                         id: import('zod').ZodString;
                         name: import('zod').ZodString;
                         slug: import('zod').ZodString;
+                        timeZone: import('zod').ZodString;
                     }, import('zod/v4/core').$strip>;
                     role: import('zod').ZodEnum<{
                         owner: "owner";
@@ -96,10 +98,7 @@ const uiClient: import('@sapporta/shared/client').ThrowingClient<{
                     member: "member";
                 }>;
                 isOwner: import('zod').ZodBoolean;
-            }, import('zod/v4/core').$strip>;
-            401: import('zod').ZodObject<{
-                error: import('zod').ZodString;
-                cod
+            }, import('zod/v4/core').$stri
 // …declaration truncated at 2500 bytes.
 ```
 

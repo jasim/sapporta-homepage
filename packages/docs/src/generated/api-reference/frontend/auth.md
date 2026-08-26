@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend/auth"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend/auth"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/auth
 
-Import from `@sapporta/frontend/auth`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/auth`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-18 symbols documented here.
+20 symbols documented here.
 
 ## Types (3)
 
@@ -47,6 +47,7 @@ interface AuthState {
     reloadSession: () => Promise<void>;
     loadBootstrapStatus: () => Promise<void>;
     switchWorkspace: (body: SwitchActiveWorkspaceBody) => Promise<void>;
+    setWorkspaceTimeZone: (body: UpdateWorkspaceTimeZoneBody) => Promise<void>;
     logout: () => Promise<void>;
     reset: () => void;
 }
@@ -62,7 +63,7 @@ interface ChangePasswordInput {
 }
 ```
 
-## Functions and components (14)
+## Functions and components (16)
 
 ### AccountProfilePage
 
@@ -146,10 +147,26 @@ function SignupPage(): import("react").JSX.Element;
 function switchActiveWorkspace(body: SwitchActiveWorkspaceBody): Promise<AuthContextResponse>;
 ```
 
+### updateWorkspaceTimeZone
+
+Sets the calendar the active workspace keeps.
+
+```ts
+function updateWorkspaceTimeZone(body: UpdateWorkspaceTimeZoneBody): Promise<AuthContextResponse>;
+```
+
 ### VerifyEmailPage
 
 ```ts
 function VerifyEmailPage(): import("react").JSX.Element;
+```
+
+### WorkspaceSettingsPage
+
+The settings that belong to the workspace rather than to whoever is signed in to it.
+
+```ts
+function WorkspaceSettingsPage(): import("react").JSX.Element;
 ```
 
 ## Values, classes, and namespaces (1)

@@ -29,6 +29,20 @@ export const user = sqliteTable("user", {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  /**
+   * The calendar this account keeps, copied onto the first workspace it
+   * creates and never read again.
+   *
+   * The framework template declares this with no default, so an account cannot
+   * come into being without a real zone. SQLite cannot add such a column to a
+   * table that already holds accounts, and the rebuild that would allow it is
+   * not available here: `drizzle-kit` runs migrations inside a transaction,
+   * where `PRAGMA foreign_keys=OFF` is ignored and dropping this table would
+   * cascade away every session, credential, and membership. The default is the
+   * value rows written before the column existed read as; it is not a way to
+   * skip the field, which `projectAuthUserOptions` still marks required, so a
+   * sign-up carrying no zone is refused before any row is written.
+   */
   timeZone: text("timeZone").default("UTC").notNull(),
 });
 

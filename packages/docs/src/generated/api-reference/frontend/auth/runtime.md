@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/auth/runtime"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend/auth/runtime"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/auth/runtime
 
-Import from `@sapporta/frontend/auth/runtime`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/auth/runtime`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 12 symbols documented here.
 
@@ -47,6 +47,7 @@ interface AuthState {
     reloadSession: () => Promise<void>;
     loadBootstrapStatus: () => Promise<void>;
     switchWorkspace: (body: SwitchActiveWorkspaceBody) => Promise<void>;
+    setWorkspaceTimeZone: (body: UpdateWorkspaceTimeZoneBody) => Promise<void>;
     logout: () => Promise<void>;
     reset: () => void;
 }

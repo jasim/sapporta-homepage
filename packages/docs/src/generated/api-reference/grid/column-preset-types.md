@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Types"
 package: "@sapporta/grid"
-version: "0.4.1"
+version: "0.5.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.4.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Types
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.4.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-49 of 84 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+50 of 88 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### BooleanPreset
 
@@ -24,7 +24,7 @@ type BooleanPreset = PresetBase & {
 ### BuiltInColumnPresetKind
 
 ```ts
-type BuiltInColumnPresetKind = "identifier" | "text" | "number" | "currency" | "percentage" | "date" | "boolean" | "select" | "lookupValue" | "foreignKey";
+type BuiltInColumnPresetKind = "identifier" | "text" | "number" | "currency" | "percentage" | "date" | "timestamp" | "boolean" | "select" | "lookupValue" | "foreignKey";
 ```
 
 ### CharacterColumnSizing
@@ -67,7 +67,7 @@ type ColumnHeaderProps<TMeta = unknown> = {
 ### ColumnPreset
 
 ```ts
-type ColumnPreset = IdentifierPreset | TextPreset | NumberPreset | CurrencyPreset | PercentagePreset | DatePreset | BooleanPreset | SelectPreset | LookupPreset | ForeignKeyPreset | CustomPreset;
+type ColumnPreset = IdentifierPreset | TextPreset | NumberPreset | CurrencyPreset | PercentagePreset | DatePreset | TimestampPreset | BooleanPreset | SelectPreset | LookupPreset | ForeignKeyPreset | CustomPreset;
 ```
 
 ### ColumnPresetCellRenderRuntime
@@ -206,7 +206,7 @@ type ColumnSizingStorageKeyContext = {
 ### ColumnWidth
 
 ```ts
-type ColumnWidth = "compact" | "content" | "fill" | "numeric" | "date" | "enum" | "foreignKey" | {
+type ColumnWidth = "compact" | "content" | "fill" | "numeric" | "date" | "timestamp" | "enum" | "foreignKey" | {
     min?: number;
     ideal?: number;
     max?: number;
@@ -459,6 +459,14 @@ type TextPreset = PresetBase & {
     text: {
         display?: TextDisplayMode;
     };
+};
+```
+
+### TimestampPreset
+
+```ts
+type TimestampPreset = PresetBase & {
+    kind: "timestamp";
 };
 ```
 

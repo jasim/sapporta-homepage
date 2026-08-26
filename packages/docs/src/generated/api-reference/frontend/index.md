@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 189 symbols are published directly from this specifier — too many for one page, so they are grouped below.
 
@@ -19,17 +19,17 @@ Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.5.0`; co
 - [Functions and components (85)](https://sapporta.com/api-reference/frontend/index-functions.md) — applySchemaOverrides, buildRecordFormFields, buildSchemaTGridConfig, buildTableRowsQuery, buildTableSearchParams, buildTableSelectionQuery, buildTGridColumnsForTable, catalogTableLabel, clearTableSelection, createColumnsBuilder, createRecord, createTableRow, createTGridColumnMapper, createTGridColumnsBuilder, createTGridSession, decodeTableValueDraft, defineSchemaTGrid, defineTableSchema, defineTGrid, deleteSelectedTableRows, deleteTableRow, fetchTableRow, fetchTableRows, fieldModelForColumn, foreignKeyFieldModelForColumn, FormField, handleResolvedLinkClick, isExternalHref, LinkIconGlyph, LinkMenuItems, linkRel, navigateToNewRecord, NewRecordPage, normalizeForeignKeyScalarFilters, normalizeTableViewPreference, openResolvedLink, parseCreateDraft, parseTablePatchValueDraft, parseTableSearchParams, registerTGridSession, relatedRowsTableHref, reloadTGridRows, resolveLink, resolveLinks, resolveTableGridPresentation, resolveTablePageMode, resolveTGridCellLinks, resolveTGridRowLinks, sanitizeSortDescriptors, SchemaTableGridView, selectedTableDeleteTargets, startTGridLookupLoading, tableColumnPresetWidth, tableFilteredByUrl, tableGridUrlForQueryState, TableGridView, tableLoadErrorMessage, TablePage, tableQuerySeedFromUrlState, tableViewPreferenceKey, TGrid, unregisterTGridSession, updateTableRow, useCurrentTGridSession, useKeyHints, useSchemaTableGrid, useTableGrid, useTableGridUrlState, useTableLevelPager, useTableLevelQuery, useTablePageMode, useTableSelection, useTableViewPreference, useTGridActiveRow, useTGridCell, useTGridCellEditor, useTGridLifecycle, useTGridQueryState, useTGridSession, useTGridSourceField, useTGridSourceStateField, useTGridSourceStatus, visiblePaginationItems, withTGridCellLinks, withTGridSessionContext
 - [Values, classes, and namespaces (7)](https://sapporta.com/api-reference/frontend/index-values.md) — NARROW_TABLE_PAGE_MAX_WIDTH, tgridCellContext, tgridCellEditorContext, tgridSessionContext, uiClient, useHintsStore, useThemeStore
 
-## Also available from narrower specifiers (128)
+## Also available from narrower specifiers (132)
 
 These are exported by `@sapporta/frontend` too, but their signatures live on the narrower page. Prefer the narrower specifier in application code.
 
 - `@sapporta/frontend/app` — AppShell, AppShellProps, BootLoader, HomeRedirect, NotFoundView, getNavigate, navigateToTable, setNavigate
-- `@sapporta/frontend/auth` — AccountProfilePage, AuthGate, AuthSession, AuthState, ChangePasswordInput, ChangePasswordPage, ForgotPasswordPage, LoginPage, PublicOnlyGate, ResetPasswordPage, SignupPage, VerifyEmailPage, changePassword, fetchAuthBootstrapStatus, fetchAuthContext, signOut, switchActiveWorkspace, useAuthStore
+- `@sapporta/frontend/auth` — AccountProfilePage, AuthGate, AuthSession, AuthState, ChangePasswordInput, ChangePasswordPage, ForgotPasswordPage, LoginPage, PublicOnlyGate, ResetPasswordPage, SignupPage, VerifyEmailPage, WorkspaceSettingsPage, changePassword, fetchAuthBootstrapStatus, fetchAuthContext, signOut, switchActiveWorkspace, updateWorkspaceTimeZone, useAuthStore
 - `@sapporta/frontend/form` — FormSubmissionError, fieldIssuesForSubmissionError, firstFormErrorMessage
 - `@sapporta/frontend/layout` — AppPage, AppPageProps, PageBody, PageBodyProps, PageFrame, PageFrameProps, PageHeader, PageHeaderButton, PageHeaderProps, SIDEBAR_DESKTOP_MEDIA_QUERY, SIDEBAR_EXPANDED_PREF_KEY, SidebarController, SidebarProvider, SidebarProviderOptions, SidebarProviderProps, SidebarRegion, SidebarRegionProps, SidebarShell, SidebarToggle, SidebarToggleProps, useSidebar
 - `@sapporta/frontend/lookup` — LookupForColumn, LookupPicker, LookupPickerItemDisplay, LookupPickerItemProps, LookupPickerProps, LookupStore, TableLookupSource, buildLookupSearchQuery, buildLookupValueQuery, createLookupStore, createTableLookupSource, fetchLookup, fetchLookupEntriesForSearch, fetchLookupEntriesForValues, fetchLookupSearch, lookupEntriesFromResponse, useLookupStore, useTableLookup
-- `@sapporta/frontend/platform` — API_ORIGIN, getApiBase
-- `@sapporta/frontend/report` — DateRangeField, ReportCellLink, ReportCellLinkContext, ReportCellLinkResolvers, ReportError, ReportGridDataset, ReportGridDatasetProps, ReportRowLinkContext, ReportRunButton, ReportRunButtonProps, ReportScreenFrame, ReportScreenFrameProps, ReportStat, ReportSummaryStats, ReportSummaryStatsProps, ReportToolbar, ReportToolbarProps, UrlQueryObject, UrlQueryValue, buildSearchParams, createSnapshotUrl, useUrlQueryState
+- `@sapporta/frontend/platform` — API_ORIGIN, appTimeZone, getApiBase
+- `@sapporta/frontend/report` — DateRangeField, ReportCellLink, ReportCellLinkContext, ReportCellLinkResolvers, ReportError, ReportGridDataset, ReportGridDatasetProps, ReportRowLinkContext, ReportRunButton, ReportRunButtonProps, ReportScreenFrame, ReportScreenFrameProps, ReportStat, ReportSummaryStats, ReportSummaryStatsProps, ReportTimeZoneNote, ReportToolbar, ReportToolbarProps, UrlQueryObject, UrlQueryValue, buildSearchParams, createSnapshotUrl, useUrlQueryState
 - `@sapporta/frontend/routes/new-record` — NewRecordRoute
 - `@sapporta/frontend/routes/table` — TableGridOptionsByTable, TableRoute, TableRouteProps
 - `@sapporta/frontend/schema` — loadProjectInfo, loadSchema, useSchemaStore

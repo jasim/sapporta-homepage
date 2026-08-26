@@ -1,19 +1,27 @@
 ---
 title: "@sapporta/frontend/platform"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend/platform"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/platform
 
-Import from `@sapporta/frontend/platform`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/platform`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-9 symbols documented here.
+11 symbols documented here.
 
-## Functions and components (7)
+## Functions and components (9)
+
+### appTimeZone
+
+The zone every timestamp on this page is written in.
+
+```ts
+function appTimeZone(): TimeZone;
+```
 
 ### errorMessage
 
@@ -55,6 +63,14 @@ function parseErrorBody(response: Response): Promise<unknown>;
 
 ```ts
 function savePref<T extends JsonValue>(key: string, value: T): void;
+```
+
+### setAppTimeZone
+
+Publish the zone the active workspace keeps.
+
+```ts
+function setAppTimeZone(value: string): void;
 ```
 
 ## Values, classes, and namespaces (2)

@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Values, classes, and namespaces"
 package: "@sapporta/grid"
-version: "0.4.1"
+version: "0.5.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.4.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Values, classes, and namespaces
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.4.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-3 of 84 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md).
+3 of 88 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md).
 
 ### columnPreset
 
@@ -23,6 +23,7 @@ const columnPreset: {
     currency: typeof currency;
     percentage: typeof percentage;
     date: typeof date;
+    timestamp: typeof timestamp;
     boolean: typeof boolean;
     select: typeof select;
     lookupValue: typeof lookupValue;

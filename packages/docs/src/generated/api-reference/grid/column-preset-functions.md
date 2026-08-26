@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Functions and components"
 package: "@sapporta/grid"
-version: "0.4.1"
+version: "0.5.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.4.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Functions and components
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.4.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-32 of 84 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+35 of 88 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### boolean
 
@@ -69,8 +69,18 @@ function currency<TMeta = unknown>(options: NumberColumnOptions<TMeta>): ColumnS
 
 ### date
 
+A date or timestamp column, written on the wall clock the page publishes with `setDisplayTimeZone` — see `display-zone.ts` for why the column does not carry a zone of its own.
+
 ```ts
 function date<TMeta = unknown>(options: ColumnPresetOptions<TMeta>): ColumnSchema;
+```
+
+### displayTimeZone
+
+The zone every grid on this page reads its moments on.
+
+```ts
+function displayTimeZone(): TimeZone;
 ```
 
 ### foreignKey
@@ -189,6 +199,14 @@ function saveColumnSizingOverrides(sizing: ResolvedColumnSizing, schema: readonl
 function select<TMeta = unknown>(options: SelectColumnOptions<TMeta>): ColumnSchema;
 ```
 
+### setDisplayTimeZone
+
+Publish the zone every grid on this page reads its moments on.
+
+```ts
+function setDisplayTimeZone(value: TimeZone): void;
+```
+
 ### templateColumns
 
 ```ts
@@ -199,6 +217,12 @@ function templateColumns(columns: readonly ColumnSchema[], overrides?: ColumnSiz
 
 ```ts
 function text<TMeta = unknown>(options: TextColumnOptions<TMeta>): ColumnSchema;
+```
+
+### timestamp
+
+```ts
+function timestamp<TMeta = unknown>(options: ColumnPresetOptions<TMeta>): ColumnSchema;
 ```
 
 ### trackForColumn

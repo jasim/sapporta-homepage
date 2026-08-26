@@ -1,19 +1,17 @@
 # Publishing a Sapporta release to the homepage
 
-The homepage builds against the published `@sapporta/*` packages, and it
-documents the published `sapporta` CLI. When a new Sapporta release goes out,
-this repository has to pick up the new packages, regenerate everything that is
-derived from them, and commit the result.
-
-Day to day the workspace usually points at the local Sapporta checkout
-(`pnpm package-sources:use-local`). The sequence below moves it back to npm,
-takes the release, and leaves the repository committed.
+The site builds against the published `@sapporta/*` packages and documents the
+published `sapporta` CLI. This is the sequence for taking a new release all the
+way to production. The workspace normally points at the local Sapporta checkout;
+the first step moves it back to npm.
 
 ## The sequence
 
 ```bash
 pnpm package-sources:update-npm
 pnpm package-sources:use-npm
+rm -rf packages/*/node_modules
+find packages -maxdepth 2 -name pnpm-lock.yaml -delete
 pnpm install
 pnpm package-sources:verify
 pnpm generate:sapporta-cli-version
@@ -25,55 +23,69 @@ pnpm check:docs-index
 pnpm test:build-scripts
 git add .
 git commit -m "Update to latest sapporta version"
+git push origin main
+git push dokku main
 ```
 
-## When the build fails
+`pnpm build` is the step that fails when a release changes the framework surface.
+Fix the app code in `packages/api/`, `packages/frontend/`, or `packages/shared/`,
+re-run `pnpm build`, and carry on from there. The generated API reference is
+written from declaration files, not from this app, so that fix does not require
+regenerating it.
 
-A Sapporta release can change the framework surface the app compiles against, so
-`pnpm build` is the step that fails. Fix the application code — usually in
-`packages/api/`, `packages/frontend/`, or `packages/shared/` — then resume:
+Push only after the build and both `check:` scripts pass. `git push dokku main`
+is the deploy: dokku builds the `Dockerfile` and restarts the app.
+`DEPLOYMENT.md` covers the production topology and environment.
+
+## npm's `latest` lags behind a publish
+
+The registry can take an hour or more to serve a just-published version, so
+`update-npm` and `generate:sapporta-cli-version` may both resolve to the previous
+release. **If the user names the versions they published, use those instead of
+whatever the registry returns.**
+
+For `@sapporta/*`: edit the `npm` map in `.package-source-switch.json` by hand
+and start the sequence at `use-npm`. Do not run `update-npm` — it overwrites that
+map with whatever the registry is currently serving. `verify` compares the
+manifests against the map, so the workspace stays consistent either way.
+
+For the `sapporta` CLI: `generate:sapporta-cli-version` always fetches
+`sapporta@latest`, and `prebuild` re-runs it, so a hand-edited version is
+overwritten by `pnpm build`. Write the version into
+`packages/docs/src/generated/sapporta-cli.mjs` after the full build, then rebuild
+the docs alone — that skips the root `prebuild`:
 
 ```bash
-pnpm build
-pnpm check:api-reference
-pnpm check:docs-index
-pnpm test:build-scripts
-git add .
-git commit -m "Update to latest sapporta version"
+pnpm --filter ./packages/docs build
 ```
-
-The generated API reference is written from declaration files, not from this
-app's code, so fixing the app does not require regenerating it.
 
 ## What each step does
 
-- `package-sources:update-npm` asks the registry for the latest version of every
-  `@sapporta/*` package and records it in `.package-source-switch.json`.
-- `package-sources:use-npm` writes those versions into every `package.json` in
-  the workspace, drops the `link:` overrides from `pnpm-workspace.yaml`, and
-  removes the source-link runtime flag from the API's `dev` and `start` scripts.
-- `install` is what actually brings the new packages down, including into
-  `packages/api-reference/`.
-- `package-sources:verify` fails if any manifest, workspace override, or lockfile
+- `package-sources:update-npm` — records each `@sapporta/*` latest version in
+  `.package-source-switch.json`. The only step that changes those versions.
+- `package-sources:use-npm` — writes those versions into every `package.json`,
+  drops the `link:` overrides from `pnpm-workspace.yaml`, and removes the
+  source-link runtime flag from the API's `dev` and `start` scripts.
+- `rm -rf` and `find … -delete` — clear per-package `node_modules` and any stray
+  per-package lockfiles, so nothing survives from local link mode.
+- `install` — brings the packages down, including into `packages/api-reference/`.
+- `package-sources:verify` — fails if a manifest, workspace override, or lockfile
   entry still disagrees with npm mode.
-- `generate:sapporta-cli-version` resolves `sapporta@latest` from the registry and
-  writes `packages/docs/src/generated/sapporta-cli.mjs`, which is where the
-  install command shown on the site gets its version number. This is the CLI
-  package, versioned separately from the `@sapporta/*` libraries.
-- `generate:api-reference` reads the `@sapporta/*` declaration files installed
-  under `packages/api-reference/` and rewrites
-  `packages/docs/src/generated/api-reference/`. It documents whatever is
-  installed, so it has to run after `pnpm install` — before that, it would just
-  regenerate the previous release.
-- `generate:docs-index` rebuilds `packages/docs/src/content/docs/docs.md` from
+- `generate:sapporta-cli-version` — writes `sapporta@latest` into
+  `packages/docs/src/generated/sapporta-cli.mjs`, which supplies the version in
+  the install command shown on the site. The CLI is versioned separately from the
+  `@sapporta/*` libraries.
+- `generate:api-reference` — rewrites
+  `packages/docs/src/generated/api-reference/` from the declaration files
+  installed under `packages/api-reference/`. Must run after `install`, or it
+  regenerates the previous release.
+- `generate:docs-index` — rebuilds `packages/docs/src/content/docs/docs.md` from
   `packages/docs/sidebar.mjs`.
-- `build` compiles shared, docs, API, and frontend. All three generate steps feed
-  files into `packages/docs/src/`, so they run before it; the docs site is built
-  from what is on disk at that moment. `prebuild` re-runs
-  `generate:sapporta-cli-version` on its own, so that step is cheap insurance
-  rather than a duplicate.
-- The two `check:` scripts are the CI guards: they fail if the committed
-  generated files do not match what a regeneration would produce.
+- `build` — all three generate steps write into `packages/docs/src/`, so they run
+  before it; the docs build reads what is on disk.
+- `check:api-reference`, `check:docs-index` — CI guards; they fail if the
+  committed generated files are stale.
+- `git push dokku main` — deploys. `origin` is GitHub only.
 
 ## Back to local Sapporta
 
@@ -83,21 +95,8 @@ pnpm install
 pnpm package-sources:verify
 ```
 
-`use:local` points the workspace at the Sapporta checkout recorded in
-`.package-source-switch.json` and restores the source-link runtime flag. Pass a
-path once if the checkout has moved:
+Pass a path once if the checkout moved:
 
 ```bash
 pnpm package-sources use:local /absolute/path/to/sapporta
 ```
-
-## Deploy
-
-```bash
-./deploy.sh
-```
-
-`deploy.sh` re-runs `update-npm`, `use:npm`, a clean `install`, `verify`, and
-`build`, then stops and waits: commit anything it changed, type `yes`, and it
-pushes `main` to `origin` and to `dokku`. `DEPLOYMENT.md` covers the production
-topology and environment.

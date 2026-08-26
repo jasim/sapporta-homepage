@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/shell"
 package: "@sapporta/frontend"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/frontend/shell"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/shell
 
-Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.5.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 44 symbols documented here.
 
@@ -88,6 +88,11 @@ interface AppShellProps {
      * application places `SidebarToggle` in its own persistent UI.
      */
     sidebarToggle?: ReactNode | false;
+    /**
+     * Replace what sits under the sidebar navigation, which is the account menu
+     * unless this says otherwise. `null` leaves the footer out.
+     */
+    sidebarFooter?: ReactNode;
 }
 ```
 
@@ -236,7 +241,7 @@ function AppPage({ children, className, headerClassName, bodyClassName, ...heade
 The standard shell keeps navigation reachable without asking each route to render a particular header.
 
 ```ts
-function AppShell({ navigation, showFrameworkNavigation, sidebarOptions, sidebarToggle, }: AppShellProps): import("react").JSX.Element;
+function AppShell({ navigation, showFrameworkNavigation, sidebarOptions, sidebarToggle, sidebarFooter, }: AppShellProps): import("react").JSX.Element;
 ```
 
 ### AuthAccountMenu
