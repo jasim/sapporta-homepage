@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/shared"
 package: "@sapporta/shared"
-version: "0.2.4"
+version: "0.3.0"
 specifier: "@sapporta/shared"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.2.4`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared
 
-Import from `@sapporta/shared`. Documented from `@sapporta/shared@0.2.4`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared`. Documented from `@sapporta/shared@0.3.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 13 symbols documented here.
 
-## Also available from narrower specifiers (96)
+## Also available from narrower specifiers (111)
 
 These are exported by `@sapporta/shared` too, but their signatures live on the narrower page. Prefer the narrower specifier in application code.
 
@@ -23,7 +23,7 @@ These are exported by `@sapporta/shared` too, but their signatures live on the n
 - `@sapporta/shared/filter` — FilterCondition, FilterDraftCondition, FilterDraftValue, FilterParseError, FilterParseErrorCode, FilterTableLike, LIST_OPS, ListOp, NULL_OPS, NewFilterCondition, NullOp, OPERATORS, Operator, Polarity, SCALAR_OPS, ScalarOp, TypedFilterCondition, TypedFilterParseCode, TypedFilterParseError, TypedValue, checkOperatorApplicable, conditionContentEqual, decodeFilters, encodeFilterValue, encodeFilters, encodeTypedCondition, encodeTypedFilters, encodeTypedValue, eqCondition, filtersEqual, isOperator, materializeFilterCondition, materializeTypedFilterCondition, mintFilterId, normalizeFilters, parseFilterForTable, parseFilterValue, parseFilters, parseFiltersForTable, serializeTypedValue, updateTypedFilterCondition, wireKey
 - `@sapporta/shared/record-id` — RecordId, toRecordId
 - `@sapporta/shared/row-scope` — SCOPED_TO_USER_ID_SQL_COLUMN, SCOPED_TO_USER_ID_TS_COLUMN, WORKSPACE_ID_SQL_COLUMN, WORKSPACE_ID_TS_COLUMN, isSystemManagedScopeFieldName, scopeColumnNames, systemManagedScopeFieldNames
-- `@sapporta/shared/temporal` — Temporal, canonicalizeInstantString, formatCanonicalInstant, formatInstantForDateTimeLocalInput, formatPlainDate, formatPlainDateForDateInput, parseCanonicalInstant, parseDateInputToPlainDateString, parseDateTimeLocalInputToCanonicalInstantString, parsePlainDate
+- `@sapporta/shared/temporal` — LocalDayBound, Temporal, TemporalDisplayPrecision, TimeZone, canonicalizeInstantString, describeInstantForDisplay, deviceTimeZone, formatCanonicalInstant, formatInstantForDateInput, formatInstantForDateTimeLocalInput, formatInstantForDisplay, formatPlainDate, formatPlainDateForDateInput, formatPlainDateForDisplay, formatTemporalForDisplay, formatTimeZoneOffsetLabel, isValidTimeZone, localDayInZone, parseCanonicalInstant, parseDateInputToInstantString, parseDateInputToPlainDateString, parseDateTimeLocalInputToCanonicalInstantString, parsePlainDate, parseTimeZone, supportedTimeZones
 - `@sapporta/shared/validation` — ApiProblem, BoundedIntegerErrorFactory, BoundedIntegerOptions, FieldIssue, OptionalBoundedIntegerOptions, RequiredBoundedIntegerOptions, apiProblemFromBody, assertBoundedInteger, fieldIssuesFromZodError, parseBoundedInteger, parseOptionalBoundedInteger
 - `@sapporta/shared/value-kind` — ColumnMeta, OPERATOR_APPLICABILITY, ValueKind, isOperatorApplicable
 

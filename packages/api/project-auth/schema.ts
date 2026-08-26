@@ -29,6 +29,7 @@ export const user = sqliteTable("user", {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  timeZone: text("timeZone").default("UTC").notNull(),
 });
 
 export const session = sqliteTable(
@@ -110,6 +111,7 @@ export const organization = sqliteTable(
     logo: text("logo"),
     createdAt: integer("createdAt", { mode: "timestamp_ms" }).notNull(),
     metadata: text("metadata"),
+    timeZone: text("timeZone").default("UTC").notNull(),
   },
   (table) => [uniqueIndex("organization_slug_uidx").on(table.slug)],
 );

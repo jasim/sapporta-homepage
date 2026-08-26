@@ -110,6 +110,7 @@ export function createProjectAuth({
     env,
     routes: createProjectAuthRoutes({
       conn,
+      resolveAuth,
       switchActiveWorkspace: (c, workspaceId) =>
         switchActiveWorkspaceContext({
           auth: auth.api,
@@ -153,7 +154,6 @@ export function createProjectAuth({
 
 export { createBetterAuth, type ProjectBetterAuth } from "./better-auth.js";
 export {
-  membershipFromRow,
   resolvePrincipal,
   resolveSapportaAuthContext,
   switchActiveWorkspace,

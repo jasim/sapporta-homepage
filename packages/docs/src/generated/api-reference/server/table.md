@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/table"
 package: "@sapporta/server"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/server/table"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/table
 
-Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.5.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.6.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 26 symbols documented here.
 
@@ -229,7 +229,7 @@ type TableValidationValue<TTable extends AnySQLiteTable> = Readonly<Partial<Cano
 ### bool
 
 ```ts
-function bool(name: string): import("drizzle-orm/sqlite-core").SQLiteBooleanBuilderInitial<string>;
+function bool<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteBooleanBuilderInitial<TName>;
 ```
 
 ### date
@@ -237,8 +237,8 @@ function bool(name: string): import("drizzle-orm/sqlite-core").SQLiteBooleanBuil
 `TEXT` (ISO `YYYY-MM-DD`) + kind `"date"`.
 
 ```ts
-function date(name: string): import("drizzle-orm/sqlite-core").SQLiteCustomColumnBuilder<{
-    name: string;
+function date<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteCustomColumnBuilder<{
+    name: "";
     dataType: "custom";
     columnType: "SQLiteCustomColumn";
     data: Temporal.PlainDate;
@@ -264,19 +264,19 @@ function isAutoManagedTimestampColumn(name: string): boolean;
 ### money
 
 ```ts
-function money(name: string): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<string>;
+function money<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<TName>;
 ```
 
 ### number
 
 ```ts
-function number(name: string): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<string>;
+function number<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<TName>;
 ```
 
 ### percentage
 
 ```ts
-function percentage(name: string): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<string>;
+function percentage<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteRealBuilderInitial<TName>;
 ```
 
 ### sapportaTable
@@ -292,13 +292,13 @@ function sapportaTable<TTable extends AnySQLiteTable>(options: TableOptions<TTab
 A text column whose allowed values are declared once on the Drizzle column.
 
 ```ts
-function select<const TOptions extends readonly [string, ...string[]]>(name: string, options: TOptions): import("drizzle-orm/sqlite-core").SQLiteTextBuilderInitial<string, import("drizzle-orm").Writable<TOptions>, number | undefined>;
+function select<const TOptions extends readonly [string, ...string[]], TName extends string>(name: TName, options: TOptions): import("drizzle-orm/sqlite-core").SQLiteTextBuilderInitial<TName, import("drizzle-orm").Writable<TOptions>, number | undefined>;
 ```
 
 ### text
 
 ```ts
-function text(name: string): import("drizzle-orm/sqlite-core").SQLiteTextBuilderInitial<string, [string, ...string[]], number | undefined>;
+function text<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteTextBuilderInitial<TName, [string, ...string[]], number | undefined>;
 ```
 
 ### timestamp
@@ -306,8 +306,8 @@ function text(name: string): import("drizzle-orm/sqlite-core").SQLiteTextBuilder
 `TEXT` (canonical `YYYY-MM-DDTHH:mm:ssZ`) + kind `"timestamp"`.
 
 ```ts
-function timestamp(name: string): import("drizzle-orm/sqlite-core").SQLiteCustomColumnBuilder<{
-    name: string;
+function timestamp<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteCustomColumnBuilder<{
+    name: "";
     dataType: "custom";
     columnType: "SQLiteCustomColumn";
     data: Temporal.Instant;

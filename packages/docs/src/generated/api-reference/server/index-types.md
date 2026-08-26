@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Types"
 package: "@sapporta/server"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Types
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.5.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-95 of 202 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+96 of 204 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### ApiDoc
 
@@ -92,6 +92,20 @@ type AuthWorkspace = {
     id: string;
     name: string;
     slug: string;
+    /**
+     * The calendar this workspace keeps.
+     *
+     * A day is a calendar day in this zone: it is what a report groups by, what
+     * a day-bounded filter resolves against, and what a timestamp is displayed
+     * on. It is a business fact in the same sense that a currency or a fiscal
+     * year start is, so it belongs to the workspace rather than to whoever is
+     * reading — two colleagues looking at one dashboard have to see the same
+     * numbers under the same date.
+     *
+     * Checked where the workspace row is read, so everything downstream holds a
+     * zone this runtime can render. Read it through `workspaceTimeZone`.
+     */
+    timeZone: TimeZone;
 };
 ```
 
@@ -936,6 +950,16 @@ Files uploaded via `multipart/form-data`, keyed by the form field name.
 type UploadedFiles = Record<string, File | File[]>;
 ```
 
+### UserPrincipal
+
+The signed-in case of `Principal`, for callers who know there is a user.
+
+```ts
+type UserPrincipal<Membership extends WorkspaceMembership = WorkspaceMembership> = Extract<Principal<Membership>, {
+    kind: "user";
+}>;
+```
+
 ### ValidationErrorDetail
 
 ```ts
@@ -975,8 +999,6 @@ type WorkspaceMembership<Role extends string = WorkspaceRole> = {
 ```
 
 ### WorkspaceRole
-
-Describes who is making a request, independent from which rows the request may touch.
 
 ```ts
 type WorkspaceRole = "owner" | "member";

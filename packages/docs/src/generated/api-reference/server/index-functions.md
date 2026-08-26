@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Functions and components"
 package: "@sapporta/server"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Functions and components
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.5.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-87 of 202 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+88 of 204 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### anonymousPrincipal
 
@@ -768,7 +768,7 @@ Wraps already-resolved user and membership facts.
 function userPrincipal<Membership extends WorkspaceMembership>(input: {
     user: SapportaAuthUser;
     membership: Membership;
-}): Principal<Membership>;
+}): UserPrincipal<Membership>;
 ```
 
 ### validateApiWriteInput
@@ -829,6 +829,14 @@ function workspaceRows(dataAuthority: RequestDataAuthority, table: TableDef): SQ
 
 ```ts
 function workspaceScopeColumn(table: TableDef): ScopeColumnFact | null;
+```
+
+### workspaceTimeZone
+
+The calendar this request works in.
+
+```ts
+function workspaceTimeZone<AppAbility, Membership extends WorkspaceMembership>(auth: SapportaAuthContext<AppAbility, Membership>): TimeZone;
 ```
 
 ### workspaceUserRows

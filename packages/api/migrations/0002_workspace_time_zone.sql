@@ -1,0 +1,1 @@
+ALTER TABLE `organization` ADD `timeZone` text DEFAULT 'UTC' NOT NULL;

@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/shared/contracts — Values, classes, and namespaces"
 package: "@sapporta/shared"
-version: "0.2.4"
+version: "0.3.0"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.2.4`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Values, classes, and namespaces
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.2.4`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.3.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-65 of 109 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
+67 of 112 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
 
 ### ApiError
 
@@ -32,6 +32,7 @@ const authActiveWorkspaceSchema: z.ZodObject<{
     id: z.ZodString;
     name: z.ZodString;
     slug: z.ZodString;
+    timeZone: z.ZodString;
     isOwner: z.ZodBoolean;
 }, z.core.$strip>;
 ```
@@ -58,6 +59,7 @@ const authContextResponseSchema: z.ZodObject<{
         id: z.ZodString;
         name: z.ZodString;
         slug: z.ZodString;
+        timeZone: z.ZodString;
         isOwner: z.ZodBoolean;
     }, z.core.$strip>;
     memberships: z.ZodArray<z.ZodObject<{
@@ -66,6 +68,7 @@ const authContextResponseSchema: z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
             slug: z.ZodString;
+            timeZone: z.ZodString;
         }, z.core.$strip>;
         role: z.ZodEnum<{
             owner: "owner";
@@ -101,6 +104,7 @@ const authMembershipSchema: z.ZodObject<{
         id: z.ZodString;
         name: z.ZodString;
         slug: z.ZodString;
+        timeZone: z.ZodString;
     }, z.core.$strip>;
     role: z.ZodEnum<{
         owner: "owner";
@@ -162,6 +166,7 @@ const authWorkspaceSummarySchema: z.ZodObject<{
     id: z.ZodString;
     name: z.ZodString;
     slug: z.ZodString;
+    timeZone: z.ZodString;
 }, z.core.$strip>;
 ```
 
@@ -603,6 +608,7 @@ const getAuthContextRoute: {
                 id: z.ZodString;
                 name: z.ZodString;
                 slug: z.ZodString;
+                timeZone: z.ZodString;
                 isOwner: z.ZodBoolean;
             }, z.core.$strip>;
             memberships: z.ZodArray<z.ZodObject<{
@@ -611,6 +617,7 @@ const getAuthContextRoute: {
                     id: z.ZodString;
                     name: z.ZodString;
                     slug: z.ZodString;
+                    timeZone: z.ZodString;
                 }, z.core.$strip>;
                 role: z.ZodEnum<{
                     owner: "owner";
@@ -1188,6 +1195,7 @@ const switchActiveWorkspaceRoute: {
                 id: z.ZodString;
                 name: z.ZodString;
                 slug: z.ZodString;
+                timeZone: z.ZodString;
                 isOwner: z.ZodBoolean;
             }, z.core.$strip>;
             memberships: z.ZodArray<z.ZodObject<{
@@ -1196,6 +1204,7 @@ const switchActiveWorkspaceRoute: {
                     id: z.ZodString;
                     name: z.ZodString;
                     slug: z.ZodString;
+                    timeZone: z.ZodString;
                 }, z.core.$strip>;
                 role: z.ZodEnum<{
                     owner: "owner";
@@ -1393,6 +1402,7 @@ const uiContract: {
   getAuthBootstrapStatus: …;
   getAuthContext: …;
   switchActiveWorkspace: …;
+  updateWorkspaceTimeZone: …;
   listAuthTokens: …;
   createAuthToken: …;
   revokeAuthToken: …;
@@ -1410,7 +1420,7 @@ const uiContract: {
   lookup: …;
   count: …;
 }
-// 19 members; inferred types elided. Read the full type from the declaration file if needed.
+// 20 members; inferred types elided. Read the full type from the declaration file if needed.
 ```
 
 ### updateRowRoute
@@ -1453,6 +1463,85 @@ const updateRowRoute: {
             details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
         }, z.core.$strip>;
         500: z.ZodObject<{
+            error: z.ZodString;
+            code: z.ZodOptional<z.ZodString>;
+            details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
+        }, z.core.$strip>;
+    };
+};
+```
+
+### updateWorkspaceTimeZoneBodySchema
+
+An IANA zone id, never a fixed offset.
+
+```ts
+const updateWorkspaceTimeZoneBodySchema: z.ZodObject<{
+    timeZone: z.ZodString;
+}, z.core.$strip>;
+```
+
+### updateWorkspaceTimeZoneRoute
+
+Owner-only.
+
+```ts
+const updateWorkspaceTimeZoneRoute: {
+    method: "PUT";
+    path: "/auth-context/workspace/time-zone";
+    summary: "Set the time zone the active workspace keeps its calendar in";
+    metadata: {
+        tags: string[];
+    };
+    body: z.ZodObject<{
+        timeZone: z.ZodString;
+    }, z.core.$strip>;
+    responses: {
+        200: z.ZodObject<{
+            user: z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodNullable<z.ZodString>;
+                email: z.ZodString;
+                emailVerified: z.ZodBoolean;
+            }, z.core.$strip>;
+            workspace: z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                slug: z.ZodString;
+                timeZone: z.ZodString;
+                isOwner: z.ZodBoolean;
+            }, z.core.$strip>;
+            memberships: z.ZodArray<z.ZodObject<{
+                id: z.ZodString;
+                workspace: z.ZodObject<{
+                    id: z.ZodString;
+                    name: z.ZodString;
+                    slug: z.ZodString;
+                    timeZone: z.ZodString;
+                }, z.core.$strip>;
+                role: z.ZodEnum<{
+                    owner: "owner";
+                    member: "member";
+                }>;
+                isOwner: z.ZodBoolean;
+            }, z.core.$strip>>;
+            role: z.ZodEnum<{
+                owner: "owner";
+                member: "member";
+            }>;
+            isOwner: z.ZodBoolean;
+        }, z.core.$strip>;
+        401: z.ZodObject<{
+            error: z.ZodString;
+            code: z.ZodOptional<z.ZodString>;
+            details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
+        }, z.core.$strip>;
+        403: z.ZodObject<{
+            error: z.ZodString;
+            code: z.ZodOptional<z.ZodString>;
+            details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
+        }, z.core.$strip>;
+        422: z.ZodObject<{
             error: z.ZodString;
             code: z.ZodOptional<z.ZodString>;
             details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;

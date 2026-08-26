@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/honest"
 package: "@sapporta/honest"
-version: "0.3.11"
+version: "0.3.12"
 specifier: "@sapporta/honest"
 ---
 
-> Sapporta API reference for `@sapporta/honest@0.3.11`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/honest@0.3.12`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/honest
 
-Import from `@sapporta/honest`. Documented from `@sapporta/honest@0.3.11`; confirm the installed version with `node -p "require('@sapporta/honest/package.json').version"`.
+Import from `@sapporta/honest`. Documented from `@sapporta/honest@0.3.12`; confirm the installed version with `node -p "require('@sapporta/honest/package.json').version"`.
 
 11 symbols documented here.
 

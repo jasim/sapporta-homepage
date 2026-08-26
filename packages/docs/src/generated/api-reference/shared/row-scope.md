@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/row-scope"
 package: "@sapporta/shared"
-version: "0.2.4"
+version: "0.3.0"
 specifier: "@sapporta/shared/row-scope"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.2.4`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/row-scope
 
-Import from `@sapporta/shared/row-scope`. Documented from `@sapporta/shared@0.2.4`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/row-scope`. Documented from `@sapporta/shared@0.3.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 7 symbols documented here.
 

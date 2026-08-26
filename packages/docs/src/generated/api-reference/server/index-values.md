@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Values, classes, and namespaces"
 package: "@sapporta/server"
-version: "0.5.0"
+version: "0.6.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Values, classes, and namespaces
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.5.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-20 of 202 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Functions and components](https://sapporta.com/api-reference/server/index-functions.md).
+20 of 204 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Functions and components](https://sapporta.com/api-reference/server/index-functions.md).
 
 ### ApiWritePolicyError
 

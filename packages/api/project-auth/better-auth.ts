@@ -9,6 +9,7 @@ import {
   createProjectAuthPlugins,
   projectAuthBasePath,
   projectAuthDrizzleAdapterConfig,
+  projectAuthUserOptions,
 } from "./options.js";
 import * as authSchema from "./schema.js";
 
@@ -47,6 +48,7 @@ export function createBetterAuth({
       schema: authSchema,
       ...projectAuthDrizzleAdapterConfig,
     }),
+    user: projectAuthUserOptions,
     emailAndPassword: createProjectAuthEmailAndPasswordOptions(
       env.requireVerifiedEmail,
       (data) => sendPasswordResetEmail(mailer, data),

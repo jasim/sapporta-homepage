@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/record-id"
 package: "@sapporta/shared"
-version: "0.2.4"
+version: "0.3.0"
 specifier: "@sapporta/shared/record-id"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.2.4`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/record-id
 
-Import from `@sapporta/shared/record-id`. Documented from `@sapporta/shared@0.2.4`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/record-id`. Documented from `@sapporta/shared@0.3.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 2 symbols documented here.
 

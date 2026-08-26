@@ -2,7 +2,7 @@
 
 > Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
 
-1186 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+1206 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
 
 Where a name lists more than one specifier, prefer the narrowest.
 
@@ -310,6 +310,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `deleteSelectedTableRows` — @sapporta/frontend
 - `deleteTableRow` — @sapporta/frontend
 - `describeCellActivation` — @sapporta/grid
+- `describeInstantForDisplay` — @sapporta/shared/temporal, @sapporta/shared
+- `deviceTimeZone` — @sapporta/shared/temporal, @sapporta/shared
 - `Dialog` — @sapporta/ui/dialog, @sapporta/ui
 - `DialogClose` — @sapporta/ui/dialog, @sapporta/ui
 - `DialogContent` — @sapporta/ui/dialog, @sapporta/ui
@@ -391,10 +393,15 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ForgotPasswordPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
 - `formatAuthRole` — @sapporta/frontend/shell, @sapporta/frontend
 - `formatCanonicalInstant` — @sapporta/shared/temporal, @sapporta/shared
+- `formatInstantForDateInput` — @sapporta/shared/temporal, @sapporta/shared
 - `formatInstantForDateTimeLocalInput` — @sapporta/shared/temporal, @sapporta/shared
+- `formatInstantForDisplay` — @sapporta/shared/temporal, @sapporta/shared
 - `formatPlainDate` — @sapporta/shared/temporal, @sapporta/shared
 - `formatPlainDateForDateInput` — @sapporta/shared/temporal, @sapporta/shared
+- `formatPlainDateForDisplay` — @sapporta/shared/temporal, @sapporta/shared
 - `formatTable` — @sapporta/server/cli/format
+- `formatTemporalForDisplay` — @sapporta/shared/temporal, @sapporta/shared
+- `formatTimeZoneOffsetLabel` — @sapporta/shared/temporal, @sapporta/shared
 - `FormField` — @sapporta/frontend
 - `FormSubmissionError` — @sapporta/frontend/form, @sapporta/frontend
 - `FrameworkRoutePolicyOptions` — @sapporta/server
@@ -501,6 +508,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `isRowScope` — @sapporta/server
 - `isSystemManagedScopeFieldName` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
 - `isTreeBackedRow` — @sapporta/grid
+- `isValidTimeZone` — @sapporta/shared/temporal, @sapporta/shared
 - `Kbd` — @sapporta/ui/kbd, @sapporta/ui
 - `KeyHint` — @sapporta/frontend
 - `kind` — @sapporta/grid/column-preset
@@ -546,6 +554,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `LoadSapportaProjectOptions` — @sapporta/server
 - `loadSchema` — @sapporta/frontend/schema, @sapporta/frontend
 - `loadSchemas` — @sapporta/server
+- `LocalDayBound` — @sapporta/shared/temporal, @sapporta/shared
+- `localDayInZone` — @sapporta/shared/temporal, @sapporta/shared
 - `LoginPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
 - `lookupCapabilities` — @sapporta/grid/column-preset
 - `LookupCapabilities` — @sapporta/grid/column-preset, @sapporta/grid/lookup
@@ -660,6 +670,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `parseChildPath` — @sapporta/grid
 - `parseCreateDraft` — @sapporta/frontend
 - `ParseCreateDraftResult` — @sapporta/frontend
+- `parseDateInputToInstantString` — @sapporta/shared/temporal, @sapporta/shared
 - `parseDateInputToPlainDateString` — @sapporta/shared/temporal, @sapporta/shared
 - `parseDateRange` — @sapporta/shared/daterange, @sapporta/shared
 - `parseDateTimeLocalInputToCanonicalInstantString` — @sapporta/shared/temporal, @sapporta/shared
@@ -675,6 +686,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `parseTablePatchValueDraft` — @sapporta/frontend
 - `parseTableSearchParams` — @sapporta/frontend
 - `parseTableWrite` — @sapporta/server
+- `parseTimeZone` — @sapporta/shared/temporal, @sapporta/shared
 - `PatchCellResponse` — @sapporta/grid
 - `PathDecomposition` — @sapporta/grid
 - `PathEdge` — @sapporta/grid
@@ -936,6 +948,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `storeDbPath` — @sapporta/server
 - `stringifySortOrder` — @sapporta/grid
 - `substituteHrefPlaceholders` — @sapporta/shared/contracts
+- `supportedTimeZones` — @sapporta/shared/temporal, @sapporta/shared
 - `Switch` — @sapporta/ui/switch, @sapporta/ui
 - `switchActiveWorkspace` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
 - `SwitchActiveWorkspaceBody` — @sapporta/shared/contracts
@@ -1015,6 +1028,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `tableWriteZod` — @sapporta/server
 - `templateColumns` — @sapporta/grid/column-preset
 - `Temporal` — @sapporta/shared/temporal, @sapporta/shared
+- `TemporalDisplayPrecision` — @sapporta/shared/temporal, @sapporta/shared
 - `text` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `TextColumnOptions` — @sapporta/grid/column-preset
 - `TextDisplayMode` — @sapporta/grid/column-preset
@@ -1070,6 +1084,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ThemeMode` — @sapporta/frontend
 - `ThrowingClient` — @sapporta/shared/client
 - `timestamp` — @sapporta/server/table, @sapporta/server
+- `TimeZone` — @sapporta/shared/temporal, @sapporta/shared
 - `Tooltip` — @sapporta/ui/tooltip, @sapporta/ui
 - `TooltipContent` — @sapporta/ui/tooltip, @sapporta/ui
 - `TooltipProvider` — @sapporta/ui/tooltip, @sapporta/ui
@@ -1098,6 +1113,9 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `updateRowRoute` — @sapporta/shared/contracts
 - `updateTableRow` — @sapporta/frontend
 - `updateTypedFilterCondition` — @sapporta/shared/filter, @sapporta/shared
+- `UpdateWorkspaceTimeZoneBody` — @sapporta/shared/contracts
+- `updateWorkspaceTimeZoneBodySchema` — @sapporta/shared/contracts
+- `updateWorkspaceTimeZoneRoute` — @sapporta/shared/contracts
 - `UploadedFiles` — @sapporta/honest, @sapporta/server
 - `UrlQueryObject` — @sapporta/frontend/report, @sapporta/frontend
 - `UrlQueryValue` — @sapporta/frontend/report, @sapporta/frontend
@@ -1126,6 +1144,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `usePhantoms` — @sapporta/grid
 - `useRowInteractionSnapshot` — @sapporta/grid
 - `userPrincipal` — @sapporta/server
+- `UserPrincipal` — @sapporta/server
 - `useSchemaStore` — @sapporta/frontend/schema, @sapporta/frontend
 - `useSchemaTableGrid` — @sapporta/frontend
 - `UseSchemaTableGridArgs` — @sapporta/frontend
@@ -1185,6 +1204,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `WorkspaceRole` — @sapporta/server
 - `workspaceRows` — @sapporta/server
 - `workspaceScopeColumn` — @sapporta/server
+- `workspaceTimeZone` — @sapporta/server
 - `WorkspaceUserDataAuthority` — @sapporta/server
 - `workspaceUserRows` — @sapporta/server
 - `workspaceUserScopedAuthority` — @sapporta/server

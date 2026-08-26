@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/daterange"
 package: "@sapporta/shared"
-version: "0.2.4"
+version: "0.3.0"
 specifier: "@sapporta/shared/daterange"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.2.4`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/daterange
 
-Import from `@sapporta/shared/daterange`. Documented from `@sapporta/shared@0.2.4`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/daterange`. Documented from `@sapporta/shared@0.3.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 16 symbols documented here.
 
@@ -17,13 +17,19 @@ Import from `@sapporta/shared/daterange`. Documented from `@sapporta/shared@0.2.
 
 ### DateRangeQueryBounds
 
-Date bounds resolved from route query params, ready for SQL/Drizzle comparisons.
+The days a reader named, in both of the shapes a column can be compared against.
 
 ```ts
 type DateRangeQueryBounds = {
     state: DateRangeState;
-    from: string | null;
-    to: string | null;
+    days: {
+        from: string | null;
+        to: string | null;
+    };
+    instants: {
+        from: string | null;
+        until: string | null;
+    };
 };
 ```
 
@@ -99,10 +105,10 @@ function resolveDateRange(state: DateRangeState, today: Temporal.PlainDate): Res
 
 ### resolveDateRangeQueryBounds
 
-Parse a route query's daterange fields and resolve them to ISO date strings.
+Parse a route query's daterange fields and resolve the days a reader named.
 
 ```ts
-function resolveDateRangeQueryBounds(paramName: string, params: Record<string, unknown>, today?: Temporal.PlainDate): DateRangeQueryBounds;
+function resolveDateRangeQueryBounds(paramName: string, params: Record<string, unknown>, zone: TimeZone, now: Temporal.Instant): DateRangeQueryBounds;
 ```
 
 ### serializeDateRange
