@@ -2,13 +2,10 @@
 
 ### Why use Sapporta instead of asking an LLM to generate the whole application?
 
-A coding agent can generate a form or endpoint quickly. But to ensure a consistent application of authorization and
-validation, and to build out the rich user experience like the data grid with pagination, filtering, and sorting, and
-exposing agentic capabilities that are permission-aware - all of these require a significant amount of prompting.
-Prompting however is not free, even if tokens were. Prompting is work - we have to identify what we want and express it,
-then manage the agent so it doesn't create duplicate sources of truth and complex, tangled, parallel abstractions, and
-when something doesn't fit what we want, we have to correct the agent, and between all this is lots of waiting and
-uncertainty. So the value of a well-integrated well-curated system never goes away.
+A coding agent can generate a form or endpoint quickly. What it will not do is build the shared parts underneath —
+authorization applied consistently, a data grid that behaves the same on every table, agentic access that is
+permission-aware — because each of those has to be asked for, checked, and corrected, feature by feature.
+[Why a framework instead of more prompting](#home-why-label) makes that case in full.
 
 Sapporta gives agents infrastructure to build within, so they behave predictably. The agent starts with working table
 APIs, grids, forms, and row security, and spends its time on the parts specific to your product.

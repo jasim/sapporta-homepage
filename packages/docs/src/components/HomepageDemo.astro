@@ -2,13 +2,7 @@
 import { Code } from "astro:components";
 import { Code2, Table2 } from "lucide-react";
 import BooksTableDataGrid from "./BooksTableDataGrid";
-
-// Dual Shiki themes: light tokens render inline, dark tokens ride along in
-// `--shiki-dark` CSS vars that the stylesheet activates under data-theme="dark".
-const codeThemes = {
-  light: "github-light-default",
-  dark: "github-dark-default",
-} as const;
+import { codeThemes } from "../lib/code-themes.mjs";
 const booksSchemaCode = `export const booksTable = sqliteTable("books", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),

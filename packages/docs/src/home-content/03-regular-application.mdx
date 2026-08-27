@@ -59,8 +59,6 @@ export const books = sapportaTable({
 });
 ```
 
-<div class="pt-6"></div>
-
 This produces both the backend APIs and frontend UI for the table:
 
 - **Table APIs.** Sapporta generates list, get, create, update, delete, lookup,
@@ -70,6 +68,5 @@ This produces both the backend APIs and frontend UI for the table:
   internet.
 - **Table Grid.** Sapporta publishes `/api/meta/tables`, which the React
   frontend uses to build editable grids, create forms, lookups, and nested
-  child-table views. The grids include filtering, sorting, searching, exporting,
-  nesting, and keyboard navigation. Because they use the table APIs, they get
-  the same authorization and permissions.
+  child-table views. These are the same grids shown above, and because they use
+  the table APIs they get the same authorization and permissions.

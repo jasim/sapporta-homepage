@@ -26,8 +26,8 @@ navigation:
 Sapporta is a TypeScript + SQLite web framework for building database
 applications.
 
-- **Every table gets a spreadsheet-grade grid right away.** Filtering, sorting,
-  search, export, and full keyboard navigation.
+- **Every table gets a spreadsheet-grade grid right away.** Not only the few
+  screens you remembered to ask for.
 - **Reports that drill down** into the underlying records, shareable by URL.
 - **Secure AI generated code** thanks to patterns and skills that enforce
   `where user_id = {currentUser.id}` and similar on all data access.

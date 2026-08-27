@@ -281,6 +281,44 @@
 }
 
 /*
+ * Fenced code in the essay. Shiki highlights these at build time, so the
+ * palette arrives inline on the <pre> and on every token span -- the block's
+ * own background has to outrank that, the same override the demo panel makes.
+ * Line height sits well below the prose setting: a code block is read as a
+ * shape, and the loose leading inherited from body copy pulled it apart.
+ *
+ * No rule around it, and the ground is a tint of the page's own ink rather
+ * than a fixed grey: these blocks appear both on --bg and on the --surface of
+ * the framework stage, and a tint steps whichever ground it lands on one notch
+ * down the neutral ramp. Because --ink flips with the theme, the tint darkens
+ * in light mode and lightens in dark -- the block settles into the page in
+ * both instead of sitting on top of it.
+ */
+.home-copy__code-block {
+  background: color-mix(in srgb, var(--ink) 4%, transparent) !important;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0.4rem 0 1.5rem;
+  overflow-x: auto;
+  padding: clamp(0.9rem, 2vw, 1.2rem);
+  tab-size: 2;
+}
+
+.home-copy__code-block-content {
+  font-family: var(--font-mono);
+}
+
+/*
+ * Dark mode syntax colors, as in the demo panel: the dual-theme output writes
+ * `color:<light>` with the dark value alongside in `--shiki-dark`, and under
+ * the dark theme we promote those variables to the live color.
+ */
+:root[data-theme="dark"] .home-copy__code-block,
+:root[data-theme="dark"] .home-copy__code-block span {
+  color: var(--shiki-dark, inherit) !important;
+}
+
+/*
  * Tabular figures wherever digits sit in columns. Inter's default figures are
  * proportional -- a row of 1s measures visibly narrower than a row of 0s -- so
  * numeric columns rag without this. Free on the CDN build: tnum is one of the
@@ -942,8 +980,17 @@
 .home-demo__panel--grid .homepage-quote-grid-text {
   --homepage-quote-leading: 1.72;
   --homepage-quote-lines: 5;
+  /* A sliver of the next line, left showing on a quote that has one. */
+  --homepage-quote-peek: 0.45;
   --homepage-quote-pad-start: 0.85rem;
   --homepage-quote-pad-end: 0.95rem;
+  --homepage-quote-line: calc(var(--homepage-quote-leading) * 1em);
+  --homepage-quote-read-to: calc(
+    var(--homepage-quote-pad-start) + var(--homepage-quote-lines) * var(--homepage-quote-line)
+  );
+  --homepage-quote-cut-at: calc(
+    var(--homepage-quote-read-to) + var(--homepage-quote-peek) * var(--homepage-quote-line)
+  );
 
   /* The closing gap is a transparent border, not padding, because overflow is
      clipped at the padding edge: as padding it is a band the sixth line of a
@@ -960,17 +1007,26 @@
 }
 
 /*
- * A collapsed quote ends on a whole line. The flat 12rem cap it replaces fell
- * near a baseline at this size and shaved the last line's descenders, which
- * read as a rendering fault rather than as "there is more here"; the cut
- * sentence and the expand control carry that message instead.
+ * A collapsed quote reads five whole lines and then shows a sliver of a sixth.
+ * The flat 12rem cap this replaces fell near a baseline and shaved the last
+ * line's descenders, which read as a rendering fault rather than as "there is
+ * more here" - so the sliver is only honest once it is dissolved rather than
+ * cut, which is what the mask below does.
  */
 .home-demo__panel--grid .homepage-quote-grid-text--clamped {
-  max-height: calc(
-    var(--homepage-quote-lines) * var(--homepage-quote-leading) * 1em + var(--homepage-quote-pad-start) +
-      var(--homepage-quote-pad-end)
-  );
+  max-height: calc(var(--homepage-quote-cut-at) + var(--homepage-quote-pad-end));
   overflow: hidden;
+}
+
+/*
+ * The one mark for "this quote continues". It is a dissolve, not a glyph: no
+ * ellipsis to be mistaken for the author's own, no badge, no colour spent on
+ * something that is not state. Opacity holds through the fifth line and runs
+ * out exactly at the cut, so the sixth line arrives as a ghost and no letter
+ * is ever sliced. Only a cell that really overflows carries the attribute.
+ */
+.home-demo__panel--grid .homepage-quote-grid-text--clamped[data-quote-clipped="true"] {
+  mask-image: linear-gradient(to bottom, #000 var(--homepage-quote-read-to), transparent var(--homepage-quote-cut-at));
 }
 
 .home-demo__panel--grid .homepage-quote-grid-text:not(.homepage-quote-editor)::before {
@@ -1282,13 +1338,10 @@
 
 .home-stage--framework {
   background: var(--surface);
-  border-bottom: 1px solid var(--rule);
-  border-top: 1px solid var(--rule);
 }
 
 .home-stage--quick-start {
   background: var(--surface);
-  border-block: 1px solid var(--rule);
   margin-top: clamp(2rem, 4vw, 3rem);
   padding-block: clamp(4.5rem, 8vw, 7rem);
   scroll-margin-top: 2rem;
@@ -1613,11 +1666,10 @@
  */
 .home-article__section--faq .home-copy__heading--level-3 {
   border-top: 1px solid var(--ink);
-  color: var(--muted);
-  font-size: clamp(1.2rem, 1.9vw, 1.5rem);
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
   font-weight: var(--weight-text);
   letter-spacing: -0.015em;
-  line-height: 1.12;
+  line-height: 1.6;
   margin-top: clamp(2.75rem, 5vw, 3.75rem);
   padding-top: 2ch;
 }

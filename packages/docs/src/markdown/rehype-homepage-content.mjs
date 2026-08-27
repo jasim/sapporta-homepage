@@ -11,17 +11,33 @@ function imageFromParagraph(node) {
   return image;
 }
 
-function addClass(node, ...classNames) {
-  const existing = Array.isArray(node.properties?.className) ? node.properties.className : [];
+/*
+ * Nodes reach us with their classes in either shape: hast uses a `className`
+ * array, but Shiki hands back raw `class` strings on the elements it generates
+ * (the highlighted <pre> carries `astro-code` that way). Reading both and
+ * writing one keeps a highlighted block from losing the classes Shiki set.
+ */
+function classList(node) {
+  const properties = node?.properties ?? {};
+  const values = [properties.className, properties.class].flatMap((value) => {
+    if (Array.isArray(value)) return value;
+    return typeof value === "string" ? value.split(/\s+/) : [];
+  });
 
+  return values.filter(Boolean);
+}
+
+function addClass(node, ...classNames) {
   node.properties = {
     ...node.properties,
-    className: [...new Set([...existing, ...classNames])],
+    className: [...new Set([...classList(node), ...classNames])],
   };
+
+  delete node.properties.class;
 }
 
 function hasClass(node, className) {
-  return Array.isArray(node?.properties?.className) && node.properties.className.includes(className);
+  return classList(node).includes(className);
 }
 
 function isWhitespace(node) {
