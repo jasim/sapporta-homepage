@@ -1396,7 +1396,6 @@
 }
 
 .home-article--value .home-article__section--feature + .home-article__section--feature {
-  border-top: 1px solid var(--rule);
   margin-top: clamp(5rem, 9vw, 8rem);
   padding-top: clamp(4rem, 7vw, 6rem);
 }
@@ -1563,7 +1562,6 @@
 
 .home-article__section--technical {
   align-items: start;
-  border-top: 1px solid var(--rule);
   display: grid;
   gap: 0 clamp(2.5rem, 6vw, 6rem);
   grid-template-columns: minmax(10rem, 14rem) minmax(0, var(--home-copy-width));
