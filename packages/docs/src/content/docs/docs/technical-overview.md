@@ -1,8 +1,7 @@
 ---
 title: "Technical overview"
 description:
-  "How a Sapporta application works: table declarations become a catalog, every
-  surface is derived from it, and each request walks one fixed path."
+  "A whirlwind tour of Sapporta"
 ---
 
 Sapporta is a TypeScript toolkit for building database applications —
@@ -12,11 +11,9 @@ and report on.
 
 You declare tables. Sapporta derives the rest of the application from those
 declarations while it runs: the HTTP API, the admin screens, the query grammar,
-the OpenAPI document, and the view the CLI takes of your data. This document
-describes that derivation, the path a request takes through it, and the
-guarantees each layer holds.
+the OpenAPI document, and the view the CLI takes of your data. 
 
-## The running system
+## Single process deployment
 
 A Sapporta application is one Node process. It serves an HTTP API under `/api`,
 serves the built React single-page app from that same process, and reads and
@@ -36,23 +33,15 @@ writes a SQLite file on local durable storage.
                       SQLite file
 ```
 
-There is no separate database tier and no second service. That shapes what
-Sapporta is for. SQLite admits one writer at a time, so the target is
-applications where a single node is enough — internal tools, back-office
-systems, departmental software with tens or hundreds of concurrent users. In
-exchange a deployment is a process and a file, a test database is an in-memory
-one, and a query never crosses a network.
-
 The project is yours. `sapporta init` scaffolds a workspace you own outright:
 the Hono API, the Drizzle schema, the React routes, the auth policy, the
 deployment files. Sapporta stays an npm dependency inside that workspace rather
 than a template you edit away from.
 
-## The table declaration
+## Table declaration generates APIs, grids, and agentic operation
 
-A table lives in `packages/api/schema/` and is declared twice in the same file:
-a Drizzle table for the storage, and Sapporta metadata for how the application
-should treat it.
+A table lives in `packages/api/schema/` and is declared using Drizzle. It is then
+enriched with Sapporta metadata:
 
 ```ts
 // packages/api/schema/invoices.ts
@@ -62,25 +51,27 @@ export const invoicesTable = sqliteTable("invoices", {
   scoped_to_user_id: text("scoped_to_user_id").notNull(),
   customer_id: integer("customer_id").references(() => customersTable.id),
   number: text("number").notNull(),
+  // `select` and `money` are imported from Sapporta; they provide Drizzle spec
+  // as well as semantic information for Sapporta grids, validations and APIs.  
   status: select("status", ["draft", "sent", "paid"]).notNull(),
   total: money("total").notNull(),
   issued_at: timestamp("issued_at").notNull(),
   paid_at: timestamp("paid_at"),
 });
 
+// The Sapporta metadata
 export const invoices = sapportaTable({
   drizzle: invoicesTable,
   meta: {
     label: "Invoices",
-    rowScope: "workspaceUserScoped",
+    // Scope each invoice to a specific workspace and a specific user 
+    rowScope: "workspaceUserScoped", 
+    // Use the invoice number as a label for the entire row,
+    // for example in foreign key comboboxes 
     rowLabelColumns: ["number"],
   },
 });
 ```
-
-The Drizzle half says `total` is an integer column. The Sapporta half says that
-integer is money, that an invoice belongs to one user inside one workspace, and
-that humans refer to an invoice by its number.
 
 ### Value kinds
 
@@ -105,10 +96,9 @@ column through a rename.
 ### Validation at boot
 
 Sapporta validates the whole schema at startup rather than at first request, so
-a mistake is a failed boot naming the column rather than a wrong number on a
-page weeks later.
+mistakes cause the app to crash on boot rather than continuing silently.
 
-The checks that carry design decisions are worth knowing as a class. Names that
+A few other checks are involved in sapporta definitions: Names that
 would collide with a route segment or with the columns Sapporta manages are
 rejected. A table with no primary key is an error rather than a table with an
 invented `id`. Timestamps must be in string mode, for reasons
@@ -129,7 +119,6 @@ be `notNull()`:
 Validation produces the **catalog**: one `TableDef` per table, holding the
 columns, their kinds, the labels, the row scope, and the search configuration.
 The catalog is an ordinary runtime object, readable by any code that wants it.
-Treat it as read-only — every layer below assumes it still describes the table.
 
 Everything else in the application is computed from it.
 
@@ -144,13 +133,10 @@ declaration ─────┼── grid columns: renderer, editor, alignment, 
                  └── CSV columns, for the export and for clipboard copy
 ```
 
-**None of that is code generation.** No files are written, there is no
-regeneration step to run after a schema change, and there is no generated output
-to check in and keep in sync. The surfaces are computed from the catalog — some
-at boot, some when a request arrives — so adding a file to
-`packages/api/schema/` produces a new set of endpoints and a new admin screen
-with no registration step, and no surface can drift from the declaration it came
-from.
+**None of that is code generation.** No files are written - all of this is 
+computed from the catalog — some  at boot, some when a request arrives — 
+so adding a file to `packages/api/schema/` produces a new set of endpoints and a new admin screen
+with no other step.
 
 The code that reads the catalog is split across three packages.
 
@@ -172,9 +158,11 @@ The code that reads the catalog is split across three packages.
                   the browser, the `sapporta` CLI, your scripts
 ```
 
-Two boundaries in that picture do most of the work. `@sapporta/shared` defines
+`@sapporta/shared` defines
 every wire shape and both sides import it, so a server/client mismatch is a type
-error rather than a runtime surprise. And the grid engine under the admin
+error rather. 
+
+And the grid engine under the admin
 screens is written against columns and rows alone, with the binding layer
 compiling a table's schema into grid columns and endpoints — so the grid runs
 without the framework, and the binding can be replaced without touching the
@@ -182,7 +170,7 @@ grid.
 
 ## The life of a request
 
-Every call to a generated route runs the same sequence, in the same order.
+Every call to a generated route runs in this order:
 
 ```
   HTTP request
