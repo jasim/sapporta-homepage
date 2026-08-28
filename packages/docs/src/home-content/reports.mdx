@@ -1,5 +1,6 @@
 import CapabilityStrip from "../components/CapabilityStrip.astro";
 import EvidenceShot from "../components/EvidenceShot.astro";
+import EvidenceVideo from "../components/EvidenceVideo.astro";
 
 ## Reports with drill-down
 
@@ -9,13 +10,22 @@ The main primitive is the [GridDataset type](https://sapporta.com/docs/reference
 you only need to create an API endpoint that returns a JSON value of this type, and you can use the existing Reporting
 renderer to render it.
 
-`GridDataset` is a wire format built for reports. It lets us add nested levels to each report, add links that lets us
-drill down from a high-level report entry to its targeted reports, and finally to the specific transaction.
+It supports drill-down: we can navigate from a high-level entry deep down to a specific transaction.
 
-Take a profit and loss statement. It opens with the individual revenue and expense accounts. If travel expenses look
-high, follow the link on that row into a monthly breakdown of travel — another report — and from a month into the
-journal entries behind it, until you reach the single transaction that explains the number, all without leaving the
-report you started from.
+Consider a Profit & Loss statement - it shows the consolidated revenues and expenses for a financial year.
+Let's say that the travel expenses look a bit high. We can click on it, and go to a monthly summary of the Travel Expense ledger,
+and from there, we can go into a specific month this looks high, and see all the transactions for that month. And clicking on a specific transaction
+immediately takes to that specific journal entry.
+
+<EvidenceVideo
+  mp4="/assets/home/video/reports-drilldown.mp4"
+  webm="/assets/home/video/reports-drilldown.webm"
+  poster="/assets/home/video/reports-drilldown-poster.png"
+  label="Report drill-down · accounting.demo.sapporta.com"
+  caption="A Profit & Loss drilled down to a specific journal entry"
+  width={1600}
+  height={900}
+/>
 
 Drilling down from a summary to its transactions has long been a feature of classical accounting software, and the same
 cross-linking is valuable for any kind of database-backed reporting. Sapporta gives you the affordances to add it
