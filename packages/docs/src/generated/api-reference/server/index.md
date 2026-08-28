@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server"
 package: "@sapporta/server"
-version: "0.6.0"
+version: "0.6.1"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 204 symbols are published directly from this specifier — too many for one page, so they are grouped below.
 

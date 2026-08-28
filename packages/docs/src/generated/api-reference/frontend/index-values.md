@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend — Values, classes, and namespaces"
 package: "@sapporta/frontend"
-version: "0.6.0"
+version: "0.6.1"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Values, classes, and namespaces
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 7 of 189 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md).
 

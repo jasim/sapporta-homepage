@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/combobox"
 package: "@sapporta/ui"
-version: "0.2.13"
+version: "0.2.14"
 specifier: "@sapporta/ui/combobox"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.13`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.2.14`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/combobox
 
-Import from `@sapporta/ui/combobox`. Documented from `@sapporta/ui@0.2.13`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/combobox`. Documented from `@sapporta/ui@0.2.14`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 2 symbols documented here.
 

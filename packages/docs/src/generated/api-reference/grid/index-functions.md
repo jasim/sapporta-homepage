@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid — Functions and components"
 package: "@sapporta/grid"
-version: "0.5.0"
+version: "0.5.1"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Functions and components
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.5.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 64 of 190 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
 

@@ -2,7 +2,7 @@
 
 > Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration. Generated from the published declaration files — this is the API as shipped, not a summary of it.
 
-Describes `@sapporta/shared@0.3.0`, `@sapporta/server@0.6.0`, `@sapporta/honest@0.3.12`, `@sapporta/grid@0.5.0`, `@sapporta/frontend@0.6.0`, `@sapporta/ui@0.2.13`.
+Describes `@sapporta/shared@0.3.1`, `@sapporta/server@0.6.1`, `@sapporta/honest@0.3.13`, `@sapporta/grid@0.5.1`, `@sapporta/frontend@0.6.1`, `@sapporta/ui@0.2.14`.
 
 Read this instead of opening declaration files under `node_modules`.
 
@@ -16,7 +16,7 @@ Read this instead of opening declaration files under `node_modules`.
 - Prefer the narrowest specifier that publishes a symbol. Root barrels re-export their subpaths and link to them rather than repeating signatures.
 - Signatures are the published declarations verbatim. Behaviour a signature cannot express is covered by the guides at https://sapporta.com/docs.md.
 
-## @sapporta/shared 0.3.0
+## @sapporta/shared 0.3.1
 
 - [@sapporta/shared](https://sapporta.com/api-reference/shared/index.md): 13 documented, 111 re-exported from subpaths.
 - [@sapporta/shared/filter](https://sapporta.com/api-reference/shared/filter.md): 42 documented.
@@ -32,7 +32,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/shared/contracts](https://sapporta.com/api-reference/shared/contracts.md): 112 documented, split by group.
 - [@sapporta/shared/client](https://sapporta.com/api-reference/shared/client.md): 6 documented.
 
-## @sapporta/server 0.6.0
+## @sapporta/server 0.6.1
 
 - [@sapporta/server](https://sapporta.com/api-reference/server/index.md): 204 documented, 25 re-exported from subpaths, split by group.
 - [@sapporta/server/table](https://sapporta.com/api-reference/server/table.md): 26 documented.
@@ -47,11 +47,11 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/server/cli/format](https://sapporta.com/api-reference/server/cli/format.md): 3 documented.
 - [@sapporta/server/cli/render](https://sapporta.com/api-reference/server/cli/render.md): 2 documented.
 
-## @sapporta/honest 0.3.12
+## @sapporta/honest 0.3.13
 
 - [@sapporta/honest](https://sapporta.com/api-reference/honest/index.md): 11 documented.
 
-## @sapporta/grid 0.5.0
+## @sapporta/grid 0.5.1
 
 - [@sapporta/grid](https://sapporta.com/api-reference/grid/index.md): 190 documented, 3 re-exported from subpaths, split by group.
 - [@sapporta/grid/advanced](https://sapporta.com/api-reference/grid/advanced.md): 17 documented.
@@ -60,7 +60,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/grid/lookup/react](https://sapporta.com/api-reference/grid/lookup/react.md): 4 documented.
 - `@sapporta/grid/index.css` — stylesheet, no exported symbols. Import for side effects.
 
-## @sapporta/frontend 0.6.0
+## @sapporta/frontend 0.6.1
 
 - [@sapporta/frontend](https://sapporta.com/api-reference/frontend/index.md): 189 documented, 132 re-exported from subpaths, split by group.
 - [@sapporta/frontend/app](https://sapporta.com/api-reference/frontend/app.md): 9 documented.
@@ -80,7 +80,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/frontend/shell](https://sapporta.com/api-reference/frontend/shell.md): 44 documented.
 - `@sapporta/frontend/index.css` — stylesheet, no exported symbols. Import for side effects.
 
-## @sapporta/ui 0.2.13
+## @sapporta/ui 0.2.14
 
 - [@sapporta/ui](https://sapporta.com/api-reference/ui/index.md): 0 documented, 59 re-exported from subpaths.
 - `@sapporta/ui/index.css` — stylesheet, no exported symbols. Import for side effects.

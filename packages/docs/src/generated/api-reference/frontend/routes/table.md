@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/routes/table"
 package: "@sapporta/frontend"
-version: "0.6.0"
+version: "0.6.1"
 specifier: "@sapporta/frontend/routes/table"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/routes/table
 
-Import from `@sapporta/frontend/routes/table`. Documented from `@sapporta/frontend@0.6.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/routes/table`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 3 symbols documented here.
 

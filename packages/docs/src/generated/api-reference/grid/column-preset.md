@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/column-preset"
 package: "@sapporta/grid"
-version: "0.5.0"
+version: "0.5.1"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 88 symbols are published directly from this specifier — too many for one page, so they are grouped below.
 
