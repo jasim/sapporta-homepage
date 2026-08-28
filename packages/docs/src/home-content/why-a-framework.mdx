@@ -2,40 +2,23 @@ import EvidenceTranscript from "../components/EvidenceTranscript.astro";
 
 ## Why a framework instead of more prompting
 
-Agents produce screens quickly, but they do not build the shared parts
-underneath: one grid that filters and sorts, APIs that secure their own rows,
-forms that follow the schema.
+Unless explicitly guided, AI agents do not build shared foundations.
 
-**Ask for a filter, get a one-off.** Ask for a filter on a list of tickets
-and the agent writes conditions for the fields you named. It handles equals
-but not contains, and breaks when two conditions meet. Fixing it takes rounds
-of specifying, checking, correcting, and waiting. Someone still has to build
-the UI that shows the filter is active, and clears it.
+Consider data filtering. If you prompt an agent to build filtering for a table, it will create a custom solution —
+frontend, backend, and support for specific operators — just for that single table. When you ask it to add filtering to a
+second table, it will write diverging code rather than building a well-reasoned, reusable abstraction.
 
-<EvidenceTranscript
-  label="The prompting loop"
-  lines={[
-    { kind: "user", text: "add filtering to tickets" },
-    { kind: "agent", text: "\"contains\" doesn't work" },
-    { kind: "agent", text: "breaks with two conditions" },
-    { kind: "agent", text: "nothing shows a filter is active" },
-    { kind: "user", text: "now the same for invoices…" },
-  ]}
-/>
+A software developer can certainly spot this issue and prompt the LLM to build a shared foundation instead. But that
+requires constant vigilance. We have to think through our requirements, articulate them, and then micromanage the agent
+so it doesn’t create duplicate sources of truth. When the output is not exactly what we wanted, we have to
+course-correct and backtrack, adding significant waiting and uncertainty.
 
-**Prompting never generalizes.** Then you want the same on invoices, and the
-work repeats. The agent will not stop and treat filtering as a general
-feature; that only happens in a system designed around it. Asking feature by
-feature never produces a shared architecture — each generated screen filters
-a little differently, filtering exists only on the tables you happened to ask
-about, and rows are checked only where someone remembered to ask.
+A framework eliminates this friction. With Sapporta, general-purpose database functionality is handled out of the box.
+For instance, Sapporta includes an explicit grammar for filtering that automatically maps into valid SQL with
+server-side row-level security.
 
-**Sapporta provides those shared parts,** declared once and used by every
-table, so your attention goes back to your own work — the workflows of your
-clinic CRM, your inspection tracker, your vertical SaaS — instead of another
-round of describing and fixing plumbing:
+This extends beyond filtering. A single `sapportaTable` declaration instantly generates frontend grids and forms,
+alongside secure backend APIs.
 
-- Declare a table once and it gets grids, forms, reports, and secure APIs
-- Shared behavior is written once, in one place, instead of per feature
-- Security is built into the framework and the agent skills
-- The whole stack (Hono + React + SQLite) stays visible and maintainable
+By letting the framework handle all this plumbing, you can rapidly build your application using coding agents, and get
+the rich user experience and security guardrails that come with it.

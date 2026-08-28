@@ -1,129 +1,19 @@
 import EvidenceTranscript from "../components/EvidenceTranscript.astro";
 
-## Agentic use out of the box
+## Everything a user can do, an agent can as well
 
-If you are building new software today — a database application, or any kind of
-software — then as much as the user interface, or even more, it matters that
-your system has an agentic interface: a way for an agent to talk to your system
-and do almost everything that a user can do themselves manually.
+If you are building new software today then it must have an agentic surface - a way for an agent to explore and use your
+entire system securely.
 
-**Where this came from.** I had to build this because I started out building a
-double entry bookkeeping system for my personal use, and I did not want to enter
-my data manually at all. I would rather import my bank statements and pass them
-through a coding agent, so that it can parse everything into the appropriate
-structure, map the bank transactions into the categories and accounts I have in
-my system, and then insert them as valid double entry journal transactions. All
-of this happens through a coding agent: I point it at a bank statement in my
-project and it is all done from there. A lot of the things that I used to build
-as imperative systems are now encoded into prompts.
+For instance, compare a traditional accounting system against something built for agentic operations. Instead of
+manually entering transactions, we can point a coding agent at any bank statement. Then the agent can look for existing
+parsers for the statement, or write one itself. It can then classify the parsed transactions according to business rules
+written in freeform English, and then import them into the system. The agent can even reconcile entries, find
+missing/duplicated transactions, and answer ad-hoc questions.
 
-**Freeform data entry using agents.** In a calorie tracker built with
-Sapporta, you can type your meal into your coding agent in shorthand —
-"about 2 hours ago, brekkie - toast butter with 2 banans" — or dictate it by
-voice. The agent matches the items against foods already in your database
-and turns them into valid entries. If a food is missing, it creates it, looks
-up standard nutrition information, and links everything up. This takes no
-extra code: the generated table APIs and the
-[Sapporta Skill](https://github.com/jasim/sapporta-skills/tree/main/skills/sapporta/references/data-console)
-are enough for the agent to run multi-step workflows on its own.
+Sapporta makes all this possible, without needing any additional work, by exposing an `/api/openapi.json` endpoint that
+lists every API in the application. This includes all the auto-generated APIs for every table, as well as all the domain
+APIs that you write yourself.
 
-<EvidenceTranscript
-  label="Your coding agent"
-  lines={[
-    {
-      kind: "user",
-      text: "about 2 hours ago, brekkie - toast butter with 2 banans",
-    },
-    {
-      kind: "agent",
-      text: "Logging this meal through your Sapporta app's table APIs.",
-    },
-    { kind: "tool", text: "GET /api/tables/foods?search=toast · 1 row" },
-    { kind: "tool", text: "GET /api/tables/foods?search=banana · no match" },
-    { kind: "tool", text: "POST /api/tables/foods · created Banana, 89 kcal" },
-    { kind: "tool", text: "POST /api/tables/meals · Breakfast, 09:40" },
-    {
-      kind: "agent",
-      text: "Logged toast with butter and two bananas. Banana wasn't in your foods list, so I added it with its standard nutrition values.",
-    },
-  ]}
-/>
-
-**Multi-step queries.** In that same bookkeeping system, I can point an agent
-at it and ask why my computed bank balance doesn't match. It finds the
-duplicated, missing, or wrong transactions — work that used to take hours.
-
-<EvidenceTranscript
-  label="Your coding agent"
-  lines={[
-    {
-      kind: "user",
-      text: "why doesn't my computed bank balance match?",
-    },
-    {
-      kind: "agent",
-      text: "Comparing the ledger against your statement, month by month.",
-    },
-    { kind: "tool", text: "GET /api/reports/ledger?account=bank" },
-    { kind: "tool", text: "GET /api/tables/transactions?from=2026-03-01&to=2026-03-31" },
-    {
-      kind: "agent",
-      text: "Found it: two card payments were entered twice, and a transfer from Mar 4 was never recorded. Correcting those closes the gap exactly.",
-    },
-  ]}
-/>
-
-**Any rigid workflow.** That is where systems are going: the ability for a
-system to think within a workflow and stitch together multiple operations —
-getting data from an external API, making a small query inside the current
-system, figuring out some foreign keys, then inserting entries into multiple
-tables in a coherent manner. If an agent is able to do all this, just as it can
-use bash tools and tool calling, then your database application suddenly becomes
-prime fertile ground for agentic usage. That is how I use a lot of my own
-Sapporta applications.
-
-**Generated APIs for every table.** Any application that you build with
-Sapporta immediately gets an agentic surface, and a lot of the design decisions
-in the system come from that. Every table is automatically given REST APIs for
-read, create, update, delete, and search, as well as for getting to related
-records, inserting records, and running read-only SQL if you are the owner of
-the entire application.
-
-**Personal systems need little access control.** If you are building a personal
-system then you don't need a lot of data access control. You just need to be
-able to non-destructively run SQL queries, and that covers almost every other
-data query you want.
-
-**Putting it on the internet.** Once you expose it, you want some kind of access
-control, because now it can be used from wherever you want, and you may want
-other people to use it too. So by default we make sure that every record in the
-system is tagged to the tenant, which we call a workspace, as well as to the
-user that owns that record. All the automatically generated APIs make sure that
-data access goes through that row security. In addition we have CASL, which lets
-you do an RBAC-like attribute-based permission system that can allow and forbid
-actions in a fine-grained manner.
-
-**The same APIs build the grid.** Since we need these APIs for the agents
-anyway, they also let us build a data grid that is general purpose. You don't
-have to create custom API endpoints for listing records, filtering, searching,
-and sorting. One single metadata declaration gives you both.
-
-**Every operation in one document.** To make this agentic use possible, we
-generate an `/api/openapi.json` for every Sapporta application that lists every
-API operation possible. That includes all the auto-generated APIs for every
-table, as well as all the domain APIs that you write yourself. Which means that
-if the front end can do something by talking to any of our APIs, the agent can
-do all those things too. And since agents are far more powerful, they can query
-complex information, create and manipulate data, and work in a far more
-intelligent manner. Agentic tools can also build their own scripts on top of
-these APIs to do custom workflows.
-
-**Give agents as much power as possible.** If you are building a new web
-application, I think today we need complete agentic access, and the way to
-provide it is to give as much power to the agents as possible. Trying to think
-in advance in terms of what the narrow APIs are that we want to provide — I
-think that age is gone. With agents, even if you provide a narrow API, if a user
-needs to get all the data out, they can. So we have to move access control into
-a different layer. But if you are building systems for power users right now, I
-think these general purpose APIs are very critical. So that is what Sapporta
-gives you.
+Sapporta also lets you create agent tokens. With this you can point your coding agents at any hosted Sapporta
+application, and its row-level security ensures that users are able to access only the data that belongs to them.
