@@ -2,9 +2,20 @@ import EvidenceTranscript from "../components/EvidenceTranscript.astro";
 
 ## Agentic use out of the box
 
-Every endpoint and table operation is published to `/api/openapi.json`, so
-agents can use your whole application. Row-level security and CASL
-authorization apply to every call.
+If you are building new software today — a database application, or any kind of
+software — then as much as the user interface, or even more, it matters that
+your system has an agentic interface: a way for an agent to talk to your system
+and do almost everything that a user can do themselves manually.
+
+**Where this came from.** I had to build this because I started out building a
+double entry bookkeeping system for my personal use, and I did not want to enter
+my data manually at all. I would rather import my bank statements and pass them
+through a coding agent, so that it can parse everything into the appropriate
+structure, map the bank transactions into the categories and accounts I have in
+my system, and then insert them as valid double entry journal transactions. All
+of this happens through a coding agent: I point it at a bank statement in my
+project and it is all done from there. A lot of the things that I used to build
+as imperative systems are now encoded into prompts.
 
 **Freeform data entry using agents.** In a calorie tracker built with
 Sapporta, you can type your meal into your coding agent in shorthand —
@@ -38,10 +49,9 @@ are enough for the agent to run multi-step workflows on its own.
   ]}
 />
 
-**Multi-step queries.** In the personal bookkeeping system I built with
-Sapporta, I can point an agent at it and ask why my computed bank balance
-doesn't match. It finds the duplicated, missing, or wrong transactions — work
-that used to take hours.
+**Multi-step queries.** In that same bookkeeping system, I can point an agent
+at it and ask why my computed bank balance doesn't match. It finds the
+duplicated, missing, or wrong transactions — work that used to take hours.
 
 <EvidenceTranscript
   label="Your coding agent"
@@ -62,3 +72,58 @@ that used to take hours.
     },
   ]}
 />
+
+**Any rigid workflow.** That is where systems are going: the ability for a
+system to think within a workflow and stitch together multiple operations —
+getting data from an external API, making a small query inside the current
+system, figuring out some foreign keys, then inserting entries into multiple
+tables in a coherent manner. If an agent is able to do all this, just as it can
+use bash tools and tool calling, then your database application suddenly becomes
+prime fertile ground for agentic usage. That is how I use a lot of my own
+Sapporta applications.
+
+**Generated APIs for every table.** Any application that you build with
+Sapporta immediately gets an agentic surface, and a lot of the design decisions
+in the system come from that. Every table is automatically given REST APIs for
+read, create, update, delete, and search, as well as for getting to related
+records, inserting records, and running read-only SQL if you are the owner of
+the entire application.
+
+**Personal systems need little access control.** If you are building a personal
+system then you don't need a lot of data access control. You just need to be
+able to non-destructively run SQL queries, and that covers almost every other
+data query you want.
+
+**Putting it on the internet.** Once you expose it, you want some kind of access
+control, because now it can be used from wherever you want, and you may want
+other people to use it too. So by default we make sure that every record in the
+system is tagged to the tenant, which we call a workspace, as well as to the
+user that owns that record. All the automatically generated APIs make sure that
+data access goes through that row security. In addition we have CASL, which lets
+you do an RBAC-like attribute-based permission system that can allow and forbid
+actions in a fine-grained manner.
+
+**The same APIs build the grid.** Since we need these APIs for the agents
+anyway, they also let us build a data grid that is general purpose. You don't
+have to create custom API endpoints for listing records, filtering, searching,
+and sorting. One single metadata declaration gives you both.
+
+**Every operation in one document.** To make this agentic use possible, we
+generate an `/api/openapi.json` for every Sapporta application that lists every
+API operation possible. That includes all the auto-generated APIs for every
+table, as well as all the domain APIs that you write yourself. Which means that
+if the front end can do something by talking to any of our APIs, the agent can
+do all those things too. And since agents are far more powerful, they can query
+complex information, create and manipulate data, and work in a far more
+intelligent manner. Agentic tools can also build their own scripts on top of
+these APIs to do custom workflows.
+
+**Give agents as much power as possible.** If you are building a new web
+application, I think today we need complete agentic access, and the way to
+provide it is to give as much power to the agents as possible. Trying to think
+in advance in terms of what the narrow APIs are that we want to provide — I
+think that age is gone. With agents, even if you provide a narrow API, if a user
+needs to get all the data out, they can. So we have to move access control into
+a different layer. But if you are building systems for power users right now, I
+think these general purpose APIs are very critical. So that is what Sapporta
+gives you.
