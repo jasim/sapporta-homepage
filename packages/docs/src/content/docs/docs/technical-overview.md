@@ -1,7 +1,6 @@
 ---
 title: "Technical overview"
-description:
-  "A whirlwind tour of Sapporta"
+description: "A whirlwind tour of Sapporta"
 ---
 
 Sapporta is a TypeScript toolkit for building database applications —
@@ -11,7 +10,7 @@ and report on.
 
 You declare tables. Sapporta derives the rest of the application from those
 declarations while it runs: the HTTP API, the admin screens, the query grammar,
-the OpenAPI document, and the view the CLI takes of your data. 
+the OpenAPI document, and the view the CLI takes of your data.
 
 ## Single process deployment
 
@@ -40,8 +39,8 @@ than a template you edit away from.
 
 ## Table declaration generates APIs, grids, and agentic operation
 
-A table lives in `packages/api/schema/` and is declared using Drizzle. It is then
-enriched with Sapporta metadata:
+A table lives in `packages/api/schema/` and is declared using Drizzle. It is
+then enriched with Sapporta metadata:
 
 ```ts
 // packages/api/schema/invoices.ts
@@ -52,7 +51,7 @@ export const invoicesTable = sqliteTable("invoices", {
   customer_id: integer("customer_id").references(() => customersTable.id),
   number: text("number").notNull(),
   // `select` and `money` are imported from Sapporta; they provide Drizzle spec
-  // as well as semantic information for Sapporta grids, validations and APIs.  
+  // as well as semantic information for Sapporta grids, validations and APIs.
   status: select("status", ["draft", "sent", "paid"]).notNull(),
   total: money("total").notNull(),
   issued_at: timestamp("issued_at").notNull(),
@@ -64,10 +63,10 @@ export const invoices = sapportaTable({
   drizzle: invoicesTable,
   meta: {
     label: "Invoices",
-    // Scope each invoice to a specific workspace and a specific user 
-    rowScope: "workspaceUserScoped", 
+    // Scope each invoice to a specific workspace and a specific user
+    rowScope: "workspaceUserScoped",
     // Use the invoice number as a label for the entire row,
-    // for example in foreign key comboboxes 
+    // for example in foreign key comboboxes
     rowLabelColumns: ["number"],
   },
 });
@@ -98,10 +97,10 @@ column through a rename.
 Sapporta validates the whole schema at startup rather than at first request, so
 mistakes cause the app to crash on boot rather than continuing silently.
 
-A few other checks are involved in sapporta definitions: Names that
-would collide with a route segment or with the columns Sapporta manages are
-rejected. A table with no primary key is an error rather than a table with an
-invented `id`. Timestamps must be in string mode, for reasons
+A few other checks are involved in sapporta definitions: Names that would
+collide with a route segment or with the columns Sapporta manages are rejected.
+A table with no primary key is an error rather than a table with an invented
+`id`. Timestamps must be in string mode, for reasons
 [time and time zones](#time-and-time-zones) explains. And a numeric column must
 be `notNull()`:
 
@@ -111,7 +110,8 @@ be `notNull()`:
 > customer yet" is a real state — and any other column can be marked
 > non-additive to say its nullability is intentional.
 
-**Continue with:** [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
+**Continue with:**
+[Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
 · [Table validation](/docs/reference/schema/table-validation/)
 
 ## The catalog
@@ -133,10 +133,10 @@ declaration ─────┼── grid columns: renderer, editor, alignment, 
                  └── CSV columns, for the export and for clipboard copy
 ```
 
-**None of that is code generation.** No files are written - all of this is 
-computed from the catalog — some  at boot, some when a request arrives — 
-so adding a file to `packages/api/schema/` produces a new set of endpoints and a new admin screen
-with no other step.
+**None of that is code generation.** No files are written - all of this is
+computed from the catalog — some at boot, some when a request arrives — so
+adding a file to `packages/api/schema/` produces a new set of endpoints and a
+new admin screen with no other step.
 
 The code that reads the catalog is split across three packages.
 
@@ -158,17 +158,17 @@ The code that reads the catalog is split across three packages.
                   the browser, the `sapporta` CLI, your scripts
 ```
 
-`@sapporta/shared` defines
-every wire shape and both sides import it, so a server/client mismatch is a type
-error rather. 
+`@sapporta/shared` defines every wire shape and both sides import it, so a
+server/client mismatch is a type error rather.
 
-And the grid engine under the admin
-screens is written against columns and rows alone, with the binding layer
-compiling a table's schema into grid columns and endpoints — so the grid runs
-without the framework, and the binding can be replaced without touching the
-grid.
+And the grid engine under the admin screens is written against columns and rows
+alone, with the binding layer compiling a table's schema into grid columns and
+endpoints — so the grid runs without the framework, and the binding can be
+replaced without touching the grid.
 
-## The life of a request
+## Auto-generated APIs for every table
+
+[TK: Show a brief list of sample API calls that are auto-generated for a table]
 
 Every call to a generated route runs in this order:
 
@@ -198,53 +198,42 @@ Every call to a generated route runs in this order:
 ```
 
 **Parse.** A route's request and response shapes are written once, in
-`@sapporta/shared`, as a ts-rest contract with Zod schemas. The server parses
-requests against it, the generated client takes its call signatures from it, and
-the OpenAPI document is emitted from it — one contract, three consumers, and
-adding a field is one edit. A malformed query is a `400` before the database is
-touched.
+`@sapporta/shared`, as a ts-rest contract with Zod schemas. The server, frontend
+API client, and the OpenAPI document -- they all use the same schema.
 
 **Authenticate.** Resolution tries a bearer token, then a session cookie, then
 resolves anonymous. Anonymous is a legitimate resolved state that public routes
-use, not a failure; no placeholder user is created for it.
+use.
 
 **Authorize.** `ability.can(action, table)` returns a boolean — may this caller
-create invoices at all. It is never compiled into SQL and never consulted per
-row.
+create invoices at all. This is from the CASL library.
 
-**Scope.** The rows come next, and separately. The table's declared scope is
-bound to the authority this request carries, and the resulting predicate wraps
-every query the operation runs.
+**Scope.** Each row in a table can be bound to a specific user, and all
+generated APIs check for it by adding it to the query as an AND condition.
 
-**Validate.** Writes pass one gate, which rejects rather than repairs. String
-fields refuse control characters other than tab, newline, and carriage return —
-text carrying a vertical tab stores cleanly, renders as ordinary text, breaks a
-CSV export weeks later, and cannot be found by searching for what it looks like.
-A strict per-column parse runs next, so a misspelled column name fails the write
-instead of being dropped, and the parsed value is what gets written.
-
-**Respond.** Failures have one shape, with a code that can be branched on.
+**Respond.** There is a standardized Error type for response failures:
 
 ```jsonc
 // 422
 {
   "error": "Validation failed",
   "code": "VALIDATION_FAILED",
-  "details": [{ "field": "total", "message": "Expected number" }]
+  "details": [{ "field": "total", "message": "Expected number" }],
 }
 ```
 
 The `ErrorCode` set is closed and each code maps to exactly one status, so a
-caller branches on the code rather than pattern-matching a message. SQLite
-constraint failures are classified: unique and primary-key violations become
+caller can branch on the code rather than pattern-matching a message. SQLite
+constraint failures are classified as: unique and primary-key violations become
 `409`, other constraint failures `422`. A database error classified as a 500 has
 its message replaced with a generic one, while 4xx responses keep their specific
-message — the caller learns what they did wrong, and not what the database looks
-like inside.
+message — this is to inform agentic operations so they can course-correct wrong
+calls.
 
-**Continue with:** [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
-· [Table endpoints](/docs/reference/http/table-endpoints/)
-· [Expected errors and HTTP mapping](/docs/guides/application-code/expected-errors-and-http-mapping/)
+**Continue with:**
+[Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/) ·
+[Table endpoints](/docs/reference/http/table-endpoints/) ·
+[Expected errors and HTTP mapping](/docs/guides/application-code/expected-errors-and-http-mapping/)
 
 ## Row security
 
@@ -261,16 +250,18 @@ The context keeps four things separate: `principal` (who is asking),
 turn authority into SQL). They stay separate so that granting an action never
 widens a row predicate.
 
+For more information, see "How are authentication, permissions, and tenant isolation handled?" in the FAQ in the homepage.
+
 ### Declared scopes
 
 Each table selects one of three rules with `rowScope`, and the rule fixes both
 the SQL predicate and the authority a request must carry to use it.
 
-| `rowScope` | A request reaches a row when | SQL predicate | Authority slot |
-| --- | --- | --- | --- |
-| `workspaceUserScoped` *(default)* | the row's workspace **and** user both match | `workspace_id = ? AND scoped_to_user_id = ?` | `workspaceUserScoped` |
-| `workspaceGlobal` | the row's workspace matches | `workspace_id = ?` | `workspaceGlobalOnly` |
-| `systemGlobal` | always — the table is not partitioned | `TRUE` | `systemGlobalOnly` |
+| `rowScope`                        | A request reaches a row when                | SQL predicate                                | Authority slot        |
+| --------------------------------- | ------------------------------------------- | -------------------------------------------- | --------------------- |
+| `workspaceUserScoped` _(default)_ | the row's workspace **and** user both match | `workspace_id = ? AND scoped_to_user_id = ?` | `workspaceUserScoped` |
+| `workspaceGlobal`                 | the row's workspace matches                 | `workspace_id = ?`                           | `workspaceGlobalOnly` |
+| `systemGlobal`                    | always — the table is not partitioned       | `TRUE`                                       | `systemGlobalOnly`    |
 
 A table that declares nothing gets the narrowest of the three; widening is
 explicit. When the authority slot a table needs is absent, the call throws a 403
@@ -286,11 +277,12 @@ is a 404.
 
 ### Permission and authority
 
-Permission is swappable; authority is fixed. Permissions reach the framework through one method — `can(action, subject)`
-returning a boolean — and that method is the entire interface. The scaffold
-builds abilities with CASL; the framework imports no CASL and reads no CASL
-condition, so a role table, an attribute check, or a call to a policy service
-satisfies the interface just as well.
+Permission is swappable; authority is fixed. Permissions reach the framework
+through one method — `can(action, subject)` returning a boolean — and that
+method is the entire interface. The scaffold builds abilities with CASL; the
+framework imports no CASL and reads no CASL condition, so a role table, an
+attribute check, or a call to a policy service satisfies the interface just as
+well.
 
 Authority produces SQL, so it is fixed. A request carries up to three additive
 slots, each holding the trusted ownership facts it may use for predicates,
@@ -344,9 +336,12 @@ whatever the browser last selected. Tokens are stored as hashes and shown once,
 and token management is interactive-only, so a stolen token cannot be used to
 manufacture more.
 
-**Continue with:** [Workspaces, ownership, and row visibility](/docs/guides/security/workspaces-ownership-and-row-visibility/)
-· [Scoped table reads and writes](/docs/guides/security/scoped-table-reads-and-writes/)
-· [Authentication and abilities](/docs/guides/security/authentication-and-abilities/)
+**Continue with:**
+[Workspaces, ownership, and row visibility](/docs/guides/security/workspaces-ownership-and-row-visibility/)
+·
+[Scoped table reads and writes](/docs/guides/security/scoped-table-reads-and-writes/)
+·
+[Authentication and abilities](/docs/guides/security/authentication-and-abilities/)
 
 ## Querying
 
@@ -368,7 +363,7 @@ GET /api/tables/invoices
 
 **An unknown filter column is a 400.** `filter[naration][eq]=X`, a typo for
 `narration`, is rejected by name. A parser that iterates the parameters it
-recognises and ignores the rest would return *every row* instead: the page
+recognises and ignores the rest would return _every row_ instead: the page
 renders, the total looks plausible, and nothing on screen says the number is
 wrong. Silent-ignore is rejected as a class — decoding validates the grammar,
 resolution validates the column and whether that operator applies to that kind
@@ -392,9 +387,10 @@ referenced-label branches run as `EXISTS` subqueries wrapped in the target
 table's own ownership predicate, so search cannot become a side channel around
 row security.
 
-**Continue with:** [Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
-· [Query syntax](/docs/reference/http/query-syntax/)
-· [Relational search semantics and security](/docs/guides/model-data/relational-search-semantics-and-security/)
+**Continue with:**
+[Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
+· [Query syntax](/docs/reference/http/query-syntax/) ·
+[Relational search semantics and security](/docs/guides/model-data/relational-search-semantics-and-security/)
 
 ## Time and time zones
 
@@ -428,8 +424,9 @@ where the query is built, from a zone and a moment the caller supplies. A user's
 "Last 30 days" therefore stays semantically that through every layer, instead of
 being turned at the first opportunity into two dates that then silently age.
 
-**Continue with:** [Days and time zones](/docs/reference/server/days-and-time-zones/)
-· [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
+**Continue with:**
+[Days and time zones](/docs/reference/server/days-and-time-zones/) ·
+[Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
 
 ## The admin frontend
 
@@ -450,8 +447,8 @@ Three behaviours are worth knowing at this level.
 **An edit renders before the server confirms it.** The value is written into the
 snapshot immediately and sent, and the response produces exactly one reconcile
 event of three kinds: `agreed`; `diverged`, where the authoritative value is
-written first and then reported, so a server-side adjustment is visible *as an
-adjustment* rather than as one value silently replacing another; or `rejected`,
+written first and then reported, so a server-side adjustment is visible _as an
+adjustment_ rather than as one value silently replacing another; or `rejected`,
 carrying the backend's reason alongside both the optimistic and the prior value.
 A batch has the opposite contract — atomic from the grid's point of view,
 reverting every change on any rejection, so a half-applied batch is never
@@ -473,8 +470,10 @@ the boundary rather than asserted in TypeScript — so the server can produce a
 report with whatever query it likes, including raw SQL beneath every layer in
 this document, and the frontend renders it with no report-specific code.
 
-**Continue with:** [Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
-· [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
+**Continue with:**
+[Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
+·
+[Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
 · [Choose a grid layer](/grid/start/choose-a-grid-layer/)
 
 ## Machine interfaces
@@ -491,8 +490,8 @@ catalogue and calling what is in it are separate grants.
 The `sapporta` CLI is a client of that same HTTP API. Its commands authenticate
 with a bearer token and go through the same authorization and row scoping as any
 other caller, so what the CLI can read is exactly what that token could read
-through the browser. That property — not a special mode, just the absence of
-one — is what makes it safe to hand to an agent.
+through the browser. That property — not a special mode, just the absence of one
+— is what makes it safe to hand to an agent.
 
 ```bash
 sapporta tables show invoices
@@ -507,9 +506,11 @@ default: reads run inside a query-only pragma that is restored afterward, writes
 need an explicit opt-in through a separate `sql execute` command, and
 `DROP TABLE` and `ALTER TABLE` are blocked even under the opt-in.
 
-**Continue with:** [Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/)
-· [OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
-· [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
+**Continue with:**
+[Use the Sapporta CLI](/docs/guides/discovery/use-the-sapporta-cli/) ·
+[OpenAPI and endpoint discovery](/docs/guides/discovery/openapi-and-endpoint-discovery/)
+·
+[Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
 
 ## The project
 
@@ -540,46 +541,11 @@ together: pending (not yet applied), missing (applied, file gone), and changed
 category, which is why they are not collapsed into "your migrations are out of
 date".
 
-**Continue with:** [Create a Sapporta project](/docs/getting-started/create-a-project/)
-· [Schema changes and migrations](/docs/guides/model-data/schema-changes-and-migrations/)
-· [Runtime and deployment contract](/docs/reference/operations/runtime-and-deployment-contract/)
-
-## Where the layers open
-
-One property runs through all of it: no layer is a dead end. Every layer
-described above has a documented exit, and each one names what it trades away.
-
-| Layer | The way out | What you give up |
-| --- | --- | --- |
-| Routing | Custom ts-rest contracts register on the same API object | Nothing — the contract is still parsed and typed |
-| Response shape | Return a raw `Response` | The error envelope and the generated client's typing |
-| Route guard | Pass a custom guard to the handler factory | The default auth resolution |
-| Row security | Call `scopedRows` directly from a custom endpoint | Nothing — this is the supported way to query a table |
-| Row security | `withDataAuthority()` re-narrows the engine | Nothing — a deliberate narrowing for one workflow |
-| Row security | Raw Drizzle or raw SQL | Every guarantee in [Row security](#row-security), at exactly that call |
-| Query grammar | Hand-written `WHERE` clauses; bounded reads for small sets | The shared grammar, and the filter UI's ability to author it |
-| Reports | Any query, including raw SQL, returned as a `GridDataset` | Row security, unless you use the scoped report helpers |
-| Grid data | Any object satisfying the data-source protocol | The REST binding and its schema-derived columns |
-| Grid columns | Fully custom column specs on a level | The kind-derived renderers, editors, and filters |
-| Auth screens | Take the auth runtime without the pages | The shipped sign-in, sign-up, and reset screens |
-
-The cost of leaving a layer is paid at the call site that leaves it, and it is
-paid in guarantees rather than in compatibility. Code above and below an escape
-hatch keeps working.
-
-**Continue with:** [Custom API endpoints](/docs/guides/application-code/custom-api-endpoints/)
-· [Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
+**Continue with:**
+[Create a Sapporta project](/docs/getting-started/create-a-project/) ·
+[Schema changes and migrations](/docs/guides/model-data/schema-changes-and-migrations/)
+·
+[Runtime and deployment contract](/docs/reference/operations/runtime-and-deployment-contract/)
+[Custom API endpoints](/docs/guides/application-code/custom-api-endpoints/) ·
+[Row-safe custom endpoints and reports](/docs/guides/security/row-safe-custom-endpoints-and-reports/)
 · [Scoped report data](/docs/guides/reports/scoped-report-data/)
-
-## A note on failure
-
-One goal recurs through every decision above: a mistake should fail at boot or
-return a 4xx, instead of producing a page that renders with a wrong number on
-it.
-
-Nullable numeric columns, mistyped filter parameters, timestamps that sort out
-of order, and foreign keys checked for existence rather than visibility are each
-rejected for that reason. They share a shape — each one produces output that
-looks right, on a screen with nothing on it to say otherwise. A system that
-returns an error is inconvenient once. A system that returns a plausible wrong
-answer is trusted until someone happens to check.

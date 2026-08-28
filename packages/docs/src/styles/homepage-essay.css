@@ -1582,6 +1582,20 @@
   width: 0.85rem;
 }
 
+/* On a frame this small the word is most of the picture. */
+@media (max-width: 40rem) {
+  .home-evidence__expand-hint {
+    gap: 0;
+    padding: 0.4rem;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+
+  .home-evidence__expand-word {
+    display: none;
+  }
+}
+
 .home-transcript {
   display: flex;
   flex-direction: column;
