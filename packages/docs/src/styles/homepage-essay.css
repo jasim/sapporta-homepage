@@ -1408,7 +1408,6 @@
   margin-top: 0;
 }
 
-
 .home-article {
   max-width: var(--home-media-width);
   width: 100%;
@@ -1515,6 +1514,72 @@
   display: block;
   height: auto;
   width: 100%;
+}
+
+/*
+ * At the copy measure a recording is still cramped: the app pane inside it is
+ * a screenshot of a screenshot. The frame is therefore a button — clicking it
+ * lifts the same file into the lightbox, where it gets the whole viewport and
+ * a real control bar.
+ */
+.home-evidence__expand {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: zoom-in;
+  display: block;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.home-evidence__expand:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.home-evidence__expand:hover .home-evidence__video {
+  border-color: var(--muted);
+}
+
+/*
+ * A hover state alone would leave touch screens with no affordance at all, so
+ * the hint is always on the frame and only sharpens under the cursor.
+ */
+.home-evidence__expand-hint {
+  align-items: center;
+  background: rgb(20 24 29 / 78%);
+  border: 1px solid rgb(255 255 255 / 28%);
+  color: #fff;
+  display: flex;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: var(--weight-display-label);
+  gap: 0.4rem;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  padding: 0.45rem 0.6rem;
+  position: absolute;
+  right: 0.65rem;
+  text-transform: uppercase;
+  top: 0.65rem;
+}
+
+.home-evidence__expand:hover .home-evidence__expand-hint,
+.home-evidence__expand:focus-visible .home-evidence__expand-hint {
+  background: rgb(35 40 47 / 96%);
+  border-color: rgb(255 255 255 / 55%);
+}
+
+.home-evidence__expand-icon {
+  fill: none;
+  height: 0.85rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
+  width: 0.85rem;
 }
 
 .home-transcript {
@@ -1938,6 +2003,57 @@
   max-width: calc(100vw - 3rem);
   object-fit: contain;
   width: auto;
+}
+
+/*
+ * A recording has one fixed aspect, so the expanded frame takes whichever of
+ * width or height runs out first and lets the other follow. Both budgets stop
+ * short of the viewport: the margin left over is the click target that closes.
+ */
+.home-lightbox--video {
+  --home-lightbox-media-width: min(90vw, calc(100vw - 3rem));
+  --home-lightbox-media-height: calc(90dvh - 5rem);
+}
+
+.home-lightbox--video .home-lightbox__figure {
+  overflow-y: auto;
+}
+
+.home-lightbox__video {
+  aspect-ratio: var(--home-lightbox-aspect, 1.778);
+  background: #000;
+  display: block;
+  height: auto;
+  margin: 0;
+  max-height: var(--home-lightbox-media-height);
+  max-width: 100%;
+  width: min(
+    var(--home-lightbox-media-width),
+    calc(var(--home-lightbox-media-height) * var(--home-lightbox-aspect, 1.778))
+  );
+}
+
+/* On a phone the gutters have to shrink before the recording does. */
+@media (max-width: 40rem) {
+  .home-lightbox {
+    padding: 0.75rem;
+  }
+
+  .home-lightbox__frame,
+  .home-lightbox__figure {
+    max-height: calc(100dvh - 1.5rem);
+    max-width: calc(100vw - 1.5rem);
+  }
+
+  .home-lightbox--video {
+    --home-lightbox-media-width: calc(100vw - 1.5rem);
+    --home-lightbox-media-height: calc(90dvh - 4rem);
+  }
+
+  .home-lightbox__close {
+    right: 0.5rem;
+    top: 0.5rem;
+  }
 }
 
 .home-lightbox__caption {

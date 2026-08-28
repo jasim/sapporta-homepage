@@ -9,26 +9,214 @@ interface Props {
   height: number;
 }
 
-const { mp4, webm, poster, label, caption, width, height } = Astro.props;
+const {
+  mp4,
+  webm,
+  poster,
+  label,
+  caption,
+  width,
+  height,
+} = Astro.props;
+
+const aspect = width / height;
 ---
 
-<figure class="home-evidence home-evidence--video">
-  {label && <p class="home-evidence__label">{label}</p>}
-  <video
-    class="home-evidence__video"
-    autoplay
-    muted
-    loop
-    playsinline
-    poster={poster}
-    width={width}
-    height={height}
-    aria-label={caption}
+<figure
+  class="home-evidence home-evidence--video"
+  data-video-evidence
+>
+  {
+    label && (
+      <p class="home-evidence__label">{label}</p>
+    )
+  }
+  <button
+    class="home-evidence__expand"
+    type="button"
+    aria-label={`Expand video: ${label ?? caption}`}
+    data-video-evidence-open
   >
-    {webm && <source src={webm} type="video/webm" />}
-    <source src={mp4} type="video/mp4" />
-  </video>
+    <video
+      class="home-evidence__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      poster={poster}
+      width={width}
+      height={height}
+      data-video-evidence-inline
+    >
+      {
+        webm && (
+          <source src={webm} type="video/webm" />
+        )
+      }
+      <source src={mp4} type="video/mp4" />
+    </video>
+    <span
+      class="home-evidence__expand-hint"
+      aria-hidden="true"
+    >
+      <svg
+        class="home-evidence__expand-icon"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7"
+        ></path>
+      </svg>
+      <span class="home-evidence__expand-word">
+        Expand
+      </span>
+    </span>
+  </button>
+
+  <dialog
+    class="home-lightbox home-lightbox--video"
+    aria-label={caption}
+    style={`--home-lightbox-aspect: ${aspect}`}
+    data-video-evidence-dialog
+  >
+    <div class="home-lightbox__frame">
+      <button
+        class="home-lightbox__close"
+        type="button"
+        aria-label="Close expanded video"
+        title="Close"
+        data-video-evidence-close
+      >
+        <svg
+          class="home-lightbox__close-icon"
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+        >
+          <path d="M18 6 6 18M6 6l12 12"></path>
+        </svg>
+      </button>
+      <div class="home-lightbox__figure">
+        <video
+          class="home-lightbox__video"
+          controls
+          playsinline
+          preload="metadata"
+          poster={poster}
+          width={width}
+          height={height}
+          data-video-evidence-player
+        >
+          {
+            webm && (
+              <source
+                src={webm}
+                type="video/webm"
+              />
+            )
+          }
+          <source src={mp4} type="video/mp4" />
+        </video>
+        <p class="home-lightbox__caption">
+          {caption}
+        </p>
+      </div>
+    </div>
+  </dialog>
+
   <figcaption class="home-evidence__caption">
     {caption}
   </figcaption>
 </figure>
+
+<script>
+  const evidences =
+    document.querySelectorAll<HTMLElement>(
+      "[data-video-evidence]",
+    );
+
+  for (const evidence of evidences) {
+    const trigger =
+      evidence.querySelector<HTMLButtonElement>(
+        "[data-video-evidence-open]",
+      );
+    const dialog =
+      evidence.querySelector<HTMLDialogElement>(
+        "[data-video-evidence-dialog]",
+      );
+    const preview =
+      evidence.querySelector<HTMLVideoElement>(
+        "[data-video-evidence-inline]",
+      );
+    const player =
+      evidence.querySelector<HTMLVideoElement>(
+        "[data-video-evidence-player]",
+      );
+    const close =
+      evidence.querySelector<HTMLButtonElement>(
+        "[data-video-evidence-close]",
+      );
+
+    if (
+      !trigger ||
+      !dialog ||
+      !preview ||
+      !player
+    )
+      continue;
+
+    // An unmuted start is not allowed everywhere. If
+    // the browser refuses, fall back to the terms the
+    // preview already plays on rather than opening on
+    // a still frame.
+    const play = () => {
+      void player.play().catch(() => {
+        player.muted = true;
+        void player.play().catch(() => {});
+      });
+    };
+
+    // Undoing the scroll lock is what strands a page if
+    // it is missed, so it runs from every way out — the
+    // two we handle here and `close`, which is all an
+    // Escape key leaves us. Running twice is harmless.
+    const collapse = () => {
+      delete document.body.dataset.lightboxOpen;
+      player.pause();
+      void preview.play().catch(() => {});
+    };
+
+    const dismiss = () => {
+      dialog.close();
+      collapse();
+      trigger.focus();
+    };
+
+    trigger.addEventListener("click", () => {
+      // Pick up where the muted preview loop is, so
+      // expanding keeps the frame you clicked on.
+      player.currentTime = preview.currentTime;
+      preview.pause();
+      document.body.dataset.lightboxOpen = "true";
+      dialog.showModal();
+      play();
+    });
+
+    close?.addEventListener("click", dismiss);
+
+    // Everything but the player itself — backdrop,
+    // gutters, caption — is a way back to the page.
+    dialog.addEventListener("click", (event) => {
+      const target =
+        event.target as HTMLElement | null;
+      if (
+        !target?.closest(
+          "[data-video-evidence-player]",
+        )
+      ) {
+        dismiss();
+      }
+    });
+
+    dialog.addEventListener("close", collapse);
+  }
+</script>
