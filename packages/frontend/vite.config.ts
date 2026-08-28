@@ -4,25 +4,39 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { parseBoundedInteger } from "@sapporta/shared/validation";
 
-// Dev topology: Vite serves the SPA on :5173 and transparently proxies
-// /api/* to the Hono backend on SAPPORTA_API_PORT (default 3000) — frontend code uses
-// relative URLs and never sees the backend port. In prod, Hono alone
-// serves both the built SPA (packages/frontend/dist/) and the API from one origin,
-// so the same relative URLs keep working. No VITE_API_URL is needed unless
-// production splits the SPA and API across different origins.
+// Dev topology: Hono on SAPPORTA_API_PORT is the only origin the browser uses,
+// in development as in production. It serves /api/* itself and proxies every
+// other URL to a dev server — Astro's for the marketing site and docs, this one
+// for the React application — using the same route table it serves the builds
+// with in production (packages/api/site-routes.ts). Frontend code uses relative
+// URLs and never sees a port. No VITE_API_URL is needed unless production
+// splits the SPA and API across different origins.
 //
-// Multi-project on one machine: give each project its own SAPPORTA_API_PORT and
-// SAPPORTA_FRONTEND_PORT in .env.development. boot.ts reads SAPPORTA_API_PORT
-// to bind Hono; this config reads it as the API proxy target and reads
-// SAPPORTA_FRONTEND_PORT as Vite's own port. strictPort keeps the trusted dev
-// origin exact.
+// `base` is why this server can sit behind that shared origin. Both dev servers
+// are Vite servers, and both want /@vite/, /@id/, /src/ and /node_modules/ for
+// their dev module graphs. While serving, this one moves its whole graph under
+// /app-assets/ — the prefix production already gives its built assets — leaving
+// the root unambiguous. A `vite build`, and a `vite preview` of what it built,
+// keep base "/": there is no second dev server to share the origin with.
+//
+// HMR cannot travel through the Hono front door: it is a WebSocket, and the
+// proxy there forwards with fetch(). `hmr.clientPort` points the browser at
+// this server directly for that one socket, which is the only time it does.
+//
+// Multi-project on one machine: give each project its own SAPPORTA_API_PORT,
+// SAPPORTA_FRONTEND_PORT and SAPPORTA_DOCS_PORT in .env.development. boot.ts
+// reads SAPPORTA_API_PORT to bind Hono; this config reads it for the standalone
+// `pnpm dev:ui` proxy and reads SAPPORTA_FRONTEND_PORT as Vite's own port.
+// strictPort keeps the port Hono proxies to exact.
 //
 // sapporta-homepage-app-shared is aliased to its source so HMR works without rebuilding
 // the shared package's dist/ on every edit. Backend imports the same
 // package via the pnpm symlink and reads dist/ (Node can't run TS).
 const apiPort = parseIntegerEnv("SAPPORTA_API_PORT", 3000);
+const frontendPort = parseIntegerEnv("SAPPORTA_FRONTEND_PORT", 5173);
 
-export default defineConfig({
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === "serve" && !isPreview ? "/app-assets/" : "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     dedupe: [
@@ -44,8 +58,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: parseIntegerEnv("SAPPORTA_FRONTEND_PORT", 5173),
+    port: frontendPort,
     strictPort: true,
+    hmr: { clientPort: frontendPort },
+    // Only used when this server is opened directly with `pnpm dev:ui`; through
+    // the Hono front door, /api/* never reaches Vite.
     proxy: {
       "/api": `http://localhost:${apiPort}`,
     },
@@ -60,7 +77,7 @@ export default defineConfig({
       },
     },
   },
-});
+}));
 
 function parseIntegerEnv(name: string, fallback: number): number {
   const value = process.env[name];

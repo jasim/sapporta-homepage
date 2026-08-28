@@ -11,11 +11,13 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:12339`.
+Open `http://localhost:13450` — the API is the single development front door
+and proxies the site and the application to their own dev servers. The port is
+`SAPPORTA_API_PORT` in `.env.development`.
 
 ## Commands
 
-- `pnpm dev` - start backend and frontend in watch mode
+- `pnpm dev` - start backend, docs, and frontend in watch mode behind one origin
 - `pnpm build` - compile the shared package, API, and frontend
 - `pnpm start` - run the production server after `pnpm build`
 - `pnpm exec sapporta describe` - inspect the running API

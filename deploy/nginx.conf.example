@@ -220,9 +220,22 @@ http {
             add_header Cache-Control "no-cache" always;
         }
 
-        location ~ ^/(?:favicon\.svg|sitemap(?:-index|-0)?\.xml|LICENSE\.txt)$ {
+        # og.png is the social preview image named by the homepage's og:image
+        # meta tag. It belongs to the docs root like favicon.svg: without it
+        # here, `location /` answers a crawler with the React shell and a 200
+        # and every social preview silently degrades to no image.
+        location ~ ^/(?:favicon\.svg|og\.png|sitemap(?:-index|-0)?\.xml|LICENSE\.txt)$ {
             root /var/www/sapporta-homepage-app/packages/docs/dist;
             try_files $uri =404;
+            add_header Cache-Control "no-cache" always;
+        }
+
+        # robots.txt advertises /sitemap-index.xml, the name @astrojs/sitemap
+        # emits. /sitemap.xml is the conventional path a crawler probes without
+        # being told, so it reads the same generated index.
+        location = /sitemap.xml {
+            root /var/www/sapporta-homepage-app/packages/docs/dist;
+            try_files /sitemap-index.xml =404;
             add_header Cache-Control "no-cache" always;
         }
 

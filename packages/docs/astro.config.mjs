@@ -23,12 +23,24 @@ function injectGettingStartedEnv() {
   };
 }
 
+/*
+ * Dev topology: the Hono server on SAPPORTA_API_PORT is the only origin the
+ * browser uses. In production it serves this site from dist/; in development it
+ * proxies the same URLs to this dev server instead, deciding ownership from one
+ * shared table (packages/api/site-routes.ts). That needs a fixed port here.
+ * Hot module reload is a WebSocket and cannot cross a fetch()-based proxy, so
+ * `hmr.clientPort` points the browser at this server directly for that socket
+ * alone. `astro build` ignores both settings.
+ */
+const docsPort = Number(process.env.SAPPORTA_DOCS_PORT) || 4321;
+
 // https://astro.build/config
 export default defineConfig({
   site: gettingStartedEnv.docsCanonicalOrigin,
   base: "/",
   output: "static",
   trailingSlash: "ignore",
+  server: { port: docsPort },
   markdown: {
     processor: unified({
       remarkPlugins: [injectGettingStartedEnv],
@@ -37,6 +49,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: { hmr: { clientPort: docsPort } },
   },
   integrations: [
     react(),

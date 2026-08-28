@@ -6,7 +6,7 @@ APIs, auth-aware row access, and a React app shell.
 
 ## Commands
 
-- `pnpm dev` starts the API and frontend in watch mode.
+- `pnpm dev` starts the API, docs, and frontend in watch mode behind one origin.
 - `pnpm build` compiles the shared package, API, and frontend.
 - `pnpm start` runs the production server after `pnpm build`.
 - `pnpm exec sapporta describe` inspects the running API.
@@ -16,6 +16,30 @@ APIs, auth-aware row access, and a React app shell.
 - `pnpm check:docs-index` fails if the committed `/docs` index is stale.
 
 Prefer the project-local CLI form: `pnpm exec sapporta ...`.
+
+## Development topology
+
+`pnpm dev` runs four watchers and one front door. The Hono API on
+`SAPPORTA_API_PORT` is the only origin the browser uses, in development as in
+production: it serves `/api/*` itself and proxies every other URL to the dev
+server that owns it — `astro dev` for the marketing site and documentation,
+Vite for the React application. Nothing is rebuilt on a change, so a
+documentation edit is a hot reload rather than an `astro build`.
+
+Both modes decide who owns a URL from one table,
+`packages/api/site-routes.ts`. In production `mountStaticSite` reads those paths
+out of `packages/docs/dist`; in development `mountDevSite` proxies the same
+paths to `astro dev`. Everything not listed belongs to the React application.
+
+Two things differ from production, both because `astro dev` has no completed
+build to read: the sitemaps 404, and Pagefind search is unavailable.
+
+Ports live in `.env.development`: `SAPPORTA_API_PORT` is the front door,
+alongside `SAPPORTA_DOCS_PORT` and `SAPPORTA_FRONTEND_PORT`.
+`SAPPORTA_PUBLIC_APP_URL` must name the front door or sign-in is rejected;
+`scripts/dev.mjs` warns when they disagree. `pnpm dev:ui` and `pnpm dev:server`
+still start a single package for debugging, but only the front door serves the
+whole site.
 
 ## Where to make changes
 
@@ -27,6 +51,10 @@ Prefer the project-local CLI form: `pnpm exec sapporta ...`.
 - Browser API calls: add typed clients in `packages/frontend/src/api.ts`.
 - Auth and permissions: start in `packages/api/authz/`. Read the auth docs before
   changing row access rules.
+- Public URLs: `packages/api/site-routes.ts` is the one table naming every URL
+  the Astro build owns. Add a documentation surface or a root file there, not in
+  `static-site.ts`, so the production host and the development proxy stay in
+  agreement.
 - Documentation landing page: `packages/docs/src/content/docs/docs.md` is
   generated — never edit it. Change `packages/docs/sidebar.mjs` and run
   `pnpm generate:docs-index`. The page is the index of every documentation page,

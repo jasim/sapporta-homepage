@@ -16,21 +16,23 @@ import {
   explicitlyPrefersMarkdown,
   markdownVariantPath,
 } from "./docs-negotiation.js";
+import {
+  apiReferenceIndexFile,
+  apiReferenceIndexPaths,
+  astroOwnedPatterns,
+  astroPageRoutes,
+  docsRootFiles,
+  markdownContentType,
+  plainTextContentType,
+} from "./site-routes.js";
 
 type AppServer = Hono<SapportaEnv>;
 
 export interface StaticSiteOptions {
   docsDistDir: string;
   frontendDistDir: string;
-  astroPageRoutes: ReadonlyArray<{
-    path: string;
-    file: string;
-  }>;
 }
 
-const markdownContentType = "text/markdown; charset=utf-8";
-const plainTextContentType = "text/plain; charset=utf-8";
-const xmlContentType = "application/xml; charset=utf-8";
 const llmsIndexPaths = new Set([
   "/llms.txt",
   "/.well-known/llms.txt",
@@ -43,7 +45,7 @@ const noCache = cacheControl("no-cache");
 const immutableCache = cacheControl("public, max-age=31536000, immutable");
 
 export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
-  const { astroPageRoutes, docsDistDir, frontendDistDir } = options;
+  const { docsDistDir, frontendDistDir } = options;
   const docsDist = relative(process.cwd(), docsDistDir) || ".";
   const frontendDist = relative(process.cwd(), frontendDistDir) || ".";
 
@@ -135,22 +137,12 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   serveStaticUse(app, "/_astro/*", docsDist, { cache: immutableCache });
   serveStaticUse(app, "/assets/*", docsDist);
   serveStaticUse(app, "/pagefind/*", docsDist);
-  serveStaticGet(app, "/favicon.svg", docsDist);
-  serveStaticGet(app, "/LICENSE.txt", docsDist);
-  serveStaticGet(app, "/robots.txt", docsDist, {
-    contentType: plainTextContentType,
-  });
-  serveStaticGet(app, "/sitemap.xml", docsDist, {
-    contentType: xmlContentType,
-  });
-  serveStaticGet(app, "/sitemap-index.xml", docsDist, {
-    contentType: xmlContentType,
-  });
-  serveStaticGet(app, "/sitemap-0.xml", docsDist, {
-    contentType: xmlContentType,
-  });
-  serveStaticGet(app, "/llms.txt", docsDist);
-  serveStaticGet(app, "/.well-known/llms.txt", docsDist);
+  for (const rootFile of docsRootFiles) {
+    serveStaticGet(app, rootFile.path, docsDist, {
+      file: rootFile.file,
+      contentType: rootFile.contentType,
+    });
+  }
   for (const route of astroPageRoutes) {
     serveStaticGet(app, route.path, docsDist, {
       file: route.file,
@@ -197,13 +189,9 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   // `/api-reference`, with or without a trailing slash, and `/api-reference.md`
   // all read the index page, the way `/docs` and `/docs.md` both read the
   // documentation index.
-  for (const path of [
-    "/api-reference",
-    "/api-reference/",
-    "/api-reference.md",
-  ]) {
+  for (const path of apiReferenceIndexPaths) {
     serveStaticGet(app, path, docsDist, {
-      file: "api-reference/index.md",
+      file: apiReferenceIndexFile,
       cache: noCache,
     });
   }
@@ -212,29 +200,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
   // A missing file under an Astro-owned path is a real 404. Claim these paths
   // before the React fallback so a typo in a documentation or asset URL cannot
   // return the unrelated application shell with a misleading 200 response.
-  for (const pattern of [
-    ...astroPageRoutes.map((route) => route.path),
-    "/favicon.svg",
-    "/LICENSE.txt",
-    "/robots.txt",
-    "/sitemap.xml",
-    "/sitemap-index.xml",
-    "/sitemap-0.xml",
-    "/llms.txt",
-    "/.well-known/llms.txt",
-    "/docs",
-    "/docs.md",
-    "/docs/*",
-    "/grid",
-    "/grid/*",
-    "/api-reference",
-    "/api-reference/",
-    "/api-reference.md",
-    "/api-reference/*",
-    "/_astro/*",
-    "/assets/*",
-    "/pagefind/*",
-  ]) {
+  for (const pattern of astroOwnedPatterns) {
     app.get(pattern, (c) => c.notFound());
   }
 

@@ -32,9 +32,14 @@ describe("crawler-facing static routes", () => {
         "User-agent: OAI-SearchBot\nAllow: /\n",
       ),
       writeFile(
-        join(docsDistDir, "sitemap.xml"),
-        '<?xml version="1.0"?><sitemapindex></sitemapindex>',
+        join(docsDistDir, "sitemap-index.xml"),
+        '<?xml version="1.0"?><sitemapindex><loc>/sitemap-0.xml</loc></sitemapindex>',
       ),
+      writeFile(
+        join(docsDistDir, "sitemap-0.xml"),
+        '<?xml version="1.0"?><urlset><url><loc>/</loc></url></urlset>',
+      ),
+      writeFile(join(docsDistDir, "og.png"), "not-really-a-png"),
       writeFile(join(frontendDistDir, "index.html"), "<h1>SPA fallback</h1>"),
       writeFile(
         join(docsDistDir, "api-reference", "index.md"),
@@ -55,14 +60,7 @@ describe("crawler-facing static routes", () => {
     ]);
 
     app = new Hono<SapportaEnv>();
-    mountStaticSite(app, {
-      docsDistDir,
-      frontendDistDir,
-      astroPageRoutes: [
-        { path: "/", file: "index.html" },
-        { path: "/index.html", file: "index.html" },
-      ],
-    });
+    mountStaticSite(app, { docsDistDir, frontendDistDir });
   });
 
   afterAll(async () => {
@@ -79,14 +77,39 @@ describe("crawler-facing static routes", () => {
     expect(await response.text()).toContain("User-agent: OAI-SearchBot");
   });
 
-  it("serves sitemap.xml as XML before the SPA fallback", async () => {
-    const response = await app.request("/sitemap.xml");
+  it("serves the generated sitemap index as XML before the SPA fallback", async () => {
+    // robots.txt advertises /sitemap-index.xml; /sitemap.xml is the path a
+    // crawler probes on its own. Both read the one generated index.
+    for (const path of ["/sitemap-index.xml", "/sitemap.xml"]) {
+      const response = await app.request(path);
+
+      expect(response.status, path).toBe(200);
+      expect(response.headers.get("Content-Type"), path).toBe(
+        "application/xml; charset=utf-8",
+      );
+      expect(await response.text(), path).toContain("<sitemapindex>");
+    }
+  });
+
+  it("serves the sitemap URL set as XML before the SPA fallback", async () => {
+    const response = await app.request("/sitemap-0.xml");
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe(
       "application/xml; charset=utf-8",
     );
-    expect(await response.text()).toContain("<sitemapindex>");
+    expect(await response.text()).toContain("<urlset>");
+  });
+
+  it("serves og.png as an image before the SPA fallback", async () => {
+    // The homepage names this file in og:image. Reaching the SPA fallback
+    // hands a crawler the React shell with a 200, and the social preview
+    // degrades to no image with nothing in the build reporting a failure.
+    const response = await app.request("/og.png");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe("image/png");
+    expect(await response.text()).not.toContain("SPA fallback");
   });
 
   it("serves the documentation index as Markdown before the SPA fallback", async () => {
@@ -171,6 +194,15 @@ describe("crawler-facing static routes", () => {
 
   it("404s a missing API reference page instead of the SPA shell", async () => {
     const response = await app.request("/api-reference/no-such-package.md");
+
+    expect(response.status).toBe(404);
+    expect(await response.text()).not.toContain("SPA fallback");
+  });
+
+  it("404s a docs-root file missing from the build instead of the SPA shell", async () => {
+    // LICENSE.txt is mounted but absent from this fixture, standing in for any
+    // root file the Astro build stops emitting.
+    const response = await app.request("/LICENSE.txt");
 
     expect(response.status).toBe(404);
     expect(await response.text()).not.toContain("SPA fallback");
