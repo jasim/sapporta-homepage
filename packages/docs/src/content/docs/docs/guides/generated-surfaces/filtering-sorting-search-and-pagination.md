@@ -11,26 +11,27 @@ page.
 
 ## Compose the query
 
-Generated list and export routes use one strict grammar:
+Generated list and export routes carry filters, a search term, a sort list, and
+page bounds in one query string:
 
 ```http
 GET /api/tables/tasks?filter[project_id][eq]=1&filter[status][in]=open&q=launch&sort=due_date,-id&page=1&limit=25
 ```
 
-- Every filter includes a column and operator: `filter[column][operator]=value`.
-- `in` and `nin` accept comma-separated values. Select-backed text also supports
-  the other text operators, including `eq` and `neq`.
-- `q` uses the table's configured search plan. Search is enabled for visible
-  application columns by default; explicitly configured child paths can
-  contribute at any finite depth. The search predicate combines with filters
-  using AND.
-- `sort=due_date,-id` orders due date ascending, then ID descending.
-- `page` is one-based. `limit` accepts values from 1 through 1000 and defaults
-  to 50.
+Each filter names a column and an operator as `filter[column][operator]=value`.
+`q` runs the table's configured search plan, `sort` takes column names with a
+leading `-` for descending order, and `page` and `limit` bound the result.
+[Query syntax](/docs/reference/http/query-syntax/) lists every operator, the
+column kinds each one applies to, and the values each one accepts.
+
+Search is enabled for visible application columns by default; explicitly
+configured child paths can contribute at any finite depth. The search predicate
+combines with filters using AND.
 
 Bracket characters may need URL encoding in a shell or client. This `curl` form
-keeps the query readable while encoding it correctly. Take `SAPPORTA_API_PORT` from this project's `.env.development`; `pnpm dev`
-prints it as the API URL when it starts.
+keeps the query readable while encoding it correctly. Take `SAPPORTA_API_PORT`
+from this project's environment (`pnpm dev` prints it as the API URL when
+it starts).
 
 ```bash
 curl --get "http://localhost:$SAPPORTA_API_PORT/api/tables/tasks" \
@@ -42,8 +43,8 @@ curl --get "http://localhost:$SAPPORTA_API_PORT/api/tables/tasks" \
   --data-urlencode "limit=25"
 ```
 
-Use the authenticated browser session, an API token, or the Sapporta CLI when
-the app is protected. The successful response includes the current page and
+Use a logged-in browser session or an Agent token for authentication. Successful
+response includes the current page and
 total count:
 
 ```json
@@ -57,7 +58,12 @@ total count:
       "due_date": "2026-08-01"
     }
   ],
-  "meta": { "total": 1, "page": 1, "limit": 25, "pages": 1 }
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 25,
+    "pages": 1
+  }
 }
 ```
 
@@ -80,6 +86,8 @@ clients, and CSV export preserve duplicates as repeated URL keys. They do not
 emit indexed names such as `filter[title][contains][0]`, and they do not keep
 only the last value. That distinction matters because dropping either condition
 would silently widen the result.
+
+## Keep query state in the URL
 
 Generated table screens serialize the same query state in the URL. Open
 `/tables/tasks`, select the project and open status, search for **launch**, set
@@ -116,22 +124,10 @@ the workspace zone.
 
 Unknown columns, unsupported operators, malformed semantic values, `q` on a
 table with `search: false`, and invalid page or limit values return a structured
-400 response. A caller must correct the query. Retrying after dropping a
-rejected filter can expose or export a much larger result set.
-
-```http
-GET /api/tables/tasks?filter[status]=open
-```
-
-The request above is invalid because it omits the operator bracket. It returns
-HTTP `400` with a stable code:
-
-```json
-{
-  "error": "Filter \"filter[status]\" must use filter[col][op]=value syntax",
-  "code": "unknown_filter_shape"
-}
-```
+400 response carrying a stable code. A caller must correct the query. Retrying
+after dropping a rejected filter can expose or export a much larger result set.
+[Read a rejected query](/docs/reference/http/query-syntax/#read-a-rejected-query)
+lists the codes and what each one reports.
 
 For typed frontend table code, use `TypedFilterCondition` with
 `encodeTypedFilters()` at the URL boundary, and use `parseFiltersForTable()`
@@ -143,9 +139,9 @@ must not become a valid broad query.
 
 ## Related reference
 
+- [Query syntax](/docs/reference/http/query-syntax/)
 - [Configure table search](/docs/guides/model-data/configure-table-search/)
 - [Use table search](/docs/guides/model-data/use-table-search/)
-- [Query syntax](/docs/reference/http/query-syntax/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
