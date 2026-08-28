@@ -1400,19 +1400,6 @@
   margin-top: 0;
 }
 
-/*
- * The closing line is the section's takeaway: it reads at lede weight so a
- * skimmer who only reads the first and last line still gets the argument.
- */
-.home-article__section--why > .home-copy__paragraph:last-child {
-  border-top: 1px solid var(--rule);
-  font-size: 1.15rem;
-  font-weight: var(--weight-text);
-  line-height: 1.55;
-  margin-top: 2rem;
-  padding-top: 1.4rem;
-  text-wrap: pretty;
-}
 
 .home-article {
   max-width: var(--home-media-width);

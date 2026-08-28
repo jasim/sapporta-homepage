@@ -5,20 +5,19 @@ import EvidenceTranscript from "../components/EvidenceTranscript.astro";
 Unless explicitly guided, AI agents do not build shared foundations.
 
 Consider data filtering. If you prompt an agent to build filtering for a table, it will create a custom solution —
-frontend, backend, and support for specific operators — just for that single table. When you ask it to add filtering to a
-second table, it will write diverging code rather than building a well-reasoned, reusable abstraction.
+frontend, backend, and support for specific operators — just for that single table. When you ask it to add filtering to
+a second table, it will write diverging code rather than building a well-reasoned, reusable abstraction.
 
 A software developer can certainly spot this issue and prompt the LLM to build a shared foundation instead. But that
 requires constant vigilance. We have to think through our requirements, articulate them, and then micromanage the agent
 so it doesn’t create duplicate sources of truth. When the output is not exactly what we wanted, we have to
-course-correct and backtrack, adding significant waiting and uncertainty.
+course-correct, adding significant waiting and uncertainty.
 
 A framework eliminates this friction. With Sapporta, general-purpose database functionality is handled out of the box.
-For instance, Sapporta includes an explicit grammar for filtering that automatically maps into valid SQL with
-server-side row-level security.
+For instance, Sapporta includes an
+[explicit grammar for filtering](https://sapporta.com/docs/reference/http/query-syntax/) that automatically maps into
+valid SQL with server-side row-level security.
 
-This extends beyond filtering. A single `sapportaTable` declaration instantly generates frontend grids and forms,
-alongside secure backend APIs.
-
-By letting the framework handle all this plumbing, you can rapidly build your application using coding agents, and get
-the rich user experience and security guardrails that come with it.
+By letting the framework handle the generic parts of database applications - both the UI, backend and the wiring, you
+can rapidly build your application using coding agents, and get the rich user experience and security guardrails that
+come with it.

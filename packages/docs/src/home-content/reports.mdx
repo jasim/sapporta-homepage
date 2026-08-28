@@ -3,44 +3,33 @@ import EvidenceShot from "../components/EvidenceShot.astro";
 
 ## Reports with drill-down
 
-A report is one API endpoint returning a common wire format. Sorting,
-exporting, nesting, and deep links all come from the framework.
+Sapporta ships with a light-weight reporting system.
 
-<CapabilityStrip
-  items={[
-    "nested levels",
-    "rollups",
-    "subtotals",
-    "deep links",
-    "keyboard",
-    "composable",
-  ]}
-/>
+The main primitive is the [GridDataset type](https://sapporta.com/docs/reference/reports/grid-dataset). On the server,
+you only need to create an API endpoint that returns a JSON value of this type, and you can use the existing Reporting
+renderer to render it.
 
-**One wire format instead of ad-hoc HTML.** Written from scratch, exporting,
-sorting, and filtering end up mixed into each report's rendering code,
-differently every time. In Sapporta the endpoint
-returns a `GridDataset` and the ReportGrid component renders it with the
-Sapporta Grid, so rendering stays separate from those concerns.
+`GridDataset` is a wire format built for reports. It lets us add nested levels to each report, add links that lets us
+drill down from a high-level report entry to its targeted reports, and finally to the specific transaction.
 
-**Nested levels.** Reports can render multiple levels: rows in an Account
-Ledger expand to show their journal entry, so you get the full context of a
-transaction without leaving the report.
+Take a profit and loss statement. It opens with the individual revenue and expense accounts. If travel expenses look
+high, follow the link on that row into a monthly breakdown of travel — another report — and from a month into the
+journal entries behind it, until you reach the single transaction that explains the number, all without leaving the
+report you started from.
 
-<EvidenceShot
-  src="/assets/home/screenshots/master-detail.png"
-  alt="People and their related tasks shown in a master-detail layout"
-  caption="Rows expand in place to show the records underneath each figure."
-/>
+Drilling down from a summary to its transactions has long been a feature of classical accounting software, and the same
+cross-linking is valuable for any kind of database-backed reporting. Sapporta gives you the affordances to add it
+cheaply: any report you build with Sapporta and the Sapporta skill looks for good cross-linking opportunities and wires
+them up by default.
 
-**URL deep-linking.** A report's parameters and drill-downs are kept in the
-URL, so you can share any report configuration as a link.
+<CapabilityStrip items={["nested levels", "rollups", "subtotals", "deep links", "keyboard", "composable"]} />
 
-**Built-in primitives.** Rollups, subtotals, opening rows, and closing rows
-are supported directly.
+**URL deep-linking.** A report's parameters and drill-downs are kept in the URL, so you can share any report
+configuration as a link.
 
-**Full keyboard.** Space expands nested rows; Enter follows the active
-cell's link.
+**Built-in primitives.** Rollups, subtotals, opening rows, and closing rows are supported directly.
 
-**Composable.** Argument inputs, error display, and summary stats are React
-components your code can reuse, extend, or replace entirely.
+**Full keyboard.** Space expands nested rows; Enter follows the active cell's link.
+
+**Composable.** Argument inputs, error display, and summary stats are React components your code can reuse, extend, or
+replace entirely.
