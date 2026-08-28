@@ -3,30 +3,22 @@ import EvidenceShot from "../components/EvidenceShot.astro";
 
 ## A datagrid for every table
 
-Declare a table and you get a live, editable grid. The demo at the top of
-this page came from one table declaration.
+**High-density keyboard-centric interface.** If you look at traditional ERP software, a large chunk of their interface is just forms, data grids, and reports. All of
+them heavily favour the keyboard. They are targeted at power-users and thus have high information density. Sapporta’s goal
+is to bring the same experience to database applications on the web.
 
-<CapabilityStrip
-  items={[
-    "filtering",
-    "sorting",
-    "search",
-    "inline edit",
-    "export",
-    "master-detail",
-    "keyboard",
-  ]}
-/>
+<CapabilityStrip items={["filtering", "sorting", "search", "inline edit", "export", "master-detail", "keyboard"]} />
 
-**Why spreadsheets work.** People reach for spreadsheets because they can
-work with data without deciding every requirement in advance. Sorting,
-searching, and filtering are available on every sheet, and that small set of
-operations covers much of what you need to change and understand data.
+Declare a table and you get a live, editable grid. The demo at the top of this page came from one table declaration.
 
-**One component, done well.** Traditional ERP interfaces are mostly forms,
-data grids, and reports — keyboard-first, information-dense, built for power
-users. Sapporta brings that to the web by using one data grid for all tabular
-data, so the work put into that component benefits the whole application.
+
+**Why spreadsheets work.** People reach for spreadsheets because they can work with data without deciding every
+requirement in advance. Sorting, searching, and filtering are available on every sheet, and that small set of operations
+covers much of what you need to change and understand data.
+
+**One component, done well.** Traditional ERP interfaces are mostly forms, data grids, and reports — keyboard-first,
+information-dense, built for power users. Sapporta brings that to the web by using one data grid for all tabular data,
+so the work put into that component benefits the whole application.
 
 <EvidenceShot
   src="/assets/home/screenshots/grid-filtering.png"
@@ -34,12 +26,10 @@ data, so the work put into that component benefits the whole application.
   caption="Filters combine directly above the grid while matching rows stay visible."
 />
 
-**No second-class tables.** Built per feature, grid behavior gets written
-again for every table, so conventional systems polish a few central screens
-and leave the rest of the application's data poorly served. In Sapporta, like in a spreadsheet, every table gets the full
-grid the moment it is created.
+**No second-class tables.** Built per feature, grid behavior gets written again for every table, so conventional systems
+polish a few central screens and leave the rest of the application's data poorly served. In Sapporta, like in a
+spreadsheet, every table gets the full grid the moment it is created.
 
-**The grid itself.** The
-[Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is
-a custom-built React component with a feature set and UX similar to Airtable
-and NocoDB, with keyboard support that works across nested levels.
+**The grid itself.** The [Sapporta Grid](https://github.com/jasim/sapporta/tree/main/packages/grid) is a custom-built
+React component with a feature set and UX similar to Airtable and NocoDB, with keyboard support that works across nested
+levels.

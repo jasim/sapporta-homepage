@@ -29,9 +29,9 @@ applications.
 - **Every table gets a spreadsheet-grade grid right away.** Filtering, sorting,
   search, export, and full keyboard navigation.
 - **Reports that drill down** into the underlying records, shareable by URL.
-- **Secure AI generated code** thanks to patterns and skills that enforce
-  `where user_id = {currentUser.id}` and similar on all data access.
-- **Default agentic.** You can operate Sapporta applications fully agentically.
-  In a Calorie Tracker, you could say "log 2 eggs, toast, black coffee", and
+- **Secure software despite AI code generation** with patterns and skills that enforce
+  `where user_id = {currentUser.id}` and similar on all data access code.
+- **Default agentic.** All applications that you build with Sapporta are fully agentic.
+  For a Calorie Tracker, you could tell the coding agent: "breakfast: 2 eggs, toast, black coffee", and
   it'll find the right food entries, create them if needed, and log them
   accurately.
