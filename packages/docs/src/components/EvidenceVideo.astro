@@ -1,0 +1,34 @@
+---
+interface Props {
+  mp4: string;
+  webm?: string;
+  poster: string;
+  label?: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
+const { mp4, webm, poster, label, caption, width, height } = Astro.props;
+---
+
+<figure class="home-evidence home-evidence--video">
+  {label && <p class="home-evidence__label">{label}</p>}
+  <video
+    class="home-evidence__video"
+    autoplay
+    muted
+    loop
+    playsinline
+    poster={poster}
+    width={width}
+    height={height}
+    aria-label={caption}
+  >
+    {webm && <source src={webm} type="video/webm" />}
+    <source src={mp4} type="video/mp4" />
+  </video>
+  <figcaption class="home-evidence__caption">
+    {caption}
+  </figcaption>
+</figure>

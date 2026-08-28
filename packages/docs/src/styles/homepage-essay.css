@@ -1501,6 +1501,22 @@
   max-width: 34rem;
 }
 
+/*
+ * Recordings break out past the copy measure: a split-frame session needs the
+ * width for its app pane to stay legible. Same hairline treatment as a shot.
+ */
+.home-evidence--video {
+  margin: 2rem 0 2.25rem;
+  max-width: min(68rem, 100%);
+}
+
+.home-evidence__video {
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--bg));
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
 .home-transcript {
   display: flex;
   flex-direction: column;

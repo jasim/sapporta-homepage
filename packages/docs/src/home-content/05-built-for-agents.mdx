@@ -1,4 +1,4 @@
-import EvidenceTranscript from "../components/EvidenceTranscript.astro";
+import EvidenceVideo from "../components/EvidenceVideo.astro";
 
 ## Everything a user can do, an agent can as well
 
@@ -17,3 +17,13 @@ APIs that you write yourself.
 
 Sapporta also lets you create agent tokens. With this you can point your coding agents at any hosted Sapporta
 application, and its row-level security ensures that users are able to access only the data that belongs to them.
+
+<EvidenceVideo
+  mp4="/assets/home/video/agent-breakfast-log.mp4"
+  webm="/assets/home/video/agent-breakfast-log.webm"
+  poster="/assets/home/video/agent-breakfast-log-poster.png"
+  label="Agent session · calories.demo.sapporta.com"
+  caption="A recorded Claude Code session logs “breakfast: 2 eggs and a toast”. The agent reads /api/openapi.json, finds the food rows through the table APIs, and posts the meal; the Today dashboard picks up the result. Playback is sped up; every request is a live call authenticated with an agent token."
+  width={1600}
+  height={900}
+/>
