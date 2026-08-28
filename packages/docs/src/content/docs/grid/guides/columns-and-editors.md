@@ -75,6 +75,29 @@ Use a raw column only when the cell needs a fully custom renderer, editor,
 parser, comparator, or activation contract. Otherwise, prefer a preset and
 replace only the renderer or behavior that is product-specific.
 
+A `renderCell` override receives `defaultContent`: the cell the preset would
+have rendered on its own, formatting and truncation included. Wrap it to
+decorate the built-in cell, or ignore it to replace the cell outright. Grid
+cells show no tooltip by default; to add one, wrap `defaultContent` in
+`CellTooltip`:
+
+```tsx
+import { CellTooltip, text } from "@sapporta/grid/column-preset";
+
+text({
+  id: "title",
+  name: "Title",
+  renderCell: ({ defaultContent, row }) => (
+    <CellTooltip content={String(row.columns.summary ?? "")}>
+      {defaultContent}
+    </CellTooltip>
+  ),
+});
+```
+
+An empty `content` renders the cell without a tooltip, so a tooltip can be
+shown on the rows that need one and left off elsewhere.
+
 Copy is column behavior too. Plain columns copy their raw value by default,
 while select and lookup-style presets can contribute both a stored value and a
 label. Use [Copying Grid Data](/grid/guides/copying-grid-data/) when a column

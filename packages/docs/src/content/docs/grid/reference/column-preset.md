@@ -88,7 +88,9 @@ type ColumnPresetOptions<TMeta = unknown> = {
   format?: (value: unknown) => string;
   parse?: (value: string, props: CellEditorProps) => unknown;
   compare?: (a: unknown, b: unknown) => number;
-  renderCell?: (props: CellRenderProps) => ReactNode;
+  // PresetCellRenderProps adds defaultContent: the preset's own cell, to
+  // wrap (for example in CellTooltip) or replace.
+  renderCell?: (props: PresetCellRenderProps) => ReactNode;
   copy?: GridColumnCopyBehavior;
   meta?: TMeta;
 };
