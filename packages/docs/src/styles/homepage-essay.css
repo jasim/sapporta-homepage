@@ -77,6 +77,7 @@
 }
 
 .home-layout--demo,
+.home-layout--demo-apps,
 .home-layout--quick-start,
 .home-layout--article {
   display: block;
@@ -499,33 +500,75 @@
   width: 100%;
 }
 
+/*
+ * Pointer from the hero grid to the demo applications section. The full demo
+ * links live just before Get Started; this one line is the trailhead so a
+ * reader at the top of the page knows complete applications are down there.
+ */
+.home-demo-pointer {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  max-width: var(--home-media-width);
+  padding-top: 0.8rem;
+  width: 100%;
+}
+
+.home-demo-pointer__link {
+  color: var(--link);
+  font-weight: var(--weight-emphasis);
+  text-decoration: none;
+}
+
+.home-demo-pointer__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-demo-pointer__arrow {
+  display: inline-block;
+  font-weight: var(--weight-text);
+  margin-left: 0.35rem;
+  transition: transform 120ms ease-out;
+}
+
+.home-demo-pointer__link:hover .home-demo-pointer__arrow {
+  transform: translateY(2px);
+}
+
 /* Demo application links -------------------------------------------------- */
 
+/*
+ * A page section in its own right (marker, heading), sitting directly above
+ * the Get Started band -- so it stays on the page background rather than
+ * adding a second tinted block before that band.
+ */
 .home-app-links {
-  background: var(--surface);
+  background: transparent;
   border: 0;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  max-width: 80rem;
+  margin-top: 0;
+  max-width: var(--home-media-width);
   min-width: 0;
-  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  padding: 0;
   width: 100%;
 }
 
 .home-app-links__intro {
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
   font-weight: var(--weight-display);
-  letter-spacing: var(--display-tracking);
-  line-height: 1.35;
-  margin: 0 0 0.35rem;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
 }
 
 .home-app-links__note {
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  font-size: 1rem;
   line-height: 1.5;
-  margin: 0 0 1.6rem;
+  margin: 0 0 clamp(1.75rem, 3.5vw, 2.5rem);
 }
 
 /*
@@ -1131,7 +1174,7 @@
   color: color-mix(in srgb, var(--ink-soft) 82%, transparent);
   font-size: 0.8125rem;
   line-height: 1.6;
-  margin: 2.25rem 0 0;
+  margin: 1.5rem 0 0;
   max-width: 40rem;
   padding-top: 1rem;
 }
@@ -1156,7 +1199,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  margin: 1.75rem 0 0;
+  margin: 1.25rem 0 0;
 }
 
 .home-quick-start__application-options {
@@ -1262,7 +1305,7 @@
 .home-quick-start__prompt-shell {
   background: var(--bg);
   border: 1px solid var(--rule);
-  margin: 1.5rem 0 0;
+  margin: 1.25rem 0 0;
   position: relative;
 }
 
@@ -1324,7 +1367,7 @@
 }
 
 .home-quick-start__static--bottom {
-  margin-top: 0.9rem;
+  margin-top: 0;
 }
 
 .home-quick-start__static--bottom p {
@@ -1343,7 +1386,7 @@
 }
 
 .home-quick-start__clip {
-  max-height: 15em;
+  max-height: 11em;
   overflow: hidden;
   position: relative;
 }
@@ -1514,15 +1557,29 @@
   background: var(--surface);
 }
 
+.home-stage--demo-apps {
+  scroll-margin-top: 2rem;
+}
+
+.home-layout--demo-apps {
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+/*
+ * The quick-start band sits one step deeper than the --surface framework band
+ * below it, and it is kept deliberately shallow: both fight the false floor
+ * where the band fills a whole fold and the page appears to end at
+ * "Get started".
+ */
 .home-stage--quick-start {
-  background: var(--surface);
+  background: var(--surface-soft);
   margin-top: clamp(2rem, 4vw, 3rem);
-  padding-block: clamp(4.5rem, 8vw, 7rem);
+  padding-block: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 4vw, 3.5rem);
   scroll-margin-top: 2rem;
 }
 
 .home-section-marker--quick-start {
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
 }
 
 .home-layout--value {
@@ -2376,7 +2433,7 @@
   }
 
   .home-stage--quick-start {
-    padding-block: clamp(3.5rem, 9vw, 5rem);
+    padding-block: clamp(2.25rem, 6vw, 3rem) clamp(1.75rem, 4.5vw, 2.5rem);
   }
 
   .home-article__section + .home-article__section {

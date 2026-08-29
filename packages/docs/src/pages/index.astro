@@ -216,6 +216,8 @@ const homepageStructuredData = {
                 primaryHref="#get-started"
                 primaryLabel="Get Started"
                 primaryIcon="get-started"
+                secondaryHref="#demo-applications"
+                secondaryLabel="Try demo apps"
               />
             </div>
           </article>
@@ -226,58 +228,16 @@ const homepageStructuredData = {
         >
           <HomepageDemo />
 
-          <nav
-            class="home-app-links"
-            aria-label="Complete applications built with Sapporta"
-          >
-            <p class="home-app-links__intro">
-              Try complete applications built with
-              Sapporta
-            </p>
-            <p class="home-app-links__note">
-              Live demos, seeded with sample data
-              — open one and look around.
-            </p>
-            <ul class="home-app-links__list">
-              {
-                demoApplications.map((app) => (
-                  <li class="home-app-links__item">
-                    <a
-                      class="home-app-link"
-                      href={app.href}
-                    >
-                      <span class="home-app-link__media">
-                        <img
-                          class="home-app-link__screenshot"
-                          src={app.screenshot}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </span>
-                      <span class="home-app-link__body">
-                        <span class="home-app-link__label">
-                          {app.label}
-                        </span>
-                        <span class="home-app-link__description">
-                          {app.description}
-                        </span>
-                        <span class="home-app-link__cta">
-                          Try the demo
-                          <span
-                            class="home-app-link__arrow"
-                            aria-hidden="true"
-                          >
-                            →
-                          </span>
-                        </span>
-                      </span>
-                    </a>
-                  </li>
-                ))
-              }
-            </ul>
-          </nav>
+          <p class="home-demo-pointer">
+            <a
+              class="home-demo-pointer__link"
+              href="#demo-applications"
+              >Try demo apps built with Sapporta<span
+                class="home-demo-pointer__arrow"
+                aria-hidden="true">↓</span
+              ></a
+            >
+          </p>
         </div>
 
         <div
@@ -335,6 +295,78 @@ const homepageStructuredData = {
               <WhyAFramework />
             </section>
           </article>
+        </div>
+      </section>
+
+      <section
+        class="home-stage home-stage--demo-apps"
+        id="demo-applications"
+        aria-labelledby="home-demo-apps-title"
+      >
+        <div
+          class="home-layout home-layout--demo-apps"
+        >
+          <div
+            class="home-section-marker home-section-marker--demo-apps"
+          >
+            <span>Demo applications</span>
+          </div>
+
+          <nav
+            class="home-app-links"
+            aria-label="Complete applications built with Sapporta"
+          >
+            <h2
+              class="home-app-links__intro"
+              id="home-demo-apps-title"
+            >
+              Try complete applications built with
+              Sapporta
+            </h2>
+            <p class="home-app-links__note">
+              Live demos, seeded with sample data,
+              no login required.
+            </p>
+            <ul class="home-app-links__list">
+              {
+                demoApplications.map((app) => (
+                  <li class="home-app-links__item">
+                    <a
+                      class="home-app-link"
+                      href={app.href}
+                    >
+                      <span class="home-app-link__media">
+                        <img
+                          class="home-app-link__screenshot"
+                          src={app.screenshot}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </span>
+                      <span class="home-app-link__body">
+                        <span class="home-app-link__label">
+                          {app.label}
+                        </span>
+                        <span class="home-app-link__description">
+                          {app.description}
+                        </span>
+                        <span class="home-app-link__cta">
+                          Try the demo
+                          <span
+                            class="home-app-link__arrow"
+                            aria-hidden="true"
+                          >
+                            →
+                          </span>
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
         </div>
       </section>
 

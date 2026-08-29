@@ -20,7 +20,7 @@ Load and follow the Sapporta skill. It owns project setup, modelling, implementa
 const sampleDataLine =
   "Add realistic sample data, seeded under a user with email test@example.com and password test1234. Show these credentials prominently in the log-in screen.";
 const nextStepsLine =
-  "Once the project is built, suggest three concrete changes I could ask you for next, each specific to this application: one improvement to the user interface, one report to add or change, and one new workflow.";
+  "Once the project is built, suggest three concrete changes I could make to this application: one improvement to the user interface, one report to add or change, and one new workflow. Also display these suggestions in the homepage of the app prominently.";
 
 const applicationPrompts = [
   {
@@ -79,9 +79,7 @@ Model ${application.model}.
 Include:
 ${application.include.map((item) => `- ${item}`).join("\n")}
 
-${sampleDataLine}
-
-${nextStepsLine}`,
+${sampleDataLine} ${nextStepsLine}`,
 }));
 
 const blankApplication = "a project for me";
@@ -97,9 +95,7 @@ ${createProjectAgentUrl}
 
 ${blankBodyParagraphs.join("\n\n")}
 
-${sampleDataLine}
-
-${nextStepsLine}`;
+${sampleDataLine} ${nextStepsLine}`;
 
 const promptDocs = [
   {
@@ -235,7 +231,8 @@ const promptDocs = [
                     strokeWidth={2}
                   />
                   <span>
-                    [ Sapporta skill installation ]
+                    [ Sapporta skill installation
+                    ]
                   </span>
                 </p>
                 <div class="home-quick-start__static">
@@ -259,7 +256,11 @@ const promptDocs = [
                   data-doc-clip
                 >
                   <p class="home-quick-start__doc-lead">
-                    Using Sapporta, build <strong>{doc.application}</strong>.
+                    Using Sapporta, build{" "}
+                    <strong>
+                      {doc.application}
+                    </strong>
+                    .
                   </p>
                   <p class="home-quick-start__doc-url">
                     {createProjectAgentUrl}
@@ -267,8 +268,8 @@ const promptDocs = [
                   {"include" in doc ? (
                     <>
                       <p class="home-quick-start__doc-model">
-                        Model <em>{doc.model}</em>.
-                        Include:
+                        Model <em>{doc.model}</em>
+                        . Include:
                       </p>
                       <ul>
                         {doc.include.map(
@@ -293,8 +294,10 @@ const promptDocs = [
                   />
                 </div>
                 <div class="home-quick-start__static home-quick-start__static--bottom">
-                  <p>{sampleDataLine}</p>
-                  <p>{nextStepsLine}</p>
+                  <p>
+                    {sampleDataLine}{" "}
+                    {nextStepsLine}
+                  </p>
                 </div>
                 <p class="home-quick-start__fold home-quick-start__fold--bottom">
                   <ListCollapse
@@ -436,7 +439,8 @@ const promptDocs = [
     key: string | undefined,
   ) => {
     agentPromptDocs.forEach((doc) => {
-      const isActive = doc.dataset.promptKey === key;
+      const isActive =
+        doc.dataset.promptKey === key;
       if (isActive) {
         doc.setAttribute("data-active", "true");
       } else {
@@ -488,7 +492,10 @@ const promptDocs = [
       document.querySelector<HTMLElement>(
         '[data-prompt-doc][data-active="true"]',
       );
-    if (active && !active.hasAttribute("data-open")) {
+    if (
+      active &&
+      !active.hasAttribute("data-open")
+    ) {
       updateDocFit(active);
     }
   };
@@ -500,7 +507,8 @@ const promptDocs = [
 
   agentPromptOptions.forEach((option) => {
     option.addEventListener("click", () => {
-      if (!option.dataset.agentPromptValue) return;
+      if (!option.dataset.agentPromptValue)
+        return;
 
       selectAgentPromptOption(option);
 

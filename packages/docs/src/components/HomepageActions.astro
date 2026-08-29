@@ -7,6 +7,8 @@ const {
   primaryLabel = "Get Started",
   primaryIcon = "get-started",
   primaryStyle = true,
+  secondaryHref = undefined,
+  secondaryLabel = undefined,
 } = Astro.props;
 
 const actions = [
@@ -16,6 +18,16 @@ const actions = [
     icon: primaryIcon,
     primary: primaryStyle,
   },
+  ...(secondaryHref && secondaryLabel
+    ? [
+        {
+          href: secondaryHref,
+          label: secondaryLabel,
+          icon: "none",
+          primary: false,
+        },
+      ]
+    : []),
   {
     href: "https://github.com/jasim/sapporta",
     label: "GitHub",
