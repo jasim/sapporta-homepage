@@ -1260,24 +1260,190 @@
 }
 
 .home-quick-start__prompt-shell {
+  background: var(--bg);
+  border: 1px solid var(--rule);
   margin: 1.5rem 0 0;
   position: relative;
 }
 
-.home-quick-start__prompt {
-  background: var(--bg);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  box-shadow: none;
-  color: var(--ink);
-  cursor: text;
+.home-quick-start__doc {
+  display: none;
+  padding: 1.1rem clamp(1.1rem, 2.2vw, 1.4rem);
+}
+
+.home-quick-start__doc[data-active="true"] {
+  display: block;
+}
+
+/*
+ * Fold marker: an icon and a bracketed label standing in for a fixed part of
+ * the prompt. Not a control -- expansion belongs to the toggle button alone.
+ */
+.home-quick-start__fold {
+  align-items: center;
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+  display: flex;
+  font-size: 0.78rem;
+  gap: 0.5rem;
+  line-height: 1;
+  margin: 0;
+  user-select: none;
+}
+
+.home-quick-start__fold svg {
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+
+.home-quick-start__fold--top {
+  margin-bottom: 1rem;
+  padding-right: 3rem;
+}
+
+.home-quick-start__fold--bottom {
+  margin-top: 1rem;
+}
+
+.home-quick-start__doc[data-open] .home-quick-start__fold {
+  display: none;
+}
+
+/*
+ * The fixed prompt text, revealed in place of the fold markers: same face and
+ * alignment as the brief, only the colour marks it as boilerplate.
+ */
+.home-quick-start__static {
+  color: var(--muted);
+  display: none;
   font-size: 0.875rem;
   line-height: 1.6;
+}
+
+.home-quick-start__static p {
+  margin: 0 0 0.85rem;
+}
+
+.home-quick-start__static--bottom {
+  margin-top: 0.9rem;
+}
+
+.home-quick-start__static--bottom p {
   margin: 0;
-  overflow-x: auto;
-  padding: clamp(1.1rem, 2.2vw, 1.4rem);
-  user-select: text;
-  white-space: pre-wrap;
+}
+
+.home-quick-start__static code {
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.home-quick-start__doc[data-open] .home-quick-start__static {
+  display: block;
+}
+
+.home-quick-start__clip {
+  max-height: 15em;
+  overflow: hidden;
+  position: relative;
+}
+
+.home-quick-start__doc[data-open] .home-quick-start__clip {
+  max-height: none;
+}
+
+.home-quick-start__fade {
+  background: linear-gradient(to bottom, transparent, var(--bg) 90%);
+  bottom: 0;
+  height: 6em;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+.home-quick-start__doc[data-open] .home-quick-start__fade,
+.home-quick-start__doc[data-fits] .home-quick-start__fade {
+  display: none;
+}
+
+.home-quick-start__doc-lead {
+  font-size: 0.95rem;
+  margin: 0 0 0.9rem;
+}
+
+.home-quick-start__doc-lead strong {
+  font-weight: var(--weight-emphasis);
+}
+
+.home-quick-start__doc-url {
+  color: var(--muted);
+  display: none;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.home-quick-start__doc[data-open] .home-quick-start__doc-url {
+  display: block;
+}
+
+.home-quick-start__doc-model {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  margin: 0 0 0.9rem;
+}
+
+.home-quick-start__doc-model em {
+  color: var(--ink);
+  font-style: normal;
+  font-weight: var(--weight-emphasis);
+}
+
+.home-quick-start__doc ul {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.home-quick-start__doc li {
+  color: var(--ink-soft);
+  font-size: 0.855rem;
+  line-height: 1.55;
+  margin-bottom: 0.45rem;
+}
+
+.home-quick-start__doc li::marker {
+  color: var(--rule-strong);
+}
+
+.home-quick-start__doc-body p {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0 0 0.9rem;
+}
+
+.home-quick-start__doc-toggle {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--link);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: var(--weight-emphasis);
+  padding: 0.6rem 0 0;
+  text-align: left;
+}
+
+.home-quick-start__doc-toggle:hover {
+  text-decoration: underline;
+}
+
+.home-quick-start__doc-toggle:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .home-quick-start__prompt-copy {

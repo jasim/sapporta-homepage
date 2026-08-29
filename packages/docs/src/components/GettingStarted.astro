@@ -3,6 +3,7 @@ import {
   Check,
   Copy,
   Hammer,
+  ListCollapse,
 } from "lucide-react";
 import { gettingStartedEnv } from "../lib/getting-started-env.mjs";
 
@@ -16,6 +17,8 @@ const createProjectAgentPreamble = `Before you begin, ensure the Sapporta skill 
 ${skillInstallCommand}
 
 Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.`;
+const sampleDataLine =
+  "Add realistic sample data, seeded under a user with email test@example.com and password test1234. Show these credentials prominently in the log-in screen.";
 
 const applicationPrompts = [
   {
@@ -63,6 +66,7 @@ const applicationPrompts = [
   },
 ].map((application) => ({
   ...application,
+  key: application.label,
   prompt: `${createProjectAgentPreamble}
 
 Using Sapporta, build ${application.application}.
@@ -73,23 +77,32 @@ Model ${application.model}.
 Include:
 ${application.include.map((item) => `- ${item}`).join("\n")}
 
-Add realistic sample data, seeded under a user with email test@example.com and password test1234. Show these credentials prominently in the log-in screen.`,
+${sampleDataLine}`,
 }));
 
+const blankApplication = "a project for me";
+const blankBodyParagraphs = [
+  "I have not described the project yet. Before doing anything else, ask me one or two questions to find out what I want to build and how I will use it. From my answers, infer the domain model — the tables, their relationships, and the key workflows — and show me that plan in a few short lines for confirmation before you build.",
+  "Then build the complete application.",
+];
+const blankPromptKey = "Build your project";
 const blankPrompt = `${createProjectAgentPreamble}
 
-Using Sapporta, build a project for me.
+Using Sapporta, build ${blankApplication}.
 ${createProjectAgentUrl}
 
-I have not described the project yet. Before doing anything else, ask me one
-or two questions to find out what I want to build and how I will use it. From
-my answers, infer the domain model — the tables, their relationships, and the
-key workflows — and show me that plan in a few short lines for confirmation
-before you build.
+${blankBodyParagraphs.join("\n\n")}
 
-Then build the complete application.
+${sampleDataLine}`;
 
-Add realistic sample data, seeded under a user with email test@example.com and password test1234. Show these credentials prominently in the log-in screen.`;
+const promptDocs = [
+  {
+    key: blankPromptKey,
+    application: blankApplication,
+    body: blankBodyParagraphs,
+  },
+  ...applicationPrompts,
+];
 ---
 
 <section
@@ -127,6 +140,7 @@ Add realistic sample data, seeded under a user with email test@example.com and p
             data-agent-prompt-option
             data-agent-prompt-value={blankPrompt}
             data-agent-prompt-label="Build your project"
+            data-agent-prompt-target={blankPromptKey}
             aria-pressed="true"
             data-selected="true"
           >
@@ -160,6 +174,9 @@ Add realistic sample data, seeded under a user with email test@example.com and p
                       data-agent-prompt-label={
                         application.label
                       }
+                      data-agent-prompt-target={
+                        application.key
+                      }
                       aria-pressed="false"
                     >
                       {application.label}
@@ -173,9 +190,6 @@ Add realistic sample data, seeded under a user with email test@example.com and p
         <div
           class="home-quick-start__prompt-shell"
         >
-          <pre
-            class="home-quick-start__prompt"
-            data-agent-prompt>{blankPrompt}</pre>
           <button
             class="home-quick-start__prompt-copy"
             type="button"
@@ -196,6 +210,107 @@ Add realistic sample data, seeded under a user with email test@example.com and p
               data-copy-icon-check
             />
           </button>
+          {
+            promptDocs.map((doc) => (
+              <div
+                class="home-quick-start__doc"
+                data-prompt-doc
+                data-prompt-key={doc.key}
+                data-active={
+                  doc.key === blankPromptKey
+                    ? "true"
+                    : undefined
+                }
+              >
+                <p class="home-quick-start__fold home-quick-start__fold--top">
+                  <ListCollapse
+                    aria-hidden="true"
+                    size={14}
+                    strokeWidth={2}
+                  />
+                  <span>
+                    [ Sapporta skill installation ]
+                  </span>
+                </p>
+                <div class="home-quick-start__static">
+                  <p>
+                    Before you begin, ensure the
+                    Sapporta skill is installed:
+                    <br />
+                    <code>
+                      {skillInstallCommand}
+                    </code>
+                  </p>
+                  <p>
+                    Load and follow the Sapporta
+                    skill. It owns project setup,
+                    modelling, implementation, and
+                    verification.
+                  </p>
+                </div>
+                <div
+                  class="home-quick-start__clip"
+                  data-doc-clip
+                >
+                  <p class="home-quick-start__doc-lead">
+                    Using Sapporta, build <strong>{doc.application}</strong>.
+                  </p>
+                  <p class="home-quick-start__doc-url">
+                    {createProjectAgentUrl}
+                  </p>
+                  {"include" in doc ? (
+                    <>
+                      <p class="home-quick-start__doc-model">
+                        Model <em>{doc.model}</em>.
+                        Include:
+                      </p>
+                      <ul>
+                        {doc.include.map(
+                          (item) => (
+                            <li>{item}</li>
+                          ),
+                        )}
+                      </ul>
+                    </>
+                  ) : (
+                    <div class="home-quick-start__doc-body">
+                      {doc.body.map(
+                        (paragraph) => (
+                          <p>{paragraph}</p>
+                        ),
+                      )}
+                    </div>
+                  )}
+                  <div
+                    class="home-quick-start__fade"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div class="home-quick-start__static home-quick-start__static--bottom">
+                  <p>{sampleDataLine}</p>
+                </div>
+                <p class="home-quick-start__fold home-quick-start__fold--bottom">
+                  <ListCollapse
+                    aria-hidden="true"
+                    size={14}
+                    strokeWidth={2}
+                  />
+                  <span>
+                    [ Sample data &amp; test
+                    log-in ]
+                  </span>
+                </p>
+                <button
+                  class="home-quick-start__doc-toggle"
+                  type="button"
+                  data-doc-toggle
+                  aria-expanded="false"
+                >
+                  Show the full brief
+                </button>
+              </div>
+            ))
+          }
         </div>
         <div class="home-quick-start__actions">
           <button
@@ -239,10 +354,6 @@ Add realistic sample data, seeded under a user with email test@example.com and p
     document.querySelectorAll<HTMLButtonElement>(
       "[data-copy-agent-prompt]",
     );
-  const agentPrompt =
-    document.querySelector<HTMLElement>(
-      "[data-agent-prompt]",
-    );
   const copyAgentStatus =
     document.querySelector<HTMLElement>(
       "[data-copy-agent-status]",
@@ -254,6 +365,10 @@ Add realistic sample data, seeded under a user with email test@example.com and p
   const agentPromptOptions =
     document.querySelectorAll<HTMLButtonElement>(
       "[data-agent-prompt-option]",
+    );
+  const agentPromptDocs =
+    document.querySelectorAll<HTMLElement>(
+      "[data-prompt-doc]",
     );
   let copyAgentStatusTimeout:
     ReturnType<typeof setTimeout> | undefined;
@@ -268,6 +383,60 @@ Add realistic sample data, seeded under a user with email test@example.com and p
       copyAgentLabel.textContent =
         "Copy starter prompt";
     }
+  };
+
+  const updateDocFit = (doc: HTMLElement) => {
+    const clip = doc.querySelector<HTMLElement>(
+      "[data-doc-clip]",
+    );
+    if (!clip) return;
+    // A brief shorter than the clip cap must not get a fade over real text.
+    const fits =
+      clip.scrollHeight <= clip.clientHeight + 1;
+    if (fits) {
+      doc.setAttribute("data-fits", "true");
+    } else {
+      doc.removeAttribute("data-fits");
+    }
+  };
+
+  const setDocOpen = (
+    doc: HTMLElement,
+    open: boolean,
+  ) => {
+    if (open) {
+      doc.setAttribute("data-open", "true");
+    } else {
+      doc.removeAttribute("data-open");
+    }
+    const toggle =
+      doc.querySelector<HTMLButtonElement>(
+        "[data-doc-toggle]",
+      );
+    if (toggle) {
+      toggle.setAttribute(
+        "aria-expanded",
+        String(open),
+      );
+      toggle.textContent = open
+        ? "Collapse"
+        : "Show the full brief";
+    }
+    if (!open) updateDocFit(doc);
+  };
+
+  const activateAgentPromptDoc = (
+    key: string | undefined,
+  ) => {
+    agentPromptDocs.forEach((doc) => {
+      const isActive = doc.dataset.promptKey === key;
+      if (isActive) {
+        doc.setAttribute("data-active", "true");
+      } else {
+        doc.removeAttribute("data-active");
+      }
+      setDocOpen(doc, false);
+    });
   };
 
   const selectAgentPromptOption = (
@@ -286,15 +455,46 @@ Add realistic sample data, seeded under a user with email test@example.com and p
         delete option.dataset.selected;
       }
     });
+    activateAgentPromptDoc(
+      selectedOption.dataset.agentPromptTarget,
+    );
   };
+
+  agentPromptDocs.forEach((doc) => {
+    doc
+      .querySelector<HTMLButtonElement>(
+        "[data-doc-toggle]",
+      )
+      ?.addEventListener("click", () => {
+        setDocOpen(
+          doc,
+          !doc.hasAttribute("data-open"),
+        );
+      });
+    updateDocFit(doc);
+  });
+
+  // Wrapping changes as fonts arrive and the viewport resizes, and only the
+  // visible doc measures truthfully -- so re-check the active one.
+  const updateActiveDocFit = () => {
+    const active =
+      document.querySelector<HTMLElement>(
+        '[data-prompt-doc][data-active="true"]',
+      );
+    if (active && !active.hasAttribute("data-open")) {
+      updateDocFit(active);
+    }
+  };
+  window.addEventListener(
+    "resize",
+    updateActiveDocFit,
+  );
+  document.fonts?.ready.then(updateActiveDocFit);
 
   agentPromptOptions.forEach((option) => {
     option.addEventListener("click", () => {
-      const prompt =
-        option.dataset.agentPromptValue;
-      if (!agentPrompt || !prompt) return;
+      if (!option.dataset.agentPromptValue) return;
 
-      agentPrompt.textContent = prompt;
       selectAgentPromptOption(option);
 
       clearTimeout(copyAgentStatusTimeout);
@@ -307,7 +507,12 @@ Add realistic sample data, seeded under a user with email test@example.com and p
 
   copyAgentPromptButtons.forEach((button) => {
     button.addEventListener("click", async () => {
-      const prompt = agentPrompt?.textContent;
+      const selectedOption =
+        document.querySelector<HTMLButtonElement>(
+          '[data-agent-prompt-option][data-selected="true"]',
+        );
+      const prompt =
+        selectedOption?.dataset.agentPromptValue;
       if (!prompt) return;
 
       try {
