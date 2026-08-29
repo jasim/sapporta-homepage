@@ -1582,6 +1582,35 @@
   width: 0.85rem;
 }
 
+/*
+ * During a slow stretch of the recording nothing in the frame moves and it
+ * reads as a screenshot. The play glyph and the ticking timecode are the
+ * proof of playback; the glyph itself stays still so the once-a-second tick
+ * is the only motion. Non-interactive: real controls live in the lightbox.
+ */
+.home-evidence__timecode {
+  align-items: center;
+  background: rgb(20 24 29 / 78%);
+  border: 1px solid rgb(255 255 255 / 28%);
+  bottom: 0.65rem;
+  color: #fff;
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  gap: 0.4rem;
+  left: 0.65rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 0.45rem 0.6rem;
+  position: absolute;
+}
+
+.home-evidence__timecode-icon {
+  fill: currentColor;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
 /* On a frame this small the word is most of the picture. */
 @media (max-width: 40rem) {
   .home-evidence__expand-hint {
@@ -1593,6 +1622,13 @@
 
   .home-evidence__expand-word {
     display: none;
+  }
+
+  .home-evidence__timecode {
+    bottom: 0.5rem;
+    font-size: 0.6rem;
+    left: 0.5rem;
+    padding: 0.4rem 0.45rem;
   }
 }
 

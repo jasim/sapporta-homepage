@@ -71,6 +71,20 @@ const aspect = width / height;
         Expand
       </span>
     </span>
+    <span
+      class="home-evidence__timecode"
+      aria-hidden="true"
+    >
+      <svg
+        class="home-evidence__timecode-icon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M7 4.5 19.5 12 7 19.5Z"></path>
+      </svg>
+      <span data-video-evidence-timecode>
+        0:00
+      </span>
+    </span>
   </button>
 
   <dialog
@@ -156,13 +170,46 @@ const aspect = width / height;
         "[data-video-evidence-close]",
       );
 
+    const timecode =
+      evidence.querySelector<HTMLElement>(
+        "[data-video-evidence-timecode]",
+      );
+
     if (
       !trigger ||
       !dialog ||
       !preview ||
-      !player
+      !player ||
+      !timecode
     )
       continue;
+
+    const stamp = (seconds: number) => {
+      const whole = Math.floor(seconds);
+      const m = Math.floor(whole / 60);
+      const s = String(whole % 60).padStart(2, "0");
+      return `${m}:${s}`;
+    };
+
+    // Driven by `timeupdate` rather than a rAF loop:
+    // the text only changes once a second, and the
+    // event goes quiet on its own whenever the video
+    // pauses — including the browser parking it while
+    // it is off screen. The DOM write is skipped until
+    // the displayed second actually changes.
+    let shown = "";
+    const renderTime = () => {
+      const next = stamp(preview.currentTime);
+      if (next !== shown) {
+        shown = next;
+        timecode.textContent = next;
+      }
+    };
+    preview.addEventListener(
+      "timeupdate",
+      renderTime,
+    );
+    renderTime();
 
     // An unmuted start is not allowed everywhere. If
     // the browser refuses, fall back to the terms the
