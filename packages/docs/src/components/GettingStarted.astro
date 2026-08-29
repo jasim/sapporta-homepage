@@ -19,6 +19,8 @@ ${skillInstallCommand}
 Load and follow the Sapporta skill. It owns project setup, modelling, implementation, and verification.`;
 const sampleDataLine =
   "Add realistic sample data, seeded under a user with email test@example.com and password test1234. Show these credentials prominently in the log-in screen.";
+const nextStepsLine =
+  "Once the project is built, suggest three concrete changes I could ask you for next, each specific to this application: one improvement to the user interface, one report to add or change, and one new workflow.";
 
 const applicationPrompts = [
   {
@@ -77,7 +79,9 @@ Model ${application.model}.
 Include:
 ${application.include.map((item) => `- ${item}`).join("\n")}
 
-${sampleDataLine}`,
+${sampleDataLine}
+
+${nextStepsLine}`,
 }));
 
 const blankApplication = "a project for me";
@@ -93,7 +97,9 @@ ${createProjectAgentUrl}
 
 ${blankBodyParagraphs.join("\n\n")}
 
-${sampleDataLine}`;
+${sampleDataLine}
+
+${nextStepsLine}`;
 
 const promptDocs = [
   {
@@ -288,6 +294,7 @@ const promptDocs = [
                 </div>
                 <div class="home-quick-start__static home-quick-start__static--bottom">
                   <p>{sampleDataLine}</p>
+                  <p>{nextStepsLine}</p>
                 </div>
                 <p class="home-quick-start__fold home-quick-start__fold--bottom">
                   <ListCollapse
@@ -296,8 +303,8 @@ const promptDocs = [
                     strokeWidth={2}
                   />
                   <span>
-                    [ Sample data &amp; test
-                    log-in ]
+                    [ Sample data, test log-in
+                    &amp; next steps ]
                   </span>
                 </p>
                 <button
