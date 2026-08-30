@@ -2,7 +2,7 @@
 
 > Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
 
-1214 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+1230 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
 
 Where a name lists more than one specifier, prefer the narrowest.
 
@@ -115,6 +115,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `CELL_EDITING_NO_SELECTION_GRID` — @sapporta/grid
 - `CELL_GRID_WITH_ACTIVE_ROW` — @sapporta/grid
 - `CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION` — @sapporta/grid
+- `CELL_GRID_WITH_ROW_CLICK_ACTIVATION` — @sapporta/grid
 - `CELL_PRIMARY_WITH_SELECTED_SIDE_PANEL_ROW` — @sapporta/grid
 - `CELL_PRIMARY_WITH_SIDE_PANEL_ROW` — @sapporta/grid
 - `CellActionApi` — @sapporta/grid
@@ -141,6 +142,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `CellSelectionState` — @sapporta/grid/advanced, @sapporta/grid
 - `CellSelectionStatus` — @sapporta/grid
 - `cellToCsvString` — @sapporta/shared/csv, @sapporta/shared
+- `CellTooltip` — @sapporta/grid/column-preset
+- `CellTooltipProps` — @sapporta/grid/column-preset
 - `changePassword` — @sapporta/frontend/auth, @sapporta/frontend
 - `ChangePasswordInput` — @sapporta/frontend/auth, @sapporta/frontend
 - `ChangePasswordPage` — @sapporta/frontend/auth/profile, @sapporta/frontend/auth, @sapporta/frontend
@@ -395,14 +398,20 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ForgotPasswordPage` — @sapporta/frontend/auth/pages, @sapporta/frontend/auth, @sapporta/frontend
 - `formatAuthRole` — @sapporta/frontend/shell, @sapporta/frontend
 - `formatCanonicalInstant` — @sapporta/shared/temporal, @sapporta/shared
+- `formatCurrency` — @sapporta/grid/column-preset
+- `formatDate` — @sapporta/grid/column-preset
 - `formatInstantForDateInput` — @sapporta/shared/temporal, @sapporta/shared
 - `formatInstantForDateTimeLocalInput` — @sapporta/shared/temporal, @sapporta/shared
 - `formatInstantForDisplay` — @sapporta/shared/temporal, @sapporta/shared
+- `formatNumber` — @sapporta/grid/column-preset
+- `formatPercentage` — @sapporta/grid/column-preset
 - `formatPlainDate` — @sapporta/shared/temporal, @sapporta/shared
 - `formatPlainDateForDateInput` — @sapporta/shared/temporal, @sapporta/shared
 - `formatPlainDateForDisplay` — @sapporta/shared/temporal, @sapporta/shared
 - `formatTable` — @sapporta/server/cli/format
 - `formatTemporalForDisplay` — @sapporta/shared/temporal, @sapporta/shared
+- `formatText` — @sapporta/grid/column-preset
+- `formatTimestamp` — @sapporta/grid/column-preset
 - `formatTimeZoneOffsetLabel` — @sapporta/shared/temporal, @sapporta/shared
 - `FormField` — @sapporta/frontend
 - `FormSubmissionError` — @sapporta/frontend/form, @sapporta/frontend
@@ -709,6 +718,9 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `PopoverContent` — @sapporta/ui/popover, @sapporta/ui
 - `PopoverTrigger` — @sapporta/ui/popover, @sapporta/ui
 - `preset` — @sapporta/grid/column-preset
+- `presetCellClassNames` — @sapporta/grid/column-preset
+- `PresetCellProps` — @sapporta/grid/column-preset
+- `PresetCellRenderProps` — @sapporta/grid/column-preset
 - `PresetChromeOptions` — @sapporta/grid/column-preset
 - `presetRuntime` — @sapporta/grid/column-preset
 - `Principal` — @sapporta/server
@@ -745,6 +757,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ReportCellLink` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportCellLinkContext` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportCellLinkResolvers` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportCellRenderContext` — @sapporta/frontend/report, @sapporta/frontend
+- `ReportCellRenderers` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportError` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportGridDataset` — @sapporta/frontend/report, @sapporta/frontend
 - `ReportGridDatasetProps` — @sapporta/frontend/report, @sapporta/frontend
@@ -1035,6 +1049,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `Temporal` — @sapporta/shared/temporal, @sapporta/shared
 - `TemporalDisplayPrecision` — @sapporta/shared/temporal, @sapporta/shared
 - `text` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
+- `TextCell` — @sapporta/grid/column-preset
 - `TextColumnOptions` — @sapporta/grid/column-preset
 - `TextDisplayMode` — @sapporta/grid/column-preset
 - `TextPreset` — @sapporta/grid/column-preset
@@ -1047,6 +1062,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TGridCellContext` — @sapporta/frontend
 - `tgridCellEditorContext` — @sapporta/frontend
 - `TGridCellEditorContext` — @sapporta/frontend
+- `TGridCellRenderContext` — @sapporta/frontend
 - `TGridCellWriteContext` — @sapporta/frontend
 - `TGridCellWriteHandler` — @sapporta/frontend
 - `TGridCellWriteResult` — @sapporta/frontend

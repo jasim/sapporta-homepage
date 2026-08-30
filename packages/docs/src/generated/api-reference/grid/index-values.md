@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid — Values, classes, and namespaces"
 package: "@sapporta/grid"
-version: "0.5.1"
+version: "0.6.0"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Values, classes, and namespaces
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-13 of 190 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md).
+14 of 191 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md).
 
 ### CELL_EDITING_GRID
 
@@ -118,6 +118,41 @@ const CELL_GRID_WITH_INDEPENDENT_ROW_SELECTION: {
     };
     activeRow: {
         kind: "from-active-cell";
+    };
+    selectedRows: {
+        kind: "enabled";
+        mode: "multi";
+        sync: {
+            kind: "independent";
+        };
+    };
+};
+```
+
+### CELL_GRID_WITH_ROW_CLICK_ACTIVATION
+
+Cell-first navigation with independent multi-row selection whose rows also emit a semantic activation on plain click.
+
+```ts
+const CELL_GRID_WITH_ROW_CLICK_ACTIVATION: {
+    activeRow: {
+        kind: "from-active-cell";
+        activation: {
+            startsOn: "click"[];
+        };
+    };
+    mode: "cell-grid";
+    activeCell: {
+        kind: "enabled";
+        keyboard: {
+            arrows: {
+                tabular: "grid";
+                cards: "field-list";
+            };
+        };
+    };
+    selectedCells: {
+        kind: "range";
     };
     selectedRows: {
         kind: "enabled";

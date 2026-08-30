@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/param-pill"
 package: "@sapporta/ui"
-version: "0.2.14"
+version: "0.2.15"
 specifier: "@sapporta/ui/param-pill"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.14`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.2.15`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/param-pill
 
-Import from `@sapporta/ui/param-pill`. Documented from `@sapporta/ui@0.2.14`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/param-pill`. Documented from `@sapporta/ui@0.2.15`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 2 symbols documented here.
 

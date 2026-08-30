@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/frontend/report"
 package: "@sapporta/frontend"
-version: "0.6.1"
+version: "0.7.0"
 specifier: "@sapporta/frontend/report"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/report
 
-Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-23 symbols documented here.
+25 symbols documented here.
 
-## Types (12)
+## Types (14)
 
 ### ReportCellLink
 
@@ -52,6 +52,30 @@ type ReportCellLinkResolvers<TInput = unknown> = Record<string, {
 }>;
 ```
 
+### ReportCellRenderContext
+
+```ts
+type ReportCellRenderContext = CellRenderProps & {
+    dataset: GridDataset;
+    levelName: string;
+    reportColumn: GridDatasetColumn;
+    /**
+     * The cell as the column renders it on its own, formatting and truncation
+     * included. The report's drill-through link wraps the override's output
+     * afterwards, so wrapping this keeps the link either way.
+     */
+    defaultContent: ReactNode;
+};
+```
+
+### ReportCellRenderers
+
+Cell renderers for particular report columns, keyed by level name and then by column id.
+
+```ts
+type ReportCellRenderers = Record<string, Record<string, (context: ReportCellRenderContext) => ReactNode>>;
+```
+
 ### ReportGridDatasetProps
 
 ```ts
@@ -61,6 +85,7 @@ interface ReportGridDatasetProps<TInput = unknown> {
     linkContext?: {
         input: TInput;
     };
+    renderCell?: ReportCellRenderers;
 }
 ```
 
@@ -166,7 +191,7 @@ function ReportError({ error }: {
 ### ReportGridDataset
 
 ```ts
-function ReportGridDataset<TInput = unknown>({ dataset, links, linkContext, }: ReportGridDatasetProps<TInput>): import("react").JSX.Element;
+function ReportGridDataset<TInput = unknown>({ dataset, links, linkContext, renderCell, }: ReportGridDatasetProps<TInput>): import("react").JSX.Element;
 ```
 
 ### ReportRunButton

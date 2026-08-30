@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Types"
 package: "@sapporta/frontend"
-version: "0.6.1"
+version: "0.7.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Types
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-97 of 189 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+98 of 190 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### ClientColumnOptions
 
@@ -24,7 +24,7 @@ type ClientColumnOptions<RowsByLevel extends TGridRowsByLevel, AppServices, Leve
         startsOn?: readonly CellEditGesture[];
     };
     activation?: TGridCellActivation<RowsByLevel, AppServices, LevelId>;
-    renderCell?: ComponentType<TGridCellContext<RowsByLevel, AppServices, LevelId>>;
+    renderCell?: ComponentType<TGridCellRenderContext<RowsByLevel, AppServices, LevelId>>;
     copy?: TGridColumnCopyBehavior<RowsByLevel, AppServices, LevelId, unknown>;
 };
 ```
@@ -281,7 +281,7 @@ type TableColumnOptions<RowsByLevel extends TGridRowsByLevel, AppServices, Level
         startsOn?: readonly CellEditGesture[];
     };
     activation?: TGridCellActivation<RowsByLevel, AppServices, LevelId>;
-    renderCell?: ComponentType<TGridCellContext<RowsByLevel, AppServices, LevelId>>;
+    renderCell?: ComponentType<TGridCellRenderContext<RowsByLevel, AppServices, LevelId>>;
     copy?: TGridColumnCopyBehavior<RowsByLevel, AppServices, LevelId, RowsByLevel[LevelId][K]>;
     saveCellValue?: TGridCellWriteHandler<RowsByLevel, AppServices, LevelId, K>;
 };
@@ -583,6 +583,14 @@ type TGridCellEditorContext<RowsByLevel extends TGridRowsByLevel, AppServices, L
     value: RowsByLevel[LevelId][K];
     commit(value: RowsByLevel[LevelId][K], target?: CommitTarget): void;
     cancel(): void;
+};
+```
+
+### TGridCellRenderContext
+
+```ts
+type TGridCellRenderContext<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = TGridCellContext<RowsByLevel, AppServices, LevelId> & {
+    defaultContent: ReactNode;
 };
 ```
 
@@ -992,6 +1000,14 @@ type TGridTableColumnMeta = {
     table: string;
     schema: TableColumnSchema;
     displayType: DisplayType;
+    /** The `title` column renders as the card's heading instead of a labeled
+     *  field. Assigned after column build from the table's `rowLabelColumns`. */
+    cardRole?: "title";
+    /** Whether narrow cards may skip this field when its value is empty. True
+     *  for default preset cells, whose empty value renders nothing; cleared by
+     *  the column builder when a custom renderer or the row-expansion
+     *  affordance still needs the field visible. */
+    cardHideWhenEmpty?: boolean;
 };
 ```
 

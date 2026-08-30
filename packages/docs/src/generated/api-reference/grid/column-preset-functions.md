@@ -1,22 +1,30 @@
 ---
 title: "@sapporta/grid/column-preset — Functions and components"
 package: "@sapporta/grid"
-version: "0.5.1"
+version: "0.6.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Functions and components
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-35 of 88 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+43 of 100 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### boolean
 
 ```ts
 function boolean<TMeta = unknown>(options: ColumnPresetOptions<TMeta>): ColumnSchema;
+```
+
+### CellTooltip
+
+A tooltip sized and placed for a grid cell.
+
+```ts
+function CellTooltip({ content, className, delay, side, children, }: CellTooltipProps): import("react").JSX.Element;
 ```
 
 ### chrome
@@ -27,8 +35,10 @@ function chrome<TMeta = unknown, TFilter = unknown>(options?: PresetChromeOption
 
 ### clampColumnPixelWidth
 
+A width in this map was set by dragging a column edge, so it is already the answer to how wide that column should be.
+
 ```ts
-function clampColumnPixelWidth(column: ColumnSchema, value: number, minPx?: number): number;
+function clampColumnPixelWidth(value: number, minPx?: number): number;
 ```
 
 ### column
@@ -87,6 +97,44 @@ function displayTimeZone(): TimeZone;
 
 ```ts
 function foreignKey<TMeta = unknown>(options: LookupColumnOptions<TMeta>): ColumnSchema;
+```
+
+### formatCurrency
+
+```ts
+function formatCurrency(value: unknown): string;
+```
+
+### formatDate
+
+Render a date or a timestamp for reading, on the wall clock of `zone`.
+
+```ts
+function formatDate(value: unknown, zone: TimeZone): string;
+```
+
+### formatNumber
+
+```ts
+function formatNumber(value: unknown): string;
+```
+
+### formatPercentage
+
+```ts
+function formatPercentage(value: unknown): string;
+```
+
+### formatText
+
+```ts
+function formatText(value: unknown): string;
+```
+
+### formatTimestamp
+
+```ts
+function formatTimestamp(value: unknown, zone: TimeZone): string;
 ```
 
 ### identifier
@@ -217,6 +265,12 @@ function templateColumns(columns: readonly ColumnSchema[], overrides?: ColumnSiz
 
 ```ts
 function text<TMeta = unknown>(options: TextColumnOptions<TMeta>): ColumnSchema;
+```
+
+### TextCell
+
+```ts
+function TextCell({ value, runtime, preset, }: PresetCellProps<string>): import("react").JSX.Element;
 ```
 
 ### timestamp

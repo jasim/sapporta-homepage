@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/sheet"
 package: "@sapporta/ui"
-version: "0.2.14"
+version: "0.2.15"
 specifier: "@sapporta/ui/sheet"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.14`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.2.15`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/sheet
 
-Import from `@sapporta/ui/sheet`. Documented from `@sapporta/ui@0.2.14`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/sheet`. Documented from `@sapporta/ui@0.2.15`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 9 symbols documented here.
 

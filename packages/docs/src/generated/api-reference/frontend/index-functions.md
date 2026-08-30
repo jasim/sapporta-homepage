@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Functions and components"
 package: "@sapporta/frontend"
-version: "0.6.1"
+version: "0.7.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Functions and components
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-85 of 189 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+85 of 190 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### applySchemaOverrides
 
@@ -460,7 +460,7 @@ function TGrid<RowsByLevel extends TGridRowsByLevel, AppServices = unknown>({ se
     className?: string;
     style?: CSSProperties;
     viewRelatedRows?: ViewRelatedRowsOption;
-    presentation?: TGridPresentation;
+    presentation: TGridPresentation;
     /** Receives configured Enter, click, or double-click row activations. */
     onRowActivate?: (event: TGridRowActivatedEvent<RowsByLevel>) => void;
 }): import("react").JSX.Element;

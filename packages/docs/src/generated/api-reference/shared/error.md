@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/error"
 package: "@sapporta/shared"
-version: "0.3.1"
+version: "0.3.2"
 specifier: "@sapporta/shared/error"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.2`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/error
 
-Import from `@sapporta/shared/error`. Documented from `@sapporta/shared@0.3.1`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/error`. Documented from `@sapporta/shared@0.3.2`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 1 symbol documented here.
 

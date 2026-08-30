@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/auth/runtime"
 package: "@sapporta/frontend"
-version: "0.6.1"
+version: "0.7.0"
 specifier: "@sapporta/frontend/auth/runtime"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/auth/runtime
 
-Import from `@sapporta/frontend/auth/runtime`. Documented from `@sapporta/frontend@0.6.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/auth/runtime`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 12 symbols documented here.
 

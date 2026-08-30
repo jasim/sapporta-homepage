@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server — Values, classes, and namespaces"
 package: "@sapporta/server"
-version: "0.6.1"
+version: "0.6.2"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.6.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.6.2`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Values, classes, and namespaces
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.6.2`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 20 of 204 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Functions and components](https://sapporta.com/api-reference/server/index-functions.md).
 

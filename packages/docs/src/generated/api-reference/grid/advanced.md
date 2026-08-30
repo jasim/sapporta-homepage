@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/advanced"
 package: "@sapporta/grid"
-version: "0.5.1"
+version: "0.6.0"
 specifier: "@sapporta/grid/advanced"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/advanced
 
-Import from `@sapporta/grid/advanced`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/advanced`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 17 symbols documented here.
 
@@ -95,7 +95,7 @@ type PhantomRow = {
 type PhantomRowLifecycle = {
     readonly ensureBlankForEmptyPath: (path: GridPath) => PhantomRow | null;
     readonly reconcileBlankAppendPhantoms: (path: GridPath) => void;
-    readonly boundaryCellTarget: (path: GridPath, colId: ColId, colPolicy: "preserve" | "first" | "last") => CellCursor | null;
+    readonly boundaryCellTarget: (path: GridPath, colId: ColId) => CellCursor | null;
     readonly boundaryRowTarget: (path: GridPath) => {
         path: GridPath;
         rowId: RowId;

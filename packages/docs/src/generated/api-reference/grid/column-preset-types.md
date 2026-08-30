@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Types"
 package: "@sapporta/grid"
-version: "0.5.1"
+version: "0.6.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.5.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Types
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.5.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-50 of 88 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+53 of 100 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### BooleanPreset
 
@@ -25,6 +25,21 @@ type BooleanPreset = PresetBase & {
 
 ```ts
 type BuiltInColumnPresetKind = "identifier" | "text" | "number" | "currency" | "percentage" | "date" | "timestamp" | "boolean" | "select" | "lookupValue" | "foreignKey";
+```
+
+### CellTooltipProps
+
+```ts
+type CellTooltipProps = {
+    /** Tooltip body. Nothing is shown while this is empty. */
+    content: ReactNode;
+    /** Class name for the wrapper around the cell body. */
+    className?: string;
+    /** Milliseconds to hover before the tooltip opens. */
+    delay?: number;
+    side?: ComponentProps<typeof TooltipContent>["side"];
+    children: ReactNode;
+};
 ```
 
 ### CharacterColumnSizing
@@ -132,7 +147,7 @@ type ColumnPresetOptions<TMeta = unknown> = {
     format?: (value: unknown) => string;
     parse?: (value: string, props: CellEditorProps) => unknown;
     compare?: (a: unknown, b: unknown) => number;
-    renderCell?: (props: CellRenderProps) => ReactNode;
+    renderCell?: (props: PresetCellRenderProps) => ReactNode;
     renderColumnHeader?: (props: ColumnHeaderProps<TMeta>) => ReactNode;
     renderColumnHeaderMenu?: (props: ColumnHeaderMenuProps<TMeta, unknown>) => ReactNode;
     activation?: CellActivation;
@@ -375,6 +390,26 @@ type NumericInputParseResult = {
 type PercentagePreset = PresetBase & {
     kind: "percentage";
     percentage: NumberDisplay;
+};
+```
+
+### PresetCellProps
+
+```ts
+type PresetCellProps<TValue = string> = Omit<CellRenderProps, "value"> & {
+    value: TValue;
+    runtime: ColumnPresetCellRenderRuntime;
+    preset?: ColumnPreset;
+};
+```
+
+### PresetCellRenderProps
+
+Props a column's `renderCell` override receives.
+
+```ts
+type PresetCellRenderProps = CellRenderProps & {
+    defaultContent: ReactNode;
 };
 ```
 
