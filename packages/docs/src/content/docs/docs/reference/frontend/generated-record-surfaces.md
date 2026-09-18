@@ -18,7 +18,9 @@ integration points.
 ## Generated routes and components
 
 - `/tables/:tableName` renders `TableRoute`, the table-aware list, inline record
-  editing, row expansion, and declared child collections.
+  editing, row expansion, and declared child collections. A table with
+  `meta.tree` renders as one indented tree; see
+  [Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/).
 - `/tables/:tableName/new` renders `NewRecordRoute`.
 - There is no generated `/tables/:tableName/:id` browser route. The separate
   HTTP operation `GET /api/tables/<table>/<id>` returns one row but does not

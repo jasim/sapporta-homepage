@@ -61,6 +61,17 @@ that can emit this event. See
 [Active rows and row activation](/grid/reference/interactions/active-row-and-activation/)
 for precedence and validation rules.
 
+`treeExpansionChanged` reports each expansion change on a
+[tree level](/grid/reference/grid-core/level-runtime/#tree-rows), for a host
+that remembers expansion:
+
+```ts
+runtime.on("treeExpansionChanged", ({ path, rowId, expanded }) => {
+  // rowId is null when expandAll() or collapseAll() changed every row.
+  saveTreeExpansion(path, rowId, expanded);
+});
+```
+
 ## Construction and lifecycle
 
 ```ts

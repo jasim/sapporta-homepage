@@ -1,6 +1,7 @@
 ---
 title: "Core model"
-description: "Understand schemas, levels, paths, row identity, runtimes, and lifecycle."
+description:
+  "Understand schemas, levels, paths, row identity, runtimes, and lifecycle."
 ---
 
 Sapporta Grid starts with a `GridSchema`. The schema describes the row levels
@@ -29,7 +30,10 @@ const schema = {
 ```
 
 The root level is the top-level grid. Child levels appear under expanded parent
-rows. A row path identifies where a level is rendered:
+rows. A level can also show rows that refer to each other, such as accounts with
+a parent account, as one tree under one header; see
+[Tree data](/grid/guides/hierarchical-grids/#tree-data). A row path identifies
+where a level is rendered:
 
 ```ts
 rootPath("projects");
@@ -44,9 +48,9 @@ its record id. The runtime combines a path, row kind, and row key into a tagged
 ## Runtime
 
 `createGridRuntime()` combines the schema and a data source. `GridRuntime` owns
-the immutable schema, interaction configuration, host events, registered
-levels, and cross-path row operations. `GridLevelRuntime` owns rows,
-subscriptions, selection, expansion, writes, and drafts for one `GridPath`.
+the immutable schema, interaction configuration, host events, registered levels,
+and cross-path row operations. `GridLevelRuntime` owns rows, subscriptions,
+selection, expansion, writes, and drafts for one `GridPath`.
 
 ```ts
 const runtimeForScript = createGridRuntime({ schema, dataSource });
@@ -96,8 +100,10 @@ provides schema, columns, data sources, and persistence. Use `runtime.root` or
 `runtime.level(path)` before reading or changing path-local state. Use
 `runtime.registeredLevels()` only when a command intentionally spans the
 expanded hierarchy.
+
 ## Verify
-Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
-Continue with
+
+Typecheck the example and exercise its visible loading, ready, interaction, and
+failure states. Use only public `@sapporta/grid` export paths. Continue with
 [Schema, rows, paths, and identity](/grid/reference/grid-core/schema-rows-and-identity/)
 or [GridRuntime](/grid/reference/grid-core/grid-runtime/).

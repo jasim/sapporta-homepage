@@ -32,6 +32,7 @@ index for the whole site.
 
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
 - [Relationships and lookup behavior](/docs/guides/model-data/relationships-and-lookup-behavior/)
+- [Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/)
 - **Table search**
   - [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
   - [Configure table search](/docs/guides/model-data/configure-table-search/)

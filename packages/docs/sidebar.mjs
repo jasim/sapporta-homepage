@@ -41,6 +41,9 @@ export default [
             slug: "docs/guides/model-data/relationships-and-lookup-behavior",
           },
           {
+            slug: "docs/guides/model-data/show-a-table-as-a-tree",
+          },
+          {
             label: "Table search",
             items: [
               {

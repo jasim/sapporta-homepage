@@ -1,16 +1,16 @@
 ---
 title: "Scoped CRUD and bounded reads"
 description:
-  "Use `scopedRows()` for typed row CRUD, bounded lists and pages, or a
-  cursor-backed complete visible selection."
+  "Use `scopedRows()` for typed row CRUD, bounded lists and pages, tree matches,
+  or a cursor-backed complete visible selection."
 ---
 
 ## Imports
 
 `@sapporta/server` exports `scopedRows`, `ScopedRows`, `TableRow`, `RowsQuery`,
 `RowsOrderBy`, `FindManyRowsInput`, `PageRowsInput`, `PageRowsResult`,
-`scanTableRows`, `TableRowScanInput`, `TableRowScanOrder`, `RowNotFoundError`,
-and `ImmutableTableOperationError`.
+`TreeMatch`, `TreeMatchInput`, `scanTableRows`, `TableRowScanInput`,
+`TableRowScanOrder`, `RowNotFoundError`, and `ImmutableTableOperationError`.
 
 ## `scopedRows(...)`
 
@@ -47,6 +47,7 @@ checking them.
 interface ScopedRows<TTable extends AnySQLiteTable> {
   findMany(input: FindManyRowsInput): Promise<TableRow<TTable>[]>;
   page(input?: PageRowsInput): Promise<PageRowsResult<TTable>>;
+  treeMatch(input: TreeMatchInput): Promise<TreeMatch>;
   get(id: RowId): Promise<TableRow<TTable>>;
   create(input: Record<string, unknown>): Promise<TableRow<TTable>>;
   create(input: readonly unknown[]): Promise<TableRow<TTable>[]>;
@@ -105,6 +106,52 @@ Requested order clauses come first. Otherwise Sapporta uses the table's default
 sort when present. In every case it appends the primary key ascending as a
 deterministic tie-breaker; without a requested or default sort, the primary key
 is the only order.
+
+## Match a tree with its context
+
+On a table that declares `meta.tree`, `treeMatch()` selects the rows that match
+a condition together with their ancestors, so each match can be shown in place
+under its parents:
+
+```ts
+import { and, asc, eq, like } from "drizzle-orm";
+
+const rows = scopedRows(c.get("db"), auth, accounts);
+const match = await rows.treeMatch({
+  fixed: eq(accountsTable.archived, false),
+  match: like(accountsTable.name, "%tax%"),
+  matchContext: "ancestors-and-descendants",
+});
+const result = await rows.page({
+  where: match.where,
+  orderBy: asc(accountsTable.name),
+  limit: 1000,
+});
+```
+
+`TreeMatchInput` takes three fields:
+
+- `match` selects the matching rows.
+- `fixed` is optional. Every row the result keeps satisfies it: the matches, and
+  the ancestors and descendants around them. A page that lists only unarchived
+  accounts passes its archive condition here, so a match never brings back an
+  archived parent or child.
+- `matchContext` is `"ancestors"` or `"ancestors-and-descendants"`. The second
+  also keeps every descendant of a match, so a matching parent shows its whole
+  subtree.
+
+`TreeMatch` returns a `where` for `page()`, `findMany()`, `scan()`, or
+`count()`, so ordering, paging, and column selection stay those of an ordinary
+read. `matchCount` counts the rows that satisfy `fixed` and `match` themselves.
+`contextIds` lists the ancestors that `where` keeps only because a descendant
+matched.
+
+The walk follows the table's `parentColumn` through rows the request may see
+that satisfy `fixed`. It stops at a row outside that set and never returns one.
+A loop of parent keys ends the walk. `treeMatch()` throws on a table without
+`meta.tree`. The generated list route uses it for a `tree` read with a filter or
+search; see
+[Generated query resolvers](/docs/reference/server/row-scoped-data/generated-query-resolvers/).
 
 ## Stream a complete visible selection
 

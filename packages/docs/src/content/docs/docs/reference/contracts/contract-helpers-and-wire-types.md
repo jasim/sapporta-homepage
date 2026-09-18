@@ -44,7 +44,10 @@ exports.
 resolves table-specific columns and Drizzle expressions:
 
 - `exportRowsQuerySchema` and `ExportRowsQuery` cover filters, `q`, and sort.
-- `listRowsQuerySchema` and `ListRowsQuery` add bounded page and limit values.
+- `listRowsQuerySchema` and `ListRowsQuery` add bounded page and limit values,
+  `fixed[col][op]` conditions, and the optional `tree` mode, typed by
+  `treeMatchContextSchema` and `TreeMatchContext` as `"ancestors"` or
+  `"ancestors-and-descendants"`.
 - `lookupQuerySchema` and `LookupQuery` keep ID recovery separate from search.
 - `countQuerySchema` and `CountQuery` cover filters and optional grouping.
 
@@ -57,6 +60,27 @@ array.
 The accompanying constants make those defaults and bounds explicit:
 `DEFAULT_PAGE`, `DEFAULT_PAGE_SIZE`, `MAX_PAGE`, `MAX_PAGE_SIZE`,
 `DEFAULT_LOOKUP_LIMIT`, `MAX_LOOKUP_LIMIT`, and `MAX_LOOKUP_IDS`.
+
+## List and tree wire types
+
+`paginatedRowsSchema` and `PaginatedRows` describe the list response
+`{ data, meta }`. `listMetaSchema` and `ListMeta` hold `total`, `page`, `limit`,
+and `pages`, and an optional `tree` of type `ListTreeMeta`
+(`listTreeMetaSchema`). A tree read with a filter or search sets it:
+
+```ts
+type ListTreeMeta = {
+  matchCount: number; // rows that match the filter and search themselves
+  contextIds: string[]; // ancestors present only because a descendant matched
+};
+```
+
+`TableSchema.tree` is a `TableTree` (`tableTreeSchema`) with every field
+resolved: `parentColumn`, `column`, `defaultExpanded`, and `matchContext`.
+`TableTreeInput` is the declared shape, in which only `parentColumn` is
+required. `resolveTableTree(tree, rowLabelColumns)` fills in the defaults: the
+first row-label column shows the hierarchy, rows start expanded, and a filter or
+search keeps each match's ancestors and descendants.
 
 ## Preserve repeated query keys
 

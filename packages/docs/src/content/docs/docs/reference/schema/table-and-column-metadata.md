@@ -39,8 +39,10 @@ from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
   the table and column in the message.
 - The stock table page shows a tree table as one list with the hierarchy in the
   tree column, loads all its rows at once (up to 1,000), and shows each search
-  or filter match under its ancestors. Other `meta.children` entries of a tree
-  table become row links instead of expandable child grids.
+  or filter match under its ancestors. The `meta.children` entries of a tree
+  table become row links, and a row expands into its child rows of the same
+  table. See
+  [Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/).
 - `search` is `false`, `"allColumns"`, or an object with optional `self` and
   `children`. Search defaults to `"allColumns"`. A `self` value is `false`,
   `"allColumns"`, or an array of SQL column names; `children` is a recursive

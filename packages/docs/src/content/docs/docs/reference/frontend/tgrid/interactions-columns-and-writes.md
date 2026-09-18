@@ -76,8 +76,7 @@ hierarchy expansion. Custom configurations use `activeRow.activation.startsOn`.
 
 `SchemaTableGridView` accepts an interaction configuration but does not expose
 active-row state or activation callbacks as props. Use `useSchemaTableGrid()`,
-then render `TGrid` with the returned session inside the application
-layout.
+then render `TGrid` with the returned session inside the application layout.
 
 ## Column and write behavior
 
@@ -100,6 +99,26 @@ layout.
   receive a path-bound `GridLevelRuntime` as `context.level`.
 - `context.runtime` contains grid-wide schema, events, registered levels,
   active-row state, and cross-path row operations.
+
+## Tree rows
+
+On a
+[tree level](/docs/reference/frontend/tgrid/definitions-sessions-and-queries/#tree-levels),
+TGrid wraps the tree column with `withTreeColumn`. The column indents each row
+by its depth and shows a chevron on rows with children. Space expands or
+collapses the row, and Enter does the same on a cell that cannot be edited. The
+Grid level declares `parentKeyValue` from the table's primary key, so a child
+draft stores its parent key with the column's type, such as a number for an
+integer id.
+
+On a writable tree level, the row context menu offers **Add child row**. It adds
+a draft under the row with the parent column filled in and, in a cell grid,
+opens the tree column's editor in the draft. Leaving the draft saves it like any
+new row; a draft left untouched is removed.
+
+Rows present only because a descendant matched the filter or search carry
+`data-tree-context="true"`, and the Sapporta preset renders them in the muted
+foreground color.
 
 ## Column widths
 

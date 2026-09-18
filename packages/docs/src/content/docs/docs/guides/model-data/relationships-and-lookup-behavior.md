@@ -81,8 +81,9 @@ that it has one universal shape.
 and applies the stable due-date sort. This is a table-row expansion and child
 collection, not a generated `/tables/projects/:id` detail route. Declare child
 collections only when the reverse path is part of the record workflow. A join
-table may appear under both parents. A self-reference usually needs a
-purpose-built hierarchy.
+table may appear under both parents. A self-reference, such as a parent account,
+forms a tree: declare it with `meta.tree` as described in
+[Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/).
 
 The `search.children.tasks` entry lets a visible task make its project appear in
 the parent result. Search configuration is separate from the child grid's
@@ -92,8 +93,8 @@ cannot make an inaccessible task reveal its project.
 
 Expanding the matching project runs the child grid's own query and shows all
 visible tasks. The parent term is not inherited as a hidden child filter. Use an
-explicit task-table link or an application result when the workflow needs to show
-only the matching children.
+explicit task-table link or an application result when the workflow needs to
+show only the matching children.
 
 ## Exercise both directions
 

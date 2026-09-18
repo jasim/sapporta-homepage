@@ -1,8 +1,8 @@
 ---
 title: "GridLevelRuntime"
 description:
-  "Look up path-local displayed rows, interaction, expansion, writes, and
-  drafts."
+  "Look up path-local displayed rows, interaction, expansion, tree rows, writes,
+  and drafts."
 ---
 
 Resolve a level once, then use its path-bound reads, subscriptions, and
@@ -42,6 +42,8 @@ type GridLevelRuntime = {
   collapse(rowId: RowId): void;
   toggleExpand(rowId: RowId): void;
 
+  readonly tree: GridLevelTree | null;
+
   writeCell(coord: Coord, value: unknown): void;
   applyChanges(changes: readonly CellChange[]): void;
   createRow(node: TreeNode, atIndex?: number): Promise<CreateNodeResult>;
@@ -77,6 +79,56 @@ await level.createRow({
   columns: { name: "New project" },
 });
 await level.removeRow("project-2");
+```
+
+`isExpanded()`, `expand()`, `collapse()`, and `toggleExpand()` concern child
+levels mounted under a row. Same-level tree rows use `level.tree`.
+
+## Tree rows
+
+`level.tree` is `null` unless the level declares
+[`tree`](/grid/reference/grid-core/schema-rows-and-identity/#tree-levels):
+
+```ts
+type GridLevelTree = {
+  isExpanded(rowId: RowId): boolean;
+  expand(rowId: RowId): void;
+  collapse(rowId: RowId): void;
+  toggle(rowId: RowId): void;
+  expandAll(): void;
+  collapseAll(): void;
+  reveal(rowId: RowId): void;
+  parentOf(rowId: RowId): RowId | null;
+  childrenOf(rowId: RowId): readonly RowId[];
+  addChild(
+    parentRowId: RowId,
+    columns?: Readonly<Record<ColId, unknown>>,
+  ): RowId;
+  subscribe(listener: () => void): () => void;
+};
+```
+
+- `isExpanded()` reads `false` for a row without children, and `expand()` leaves
+  such a row unchanged.
+- `collapse()` hides a row's descendants and moves a cursor out of them. Hidden
+  rows leave the row selection.
+- `expandAll()` and `collapseAll()` also apply to rows that load later.
+- `reveal()` expands every ancestor of a row so that the row is displayed.
+- `parentOf()` returns `null` for a top-level row. `childrenOf()` returns
+  children in display order, including hidden ones.
+- `addChild()` adds a draft row under a data row, reveals it, and returns its
+  row id. The draft's parent-key field holds the value from
+  `tree.parentKeyValue`, or the parent's row key, unless `columns` supplies one.
+  A child draft left blank is removed when the cursor leaves it.
+- `subscribe()` observes expansion changes on this level. The runtime-wide
+  `treeExpansionChanged` event reports the same changes with their path.
+
+```ts
+const accounts = runtime.root.tree;
+if (accounts) {
+  accounts.reveal(federalId);
+  const draftId = accounts.addChild(taxesId, { name: "State" });
+}
 ```
 
 ## Data access

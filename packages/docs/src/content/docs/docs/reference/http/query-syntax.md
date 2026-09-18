@@ -1,8 +1,8 @@
 ---
 title: "Query syntax"
 description:
-  "Look up strict filters, lookup modes, count grouping, search, sort,
-  pagination, and tree results for generated table routes."
+  "Look up strict filters, fixed conditions, lookup modes, count grouping,
+  search, sort, pagination, and tree results for generated table routes."
 ---
 
 You can make complex queries on tables by using the generated table API and the
@@ -164,6 +164,32 @@ That request requires both substrings. Indexed forms such as
 `filter[title][contains][0]` are not accepted, and repeated keys are not
 collapsed to the last value. Dropping either condition would widen the result.
 
+## Fixed conditions
+
+A list read also accepts conditions under a second prefix, `fixed`, in the same
+column, operator, and value grammar:
+
+```http
+GET /api/tables/accounts?fixed[archived][eq]=false&filter[name][contains]=tax
+```
+
+Every returned row satisfies the `fixed` conditions. The `filter` conditions and
+`q` select the matches among those rows. On a flat read the two combine with
+AND, so that request returns the same rows as one that writes
+`filter[archived][eq]=false`. On a [tree read](#keep-tree-matches-in-context)
+they differ: the ancestors and descendants returned around each match satisfy
+the `fixed` conditions too, so a search never brings back an archived parent or
+child of a matching account.
+
+A screen sends the constraints it owns as `fixed`, such as a child grid's
+parent-row key or a page's fixed filter, and the user's own filters as `filter`.
+The generated table page and TGrid levels read rows this way.
+
+`fixed` keys follow every rule of `filter` keys: the same operators, value
+formats, repeated keys, and error codes. Only the list route reads them. CSV
+export and count reject a `fixed[...]` key as an unknown parameter with
+`bad_value`.
+
 ## Search with `q`
 
 `q` runs the table's server-side search plan and combines with filters using
@@ -211,10 +237,11 @@ descendant of Federal.
 | `ancestors`                 | each match's ancestors                  |
 | `ancestors-and-descendants` | each match's ancestors and its subtrees |
 
-The walk follows the table's `parentColumn` and applies row scope at every step,
-so it never returns or passes through a row the caller cannot read. A loop in
-the data ends the walk. Without a filter or search every row already matches,
-and `tree` changes nothing.
+The walk follows the table's `parentColumn` through the rows the caller can read
+that satisfy the [`fixed` conditions](#fixed-conditions). It stops at a row
+outside that set, so it never returns or passes through such a row. A loop in
+the data ends the walk. Without a filter or search every row that satisfies the
+`fixed` conditions already matches, and `tree` changes nothing.
 
 When a filter or search is applied, the response `meta` carries
 `tree: { matchCount, contextIds }`. `matchCount` counts the rows that match
@@ -253,7 +280,7 @@ order.
 
 | Route                                | Filters | `q`                  | `sort` | Pagination      | Own parameters               |
 | ------------------------------------ | ------- | -------------------- | ------ | --------------- | ---------------------------- |
-| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | `tree`                       |
+| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | `fixed[...]`, `tree`         |
 | `GET /api/tables/<table>/export.csv` | yes     | table search         | yes    | unpaginated     | —                            |
 | `GET /api/tables/<table>/_count`     | yes     | no                   | no     | no              | `group_by`, `order`, `limit` |
 | `GET /api/tables/<table>/_lookup`    | no      | display-field search | no     | `limit`         | `ids`, `fields`              |
@@ -268,8 +295,8 @@ return HTTP `400` with one of these stable codes:
 
 | Code                   | Cause                                                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `unknown_filter_shape` | a `filter[...]` key that is not `filter[column][operator]`                                                                       |
-| `unknown_column`       | a filter, sort, or group column that is not on the table                                                                         |
+| `unknown_filter_shape` | a `filter[...]` or `fixed[...]` key that is not `filter[column][operator]` or `fixed[column][operator]`                          |
+| `unknown_column`       | a filter, fixed, sort, or group column that is not on the table                                                                  |
 | `unknown_op`           | an operator outside the supported set                                                                                            |
 | `op_not_applicable`    | an operator that does not apply to the column's kind                                                                             |
 | `bad_value`            | a value that does not parse in the column's kind, an empty `in` list or item, or an `is` polarity other than `null` or `notnull` |

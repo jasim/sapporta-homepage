@@ -1,6 +1,7 @@
 ---
 title: "Styling"
-description: "Style grid sizing and public row, cell, level, selection, and editing states."
+description:
+  "Style grid sizing and public row, cell, level, selection, and editing states."
 ---
 
 This guide shows application styling recipes. The stable selector inventory
@@ -152,8 +153,7 @@ different:
 
 ## Style editing
 
-When an editor is open, the cell is marked with
-`data-cell-status="editing"`:
+When an editor is open, the cell is marked with `data-cell-status="editing"`:
 
 ```css
 .projectGrid [data-grid-part="cell"][data-cell-status="editing"] {
@@ -209,17 +209,18 @@ below read a `--sap-grid-*` variable first, so an application sets them once on
 }
 ```
 
-| Variable                                    | Default                     | Sets                                   |
-| ------------------------------------------- | --------------------------- | -------------------------------------- |
-| `--sap-grid-cell-padding`                   | `0 10px`                    | Body cell padding                      |
-| `--sap-grid-header-cell-padding`            | `0 10px`                    | Header cell padding                    |
-| `--sap-grid-header-font-weight`             | `760`                       | Header text weight                     |
-| `--sap-grid-header-letter-spacing`          | `var(--tracking-sap-head)`  | Header letter spacing                  |
-| `--sap-grid-row-header-column-width`        | `40px`                      | Row header column on the root level    |
-| `--sap-grid-nested-row-header-column-width` | `30px`                      | Row header column on nested levels     |
-| `--sap-grid-nested-cell-min-height`         | `31px`                      | Minimum cell height on nested levels   |
-| `--sap-grid-nested-indent`                  | `58px`                      | Indent of the first nested level       |
-| `--sap-grid-nested-indent-deep`             | `46px`                      | Indent of every level below that       |
+| Variable                                    | Default                    | Sets                                  |
+| ------------------------------------------- | -------------------------- | ------------------------------------- |
+| `--sap-grid-cell-padding`                   | `0 10px`                   | Body cell padding                     |
+| `--sap-grid-header-cell-padding`            | `0 10px`                   | Header cell padding                   |
+| `--sap-grid-header-font-weight`             | `760`                      | Header text weight                    |
+| `--sap-grid-header-letter-spacing`          | `var(--tracking-sap-head)` | Header letter spacing                 |
+| `--sap-grid-row-header-column-width`        | `40px`                     | Row header column on the root level   |
+| `--sap-grid-nested-row-header-column-width` | `30px`                     | Row header column on nested levels    |
+| `--sap-grid-nested-cell-min-height`         | `31px`                     | Minimum cell height on nested levels  |
+| `--sap-grid-nested-indent`                  | `58px`                     | Indent of the first nested level      |
+| `--sap-grid-nested-indent-deep`             | `46px`                     | Indent of every level below that      |
+| `--sap-grid-tree-indent`                    | `18px`                     | Indent of each depth in a tree column |
 
 Font sizes and root-level row and header heights come from the `text-sap-body`,
 `text-sap-label`, `h-sap-row`, and `h-sap-header` tiers; see
@@ -228,7 +229,30 @@ Column widths come from `columnSizing.minWidths` on the chrome; see
 [ColumnPreset](/grid/reference/column-preset/#preset-chrome-and-column-sizing).
 Other `--grid-*` values are set per level by the application's own CSS.
 
+A [tree column](/grid/guides/hierarchical-grids/#tree-data) reads three more
+values, which inherit from any ancestor of the grid: `--grid-tree-gap` (`2px`)
+between the chevron and the content, `--grid-tree-chevron-size` (`20px`) for the
+chevron and its placeholder, and `--grid-tree-context-color` for rows present
+only as the ancestor of a filter match. The preset draws those rows in
+`var(--sap-fg-muted)`:
+
+```css
+.accountsGrid {
+  --sap-grid-tree-indent: 24px;
+  --grid-tree-context-color: var(--sap-fg-subtle);
+}
+
+.accountsGrid [data-grid-part="row"][data-tree-depth="0"] {
+  font-weight: 600;
+}
+```
+
+`withTreeColumn(column, { indentStep: "24px" })` sets the indent of one column.
+
 ## Verify
-Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
+
+Typecheck the example and exercise its visible loading, ready, interaction, and
+failure states. Use only public `@sapporta/grid` export paths.
+
 Continue with the
 [Grid DOM state contract](/grid/reference/dom-and-styling-contract/).

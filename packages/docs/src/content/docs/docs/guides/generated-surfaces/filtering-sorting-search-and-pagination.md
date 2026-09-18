@@ -30,8 +30,8 @@ combines with filters using AND.
 
 Bracket characters may need URL encoding in a shell or client. This `curl` form
 keeps the query readable while encoding it correctly. Take `SAPPORTA_API_PORT`
-from this project's environment (`pnpm dev` prints it as the API URL when
-it starts).
+from this project's environment (`pnpm dev` prints it as the API URL when it
+starts).
 
 ```bash
 curl --get "http://localhost:$SAPPORTA_API_PORT/api/tables/tasks" \
@@ -44,8 +44,7 @@ curl --get "http://localhost:$SAPPORTA_API_PORT/api/tables/tasks" \
 ```
 
 Use a logged-in browser session or an Agent token for authentication. Successful
-response includes the current page and
-total count:
+response includes the current page and total count:
 
 ```json
 {
@@ -86,6 +85,45 @@ clients, and CSV export preserve duplicates as repeated URL keys. They do not
 emit indexed names such as `filter[title][contains][0]`, and they do not keep
 only the last value. That distinction matters because dropping either condition
 would silently widen the result.
+
+## Separate fixed conditions from user filters
+
+A list read carries a second list of conditions under the `fixed` prefix. A
+screen puts the constraints it owns there, such as a child grid's parent key or
+a page that lists only open tasks, and keeps the user's own filters under
+`filter`:
+
+```http
+GET /api/tables/tasks?fixed[project_id][eq]=1&filter[status][in]=open,review&q=launch
+```
+
+Every returned row satisfies the fixed conditions, and `filter` and `q` select
+the matches among them. On an ordinary table the two lists combine with AND. On
+a table that declares `meta.tree`, a tree read keeps each match's ancestors and
+descendants only when they satisfy the fixed conditions too. The generated table
+page and TGrid levels send their parent-row constraint and `fixedFilters` this
+way; CSV export and count read only `filter` conditions.
+
+The shared filter codec writes and reads either list. `encodeFilters()`,
+`encodeTypedFilters()`, `decodeFilters()`, and `wireKey()` take an optional
+`FilterNamespace`, `"filter"` by default or `"fixed"`:
+
+```ts
+import { encodeFilters, mintFilterId } from "@sapporta/shared/filter";
+
+const params = encodeFilters(
+  [
+    {
+      id: mintFilterId("project_id", "eq"),
+      column: "project_id",
+      op: "eq",
+      value: "1",
+    },
+  ],
+  "fixed",
+);
+params.toString(); // "fixed%5Bproject_id%5D%5Beq%5D=1"
+```
 
 ## Keep query state in the URL
 

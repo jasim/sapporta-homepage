@@ -53,7 +53,7 @@ const interaction = {
     ...ROW_PRIMARY_MASTER_DETAIL.activeRow,
     keyboard: {
       ...ROW_PRIMARY_MASTER_DETAIL.activeRow.keyboard,
-      expansion: "left-right",
+      expansion: "enabled",
     },
     activation: { startsOn: ["enter", "doubleClick"] },
   },
@@ -95,8 +95,7 @@ persisted record.
 Interaction validation enforces these invariants:
 
 - activation gestures are unique;
-- `click` and `doubleClick` cannot both activate rows;
-- row-list Enter cannot own both row activation and hierarchy expansion; and
+- `click` and `doubleClick` cannot both activate rows; and
 - in cell-grid mode, editing and configured cell activation take precedence over
   row activation for the same gesture.
 

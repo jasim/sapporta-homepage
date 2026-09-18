@@ -13,8 +13,8 @@ client with TanStack Query.
 
 New Sapporta projects install `@tanstack/react-query`.
 `packages/frontend/src/query-client.ts` exports one application `QueryClient`,
-and `main.tsx` mounts it with `QueryClientProvider`. A feature
-should reuse that provider and the public table query builders.
+and `main.tsx` mounts it with `QueryClientProvider`. A feature should reuse that
+provider and the public table query builders.
 
 ## Read functions
 
@@ -23,7 +23,7 @@ import { fetchTableRow, fetchTableRows } from "@sapporta/frontend";
 
 await fetchTableRow(tableName, recordId, { signal });
 await fetchTableRows(
-  { tableName, page, limit, sort, filters, search },
+  { tableName, page, limit, sort, filters, search, fixed, tree },
   { signal },
 );
 ```
@@ -32,11 +32,20 @@ await fetchTableRows(
 `PaginatedRows`. Both functions call the generated, auth-aware table routes.
 Their optional `AbortSignal` reaches the underlying `fetch` request.
 
+`fixed` takes typed conditions like `filters` and sends them as `fixed[col][op]`
+conditions: every returned row satisfies them, and `filters` and `search` select
+the matches among those rows. On a table with `meta.tree`, `tree: "ancestors"`
+or `tree: "ancestors-and-descendants"` returns each match with its ancestors
+(and its subtree), and the response `meta.tree` carries `matchCount` and
+`contextIds`. See
+[Fixed conditions](/docs/reference/http/query-syntax/#fixed-conditions) and
+[Keep tree matches in context](/docs/reference/http/query-syntax/#keep-tree-matches-in-context).
+
 ## Selection and page serializers
 
 `buildTableSelectionQuery()` serializes the filter, sort, and search state
 shared by paged reads and CSV exports. `buildTableRowsQuery()` starts with that
-selection and adds page and limit:
+selection and adds the `fixed` conditions, page, limit, and `tree` mode:
 
 ```ts
 import {

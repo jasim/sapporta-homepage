@@ -90,7 +90,7 @@ const interaction = {
     keyboard: {
       arrows: "move-active-row",
       shiftArrows: "extend-selected-rows",
-      expansion: "left-right-enter",
+      expansion: "enabled",
     },
   },
   selectedRows: {

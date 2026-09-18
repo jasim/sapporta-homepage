@@ -35,6 +35,7 @@ the first time a row expands. Collapse retains the resolved source for reuse.
 type LevelSnapshot = {
   readonly nodes: readonly TreeNode[];
   readonly footerRows?: readonly FooterRow[];
+  readonly treeContextRowKeys?: readonly RowKey[];
 };
 
 type LevelSourceState =
@@ -57,6 +58,13 @@ type LevelSourceState =
 Snapshots contain display-ready rows. Every `TreeNode` includes its own stable
 `rowKey`. The runtime renders source order and does not apply a second sort,
 filter, or page stage.
+
+On a [tree level](/grid/guides/hierarchical-grids/#tree-data), `nodes` is the
+flat list the grid builds the tree from. A filtered tree keeps each match's
+ancestors so the match shows in place. `treeContextRowKeys` names the ancestors
+that are present only because a descendant matched. The grid marks those rows as
+context and, when a filtered result holds a different set of rows than the one
+before it, expands them. A REST source returns the same field from `fetchPage`.
 
 ## LevelDataSource
 

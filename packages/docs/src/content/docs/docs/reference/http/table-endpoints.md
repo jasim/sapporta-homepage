@@ -14,12 +14,17 @@ Generated HTTP routes under `/api/tables/<table>`.
 - `GET /api/tables/<table>` returns
   `{ data: row[], meta: { total, page, limit, pages } }`. `page` defaults to
   `1`; `limit` defaults to `50` and accepts `1` through `1000`.
+- A list read accepts `fixed[col][op]=value` conditions in the filter grammar.
+  Every returned row satisfies them; `filter[...]` and `q` select the matches
+  among those rows. See
+  [Fixed conditions](/docs/reference/http/query-syntax/#fixed-conditions).
 - On a table with `meta.tree`, `tree=ancestors` or
-  `tree=ancestors-and-descendants` returns each filter or search match with
-  its ancestors (and its subtree). With a filter or search applied, `meta` also
-  carries `tree: { matchCount, contextIds }`: the number of rows that match
-  themselves, and the ids of ancestors present only because a descendant
-  matched. See [Keep tree matches in context](/docs/reference/http/query-syntax/#keep-tree-matches-in-context).
+  `tree=ancestors-and-descendants` returns each filter or search match with its
+  ancestors (and its subtree), walking only through rows that satisfy the
+  `fixed` conditions. With a filter or search applied, `meta` also carries
+  `tree: { matchCount, contextIds }`: the number of rows that match themselves,
+  and the ids of ancestors present only because a descendant matched. See
+  [Keep tree matches in context](/docs/reference/http/query-syntax/#keep-tree-matches-in-context).
 - `GET /api/tables/<table>/<id>` returns `{ data: row }`. This HTTP operation
   does not imply a generated frontend detail route.
 - `POST /api/tables/<table>` accepts one row, an array of rows, or a supported
@@ -27,8 +32,8 @@ Generated HTTP routes under `/api/tables/<table>`.
   `{ data: row[] }`, or `{ data: { master: row, details: row[] } }`,
   respectively.
 - Detail rows omit the `$details` foreign key; the server stamps it from the
-  created master. A row that carries it is rejected `422 VALIDATION_FAILED`
-  when the child declares that reference `apiSettable: false`, and silently
+  created master. A row that carries it is rejected `422 VALIDATION_FAILED` when
+  the child declares that reference `apiSettable: false`, and silently
   overwritten otherwise.
 - `PUT /api/tables/<table>/<id>` accepts a strict partial object containing any
   writable subset. Omitted fields remain unchanged. It returns `{ data: row }`.

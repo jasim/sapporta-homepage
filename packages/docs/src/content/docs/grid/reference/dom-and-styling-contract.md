@@ -45,6 +45,18 @@ Prefer `data-row-active` and `data-row-selected` for styling. Use
 `data-row-interaction-status` only when one combined status value is genuinely
 more convenient.
 
+Rows of a [tree level](/grid/guides/hierarchical-grids/#tree-data) carry their
+position in the tree:
+
+| Attribute                  | Meaning                                                                   |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `data-tree-depth`          | Depth in the tree, with top-level rows at `0`.                            |
+| `data-tree-context="true"` | The row is present only because a descendant matched the source's filter. |
+| `aria-level`               | Depth plus one.                                                           |
+| `aria-expanded`            | Whether the row is expanded; present only on rows with children.          |
+| `aria-setsize`             | Number of siblings, including the row.                                    |
+| `aria-posinset`            | One-based position among its siblings.                                    |
+
 ### Cell Attributes
 
 ```html
@@ -93,7 +105,10 @@ target:
 | `expand-chevron`                                     | The expand or collapse button of a row that can expand.                                               |
 | `expand-placeholder`                                 | The chevron's space on a row that cannot expand, such as a footer, subtotal, opening, or closing row. |
 | `expand-content`                                     | The cell content beside the chevron or placeholder.                                                   |
-| `tree-cell`, `tree-chevron`, `tree-placeholder`      | The same parts for a tree column; `tree-placeholder` marks a row that cannot expand.                  |
+| `tree-cell`                                          | The tree column's frame, indented by the row's depth.                                                 |
+| `tree-chevron`                                       | The expand or collapse button of a tree row with children.                                            |
+| `tree-placeholder`                                   | The chevron's space on a tree row without children.                                                   |
+| `tree-content`                                       | The cell content beside the chevron or placeholder.                                                   |
 | `text-cell`                                          | The value of a ColumnPreset text cell.                                                                |
 | `selection-summary`                                  | The row that shows a sum under each selected numeric column.                                          |
 | `selection-summary-content`                          | One column's summary.                                                                                 |
@@ -102,7 +117,9 @@ target:
 | `level-empty`                                        | The empty state of a level with no rows.                                                              |
 
 `expand-placeholder` keeps the chevron's width, so cell content lines up across
-rows that can and cannot expand.
+rows that can and cannot expand. `tree-placeholder` does the same in a tree
+column. `tree-cell` also carries `data-tree-depth`, and on a row that can expand
+`data-expandable="true"` and `data-expanded`.
 
 ## Precedence
 
