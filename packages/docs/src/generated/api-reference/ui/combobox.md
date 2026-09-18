@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/combobox"
 package: "@sapporta/ui"
-version: "0.2.15"
+version: "0.3.0"
 specifier: "@sapporta/ui/combobox"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.15`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/combobox
 
-Import from `@sapporta/ui/combobox`. Documented from `@sapporta/ui@0.2.15`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/combobox`. Documented from `@sapporta/ui@0.3.0`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 2 symbols documented here.
 
@@ -23,18 +23,18 @@ Re-exported from `@base-ui/react`. See that package for its declaration.
 
 ```ts
 const comboboxClassNames: {
-    readonly inputGroup: "flex h-9 w-full items-center rounded-md border border-input bg-transparent shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50";
-    readonly input: "h-full min-w-0 flex-1 bg-transparent px-3 py-1 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50";
+    readonly inputGroup: "flex h-sap-ctl w-full items-center rounded-md border border-input bg-transparent transition-colors focus-within:ring-1 focus-within:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50";
+    readonly input: "h-full min-w-0 flex-1 bg-transparent px-3 py-1 text-sap-emph outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50";
     readonly action: "inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4";
     readonly trigger: "[&_svg]:size-4";
     readonly positioner: "isolate z-[var(--sap-z-popover)] outline-none";
-    readonly popup: "w-(--anchor-width) overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none transition-[opacity,transform] data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0";
-    readonly empty: "py-6 text-center text-sm empty:py-0";
+    readonly popup: "w-(--anchor-width) overflow-hidden rounded-lg border bg-popover p-0 text-popover-foreground shadow-sap-elevated outline-none transition-[opacity,transform] data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0";
+    readonly empty: "py-6 text-center text-sap-body empty:py-0";
     readonly list: "max-h-[300px] overflow-x-hidden overflow-y-auto p-1";
-    readonly item: "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 pr-8 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
+    readonly item: "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 pr-8 text-sap-menu outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
     readonly itemIndicator: "absolute right-2 text-sap-muted [&_svg]:size-3.5";
-    readonly chips: "flex min-h-9 w-full flex-wrap items-center gap-1 rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50";
-    readonly chip: "inline-flex h-6 max-w-full items-center gap-1 rounded-sm bg-muted px-2 text-sm text-foreground";
+    readonly chips: "flex min-h-sap-ctl w-full flex-wrap items-center gap-1 rounded-md border border-input bg-transparent px-2 py-1 text-sap-emph transition-colors focus-within:ring-1 focus-within:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50";
+    readonly chip: "inline-flex h-6 max-w-full items-center gap-1 rounded-sm bg-muted px-2 text-sap-data text-foreground";
     readonly chipRemove: "inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-3";
 };
 ```

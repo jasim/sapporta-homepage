@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/ui"
 package: "@sapporta/ui"
-version: "0.2.15"
+version: "0.3.0"
 specifier: "@sapporta/ui"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.15`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui
 
-Import from `@sapporta/ui`. Documented from `@sapporta/ui@0.2.15`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui`. Documented from `@sapporta/ui@0.3.0`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 0 symbols documented here.
 
-## Also available from narrower specifiers (59)
+## Also available from narrower specifiers (61)
 
 These are exported by `@sapporta/ui` too, but their signatures live on the narrower page. Prefer the narrower specifier in application code.
 
@@ -21,7 +21,7 @@ These are exported by `@sapporta/ui` too, but their signatures live on the narro
 - `@sapporta/ui/badge` — Badge, badgeVariants
 - `@sapporta/ui/button` — Button, buttonVariants
 - `@sapporta/ui/checkbox` — Checkbox
-- `@sapporta/ui/cn` — cn
+- `@sapporta/ui/cn` — ClassMergeScales, cn, extendCn
 - `@sapporta/ui/combobox` — Combobox, comboboxClassNames
 - `@sapporta/ui/context-menu` — ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuPortal, ContextMenuRadioGroup, ContextMenuSeparator, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger
 - `@sapporta/ui/dialog` — Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger

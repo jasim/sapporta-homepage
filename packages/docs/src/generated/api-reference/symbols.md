@@ -2,7 +2,7 @@
 
 > Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
 
-1230 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+1237 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
 
 Where a name lists more than one specifier, prefer the narrowest.
 
@@ -160,6 +160,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `clampColumnPixelWidth` — @sapporta/grid/column-preset
 - `ClassifiedSqliteError` — @sapporta/server/errors
 - `classifySqliteError` — @sapporta/server/errors
+- `ClassMergeScales` — @sapporta/ui/cn, @sapporta/ui
 - `clearTableSelection` — @sapporta/frontend
 - `CLI_COMMANDS` — @sapporta/server/cli/commands, @sapporta/server/cli
 - `CliCommandContext` — @sapporta/server/cli
@@ -201,6 +202,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `columnSizingTemplateColumns` — @sapporta/grid/column-preset
 - `ColumnValueZod` — @sapporta/server
 - `ColumnWidth` — @sapporta/grid/column-preset
+- `ColumnWidthMinimums` — @sapporta/grid/column-preset
 - `Combobox` — @sapporta/ui/combobox, @sapporta/ui
 - `comboboxClassNames` — @sapporta/ui/combobox, @sapporta/ui
 - `CommitTarget` — @sapporta/grid
@@ -283,6 +285,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `custom` — @sapporta/shared/daterange, @sapporta/shared
 - `CustomPreset` — @sapporta/grid/column-preset
 - `cycleSort` — @sapporta/grid
+- `databasePath` — @sapporta/server/data-dir, @sapporta/server
+- `dataPath` — @sapporta/server/data-dir, @sapporta/server
 - `date` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `DATE_RANGE_SELECT_KEYS` — @sapporta/shared
 - `DatePreset` — @sapporta/grid/column-preset
@@ -349,6 +353,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `exportCsvRoute` — @sapporta/server
 - `ExportRowsQuery` — @sapporta/shared/contracts
 - `exportRowsQuerySchema` — @sapporta/shared/contracts
+- `extendCn` — @sapporta/ui/cn, @sapporta/ui
 - `extractSchema` — @sapporta/server
 - `extractSchemas` — @sapporta/server
 - `FamilyOptions` — @sapporta/honest, @sapporta/server
@@ -621,6 +626,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `mountSapportaFramework` — @sapporta/server
 - `MountSapportaFrameworkOptions` — @sapporta/server
 - `mountTables` — @sapporta/server
+- `NamedColumnWidth` — @sapporta/grid/column-preset
 - `NARROW_TABLE_PAGE_MAX_WIDTH` — @sapporta/frontend
 - `navigateToNewRecord` — @sapporta/frontend
 - `navigateToTable` — @sapporta/frontend/app, @sapporta/frontend
@@ -731,7 +737,6 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `projectInfoSchema` — @sapporta/shared/contracts
 - `projectPath` — @sapporta/server
 - `projectRoot` — @sapporta/server
-- `projectRootFromDbPath` — @sapporta/server
 - `PublicOnlyGate` — @sapporta/frontend/auth/runtime, @sapporta/frontend/auth, @sapporta/frontend
 - `QueryParamRecord` — @sapporta/shared
 - `queryParamRecordToSearchParams` — @sapporta/shared
@@ -964,7 +969,6 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `StaticSearchLookup` — @sapporta/grid/lookup
 - `StaticValueLookup` — @sapporta/grid/lookup
 - `StatusBar` — @sapporta/frontend/shell, @sapporta/frontend
-- `storeDbPath` — @sapporta/server
 - `stringifySortOrder` — @sapporta/grid
 - `substituteHrefPlaceholders` — @sapporta/shared/contracts
 - `supportedTimeZones` — @sapporta/shared/temporal, @sapporta/shared
@@ -1102,11 +1106,13 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TGridTableRow` — @sapporta/frontend
 - `TGridTableSchemaInput` — @sapporta/frontend
 - `TGridTableSchemaOverrides` — @sapporta/frontend
-- `ThemeMode` — @sapporta/frontend
+- `ThemeMode` — @sapporta/frontend/shell, @sapporta/frontend
 - `ThrowingClient` — @sapporta/shared/client
 - `timestamp` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `TimestampPreset` — @sapporta/grid/column-preset
 - `TimeZone` — @sapporta/shared/temporal, @sapporta/shared
+- `Toaster` — @sapporta/frontend/shell
+- `ToasterProps` — @sapporta/frontend/shell
 - `Tooltip` — @sapporta/ui/tooltip, @sapporta/ui
 - `TooltipContent` — @sapporta/ui/tooltip, @sapporta/ui
 - `TooltipProvider` — @sapporta/ui/tooltip, @sapporta/ui
@@ -1152,6 +1158,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `useDebounce` — @sapporta/ui/use-debounce, @sapporta/ui
 - `useDisplayedRow` — @sapporta/grid
 - `useDisplayedRowSequence` — @sapporta/grid
+- `useDocumentTheme` — @sapporta/frontend/shell, @sapporta/frontend
 - `useGridActiveRow` — @sapporta/grid
 - `useGridRuntime` — @sapporta/grid
 - `useGridRuntimeEffect` — @sapporta/grid
@@ -1196,7 +1203,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `useTGridSourceField` — @sapporta/frontend
 - `useTGridSourceStateField` — @sapporta/frontend
 - `useTGridSourceStatus` — @sapporta/frontend
-- `useThemeStore` — @sapporta/frontend
+- `useThemeStore` — @sapporta/frontend/shell, @sapporta/frontend
 - `useUrlQueryState` — @sapporta/frontend/report, @sapporta/frontend
 - `validateApiWriteInput` — @sapporta/server
 - `validateColumnName` — @sapporta/server

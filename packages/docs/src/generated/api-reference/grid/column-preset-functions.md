@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Functions and components"
 package: "@sapporta/grid"
-version: "0.6.0"
+version: "0.7.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Functions and components
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-43 of 100 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+43 of 102 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### boolean
 
@@ -68,7 +68,7 @@ function columnPresetWidthForSizing(sizing: CharacterColumnSizing): ColumnWidth 
 ### columnSizingTemplateColumns
 
 ```ts
-function columnSizingTemplateColumns(schema: readonly ColumnSchema[], overrides: ColumnSizingOverrides, minPx?: number): string;
+function columnSizingTemplateColumns(schema: readonly ColumnSchema[], overrides: ColumnSizingOverrides, minPx?: number, minWidths?: ColumnWidthMinimums): string;
 ```
 
 ### currency
@@ -258,7 +258,7 @@ function setDisplayTimeZone(value: TimeZone): void;
 ### templateColumns
 
 ```ts
-function templateColumns(columns: readonly ColumnSchema[], overrides?: ColumnSizingOverrides): string;
+function templateColumns(columns: readonly ColumnSchema[], overrides?: ColumnSizingOverrides, minWidths?: ColumnWidthMinimums): string;
 ```
 
 ### text
@@ -282,7 +282,7 @@ function timestamp<TMeta = unknown>(options: ColumnPresetOptions<TMeta>): Column
 ### trackForColumn
 
 ```ts
-function trackForColumn(column: ColumnSchema, overrides?: Readonly<Record<ColId, number>>): string;
+function trackForColumn(column: ColumnSchema, overrides?: Readonly<Record<ColId, number>>, minWidths?: ColumnWidthMinimums): string;
 ```
 
 ### width

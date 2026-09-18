@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Types"
 package: "@sapporta/frontend"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Types
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-98 of 190 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+97 of 188 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### ClientColumnOptions
 
@@ -1039,12 +1039,6 @@ type TGridTableSchemaInput = Omit<TableSchema, "name">;
 type TGridTableSchemaOverrides<RowShape extends TGridTableRow> = Partial<Omit<TableSchema, "name" | "columns">> & {
     columns?: Partial<Record<RowFieldName<RowShape>, Partial<TableColumnSchema>>>;
 };
-```
-
-### ThemeMode
-
-```ts
-type ThemeMode = "light" | "dark";
 ```
 
 ### UseSchemaTableGridArgs

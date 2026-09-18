@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/contracts — Types"
 package: "@sapporta/shared"
-version: "0.3.2"
+version: "0.3.3"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.2`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Types
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.3.2`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 43 of 112 symbols published from `@sapporta/shared/contracts`. Other groups: [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/shared/contracts-values.md).
 

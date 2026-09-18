@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/badge"
 package: "@sapporta/ui"
-version: "0.2.15"
+version: "0.3.0"
 specifier: "@sapporta/ui/badge"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.2.15`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/badge
 
-Import from `@sapporta/ui/badge`. Documented from `@sapporta/ui@0.2.15`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/badge`. Documented from `@sapporta/ui@0.3.0`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 3 symbols documented here.
 

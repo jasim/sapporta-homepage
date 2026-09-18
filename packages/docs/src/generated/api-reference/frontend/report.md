@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/report"
 package: "@sapporta/frontend"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/frontend/report"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/report
 
-Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 25 symbols documented here.
 
@@ -86,6 +86,7 @@ interface ReportGridDatasetProps<TInput = unknown> {
         input: TInput;
     };
     renderCell?: ReportCellRenderers;
+    columnSizing?: ReportGridColumnSizing;
 }
 ```
 
@@ -191,7 +192,7 @@ function ReportError({ error }: {
 ### ReportGridDataset
 
 ```ts
-function ReportGridDataset<TInput = unknown>({ dataset, links, linkContext, renderCell, }: ReportGridDatasetProps<TInput>): import("react").JSX.Element;
+function ReportGridDataset<TInput = unknown>({ dataset, links, linkContext, renderCell, columnSizing, }: ReportGridDatasetProps<TInput>): import("react").JSX.Element;
 ```
 
 ### ReportRunButton

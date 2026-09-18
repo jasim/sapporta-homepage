@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Types"
 package: "@sapporta/grid"
-version: "0.6.0"
+version: "0.7.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.6.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Types
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.6.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-53 of 100 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+55 of 102 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### BooleanPreset
 
@@ -192,7 +192,10 @@ type ColumnPresetValueCodec = {
 type ColumnSizingOptions = {
     storageKey?: ColumnSizingStorageKey;
     enabled?: boolean;
+    /** The narrowest a column can be dragged to. */
     minPx?: number;
+    /** Floors for the named default widths of columns nobody has sized. */
+    minWidths?: ColumnWidthMinimums;
 };
 ```
 
@@ -228,6 +231,14 @@ type ColumnWidth = "compact" | "content" | "fill" | "numeric" | "date" | "timest
 } | {
     track: string;
 };
+```
+
+### ColumnWidthMinimums
+
+Pixel floors for the named widths, keyed by name.
+
+```ts
+type ColumnWidthMinimums = Partial<Record<NamedColumnWidth, number>>;
 ```
 
 ### CurrencyPreset
@@ -338,6 +349,12 @@ type LookupPreset = PresetBase & {
 };
 ```
 
+### NamedColumnWidth
+
+```ts
+type NamedColumnWidth = Extract<ColumnWidth, string>;
+```
+
 ### NumberColorRule
 
 ```ts
@@ -430,6 +447,7 @@ type ResolvedColumnSizing = {
     enabled: boolean;
     storageKey?: string;
     minPx: number;
+    minWidths: ColumnWidthMinimums;
 };
 ```
 

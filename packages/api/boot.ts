@@ -1,9 +1,10 @@
 /**
  * Application entry point.
  *
- * Start here when you need to change how the app is hosted. This file chooses
- * the database, loads your table/report definitions, installs auth, mounts
- * `/api/...` routes, exposes `/api/openapi.json` for CLI discovery, and finally
+ * Start here when you need to change how the app is hosted. This file opens
+ * the database named by SAPPORTA_DATA_DIR, loads your table/report
+ * definitions, installs auth, mounts `/api/...` routes, exposes
+ * `/api/openapi.json` for CLI discovery, and finally
  * mounts the prebuilt Astro site and Vite application for single-process
  * deployments. Route registration order matters: the static host is last so it
  * cannot take a request away from an API or health route.
@@ -13,6 +14,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import {
   connectProject,
+  databasePath,
   findProjectRootFrom,
   fromProjectRoot,
   setProjectRoot,
@@ -45,11 +47,12 @@ if (!projectRoot) {
   );
 }
 setProjectRoot(projectRoot);
-const { apiDistDir, frontendDistDir, databasePath } =
-  fromProjectRoot(projectRoot);
+const { apiDistDir, frontendDistDir } = fromProjectRoot(projectRoot);
 const docsDistDir = join(projectRoot, "packages/docs/dist");
 
-const conn = connectProject(databasePath);
+// The database is sqlite.db in the directory named by SAPPORTA_DATA_DIR.
+const databaseFile = databasePath();
+const conn = connectProject(databaseFile);
 const sapporta = await loadSapportaProject({
   name: "sapporta-homepage-app",
   slug: "sapporta-homepage-app",
@@ -142,6 +145,9 @@ if (devSite) {
 const port = projectEnv.apiPort;
 const server = serve({ fetch: app.fetch, port }, () => {
   console.log(`sapporta-homepage-app API server ready (port ${port})`);
+  // SAPPORTA_DATA_DIR can come from a file, a tool, or the shell, so name the
+  // database this server opened.
+  console.log(`Database: ${databaseFile}`);
 });
 
 // Close SQLite cleanly when the process receives a termination signal.

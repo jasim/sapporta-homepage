@@ -66,10 +66,15 @@ whole site.
 
 ## Schema and migrations
 
+Every `db:*` script reads `SAPPORTA_DATA_DIR` from the environment and stops
+when it is not set; it never loads `.env.development`. Pass the value
+`.env.development` records, so the migration changes the database `pnpm dev`
+opens:
+
 ```bash
-pnpm --filter ./packages/api db:generate --name add_table
-pnpm --filter ./packages/api db:migrate
-pnpm --filter ./packages/api db:check
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:generate --name add_table
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:migrate
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:check
 ```
 
 Review generated SQL before applying it. The server checks migration readiness at

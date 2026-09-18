@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Functions and components"
 package: "@sapporta/frontend"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Functions and components
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-85 of 190 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+85 of 188 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### applySchemaOverrides
 
@@ -455,12 +455,13 @@ function tableViewPreferenceKey(tableName: string): string;
 ### TGrid
 
 ```ts
-function TGrid<RowsByLevel extends TGridRowsByLevel, AppServices = unknown>({ session, className, style, viewRelatedRows, presentation, onRowActivate, }: {
+function TGrid<RowsByLevel extends TGridRowsByLevel, AppServices = unknown>({ session, className, style, viewRelatedRows, presentation, columnSizing, onRowActivate, }: {
     session: TGridSession<RowsByLevel, AppServices>;
     className?: string;
     style?: CSSProperties;
     viewRelatedRows?: ViewRelatedRowsOption;
     presentation: TGridPresentation;
+    columnSizing?: TGridColumnSizing;
     /** Receives configured Enter, click, or double-click row activations. */
     onRowActivate?: (event: TGridRowActivatedEvent<RowsByLevel>) => void;
 }): import("react").JSX.Element;

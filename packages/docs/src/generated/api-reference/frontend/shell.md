@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/frontend/shell"
 package: "@sapporta/frontend"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/frontend/shell"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/shell
 
-Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.7.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-44 symbols documented here.
+49 symbols documented here.
 
-## Types (19)
+## Types (21)
 
 ### AccountMenuAction
 
@@ -220,7 +220,17 @@ interface SidebarRegionProps {
 type SidebarToggleProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "aria-controls" | "aria-expanded" | "onClick" | "title">;
 ```
 
-## Functions and components (21)
+### ThemeMode
+
+```ts
+type ThemeMode = "light" | "dark";
+```
+
+### ToasterProps
+
+Re-exported from `sonner`. See that package for its declaration.
+
+## Functions and components (22)
 
 ### AccountMenu
 
@@ -375,6 +385,14 @@ Terminal-style 24px status bar pinned to the bottom of the app.
 function StatusBar(): import("react").JSX.Element;
 ```
 
+### useDocumentTheme
+
+Keeps `<html data-theme>` in step with the theme mode while the calling component is mounted, so the `[data-theme="dark"]` palette applies.
+
+```ts
+function useDocumentTheme(): void;
+```
+
 ### usePageTitle
 
 Show `title` in the browser tab while the calling component is mounted.
@@ -389,7 +407,7 @@ function usePageTitle(title?: string | false | null): void;
 function useSidebar(): SidebarController;
 ```
 
-## Values, classes, and namespaces (4)
+## Values, classes, and namespaces (6)
 
 ### PageBody
 
@@ -417,4 +435,16 @@ const SIDEBAR_DESKTOP_MEDIA_QUERY = "(min-width: 64rem)";
 
 ```ts
 const SIDEBAR_EXPANDED_PREF_KEY = "sapporta:sidebar-expanded";
+```
+
+### Toaster
+
+Re-exported from `sonner`. See that package for its declaration.
+
+### useThemeStore
+
+Holds the theme mode.
+
+```ts
+const useThemeStore: import('zustand').UseBoundStore<import('zustand').StoreApi<ThemeStore>>;
 ```
