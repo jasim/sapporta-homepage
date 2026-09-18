@@ -190,6 +190,13 @@ timestamps with formatted strings. Widths are approximate displayed-character
 counts, not pixels; `minWidth: 40` is a reasonable starting point for a project
 name.
 
+`colorRule: "negative"` on the overdue column paints its figures with
+`--sap-numeric-negative`, which follows the error colour `--sap-negative` unless
+the application sets it. An overdue count is a problem, so the default fits. A
+ledger whose negative figures are ordinary money out sets
+`--sap-numeric-negative` to its ink colour instead; see
+[Theme tokens and scales](/docs/reference/frontend/theme-tokens-and-scales/).
+
 Wire dates use canonical strings. Decode them to Temporal values at the domain
 boundary, then use Temporal for comparison and arithmetic. A `date` column
 renders as `2026-08-23` and a `timestamp` column as `2026-08-23 16:38` in the

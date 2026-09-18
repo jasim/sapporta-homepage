@@ -16,7 +16,8 @@ the OpenAPI document, and the view the CLI takes of your data.
 
 A Sapporta application is one Node process. It serves an HTTP API under `/api`,
 serves the built React single-page app from that same process, and reads and
-writes a SQLite file on local durable storage.
+writes one SQLite file, in the data directory its environment names, on local
+durable storage.
 
 ```
    browser (React SPA)      sapporta CLI · scripts · agents

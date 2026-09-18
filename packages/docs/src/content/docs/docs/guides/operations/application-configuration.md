@@ -16,6 +16,7 @@ different edges of the system.
 | `SAPPORTA_REQUIRE_VERIFIED_EMAIL` | API process         | Explicit boolean override for the email-verification default   |
 | `SAPPORTA_API_PORT`               | API process         | Hono listener; falls back to `PORT`, then 3000                 |
 | `SAPPORTA_FRONTEND_PORT`          | Development command | Vite listener                                                  |
+| `SAPPORTA_DATA_DIR`               | API and Drizzle Kit | Directory holding `sqlite.db`; required, with no default       |
 | `SAPPORTA_PUBLIC_APP_URL`         | API process         | Public browser origin for auth links and default trust         |
 | `SAPPORTA_FRONTEND_ORIGINS`       | API process         | Additional exact origins allowed to send credentialed requests |
 | `VITE_API_URL`                    | Frontend build      | API origin for a split deployment; `getApiBase()` adds `/api`  |
@@ -36,10 +37,16 @@ example rather than a default.
 ```ini
 SAPPORTA_API_PORT=3212
 SAPPORTA_FRONTEND_PORT=5385
+SAPPORTA_DATA_DIR=data
 SAPPORTA_PUBLIC_APP_URL=http://localhost:5385
 SAPPORTA_MAIL_TRANSPORT=stream
 SAPPORTA_MAIL_FROM=Task App <no-reply@example.com>
 ```
+
+`SAPPORTA_DATA_DIR=data` places the development database at `data/sqlite.db`
+under the project root. `pnpm dev` and `pnpm seed` read it from
+`.env.development`; the `pnpm db:*` scripts read only the environment, so pass
+them the same value.
 
 Same-origin production serves the built SPA and API from one public origin. It
 does not need `VITE_API_URL`.
@@ -47,10 +54,15 @@ does not need `VITE_API_URL`.
 ```ini
 NODE_ENV=production
 SAPPORTA_API_PORT=3000
+SAPPORTA_DATA_DIR=/srv/tasks/data
 SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
 SAPPORTA_MAIL_TRANSPORT=smtp
 SAPPORTA_MAIL_FROM=Task App <no-reply@tasks.example.com>
 ```
+
+`SAPPORTA_DATA_DIR` names an existing directory on durable storage. The
+migration job runs with the same value, so it migrates the database the server
+opens.
 
 A split deployment builds the SPA with an absolute API origin. The API still
 uses the browser-facing app origin for auth links and adds any other deliberate

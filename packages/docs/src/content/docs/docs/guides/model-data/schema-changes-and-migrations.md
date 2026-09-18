@@ -73,8 +73,13 @@ Drizzle table would create storage with no Sapporta surface.
 Generate a migration with a name that describes the release change:
 
 ```bash
-pnpm --filter ./packages/api db:generate --name add_task_events
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:generate --name add_task_events
 ```
+
+Every `db:*` script reads `SAPPORTA_DATA_DIR` from the environment and stops
+when it is unset; none of them loads `.env.development`. Pass the value that
+file records (`data` in a new project), so each command works against the
+database `pnpm dev` opens.
 
 Open the new file under `packages/api/migrations/` before continuing. For this
 change, the SQL should create `task_events`, its task foreign key, and
@@ -105,8 +110,8 @@ the SQL touches any database.
 After reviewing the SQL and generated snapshot, apply the migration:
 
 ```bash
-pnpm --filter ./packages/api db:migrate
-pnpm --filter ./packages/api db:check
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:migrate
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:check
 ```
 
 `db:check` runs Drizzle Kit's snapshot-chain check. It validates migration

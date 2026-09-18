@@ -7,8 +7,8 @@ description:
 
 ## Identity
 
-Drizzle migration artifacts, `assertMigrationsReady`, generated boot, and
-container command.
+Drizzle migration artifacts, `assertMigrationsReady`, generated boot,
+`SAPPORTA_DATA_DIR`, and container command.
 
 ## Contract
 
@@ -16,6 +16,9 @@ container command.
   those artifacts are reviewed before deployment.
 - `db:check` validates the Drizzle snapshot chain. It does not inspect the live
   database or prove that a migration was applied.
+- The server, Drizzle Kit, and every `db:*` script open `sqlite.db` in the
+  directory named by `SAPPORTA_DATA_DIR`, and stop when it is unset. A migration
+  job runs with the same value as the server it prepares.
 - One deployment job applies pending migrations before new application replicas
   serve traffic.
 - When registered tables exist, server startup refuses:
@@ -25,6 +28,8 @@ container command.
   - an applied migration whose on-disk hash changed.
 - Server startup validates this applied-ledger readiness and never applies
   migrations from boot or request handling.
+- The readiness error names the database it checked. A successful start prints
+  `Database: <path>` after the ready line.
 - A failed migration or readiness mismatch is a startup/release failure.
 - Database backup and application rollback do not automatically reverse
   destructive SQL.

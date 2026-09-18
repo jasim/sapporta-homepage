@@ -80,6 +80,11 @@ Keep node values semantic: numbers remain numbers, percentage values are ratios
 such as `0.4`, booleans remain booleans, and date/timestamp values use their
 canonical boundary representation. Presentation metadata controls rendering.
 
+`colorRule: "negative"` and the negative side of `"signed"` paint with
+`--sap-numeric-negative`, which follows `--sap-negative` unless the application
+sets it; see
+[Theme tokens and scales](/docs/reference/frontend/theme-tokens-and-scales/).
+
 `kind` selects the column preset, and `"date"` and `"timestamp"` are separate
 presets with separate default widths. A `date` column renders `2026-08-23`; a
 `timestamp` column renders `2026-08-23 16:38` in the active workspace's time
@@ -123,6 +128,28 @@ type GridDatasetFooterRow = {
 Root totals use `footerRows`. Totals for a child collection use
 `childFooterRows` on the parent node. Footer values follow the same semantic
 number and ratio rules as ordinary nodes.
+
+## Rendering
+
+`ReportGridDataset` from `@sapporta/frontend/report` renders a parsed dataset:
+
+- `dataset`: the `GridDataset`.
+- `links` and `linkContext`: cell links and the input they read; see
+  [Report links](/docs/reference/reports/report-links/).
+- `renderCell`: cell renderers keyed by level name, then column id. A renderer
+  receives the preset's own cell as `defaultContent` and sits inside the
+  column's link.
+- `columnSizing`: every ColumnPreset column-sizing option except `storageKey`,
+  including `minWidths`; see
+  [Column sizing](/docs/reference/column-sizing/#raise-the-built-in-widths).
+  Dragged widths are stored under
+  `sapporta:report-grid-columns:<dataset name>:<level>`.
+
+Give `renderCell` and `columnSizing` stable identities, at module level or in
+`useMemo`; the grid is rebuilt whenever either changes.
+
+Nested levels are indented by `--sap-report-grid-nested-indent`, `18px` by
+default.
 
 ## Related documentation
 

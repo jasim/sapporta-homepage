@@ -19,10 +19,14 @@ After changing a schema file, generate a named migration and read the SQL. A
 rename prompt or destructive statement is a data decision, not a build detail.
 
 ```bash
-pnpm --filter ./packages/api db:generate --name add_task_events
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:generate --name add_task_events
 # Review packages/api/migrations/*.sql and commit it with the schema change.
-pnpm --filter ./packages/api db:check
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:check
 ```
+
+Every `db:*` script reads `SAPPORTA_DATA_DIR` from the environment and never
+loads `.env.development`. Pass the value that file records, so the commands
+work against the database `pnpm dev` opens.
 
 Do not generate fresh SQL during deployment. The deployed artifact must be the
 same artifact reviewed with the application change.
@@ -33,19 +37,26 @@ For the task-events release, use this sequence:
 
 1. Quiesce every process that can write the database.
 2. Create and identify a restorable backup of the durable SQLite database.
-3. Run one migration job against that database.
+3. Run one migration job against that database, with the same
+   `SAPPORTA_DATA_DIR` as the server.
 4. Start the new application code; its startup guard checks migration
    readiness.
 5. Run smoke tests and resume traffic.
 
 ```bash
+export SAPPORTA_DATA_DIR=/srv/tasks/data
 pnpm --filter ./packages/api db:migrate
 pnpm start
 ```
 
-The generated container follows the same ordering: its entrypoint runs the API
-package's local Drizzle migration command and starts `dist/boot.js` only after
-migration succeeds.
+The migration job stops when `SAPPORTA_DATA_DIR` is unset, so a missing setting
+cannot migrate some other database. The server prints `Database: <path>` when it
+starts, and a readiness failure names the database it checked.
+
+The generated container follows the same ordering: its image sets
+`SAPPORTA_DATA_DIR=/app/data`, and its entrypoint runs the API package's local
+Drizzle migration command and starts `dist/boot.js` only after migration
+succeeds.
 
 
 If migration or readiness fails, do not start the new code. Restore or roll

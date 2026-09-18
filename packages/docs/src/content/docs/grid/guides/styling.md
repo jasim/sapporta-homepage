@@ -192,6 +192,42 @@ Do not recreate focus, selection, or active-row state in CSS classes managed
 outside the runtime. The DOM data attributes already follow the configured
 interaction preset.
 
+## Tune the preset's spacing
+
+The ColumnPreset chrome sets `--grid-*` values on each level element. The values
+below read a `--sap-grid-*` variable first, so an application sets them once on
+`:root` or on any ancestor of the grid:
+
+```css
+:root {
+  --sap-grid-cell-padding: 0 14px;
+  --sap-grid-header-cell-padding: 0 14px;
+  --sap-grid-header-font-weight: 600;
+  --sap-grid-row-header-column-width: 48px;
+  --sap-grid-nested-row-header-column-width: 36px;
+  --sap-grid-nested-cell-min-height: 44px;
+}
+```
+
+| Variable                                    | Default                     | Sets                                   |
+| ------------------------------------------- | --------------------------- | -------------------------------------- |
+| `--sap-grid-cell-padding`                   | `0 10px`                    | Body cell padding                      |
+| `--sap-grid-header-cell-padding`            | `0 10px`                    | Header cell padding                    |
+| `--sap-grid-header-font-weight`             | `760`                       | Header text weight                     |
+| `--sap-grid-header-letter-spacing`          | `var(--tracking-sap-head)`  | Header letter spacing                  |
+| `--sap-grid-row-header-column-width`        | `40px`                      | Row header column on the root level    |
+| `--sap-grid-nested-row-header-column-width` | `30px`                      | Row header column on nested levels     |
+| `--sap-grid-nested-cell-min-height`         | `31px`                      | Minimum cell height on nested levels   |
+| `--sap-grid-nested-indent`                  | `58px`                      | Indent of the first nested level       |
+| `--sap-grid-nested-indent-deep`             | `46px`                      | Indent of every level below that       |
+
+Font sizes and root-level row and header heights come from the `text-sap-body`,
+`text-sap-label`, `h-sap-row`, and `h-sap-header` tiers; see
+[Theme tokens and scales](/docs/reference/frontend/theme-tokens-and-scales/).
+Column widths come from `columnSizing.minWidths` on the chrome; see
+[ColumnPreset](/grid/reference/column-preset/#preset-chrome-and-column-sizing).
+Other `--grid-*` values are set per level by the application's own CSS.
+
 ## Verify
 Typecheck the example and exercise its visible loading, ready, interaction, and failure states. Use only public `@sapporta/grid` export paths.
 Continue with the

@@ -15,12 +15,15 @@ config.
 - Origins/auth: `NODE_ENV`, `SAPPORTA_PUBLIC_APP_URL`,
   `SAPPORTA_FRONTEND_ORIGINS`, `SAPPORTA_REQUIRE_VERIFIED_EMAIL`.
 - Development-only: `SAPPORTA_ALLOW_SAMPLE_DATA_SEEDING`.
-- Runtime: `SAPPORTA_API_PORT`, hosting-platform `PORT`,
+- Runtime: `SAPPORTA_API_PORT`, hosting-platform `PORT`, `SAPPORTA_DATA_DIR`,
   `SAPPORTA_HEALTH_POLICY`, mail transport/from and SMTP variables.
 - Frontend: `VITE_API_URL`, `SAPPORTA_FRONTEND_PORT`.
 - CLI: `SAPPORTA_API_URL`, `SAPPORTA_API_TOKEN`, `SAPPORTA_OUTPUT_FORMAT`.
 - Code hooks: Drizzle config, `loadApp()`, `publicApiRoutes`, `appNavigation`,
   and public/protected route values.
+- Data directory paths: `databasePath()` and `dataPath()` from
+  `@sapporta/server`, or from `@sapporta/server/data-dir` in
+  `drizzle.config.ts`.
 
 ## Related documentation
 

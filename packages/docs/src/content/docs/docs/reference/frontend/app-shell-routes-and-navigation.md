@@ -13,11 +13,12 @@ shell layout. Use the leaf that matches the change:
   `SapportaRoutes.tsx` and the framework screens it mounts, generated table
   navigation, and the frontend authorization boundary.
 - [Layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
-  covers responsive sidebar primitives, `AppPage`, page headers, bounded
-  workspaces, height, and scrolling.
+  covers responsive sidebar primitives, application-owned shells, theme mode,
+  `AppPage`, page headers, bounded workspaces, height, and scrolling.
 
 Project screens use these public extension points rather than replacing
-`SapportaApp` or mounting a second application shell.
+`SapportaApp`. An application that needs a different frame composes its own
+shell from the sidebar primitives in place of `AppShell`.
 
 ## Related documentation
 

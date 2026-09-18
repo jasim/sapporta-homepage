@@ -60,8 +60,10 @@ Run it from the repository root:
 pnpm seed
 ```
 
-The run needs no server and no access token. Sign in as the sample-data account
-named at the top of `seed.ts` to see the rows.
+The run needs no server and no access token. It loads `.env.development` and
+writes to `sqlite.db` in the directory `SAPPORTA_DATA_DIR` names there, the
+database `pnpm dev` opens. Sign in as the sample-data account named at the top
+of `seed.ts` to see the rows.
 
 The workspace those rows land in keeps the time zone of the machine that ran the
 seed. A browser sends its own zone with a sign-up request and a script has none
@@ -122,7 +124,9 @@ that address and password belong to, and returns `rows(table)` with exactly the
 row access that person holds. It creates nothing and needs no permission
 setting. The database, table definitions, and auth come up exactly as they do
 for the server, so a script sees the schema checks the server would have refused
-to start without.
+to start without. The database is `sqlite.db` in the directory
+`SAPPORTA_DATA_DIR` names in the script's environment, and the script stops when
+the variable is unset; give it the value the server uses.
 
 A script works on the whole workspace it signed in to. That authority set is
 fixed rather than chosen at the call site: `authz/resolveRequestDataAuthority()`

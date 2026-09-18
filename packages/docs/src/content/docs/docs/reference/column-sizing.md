@@ -27,6 +27,34 @@ database can store. A date cell reads `2026-08-23` and a timestamp cell reads
 unsized when their built-in defaults are sufficient: each preset carries its own
 width, and schema-declared sizing wins where it is present.
 
+## Raise the built-in widths
+
+The built-in widths of numeric, date, timestamp, select, and reference columns
+fit Sapporta's default 12px monospace data. An application that sets its data in
+a larger face raises their floors with the `columnSizing` prop of `TGrid` and
+`ReportGridDataset`:
+
+```tsx
+const ledgerColumnSizing = {
+  minWidths: { numeric: 128, timestamp: 176 },
+};
+
+<ReportGridDataset dataset={dataset} columnSizing={ledgerColumnSizing} />;
+```
+
+`minWidths` is keyed by the preset's named widths: `numeric` (number, currency,
+and percentage columns), `date`, `timestamp`, `enum` (select columns),
+`foreignKey`, `compact`, `content`, and `fill`. Each value is a floor in pixels,
+and a floor above a width's ceiling lifts the ceiling with it. Columns with
+schema-declared `width`, `minWidth`, or `maxWidth`, and columns a person has
+dragged, keep their own widths.
+
+`columnSizing` takes every
+[ColumnPreset sizing option](/grid/reference/column-preset/#preset-chrome-and-column-sizing)
+except `storageKey`; each grid names its own storage for dragged widths. Keep
+the object's identity stable, at module level or in `useMemo`: the grid chrome
+is rebuilt whenever it changes.
+
 ## Examples
 
 Table metadata:
@@ -57,3 +85,4 @@ columns: [
 - [GridDataset](/docs/reference/reports/grid-dataset/)
 - [Days and time zones](/docs/reference/server/days-and-time-zones/)
 - [ColumnPreset](/grid/reference/column-preset/)
+- [Theme tokens and scales](/docs/reference/frontend/theme-tokens-and-scales/)

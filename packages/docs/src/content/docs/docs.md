@@ -166,6 +166,7 @@ index for the whole site.
   - [App shell, routes, and navigation](/docs/reference/frontend/app-shell-routes-and-navigation/)
   - [Application routes and navigation](/docs/reference/frontend/app-shell/application-routes-and-navigation/)
   - [App shell layout and sidebar](/docs/reference/frontend/app-shell/layout-and-sidebar/)
+- [Theme tokens and scales](/docs/reference/frontend/theme-tokens-and-scales/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
 - [Table lookups and record ids](/docs/reference/frontend/lookups/)
 - **Table queries**

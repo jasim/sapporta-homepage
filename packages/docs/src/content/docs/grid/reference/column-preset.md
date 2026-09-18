@@ -105,11 +105,37 @@ type ColumnWidth =
   | "fill"
   | "numeric"
   | "date"
+  | "timestamp"
   | "enum"
   | "foreignKey"
   | { min?: number; ideal?: number; max?: number }
   | { track: string };
+
+type NamedColumnWidth = Extract<ColumnWidth, string>;
+type ColumnWidthMinimums = Partial<Record<NamedColumnWidth, number>>;
 ```
+
+Each constructor gives its column a named width unless `width` is set. A column
+with no width fills the remaining space, `minmax(0, 1fr)`. Each named width
+resolves to a CSS grid track:
+
+| Width        | Track                       | Default for                        |
+| ------------ | --------------------------- | ---------------------------------- |
+| `compact`    | `minmax(48px, max-content)` | `identifier`, `boolean`            |
+| `content`    | `max-content`               | `column` with a custom `kind`      |
+| `fill`       | `minmax(0, 1fr)`            | `text`, `column` without a `kind`  |
+| `numeric`    | `minmax(80px, 112px)`       | `number`, `currency`, `percentage` |
+| `date`       | `minmax(112px, 128px)`      | `date`                             |
+| `timestamp`  | `minmax(144px, 160px)`      | `timestamp`                        |
+| `enum`       | `minmax(96px, max-content)` | `select`                           |
+| `foreignKey` | `minmax(144px, 220px)`      | `foreignKey`, `lookupValue`        |
+
+The pixel tracks fit a 12px monospace digit. An application that sets its data
+in a larger face raises the floors it needs through `columnSizing.minWidths` on
+the preset chrome. A floor above a named width's ceiling lifts the ceiling with
+it: `{ numeric: 128 }` turns the numeric track into `minmax(128px, 128px)`, and
+`{ content: 120 }` gives `content` a floor, `minmax(120px, max-content)`. An
+object width or a `track` width is used as given.
 
 ### Select Columns
 
@@ -168,6 +194,13 @@ const completion = percentage({
   edit: "none",
 });
 ```
+
+`colorRule` colours a numeric cell. `"positive"` paints the value with
+`--sap-positive` and `"negative"` with `--sap-numeric-negative`. `"signed"`
+paints values above zero with `--sap-positive`, values below zero with
+`--sap-numeric-negative`, and zero in the default ink. `--sap-numeric-negative`
+follows `--sap-negative` unless the application sets it, so negative figures can
+stay in ink while errors stay red.
 
 Number, currency, and percentage editors retain raw text until commit. Their
 default parser accepts commas and surrounding whitespace, returns `null` for
@@ -236,12 +269,22 @@ function parse(
 function lookupCapabilities(
   column: ColumnSchema,
 ): LookupCapabilities | undefined;
-function trackForColumn(column: ColumnSchema): string;
-function templateColumns(columns: readonly ColumnSchema[]): string;
+function trackForColumn(
+  column: ColumnSchema,
+  overrides?: Readonly<Record<ColId, number>>,
+  minWidths?: ColumnWidthMinimums,
+): string;
+function templateColumns(
+  columns: readonly ColumnSchema[],
+  overrides?: ColumnSizingOverrides,
+  minWidths?: ColumnWidthMinimums,
+): string;
 ```
 
 Use `templateColumns` when you build custom chrome that must align with the
-grid's column widths.
+grid's column widths. Pass the same `minWidths` the grid uses, so both resolve
+the named widths to the same tracks. `overrides` maps column ids to widths in
+pixels, such as widths a person dragged.
 
 ```tsx
 const style = {
@@ -249,6 +292,57 @@ const style = {
   gridTemplateColumns: templateColumns(schema.levels.tasks.columns),
 };
 ```
+
+### Preset Chrome and Column Sizing
+
+```ts
+function chrome<TMeta = unknown, TFilter = unknown>(
+  options?: PresetChromeOptions<TMeta, TFilter>,
+): GridLevelChrome;
+
+type PresetChromeOptions<TMeta = unknown, TFilter = unknown> = {
+  columnSizing?: ColumnSizingOptions;
+  renderColumnHeaderMenu?: (
+    props: ColumnHeaderMenuProps<TMeta, TFilter>,
+  ) => ReactNode;
+  commandOverrides?: (
+    level: HeaderLevelState<TFilter>,
+  ) => Partial<GridLevelCommands<TFilter>>;
+};
+
+type ColumnSizingOptions = {
+  storageKey?:
+    string | ((context: ColumnSizingStorageKeyContext) => string | undefined);
+  enabled?: boolean;
+  minPx?: number;
+  minWidths?: ColumnWidthMinimums;
+};
+```
+
+`columnPreset.chrome()` returns the level chrome that renders the preset's
+header row and lays out its column tracks. Pass it to `GridLevel` as `chrome`:
+
+```tsx
+const presetChrome = columnPreset.chrome({
+  columnSizing: {
+    storageKey: ({ levelName }) => `ledger:columns:${levelName}`,
+    minWidths: { numeric: 128, timestamp: 176 },
+  },
+});
+
+<GridLevel path={rootPath("entries")} chrome={presetChrome} />;
+```
+
+- `storageKey` names the `localStorage` entry that remembers widths a person
+  drags. A function receives the level's `path`, `levelName`, and `schema`, so
+  each level keeps its own widths.
+- `enabled` turns drag-to-resize on or off. It defaults to on when a storage key
+  resolves, and off otherwise.
+- `minPx` is the narrowest a column can be dragged to, `48` by default.
+- `minWidths` raises the floors of the named widths for columns nobody has
+  dragged.
+
+Give `GridLevel` a stable chrome: build it at module level or in `useMemo`.
 
 ## Related documentation
 

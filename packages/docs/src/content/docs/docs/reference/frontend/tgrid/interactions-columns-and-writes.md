@@ -101,6 +101,23 @@ layout.
 - `context.runtime` contains grid-wide schema, events, registered levels,
   active-row state, and cross-path row operations.
 
+## Column widths
+
+`TGrid` accepts `columnSizing`, every ColumnPreset column-sizing option except
+`storageKey`. TGrid stores dragged widths under
+`sapporta:grid-columns:<root table>:<level>`. `minWidths` raises the floors of
+the named widths, such as `{ numeric: 128 }` for currency in a larger face:
+
+```tsx
+const columnSizing = { minWidths: { numeric: 128, timestamp: 176 } };
+
+<TGrid session={session} presentation="tabular" columnSizing={columnSizing} />;
+```
+
+Give the object a stable identity, at module level or in `useMemo`; the grid
+chrome is rebuilt whenever it changes. See
+[Column sizing](/docs/reference/column-sizing/#raise-the-built-in-widths).
+
 Direct GridCore and ColumnPreset contracts live in the standalone Grid
 Reference.
 

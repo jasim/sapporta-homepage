@@ -7,7 +7,7 @@ description:
 
 ## Identity
 
-Generated pnpm workspace from `@sapporta/server` 0.2.7.
+Generated pnpm workspace from `@sapporta/server` 0.7.0.
 
 ## Layout
 
@@ -25,7 +25,7 @@ my-app/
   .env.production.example      deployment environment template
   DEPLOYMENT.md                production handoff
   Dockerfile                   container build
-  data/                        development SQLite database
+  data/                        development data directory: sqlite.db (SAPPORTA_DATA_DIR=data)
   scripts/                     project scripts
   packages/api/                schema, migrations, auth, routes, boot, mail, database I/O
     schema/                    table definitions
@@ -35,7 +35,7 @@ my-app/
     app/                       route handlers; not mounted automatically
     app.ts                     loadApp() route mounting and publicApiRoutes
     seed.ts                    sample rows written by pnpm seed
-    drizzle.config.ts          schema path, migration output, dialect, credentials
+    drizzle.config.ts          schema path, migration output, dialect, databasePath()
     runtime.ts                 openProjectRuntime()
     boot.ts                    mounts Hono on openProjectRuntime()
     script-runtime.ts          openScriptRuntime()
@@ -74,6 +74,7 @@ never edited — add another one.
 | Sample rows                      | `packages/api/seed.ts`                     | `pnpm seed`                                   |
 | Query cache defaults             | `packages/frontend/src/query-client.ts`    | —                                             |
 | Ports, origins, mail, policy     | `.env.development`                         | —                                             |
+| Development database directory   | `SAPPORTA_DATA_DIR` in `.env.development`  | pass the same value to `pnpm db:*`            |
 
 ## Rules the tree does not show
 
@@ -88,6 +89,11 @@ never edited — add another one.
   the HTTP server and a command-line script cannot drift apart. It defaults mail
   off for a script, and takes the anonymous-route list as an option rather than
   importing `app.ts`.
+- `runtime.ts` opens `sqlite.db` in the directory named by `SAPPORTA_DATA_DIR`
+  and returns its path as `databasePath`; `boot.ts` prints that path when the
+  server is ready. `drizzle.config.ts` resolves the same file with
+  `databasePath()` from `@sapporta/server/data-dir`, so the app and every
+  `db:*` script open one database.
 - One `QueryClientProvider`, mounted by `main.tsx` above the router. Feature
   modules reuse it through TanStack Query hooks and public Sapporta query
   options rather than creating a second client for one screen. The generated

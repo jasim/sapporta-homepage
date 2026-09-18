@@ -16,12 +16,15 @@ not need `VITE_API_URL`.
 
 ```bash
 pnpm build
+export SAPPORTA_DATA_DIR=/srv/tasks/data
 pnpm --filter ./packages/api db:migrate
 pnpm start
 ```
 
-Migration generation does not belong in this sequence. The release applies SQL
-already generated, reviewed, and committed during development.
+`db:migrate` and `pnpm start` run in the same environment, so both open the
+database in the same `SAPPORTA_DATA_DIR`. Migration generation does not belong
+in this sequence. The release applies SQL already generated, reviewed, and
+committed during development.
 
 Configure the API process with production values:
 
@@ -30,6 +33,7 @@ NODE_ENV=production
 BETTER_AUTH_SECRET=<long-production-secret>
 SAPPORTA_PUBLIC_APP_URL=https://tasks.example.com
 SAPPORTA_API_PORT=3000
+SAPPORTA_DATA_DIR=/srv/tasks/data
 SAPPORTA_MAIL_TRANSPORT=smtp
 SAPPORTA_MAIL_FROM=Task App <no-reply@tasks.example.com>
 ```
@@ -38,11 +42,38 @@ SAPPORTA_MAIL_FROM=Task App <no-reply@tasks.example.com>
 `SAPPORTA_REQUIRE_VERIFIED_EMAIL` is absent. Set that variable to `true` or
 `false` only when the deployment needs an explicit override.
 
-The generated database is `data/sqlite.db`; the Docker image mounts `/app/data`.
-That directory must be a durable writable volume. Backups live outside the
-application process and are tested independently from application rollback.
+## Put the database on durable storage
+
+The database is `sqlite.db` in the directory `SAPPORTA_DATA_DIR` names. The
+directory must exist and be durable and writable; on ephemeral storage the
+database disappears on the next restart.
+
+- **Docker:** the generated image sets `SAPPORTA_DATA_DIR=/app/data`. Mount a
+  named volume or a bind mount at `/app/data`.
+- **systemd:** set `SAPPORTA_DATA_DIR` in the unit's environment, to a directory
+  outside `/tmp` and any tmpfs mount.
+- **Fly.io, Railway, and similar:** attach a persistent volume and set
+  `SAPPORTA_DATA_DIR` to its mount path.
+
+A relative value resolves against the project root, never the working directory.
+Absolute paths leave no doubt about which volume holds the data.
+
+One project can serve several databases, one process per data directory: sample
+data apart from real data, or one process per customer. Each process, and each
+migration job, gets its own `SAPPORTA_DATA_DIR`.
+
+Backups live outside the application process and are tested independently from
+application rollback.
 
 ## Smoke-test the released surface
+
+The server prints the database it opened right after its ready line:
+
+```text
+Database: /srv/tasks/data/sqlite.db
+```
+
+Check that the path names the durable volume before sending traffic.
 
 The bare health request below assumes the default public health policy. An
 authenticated health policy needs credentials; a disabled policy returns 404.

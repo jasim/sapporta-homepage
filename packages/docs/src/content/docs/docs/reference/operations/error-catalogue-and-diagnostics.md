@@ -47,7 +47,10 @@ not be copied into every feature contract.
 - `RowNotFoundError` and `ImmutableTableOperationError` are server-side helper
   classes adapted by generated table handlers.
 - Migration readiness errors stop startup when migration files and the applied
-  ledger disagree.
+  ledger disagree. The message names the database it checked on a
+  `Database: <path>` line.
+- `SAPPORTA_DATA_DIR is not set` stops the server and every `db:*` script when
+  the environment does not name the data directory.
 - Native binding errors identify the addon load that failed.
 
 An HTTP-aware app domain-error family should carry its status and strict feature
@@ -62,7 +65,7 @@ Use the smallest command that identifies the failing boundary:
 pnpm exec sapporta endpoints show "POST /api/tasks/{id}/complete"
 pnpm exec sapporta tables show tasks
 pnpm exec sapporta rows get tasks 1 --output json
-pnpm --filter ./packages/api db:check
+SAPPORTA_DATA_DIR=data pnpm --filter ./packages/api db:check
 ```
 
 Endpoint discovery proves mounting and wire shape, not authorization. Repeat

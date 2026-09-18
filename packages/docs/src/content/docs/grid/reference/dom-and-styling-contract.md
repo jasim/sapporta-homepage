@@ -82,6 +82,28 @@ more convenient.
 | `data-grid-depth`       | Nesting depth, with root at `0`.           |
 | `data-active`           | Whether this level owns the active cursor. |
 
+### Part Hooks
+
+Inside cells and levels, `data-grid-part` names the parts application CSS can
+target:
+
+| Part                                                 | Element                                                                                               |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `expand-cell`                                        | A cell that holds a child-level expansion control.                                                    |
+| `expand-chevron`                                     | The expand or collapse button of a row that can expand.                                               |
+| `expand-placeholder`                                 | The chevron's space on a row that cannot expand, such as a footer, subtotal, opening, or closing row. |
+| `expand-content`                                     | The cell content beside the chevron or placeholder.                                                   |
+| `tree-cell`, `tree-chevron`, `tree-placeholder`      | The same parts for a tree column; `tree-placeholder` marks a row that cannot expand.                  |
+| `text-cell`                                          | The value of a ColumnPreset text cell.                                                                |
+| `selection-summary`                                  | The row that shows a sum under each selected numeric column.                                          |
+| `selection-summary-content`                          | One column's summary.                                                                                 |
+| `selection-summary-label`, `selection-summary-value` | The summary's label (`Sum`) and its value.                                                            |
+| `level-status`, `level-status-text`                  | A level's loading or error band and its message.                                                      |
+| `level-empty`                                        | The empty state of a level with no rows.                                                              |
+
+`expand-placeholder` keeps the chevron's width, so cell content lines up across
+rows that can and cannot expand.
+
 ## Precedence
 
 When multiple rules can apply, order application CSS from broad to specific:

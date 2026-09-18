@@ -411,6 +411,9 @@ export default [
             ],
           },
           {
+            slug: "docs/reference/frontend/theme-tokens-and-scales",
+          },
+          {
             slug: "docs/reference/frontend/generated-record-surfaces",
           },
           {
