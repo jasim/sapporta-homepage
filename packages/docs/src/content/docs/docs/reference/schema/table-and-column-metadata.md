@@ -1,22 +1,23 @@
 ---
 title: "Table and column metadata"
 description:
-  "Look up table, child, column, select, search, and visibility metadata."
+  "Look up table, child, tree, column, select, search, and visibility metadata."
 ---
 
 ## Identity
 
 `SapportaMeta`, `SapportaTableInputMeta`, `ColumnMeta`, `ChildMeta`,
-`columnBySqlName()`, and `columnPropertyName()` from `@sapporta/server`;
-serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
-`@sapporta/shared/contracts`.
+`TreeMetaInput`, `TreeMeta`, `columnBySqlName()`, and `columnPropertyName()`
+from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
+`ChildSchema`, and `TableTree` from `@sapporta/shared/contracts`.
 
 ## Contract
 
 - `SapportaTableInputMeta` is the sparse authoring shape accepted by
   `sapportaTable()`. `SapportaMeta` is its normalized server form.
 - Authoring metadata includes `label`, required `rowLabelColumns`, `rowScope`,
-  `immutable`, `references`, `defaultSort`, `children`, `columns`, and `search`.
+  `immutable`, `references`, `defaultSort`, `children`, `columns`, `search`, and
+  `tree`.
 - `rowLabelColumns` must contain at least one real SQL column name from the
   current table. Labels concatenate those stored values; they do not resolve
   referenced-row labels.
@@ -25,6 +26,21 @@ serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
   `systemGlobal` requires neither scope column.
 - Child metadata includes `table`, `foreignKey`, `label`, `columns`,
   `defaultSort`, and `width`. Child display metadata does not configure search.
+- `tree` declares that the rows form a tree through a self-referencing column,
+  such as an account's `parent_id`. It takes `parentColumn` (required), `column`
+  (the column that shows the hierarchy, default the first `rowLabelColumns`
+  entry), `defaultExpanded` (default `true`), and `matchContext`
+  (`"ancestors-and-descendants"` by default, or `"ancestors"`), which sets what
+  a search or filter keeps besides the matching rows.
+- `parentColumn` must be a nullable, single-column foreign key to the same
+  table's primary key, declared with Drizzle `.references()` or a
+  `meta.references` rule. `column` must be a visible column, and the table
+  cannot also list itself in `meta.children`. A violation fails the boot with
+  the table and column in the message.
+- The stock table page shows a tree table as one list with the hierarchy in the
+  tree column, loads all its rows at once (up to 1,000), and shows each search
+  or filter match under its ancestors. Other `meta.children` entries of a tree
+  table become row links instead of expandable child grids.
 - `search` is `false`, `"allColumns"`, or an object with optional `self` and
   `children`. Search defaults to `"allColumns"`. A `self` value is `false`,
   `"allColumns"`, or an array of SQL column names; `children` is a recursive
@@ -56,10 +72,11 @@ serialized `TableSchema`, `ColumnSchema`, and `ChildSchema` from
   branch is built on. Without one of them a `$details` row carrying that key is
   accepted and the value is silently replaced by the created master's key.
 - Browser `TableSchema` contains `name`, `label`, `immutable`, `columns`,
-  `children`, optional `rowLinks`, `rowLabelColumns`, optional `rowCount`, and
-  `searchable`. It does not serialize row scope, abilities, request authority,
-  authoring references, validation callbacks, the table-level Drizzle
-  `defaultSort`, or the recursive search plan.
+  `children`, optional `rowLinks`, `rowLabelColumns`, optional `rowCount`,
+  `searchable`, and optional `tree` with every field resolved. It does not
+  serialize row scope, abilities, request authority, authoring references,
+  validation callbacks, the table-level Drizzle `defaultSort`, or the recursive
+  search plan.
 - Visual metadata, hidden fields, and a protected frontend route do not replace
   server authorization or row scope.
 

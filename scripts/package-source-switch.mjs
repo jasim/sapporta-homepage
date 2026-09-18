@@ -6,6 +6,7 @@ import path from "node:path";
 const CONFIG_FILE = ".package-source-switch.json";
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const SOURCE_LINK_RUNTIME = "@sapporta/server/source-link-runtime";
+const SAPPORTA_ROOT_ENV = "SAPPORTA_PACKAGE_ROOT";
 const DEPENDENCY_KEYS = new Set([
   "dependencies",
   "devDependencies",
@@ -74,7 +75,7 @@ async function showStatus() {
 
   console.log(`Config: ${CONFIG_FILE} ${config ? "present" : "missing"}`);
   console.log(`Configured mode: ${config?.mode ?? "unknown"}`);
-  console.log(`Sapporta workspace: ${config?.sapportaRoot ?? "not configured"}`);
+  console.log(`Sapporta workspace: ${describeSapportaRoot(config)}`);
   console.log(
     `Direct entries: ${locations.length} ` +
       `(local ${counts.local}, npm ${counts.npm}, other ${counts.other})`,
@@ -261,7 +262,7 @@ async function localSources(config) {
   const sapportaRoot = config.sapportaRoot;
   if (!sapportaRoot) {
     throw new Error(
-      `No Sapporta workspace configured. Run ` +
+      `No Sapporta workspace configured. Set ${SAPPORTA_ROOT_ENV} or run ` +
         `"pnpm package-sources use:local /absolute/path/to/sapporta".`,
     );
   }
@@ -506,15 +507,34 @@ async function readConfigIfPresent() {
 }
 
 async function readConfig() {
-  const config = await readConfigIfPresent();
-  if (config) return config;
-  return {
+  const config = (await readConfigIfPresent()) ?? {
     version: 2,
     mode: "npm",
     sapportaRoot: undefined,
     npm: {},
     updatedAt: null,
   };
+  // SAPPORTA_PACKAGE_ROOT is the variable the Sapporta CLI already reads when
+  // it scaffolds source-linked projects, so one setting drives both. An
+  // explicit "use:local <workspace>" argument still wins: switchSources
+  // applies it after this.
+  const fromEnv = envSapportaRoot();
+  if (fromEnv) config.sapportaRoot = fromEnv;
+  return config;
+}
+
+function envSapportaRoot() {
+  const value = process.env[SAPPORTA_ROOT_ENV]?.trim();
+  return value ? path.resolve(rootDir, value) : undefined;
+}
+
+function describeSapportaRoot(config) {
+  const fromEnv = envSapportaRoot();
+  if (fromEnv) return `${fromEnv} (from ${SAPPORTA_ROOT_ENV})`;
+  if (config?.sapportaRoot) {
+    return `${config.sapportaRoot} (from ${CONFIG_FILE})`;
+  }
+  return "not configured";
 }
 
 function normalizeConfig(config) {
@@ -608,10 +628,15 @@ Commands:
   verify                  Verify manifests, overrides, and the lockfile.
 
 Local mode:
-  The first use requires the Sapporta checkout path:
+  The Sapporta checkout path comes from ${SAPPORTA_ROOT_ENV}, the same
+  variable the Sapporta CLI reads for source-linked scaffolds:
+    export ${SAPPORTA_ROOT_ENV}=/absolute/path/to/sapporta
+
+  An explicit argument overrides it for a single run:
     pnpm package-sources use:local /absolute/path/to/sapporta
 
-  The path is stored in the gitignored ${CONFIG_FILE}. Local mode writes
+  Either way the resolved path is stored in the gitignored ${CONFIG_FILE}
+  and reused whenever ${SAPPORTA_ROOT_ENV} is unset. Local mode writes
   direct link: dependencies and transitive overrides in ${WORKSPACE_FILE}.
 
 After switching:

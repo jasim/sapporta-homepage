@@ -95,7 +95,16 @@ pnpm install
 pnpm package-sources:verify
 ```
 
-Pass a path once if the checkout moved:
+The checkout path comes from `SAPPORTA_PACKAGE_ROOT`, the same variable the
+Sapporta CLI reads when it scaffolds a source-linked project:
+
+```bash
+export SAPPORTA_PACKAGE_ROOT=/absolute/path/to/sapporta
+```
+
+The resolved path is stored in `.package-source-switch.json` and reused whenever
+that variable is unset, so it only has to be set once. Pass a path to override
+both for a single run:
 
 ```bash
 pnpm package-sources use:local /absolute/path/to/sapporta

@@ -1,8 +1,8 @@
 ---
 title: "Query syntax"
 description:
-  "Look up strict filters, lookup modes, count grouping, search, sort, and
-  pagination for generated table routes."
+  "Look up strict filters, lookup modes, count grouping, search, sort,
+  pagination, and tree results for generated table routes."
 ---
 
 You can make complex queries on tables by using the generated table API and the
@@ -193,6 +193,36 @@ Both values are strings on the URL and on typed-client input. The shared
 contract coerces and bounds them before table-dependent resolution. Repeating a
 singleton key such as `page` or `limit` is invalid. CSV export is unpaginated.
 
+## Keep tree matches in context
+
+On a table that declares `meta.tree`, a list read can return each filter or
+search match together with its ancestors, so a match deep in the tree is shown
+in place:
+
+```http
+GET /api/tables/accounts?q=federal&tree=ancestors-and-descendants&limit=1000
+```
+
+That request returns Federal, its ancestors Taxes and Expenses, and every
+descendant of Federal.
+
+| Value                       | Returns besides the matches             |
+| --------------------------- | --------------------------------------- |
+| `ancestors`                 | each match's ancestors                  |
+| `ancestors-and-descendants` | each match's ancestors and its subtrees |
+
+The walk follows the table's `parentColumn` and applies row scope at every step,
+so it never returns or passes through a row the caller cannot read. A loop in
+the data ends the walk. Without a filter or search every row already matches,
+and `tree` changes nothing.
+
+When a filter or search is applied, the response `meta` carries
+`tree: { matchCount, contextIds }`. `matchCount` counts the rows that match
+themselves. `contextIds` lists the ancestors that are present only because a
+descendant matched. `meta.total` counts every returned row, so paging stays
+consistent. `tree` on a table without `meta.tree` returns `no_tree_config`. CSV
+export and count do not accept `tree`.
+
 ## Choose a lookup mode
 
 Lookup has two separate query modes, and one request uses exactly one of them.
@@ -223,7 +253,7 @@ order.
 
 | Route                                | Filters | `q`                  | `sort` | Pagination      | Own parameters               |
 | ------------------------------------ | ------- | -------------------- | ------ | --------------- | ---------------------------- |
-| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | —                            |
+| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | `tree`                       |
 | `GET /api/tables/<table>/export.csv` | yes     | table search         | yes    | unpaginated     | —                            |
 | `GET /api/tables/<table>/_count`     | yes     | no                   | no     | no              | `group_by`, `order`, `limit` |
 | `GET /api/tables/<table>/_lookup`    | no      | display-field search | no     | `limit`         | `ids`, `fields`              |
@@ -244,6 +274,7 @@ return HTTP `400` with one of these stable codes:
 | `op_not_applicable`    | an operator that does not apply to the column's kind                                                                             |
 | `bad_value`            | a value that does not parse in the column's kind, an empty `in` list or item, or an `is` polarity other than `null` or `notnull` |
 | `no_search_config`     | a non-empty `q` on a table with `search: false`                                                                                  |
+| `no_tree_config`       | `tree` on a table that does not declare `meta.tree`                                                                              |
 
 This malformed filter omits its operator:
 
