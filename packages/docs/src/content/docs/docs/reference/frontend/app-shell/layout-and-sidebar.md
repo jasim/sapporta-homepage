@@ -18,18 +18,38 @@ sidebar toggle. Desktop screens use the sidebar breakpoint at `64rem`:
 
 - The expanded sidebar takes the width of its contents beside the route content.
   `SidebarShell`, which `AppShell` renders, is `240px` wide.
+- A collapsed sidebar becomes a rail: a column `4.25rem` (68px) wide that shows
+  each navigation item's icon without its label. Every destination stays one
+  click away, and the route content gets the rest of the width.
+- When a mouse rests on the rail for 200ms, the full sidebar opens over the
+  route content, and the content does not move. Each item keeps its row, so the
+  icon under the pointer becomes the same item with its label. The sidebar
+  closes 300ms after the pointer leaves it. Touch input does not open it: a tap
+  on a rail icon follows the link.
+- Choosing a destination puts the opened sidebar away and leaves the rail, so
+  the page is not left under it. Hovering does not open it again until the
+  pointer has left the rail and come back. Sidebar contents get this by passing
+  `closeTemporary` from `useSidebar()` as `onNavigate`, which also dismisses the
+  compact drawer and does nothing while the sidebar is expanded. Pass it to
+  `AccountMenu` as `onActionComplete` so choosing Profile or Workspace settings
+  does the same; opening the menu keeps the sidebar, and a failed action keeps
+  the menu open with its message.
+- Pressing the collapse control does not open the sidebar again under the
+  pointer. It opens once the pointer has left the rail and come back to rest on
+  it. Pressing a rail icon within the 200ms cancels the opening, so a quick
+  click follows the link.
 - The collapse control stores the desktop preference under
-  `sapporta:sidebar-expanded`.
-- A collapsed sidebar has zero layout width. A fine-pointer device can reveal it
-  from the left edge without changing the stored preference or moving route
-  content.
+  `sapporta:sidebar-expanded`. The sidebar that opens over the page from the
+  rail is not stored.
 - Compact screens open the complete sidebar as a modal drawer. Drawer state is
   temporary and closes after navigation, dismissal, or a move back to the
   desktop breakpoint.
 
-The standard toggle stays inside the expanded desktop sidebar. It moves to the
-content's top-left when the desktop sidebar is collapsed and on compact screens.
-Route components do not need to render a toggle.
+On desktop, the standard toggle is the first control in the sidebar header, in
+the expanded sidebar and in the rail. It stays at the same screen position, so a
+second click lands on the same button, and the button keeps keyboard focus. On
+compact screens, the toggle sits over the content's top-left and opens the
+drawer. Route components do not need to render a toggle.
 
 `AppShell` accepts `sidebarOptions` for `defaultExpanded` and `storageKey`. An
 application with its own persistent toolbar can render `SidebarToggle` there and
@@ -39,8 +59,23 @@ both desktop and compact layouts.
 `SidebarProvider`, `SidebarRegion`, `SidebarShell`, `SidebarToggle`, and
 `useSidebar()` are public composition primitives. `SidebarShell` renders the
 navigation contents; `SidebarRegion` decides whether those contents occupy
-desktop width or a compact drawer. The region and the drawer both take the width
-of what they hold, so a sidebar of any width fits in them.
+desktop width, the rail, or a compact drawer. The expanded region and the drawer
+take the width of what they hold, so a sidebar of any width fits in them.
+
+`useSidebar().rail` is `true` while the contents are shown as the rail. Sidebar
+contents read it to fill the rail and to hide their text labels:
+
+- Pass `rail` to `SidebarShell`. It then fills the rail instead of using its own
+  width, including a width set through `className`.
+- Keep each item's height and left padding, and hide only its label (for example
+  with `sr-only`, which keeps the label as the link's accessible name). The
+  icons then stay in place when the sidebar opens over the page.
+- Show only the toggle in the header, and a compact form of the footer. The
+  standard account menu takes `compact` for this; a trigger passed through
+  `renderTrigger` chooses its own compact form.
+
+`SidebarRegion` accepts `railWidth` for a sidebar whose icons need a different
+rail width. Choose the width so the icons sit in the middle of the rail.
 
 ## Compose an application-owned shell
 
@@ -55,11 +90,10 @@ replacement takes on:
   switch or a time zone change remounts everything under `BootLoader`, so an
   outlet inside it misses the toasts posted at that moment.
 - **Header inset.** While a control sits over the content's top-left corner,
-  such as the sidebar toggle of a collapsed sidebar, set
-  `--sap-page-header-inset` to that control's width on the scroll region.
-  `PageHeader` adds the value to its leading padding, so the title stays clear
-  of the control. `AppShell` sets `3rem` while its content-side toggle is
-  present.
+  such as the drawer toggle on a compact screen, set `--sap-page-header-inset`
+  to that control's width on the scroll region. `PageHeader` adds the value to
+  its leading padding, so the title stays clear of the control. `AppShell` sets
+  `3rem` while its content-side toggle is present.
 - **Theme.** Call `useDocumentTheme()` in the shell to apply the dark palette. A
   shell that omits it stays on the light palette. See [Theme mode](#theme-mode).
 
@@ -112,12 +146,15 @@ export function LedgerShell() {
 
 function LedgerLayout() {
   const sidebar = useSidebar();
-  const toggleOverContent = !(sidebar.isDesktop && sidebar.desktopExpanded);
+  // On desktop, the toggle is part of the sidebar header, in the rail too.
+  const toggleOverContent = !sidebar.isDesktop;
 
   return (
     <div className="flex h-screen overflow-hidden">
       <SidebarRegion>
-        <LedgerSidebar className="w-[288px]" />
+        <LedgerSidebar
+          toggle={sidebar.isDesktop ? <SidebarToggle /> : undefined}
+        />
       </SidebarRegion>
       <div className="relative min-w-0 flex-1">
         {toggleOverContent && (
@@ -139,8 +176,41 @@ function LedgerLayout() {
 }
 ```
 
-`LedgerSidebar` renders the expanded sidebar's own toggle and navigation. A
-custom `AccountMenu` trigger passed through `renderTrigger` receives
+`LedgerSidebar` puts the toggle first in its header and shows its rail form
+while `rail` is `true`:
+
+```tsx
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { SidebarShell, useSidebar } from "@sapporta/frontend/shell";
+
+function LedgerSidebar({ toggle }: { toggle?: ReactNode }) {
+  const { rail, closeTemporary } = useSidebar();
+
+  return (
+    <SidebarShell
+      rail={rail}
+      className="w-[288px]"
+      header={
+        <>
+          {toggle}
+          {!rail && <span className="font-semibold">Ledger</span>}
+        </>
+      }
+      onNavigate={closeTemporary}
+    >
+      {ledgerLinks.map(({ to, label, icon: Icon }) => (
+        <Link key={to} to={to} className="flex h-8 items-center gap-2.5 px-3">
+          <Icon className="size-4 shrink-0" />
+          <span className={rail ? "sr-only" : "truncate"}>{label}</span>
+        </Link>
+      ))}
+    </SidebarShell>
+  );
+}
+```
+
+A custom `AccountMenu` trigger passed through `renderTrigger` receives
 `aria-expanded` from the menu's open state.
 
 ## Theme mode
