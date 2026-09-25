@@ -84,7 +84,10 @@ export const projectProgressLinks = {
 The resolver record is keyed first by `levelName` and then by column ID. Its
 context contains the current node, value, column, ancestors, dataset, and
 optional report input. A hierarchical report can therefore resolve a child cell
-from its own hidden ID plus an ancestor ID.
+from its own hidden ID plus an ancestor ID. The ancestors are the rows of
+enclosing levels. On a tree level, a row's tree parent is a row of the same
+level, so it is not an ancestor; read the parent's key from the row's own parent
+column.
 
 A resolver may return a list, but the current renderer follows only the first
 link. Put one canonical action first; later entries are not rendered as a menu.

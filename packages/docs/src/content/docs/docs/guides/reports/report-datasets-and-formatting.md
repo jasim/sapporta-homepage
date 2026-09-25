@@ -211,6 +211,86 @@ node's `columns`, put computed parent values in `rollup`, and attach child
 arrays through `children`. Root totals belong in `footerRows`; totals inside a
 child collection belong in `childFooterRows`.
 
+## Show rows that name a parent as one tree
+
+Some rows name a parent row of the same kind. For example, each account in an
+expense report can name its parent account in `parent_id`. Child levels would
+show each depth as a nested grid with its own header. Declare `tree` on the
+level instead, so all the accounts form one tree under one header:
+
+```ts
+import type { GridDataset } from "@sapporta/shared/grid-dataset";
+
+type ExpenseAccount = {
+  id: number;
+  parent_id: number | null;
+  name: string;
+  // The account's own expenses plus those of its sub-accounts.
+  amount: number;
+};
+
+export function expenseBreakdownDataset(
+  accounts: readonly ExpenseAccount[],
+  totalExpenses: number,
+): GridDataset {
+  return {
+    name: "expense-breakdown",
+    label: "Expense breakdown",
+    rootLevel: "account",
+    levels: {
+      account: {
+        columns: [
+          {
+            id: "parent_id",
+            label: "Parent ID",
+            kind: "number",
+            visuallyHidden: true,
+          },
+          { id: "account", label: "Account", kind: "text" },
+          {
+            id: "amount",
+            label: "Amount",
+            kind: "number",
+            displayFormat: "currency",
+          },
+        ],
+        childLevels: [],
+        tree: { parentColumn: "parent_id" },
+      },
+    },
+    nodes: accounts.map((account) => ({
+      rowKey: String(account.id),
+      levelName: "account",
+      columns: {
+        parent_id: account.parent_id,
+        account: account.name,
+        amount: account.amount,
+      },
+    })),
+    footerRows: [
+      {
+        rowKey: "total-expenses",
+        columns: { account: "Total expenses", amount: totalExpenses },
+      },
+    ],
+  };
+}
+```
+
+The nodes are one flat list. `parent_id` holds the parent row's `rowKey`, and
+the two are compared as strings. For this reason, the row key is
+`String(account.id)`; a prefixed key such as `account:12` would not match the
+parent value `12`. A row whose parent is not in the list is shown at top level.
+
+The tree is shown in the first visible text column, `account`. Set `tree.column`
+to show it in another visible column. Rows start expanded, and
+`defaultCollapsed: true` on the level starts them collapsed. Sorting a column
+orders the rows among their siblings at every depth, and the footer row stays
+below the tree.
+
+The renderer does not add up the amounts, so the mapper passes each account's
+amount with its sub-accounts included, and the footer's total.
+
 ## Define the fixture inside the test
 
 A standalone mapper test owns every row and its fixed baseline:

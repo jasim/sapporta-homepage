@@ -53,7 +53,9 @@ a configured cell resolver, so return `[]` when it lacks a safe identifier.
 - `node`: the current Grid tree node;
 - `levelName`: the current level key;
 - `input`: `TInput | undefined`;
-- `ancestors`: ancestor dataset nodes;
+- `ancestors`: the nodes of the enclosing levels, outermost first. On a tree
+  level, the row's tree parents are rows of the same level and are not included;
+  read the parent's key from the row's own parent column;
 - `column`: the current `GridDatasetColumn`; and
 - `value`: the current cell value.
 

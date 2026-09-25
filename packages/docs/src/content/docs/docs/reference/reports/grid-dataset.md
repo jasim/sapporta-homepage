@@ -40,15 +40,62 @@ report-specific error handling belongs outside the dataset.
 
 ## Level
 
-| Field              | Type                  | Required |
-| ------------------ | --------------------- | -------- |
-| `label`            | `string`              | no       |
-| `columns`          | `GridDatasetColumn[]` | yes      |
-| `childLevels`      | `string[]`            | yes      |
-| `defaultCollapsed` | `boolean`             | no       |
+| Field              | Type                   | Required |
+| ------------------ | ---------------------- | -------- |
+| `label`            | `string`               | no       |
+| `columns`          | `GridDatasetColumn[]`  | yes      |
+| `childLevels`      | `string[]`             | yes      |
+| `defaultCollapsed` | `boolean`              | no       |
+| `tree`             | `GridDatasetLevelTree` | no       |
 
 `rootLevel` must name the level used by root nodes. Each child level named by a
-level should have a matching entry in `levels`.
+level should have a matching entry in `levels`. `defaultCollapsed: true` starts
+the level's rows collapsed.
+
+## Tree level
+
+A level with `tree` shows rows that name a parent row of the same level as one
+tree under one header. For example, an expense report can show accounts that
+name their parent account in `parent_id`. Each row is indented by its depth in
+the tree column, and a row with children has a chevron that expands or collapses
+it.
+
+| Field          | Type     | Required |
+| -------------- | -------- | -------- |
+| `parentColumn` | `string` | yes      |
+| `column`       | `string` | no       |
+
+`parentColumn` names a column of the level that holds the parent row's `rowKey`.
+A `null`, `undefined`, or `""` value marks a top-level row. The value is
+compared with row keys as a string: the parent value `12` matches the row key
+`"12"`, but not the row key `"account:12"`. The parent column can be
+`visuallyHidden`.
+
+`column` names the visible column that shows the hierarchy. It defaults to the
+first visible text column, or to the first visible column when the level has no
+text column. In the narrow cards layout, this column is the title of each card.
+
+A tree level declares no `childLevels`. Its nodes are one flat list, and each
+node names its parent in the parent column instead of nesting under it through
+`children`. A row whose parent is not among the level's nodes is shown at top
+level. Rows start expanded, and `defaultCollapsed: true` starts them collapsed.
+
+In the tree column, pressing Enter opens the cell's link, and pressing Space
+expands or collapses the row. When the cell has no link, Enter also expands or
+collapses the row.
+
+Sorting a column orders the rows among their siblings at every depth. Footer
+rows stay below the tree. A tree level can also be a child level of another
+level, such as accounts under an "Income" or "Expenses" section row.
+
+`ReportGridDataset` does not add up values, so the dataset carries each parent
+row's total.
+
+`ReportGridDataset` rejects a dataset in which a tree level also declares child
+levels, names a parent column the level does not have, or names a tree column
+that is not visible. Call `gridDatasetTreeProblems(dataset)` from
+`@sapporta/shared/grid-dataset` to check the parent and tree columns in a
+mapper test. It returns one message per problem.
 
 ## Column
 
@@ -149,7 +196,8 @@ Give `renderCell` and `columnSizing` stable identities, at module level or in
 `useMemo`; the grid is rebuilt whenever either changes.
 
 Nested levels are indented by `--sap-report-grid-nested-indent`, `18px` by
-default.
+default. Each depth of a tree level is indented by `--sap-grid-tree-indent`,
+also `18px` by default.
 
 ## Related documentation
 

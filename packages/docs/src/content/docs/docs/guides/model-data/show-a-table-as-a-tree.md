@@ -228,3 +228,4 @@ describes the inputs and the result.
 - [Query syntax](/docs/reference/http/query-syntax/)
 - [TGrid definitions, sessions, and queries](/docs/reference/frontend/tgrid/definitions-sessions-and-queries/)
 - [Hierarchical grids](/grid/guides/hierarchical-grids/#tree-data)
+- [Show report rows as a tree](/docs/guides/reports/report-datasets-and-formatting/#show-rows-that-name-a-parent-as-one-tree)
