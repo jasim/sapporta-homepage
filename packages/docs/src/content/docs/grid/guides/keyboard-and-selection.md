@@ -73,6 +73,14 @@ active row's expansion, Right expand it, and Left collapse it.
 `ROW_PRIMARY_MASTER_DETAIL_WITH_ACTIVATION` also assigns Enter and double-click
 to row activation. Shift+Space is reserved for row selection.
 
+`ROW_MULTISELECT_LIST` keeps an independent multi-row selection. Shift+Space
+toggles the active row and Shift+Up or Shift+Down extends the selection. With
+the mouse, a click moves the row cursor, Shift-click selects the range from the
+row cursor to the clicked row, and Cmd-click (Ctrl-click outside macOS) adds or
+removes one row. See
+[Row selection](/grid/reference/interactions/row-selection/#pointer-gestures)
+for the rules in other configurations.
+
 On a [tree level](/grid/guides/hierarchical-grids/#tree-data) the same keys
 follow the tree. Right expands a collapsed row or moves to its first child. Left
 collapses an expanded row or moves to its parent. Space toggles, and a row

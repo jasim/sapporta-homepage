@@ -61,6 +61,28 @@ level.clearRowSelection();
 Selection commands normalize row ids against the current displayed rows and the
 configured selection mode. Non-selectable and stale rows are removed.
 
+## Pointer gestures
+
+In a row list (`mode: "row-list"`), every mouse press on a selectable row moves
+the row cursor to that row. The modifier keys decide what else happens to an
+independent selection:
+
+| Gesture                                  | Effect on the selection                                                                                                                                                                                                                                                      |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Click                                    | None. The click only moves the row cursor.                                                                                                                                                                                                                                   |
+| Shift-click                              | Selects the range from the previous row cursor to the clicked row, when `activeRow.keyboard.shiftArrows` is `"extend-selected-rows"`.                                                                                                                                        |
+| Cmd-click on macOS, Ctrl-click elsewhere | Toggles the clicked row, the same way Shift+Space toggles the active row. A `"multi"` selection adds or removes the row and keeps the other selected rows. A `"single"` selection selects the row, or clears it when it is already selected. Adding Shift is still a toggle. |
+
+When the configuration does not allow a gesture, the press only moves the row
+cursor. For example, a selection that follows the active row has no stored
+selection to toggle, and Shift-click does not extend when `shiftArrows` is
+`"move-active-row"`. Because a toggle moves the row cursor, a following
+Shift-click selects the range that starts at the toggled row.
+`ROW_MULTISELECT_LIST` enables all three gestures.
+
+In a cell grid, the same gestures apply to row headers and row-selection
+controls. There, a plain click replaces the selection with the clicked row.
+
 ## Subscriptions
 
 Level subscriptions correspond to distinct read models:
