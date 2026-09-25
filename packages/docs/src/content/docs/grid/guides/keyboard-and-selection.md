@@ -76,8 +76,8 @@ to row activation. Shift+Space is reserved for row selection.
 `ROW_MULTISELECT_LIST` keeps an independent multi-row selection. Shift+Space
 toggles the active row and Shift+Up or Shift+Down extends the selection. With
 the mouse, a click moves the row cursor, Shift-click selects the range from the
-row cursor to the clicked row, and Cmd-click (Ctrl-click outside macOS) adds or
-removes one row. See
+row cursor to the clicked row, and Cmd-click or Ctrl-click adds or removes one
+row. See
 [Row selection](/grid/reference/interactions/row-selection/#pointer-gestures)
 for the rules in other configurations.
 
