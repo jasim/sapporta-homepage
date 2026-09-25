@@ -63,6 +63,9 @@ whole site.
   are generated — never edit them. Change `packages/api-reference/` and run
   `pnpm generate:api-reference`. Bump the `@sapporta/*` versions in
   `packages/api-reference/package.json` to document a newer release.
+- Framework sync: `FRAMEWORK_SYNC.md` records the last `../sapporta` commit the
+  hand-written docs cover. Advance it in the same commit as the docs; list
+  deferred changes under `Open`.
 
 ## Schema and migrations
 
