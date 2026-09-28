@@ -538,9 +538,11 @@ through a template the project would have to re-sync with.
 
 Migration state is three problems, and the boot-time guard reports them
 together: pending (not yet applied), missing (applied, file gone), and changed
-(hash mismatch), each with the command that fixes it. The fix differs per
-category, which is why they are not collapsed into "your migrations are out of
-date".
+(hash mismatch), each with the command that fixes it for a project using the
+default `packages/api/migrations` directory. A project that names its own
+directory gets its path instead, because it migrates its own way. The fix
+differs per category, which is why they are not collapsed into "your migrations
+are out of date".
 
 **Continue with:**
 [Create a Sapporta project](/docs/getting-started/create-a-project/) ·

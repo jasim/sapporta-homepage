@@ -70,7 +70,7 @@ with identical names. Each `--sap-*` token is also a Tailwind colour, for
 | ------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `--sap-bg`                                                          | `sap-bg`                                                      | Page background                                                   |
 | `--sap-surface`                                                     | `sap-surface`                                                 | Page body, cards, grids, popovers                                 |
-| `--sap-sidebar`                                                     | `sap-sidebar`                                                 | Sidebar                                                           |
+| `--sap-sidebar`                                                     | `sap-sidebar`                                                 | Status bar, compact bottom navigation, grid header fallback       |
 | `--sap-nested-bg`                                                   | `sap-nested`                                                  | Nested grid levels, muted wash                                    |
 | `--sap-chip-bg`                                                     | `sap-chip`                                                    | Chips, secondary buttons                                          |
 | `--sap-row`, `--sap-row-hover`                                      | `sap-row`, `sap-row-hover`                                    | Rows, and the hover wash behind rows, menu items, and `bg-accent` |
@@ -84,13 +84,19 @@ with identical names. Each `--sap-*` token is also a Tailwind colour, for
 | `--sap-positive`, `--sap-warning`                                   | `sap-positive`, `sap-warning`                                 | Positive figures and warnings                                     |
 | `--sap-negative`                                                    | `sap-negative`                                                | Errors, error text, and destructive actions                       |
 | `--sap-numeric-negative`                                            | `sap-numeric-negative`                                        | Negative figures; follows `--sap-negative` unless set             |
-| `--sap-active-nav-bg`, `--sap-nav-count-bg`                         | `sap-active-nav`, `sap-nav-count`                             | Active navigation item and navigation counts                      |
+| `--sap-active-nav-bg`, `--sap-nav-count-bg`                         | `sap-active-nav`, `sap-nav-count`                             | Avatar tiles, the compact navigation's active item, nav counts    |
+| `--sap-nav-bg`, `--sap-nav-fg`, `--sap-nav-icon`                    | `sap-nav`, `sap-nav-fg`, `sap-nav-icon`                       | Navigation sidebar plane, row text, and icons                     |
+| `--sap-nav-section`, `--sap-nav-hover-bg`, `--sap-nav-selected-bg`  | `sap-nav-section`, `sap-nav-hover`, `sap-nav-selected`        | Sidebar section labels, row hover, and the current page's wash    |
 | `--sap-kbd-bg`, `--sap-kbd-inverted-bg`                             | `sap-kbd`, `sap-kbd-inverted`                                 | Keyboard hint chips, on light and on filled surfaces              |
 
 `--sap-numeric-negative` paints `colorRule: "negative"`, negative `signed`
 values, and negative report summary figures. Set it apart from `--sap-negative`
 when negative numbers are ordinary data, such as money out in a ledger, so that
 errors stay red and figures stay in ink.
+
+The `--sap-nav-*` tokens paint the navigation sidebar. Redeclare them to restyle
+it without moving `--sap-sidebar` or `--sap-active-nav-bg`, which also paint the
+status bar, grid headers, the compact bottom navigation, and avatar tiles.
 
 ## Radii and elevation
 
@@ -148,7 +154,7 @@ available.
 | `text-sap-menu`    | `11.5px` | Menu items, select cells, page header subtitle                    |
 | `text-sap-data`    | `12px`   | Inline data: IDs, dates, references, chips                        |
 | `text-sap-emph`    | `12.5px` | Buttons, inputs, search                                           |
-| `text-sap-body`    | `13px`   | Data rows, page header title, sidebar items, labels, toasts       |
+| `text-sap-body`    | `13px`   | Data rows, page header title, labels, toasts                      |
 | `text-sap-mark`    | `14.5px` | Wordmark                                                          |
 | `text-sap-display` | `18px`   | Dialog, sheet, and screen headings; stat values                   |
 
@@ -159,7 +165,7 @@ available.
 | `tracking-sap-display` | `0`      | Wordmark, stat values                 |
 | `tracking-sap-head`    | `0.06em` | Grid column headers, uppercase labels |
 | `tracking-sap-label`   | `0.06em` | Stat card labels                      |
-| `tracking-sap-section` | `0.08em` | Sidebar section labels                |
+| `tracking-sap-section` | `0.08em` | Menu and view-switch section labels   |
 
 The height tiers are registered under `--height-*`, so they produce `h-sap-*`
 and `min-h-sap-*` utilities and no padding, width, or gap utilities.

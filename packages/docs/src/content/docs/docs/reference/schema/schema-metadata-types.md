@@ -21,7 +21,8 @@ Server input types from `@sapporta/server`; normalized wire types from
   extraction uses a factory-declared kind or derives one from the Drizzle data
   type, and the frontend parses the metadata response before rendering controls.
 - Serialized columns use public SQL names and expose select options derived from
-  the Drizzle column plus `apiWritable` write policy when declared.
+  the Drizzle column plus the `apiWritable` write policy and `gridEditable` grid
+  policy when declared.
 - The authored and normalized shapes are distinct contracts and should not be
   cast interchangeably.
 

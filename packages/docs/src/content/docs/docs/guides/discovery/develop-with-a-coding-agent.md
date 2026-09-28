@@ -23,8 +23,9 @@ it does not need a bearer token merely to inspect or edit source.
 When the task also needs protected endpoint discovery, live rows, or runtime
 read-back, create a token in the intended workspace and use the setup prompt
 from `/account/profile`. Open the agent at the project root before pasting it,
-because the prompt instructs the agent to configure that checkout's private CLI
-environment and record the command future sessions should use. The
+because the prompt instructs the agent to use the authenticated command and token
+location the checkout's agent docs already give, and to record a command only
+when they give none. The
 [agent access guide](/docs/guides/security/agent-access-and-scoped-tokens/)
 covers the credential boundary, secret-bearing handoff, and revocation
 lifecycle.

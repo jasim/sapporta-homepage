@@ -16,6 +16,7 @@ Standalone Grid exposes two layers. Sapporta applications add a third table-awar
 - Start with ColumnPreset for normal standalone text, number, date, boolean, select, lookup, and selection columns.
 - Use raw GridCore columns for a custom renderer or editor that ColumnPreset does not model.
 - Use TGrid when a generated Sapporta table owns schema metadata, query state, row security, and record navigation.
+- Keep `SchemaTableGridView` and pass `columns` when a generated table page needs a different column set; drop to TGrid only when the page composition itself changes.
 - Do not import TGrid from `@sapporta/grid`; its public contract belongs to `@sapporta/frontend`.
 
 For application record workflows, start with

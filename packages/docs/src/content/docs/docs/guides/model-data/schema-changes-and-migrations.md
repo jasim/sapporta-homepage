@@ -128,6 +128,9 @@ Loading the application exercises a separate Sapporta readiness guard. Startup
 rejects pending migrations, applied files missing from disk, and applied files
 whose contents changed. It never applies migrations automatically. Production
 releases therefore run the committed migration before new code serves traffic.
+An application that packages its own migrations and migrates the user's database
+at startup opts in to applying them itself; see
+[apply migrations from application code](/docs/reference/schema/migrations/#apply-migrations-from-application-code).
 
 Commit the schema edit, generated SQL, journal, and snapshot together. The
 schema records the target state; the migration records how deployed data reaches

@@ -45,6 +45,39 @@ subscriptions must clean up on `null`. The parameter is also available through
 `useSchemaTableGrid()` omit it because their returned binding already contains
 `session`.
 
+## Standard-page columns
+
+`SchemaTableGridView` derives its columns from the table schema and supplies the
+whole table page: URL query state, filters, search, sort, pagination, CSV export,
+lookup labels, record routes, the toolbar, and New record. Its `columns` prop
+replaces that derived list for the root level, so a page can hide, reorder,
+restyle, or add columns without rebuilding the page as a `defineTGrid`
+definition. `useSchemaTableGrid` and `defineSchemaTGrid` take the same value, and
+`TablePage` takes it through `gridOptions`.
+
+```ts
+type SchemaTableColumns<AppServices = unknown> = TGridLevelColumns<
+  SchemaTableRowsByLevel,
+  AppServices,
+  string
+>;
+```
+
+The value is the spec list or builder callback a `defineTGrid` level's `columns`
+takes, built with `columns.table()`, `columns.client()`, and
+`columns.remainingTable()`. `remainingTable()` fills the gaps in schema order, so
+a page names only the columns it changes. The value is checked against the table
+when the grid builds, not when the grid is declared, and a new identity rebuilds
+the grid, so keep it in a module constant or `useMemo`. Child levels,
+`fixedFilters`, search, and CSV export are unchanged, and other views of the
+table still show every column.
+
+`expandTGridColumnSpecs` is exported for an application that compiles the same
+value itself: it returns the visible columns, in order, with every name checked
+against the table.
+[Change the standard page's columns](/docs/guides/generated-surfaces/table-aware-grids-and-customization/#change-the-standard-pages-columns)
+walks through the prop with worked examples.
+
 ## Query and loaded-row session APIs
 
 `TGridSession` exposes:

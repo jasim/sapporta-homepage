@@ -50,7 +50,9 @@ schema. A non-null select without a default cannot be submitted empty; the
 create parser reports a field issue. A Drizzle foreign key plus the project
 `rowLabelColumns` turns `project_id` into a scoped lookup that stores an ID and
 displays a name. System-managed scope fields, default-generated primary keys,
-and columns with `apiWritable: false` stay out of ordinary forms.
+and columns with `apiWritable: false` stay out of ordinary forms. A column with
+only `gridEditable: false` stays in them: it is read-only in the grid and a
+record's detail fields, but the create form still asks for it.
 
 The project definition supplies the reverse navigation:
 

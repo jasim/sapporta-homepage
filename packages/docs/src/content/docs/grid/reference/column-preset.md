@@ -83,6 +83,9 @@ type ColumnPresetOptions<TMeta = unknown> = {
         editor?: "default" | ComponentType<CellEditorProps>;
         startsOn?: readonly CellEditGesture[];
       };
+  // Refuses the plain Delete and Backspace clear for a column that must not be
+  // empty. Without it, those keys clear an editable cell.
+  disableBackspaceCellClear?: true;
   activation?: CellActivation;
   sortable?: boolean;
   format?: (value: unknown) => string;
@@ -95,6 +98,10 @@ type ColumnPresetOptions<TMeta = unknown> = {
   meta?: TMeta;
 };
 ```
+
+`align` sets the column's alignment on the grid `ColumnSchema`, so the header and
+any cell a custom `renderCell` wraps keep it. A preset sets it from its kind:
+numbers right, booleans center.
 
 ### Widths
 
@@ -308,6 +315,10 @@ type PresetChromeOptions<TMeta = unknown, TFilter = unknown> = {
   commandOverrides?: (
     level: HeaderLevelState<TFilter>,
   ) => Partial<GridLevelCommands<TFilter>>;
+  renderLevelLabelAction?: (context: {
+    path: GridPath;
+    levelName: string;
+  }) => ReactNode;
 };
 
 type ColumnSizingOptions = {
@@ -341,6 +352,11 @@ const presetChrome = columnPreset.chrome({
 - `minPx` is the narrowest a column can be dragged to, `48` by default.
 - `minWidths` raises the floors of the named widths for columns nobody has
   dragged.
+- `renderLevelLabelAction` renders a control after a nested level's caption, such
+  as a link that opens that level's rows on their own page. The generated grids
+  use it for the related-rows link; return `null` to render nothing. The caption
+  itself is the level's title-cased name, at the data size, so
+  `JOURNAL_ENTRIES` reads as `Journal Entries`.
 
 Give `GridLevel` a stable chrome: build it at module level or in `useMemo`.
 

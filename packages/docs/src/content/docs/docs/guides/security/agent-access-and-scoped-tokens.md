@@ -56,16 +56,26 @@ app APIs, but token-management endpoints reject them with `403 forbidden`.
 
 ## Hand the setup prompt to one trusted agent
 
-The setup prompt asks the agent to verify the Sapporta skill and project-local
-CLI, then reuse the project's existing directory environment tooling, such as
-mise, direnv, or a dotenv runner, to provide `SAPPORTA_API_URL` and
-`SAPPORTA_API_TOKEN` to every Sapporta command. If the project has no such tool,
-the fallback is a private, gitignored local wrapper rather than a newly
-installed environment manager.
+The setup prompt has the agent read the project's agent docs first, such as
+`AGENTS.md`, for an authenticated Sapporta command and token location they
+already give. When the docs give one, the agent sets up for that command and
+leaves the docs alone. Otherwise it uses the CLI a workspace package already
+provides: `pnpm exec` finds the `sapporta` bin only from inside the package that
+declares `sapporta` or `@sapporta/server`, for example
+`pnpm --filter ./packages/api exec sapporta`. It installs the CLI only when no
+package provides it.
 
-From there, the agent records the exact authenticated invocation in `AGENTS.md`
-and proves the connection with a read-only command. In a sandboxed agent, that
-final check may require explicit network permission for the application URL.
+To supply `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`, the agent reuses the
+project's existing directory environment tooling, such as mise, direnv, or a
+dotenv runner, unless the project's docs already name where the token goes. If
+the project has no such tool, the fallback is a private, gitignored local
+wrapper rather than a newly installed environment manager.
+
+When the project's docs give no authenticated command, the agent adds the exact
+invocation to `AGENTS.md`; it does not edit agent docs that already give one.
+Either way it proves the connection with a read-only command. In a sandboxed
+agent, that final check may require explicit network permission for the
+application URL.
 
 Against a local development server, `endpoints list` succeeds without a
 credential and therefore reports reachability rather than the token. Read the

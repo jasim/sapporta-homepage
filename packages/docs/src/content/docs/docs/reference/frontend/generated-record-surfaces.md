@@ -60,7 +60,9 @@ include scoped lookup capabilities.
 Columns do not produce editable field models when they are `visuallyHidden`, are
 primary keys with a generated default, have `apiWritable: false`, or use a
 system-managed scope name. Client-assigned primary keys remain editable when the
-metadata permits them.
+metadata permits them. `gridEditable: false` is not in this list: it makes a
+column read-only in a grid cell and a record's detail field while the create
+form still asks for it.
 
 `created_at` and `updated_at` are visually hidden by default, and an application
 may override that presentation hint. A timestamp default does not make a column

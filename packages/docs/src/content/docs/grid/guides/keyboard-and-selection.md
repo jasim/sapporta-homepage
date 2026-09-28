@@ -87,6 +87,13 @@ collapses an expanded row or moves to its parent. Space toggles, and a row
 without children ignores Right and Space. In a cell grid, Space on the tree
 column toggles the row, and Enter toggles it when the tree cell is not editable.
 
+A plain Delete or Backspace clears the focused editable cell: it writes `null`,
+and it does the same for the other selected cells of that column. Clearing is an
+edit, so it applies only where an editor could open. A column can refuse it with
+`disableBackspaceCellClear: true`; a schema-derived TGrid sets that option on
+`notNull` columns, so a required cell cannot be emptied with a keystroke while a
+nullable foreign key can.
+
 Grid copy uses the active cell or cell range. It does not read row selection.
 Keep row selection for row operations such as delete, export, bulk edit, or
 side-panel workflows.

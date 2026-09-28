@@ -191,6 +191,11 @@ Change metadata when presentation or generated behavior changes. Change the
 Drizzle table when stored structure or constraints change, then generate a
 reviewed migration.
 
+Per-column presentation and editability live in the table's `columns` meta.
+`apiWritable: false` removes a column from generated writes and forms;
+`gridEditable: false` keeps it writable through the table API and in a create
+form while the grid cells and a record's detail fields show it read-only.
+
 ## Related reference
 
 - [Table definitions](/docs/reference/schema/table-definitions/)

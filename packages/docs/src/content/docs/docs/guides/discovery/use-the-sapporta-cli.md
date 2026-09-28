@@ -12,8 +12,9 @@ generated row helpers even when the caller is allowed to use it.
 
 ## Verify the installed command
 
-Use the project-local binary so the commands match the installed framework
-version:
+Use the project-local binary, from the project root, so the commands match the
+installed framework version. A generated workspace declares `@sapporta/server`
+at the root for exactly this:
 
 ```bash
 pnpm exec sapporta --version

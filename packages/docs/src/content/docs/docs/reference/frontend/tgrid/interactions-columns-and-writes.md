@@ -85,6 +85,15 @@ then render `TGrid` with the returned session inside the application layout.
 - Numeric drafts become finite numbers. Clearing a non-text cell becomes an
   explicit `null`. An untouched field remains absent from the patch. Empty text
   remains `""`.
+- A plain Delete or Backspace writes `null` into the focused editable cell and
+  the other selected cells of its column. The write takes the edit path, so it
+  reaches the same save and validation boundary as a typed edit. TGrid sets
+  `disableBackspaceCellClear` on `notNull` columns, so a required cell cannot be
+  emptied with a keystroke; a column may set it directly to refuse the clear.
+- A column whose meta is `gridEditable: false` or `apiWritable: false` renders
+  read-only in a grid cell and in a record's detail fields. Unlike
+  `apiWritable: false`, `gridEditable: false` still leaves the column in the
+  table API and a create form.
 - Invalid editor text remains available to the editor and reaches the
   authoritative server validation boundary.
 - Select-backed columns preserve exact option identity, and render their value

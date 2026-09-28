@@ -54,7 +54,8 @@ from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
   traversal is explicit, and expanded child grids do not inherit the root search
   term.
 - Column metadata includes semantic kind, formatting, label, visibility, width
-  bounds, additive behavior, color/zero/strong hints, notes, and `apiWritable`.
+  bounds, additive behavior, color/zero/strong hints, notes, `apiWritable`, and
+  `gridEditable`.
 - Select options belong to the Drizzle column. Use Sapporta `select()` or raw
   Drizzle `text(name, { enum: options })`; schema extraction serializes the same
   option list for browser controls.
@@ -67,6 +68,11 @@ from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
 - `apiWritable: false` removes a column from generated write schemas and forms,
   and generated table APIs reject callers that submit it. Reference-level
   `apiSettable: false` applies the same policy to a server-authored foreign key.
+- `gridEditable: false` keeps a column out of grid cell editing and out of a
+  record's detail field, while the table API still accepts the column and a
+  create form still asks for it. It suits text an import wrote that a person
+  should not change. A generated grid also keeps an `apiWritable: false` column
+  read-only, as the detail field and the create form already did.
 - A table declaring `meta.children` declares the child's foreign key
   non-writable, through either `references: { fk: { apiSettable: false } }` on
   the child or `columns: { fk: { apiWritable: false } }`. Either removes the key

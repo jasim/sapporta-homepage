@@ -54,9 +54,10 @@ it `AGENTS.md`, framework-specific project files, and a project-local CLI. If
 the first outcome also needs access to the protected running application, create
 an agent token from `/account/profile` and paste the dialog's setup prompt into
 that agent. The prompt contains the correct application URL and instructs the
-agent to place the URL and token behind private local environment tooling, then
-verify the token with `api get '/api/auth-context'`. The token itself must
-never be added to `AGENTS.md`. See
+agent to follow the token location the project's agent docs already give, or to
+place the URL and token behind private local environment tooling when they give
+none, then verify the token with `api get '/api/auth-context'`. The token itself
+must never be added to `AGENTS.md`. See
 [Agent access and scoped tokens](/docs/guides/security/agent-access-and-scoped-tokens/)
 for the complete handoff and revocation workflow.
 

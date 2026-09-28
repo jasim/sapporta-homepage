@@ -64,7 +64,12 @@ hierarchy, scanning columns stitched together from several tables, watching
 values calculated on the fly — and a single-record form just gets in the way
 of that.
 
-When your requirement looks like that,
+The generated table page is usually the answer, and it is not all-or-nothing: a
+page can hide, reorder, restyle, or add columns by passing `columns` to
+`SchemaTableGridView` or `TablePage`, and keep the generated filters, search,
+URL state, lookups, CSV export, and record routes.
+
+When the requirement goes further,
 [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
 lays out the options. It compares a generated table screen, TGrid, GridCore,
 and an application screen on who controls the rows and the cache, so the surface

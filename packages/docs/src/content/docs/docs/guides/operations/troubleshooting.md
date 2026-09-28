@@ -71,6 +71,13 @@ before the root `typecheck` script existed runs
 `pnpm --filter ./packages/frontend exec tsc --noEmit` and should add the script
 to its root `package.json`.
 
+A project generated before the root declared a CLI reports
+`[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command "sapporta" not found` from the
+project root. `pnpm exec` searches the current package and then `PATH`, never an
+ancestor, so either add `@sapporta/server` to the root `devDependencies` at the
+spec `packages/api` resolves, or run the command from the package that declares
+it: `pnpm --filter ./packages/api exec sapporta ...`.
+
 For a bad filter, inspect the generated endpoint and keep an explicit operator:
 
 ```bash

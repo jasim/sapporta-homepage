@@ -14,17 +14,20 @@ cache owner first, then read the focused implementation guide.
 | Need | Surface | Data or cache owner |
 | --- | --- | --- |
 | Ordinary CRUD, filters, lookups, child collections, and export | Generated table screen | Generated table surface and server |
-| Registered table with custom columns, renderers, hierarchy, or Grid composition | TGrid, normally through `TableGridView` | Table-aware Grid session |
+| Ordinary CRUD where some columns are hidden, reordered, restyled, or added | Generated table page with `columns` | Generated table surface and server |
+| Registered table with custom levels, hierarchy, chrome, or Grid composition | TGrid, normally through `TableGridView` | Table-aware Grid session |
 | Temporary, composite, calculated, or browser-owned rows | GridCore, usually with `ColumnPreset` | Application source and runtime |
 | Custom route, layout, workflow, URL state, commands, or non-grid controls | Application React screen | Screen coordinates query, Grid, and action owners |
 | Reusable, authoritative scoped aggregate | Application report route and screen | Server route plus typed client and query |
 
 The generated route is the default because it already has table metadata,
 lookups, generated clients, URL query state, record links, and row-safe writes.
-TGrid retains those table services while the application chooses the
-composition. GridCore starts from a schema and data source you supply.
-`ColumnPreset` can add standard editors and codecs to GridCore, but it does not
-turn application rows into registered table rows.
+To change only its columns, pass `columns` to `SchemaTableGridView` or
+`TablePage`'s `gridOptions` and keep every generated behavior. Reach for TGrid
+when the composition itself changes: the page supplies its own chrome, extra
+levels, or interaction configuration. GridCore starts from a schema and data
+source you supply. `ColumnPreset` can add standard editors and codecs to
+GridCore, but it does not turn application rows into registered table rows.
 
 Use ordinary controls for singleton values, forms, wizards, and compact panels
 around a Grid. A custom screen can keep generated screens as the system of
@@ -35,7 +38,8 @@ record while adding one focused projection or command beside them.
 - [Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
   chooses keyboard, active-row, activation, and selection behavior.
 - [Table-aware grids and customization](/docs/guides/generated-surfaces/table-aware-grids-and-customization/)
-  keeps one registered table's query, lookup, URL, and save behavior.
+  keeps one registered table's query, lookup, URL, and save behavior; its
+  `columns` section changes the standard page's columns without leaving it.
 - [Low-level TGrid sessions](/docs/guides/generated-surfaces/low-level-tgrid-sessions/)
   owns explicit hierarchy, session lifecycle, and external reload registration.
 - [Bounded GridCore projections](/docs/guides/application-code/bounded-gridcore-projections/)

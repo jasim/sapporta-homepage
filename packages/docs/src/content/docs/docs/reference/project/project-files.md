@@ -15,7 +15,7 @@ Generated pnpm workspace from `@sapporta/server` 0.7.0.
 ```text
 my-app/
   sapporta.json                marks the project root for Sapporta tooling
-  package.json                 root scripts
+  package.json                 root scripts and the root CLI devDependency
   pnpm-workspace.yaml          package membership
   AGENTS.md                    coding-agent instructions; routes work to the two files below
   CLAUDE.md                    coding-agent instructions
@@ -79,11 +79,17 @@ never edited — add another one.
 ## Rules the tree does not show
 
 - API and frontend may import shared. Shared must not import either I/O package.
-- Each workspace package declares the `@sapporta/*` packages it imports, and
-  the workspace root declares none. `packages/api` declares `@sapporta/server` and
-  `@sapporta/honest`; `packages/frontend` declares `@sapporta/frontend`,
-  `@sapporta/ui`, and `@sapporta/grid`; all three declare `@sapporta/shared` and
+- Each workspace package declares the `@sapporta/*` packages it imports.
+  `packages/api` declares `@sapporta/server` and `@sapporta/honest`;
+  `packages/frontend` declares `@sapporta/frontend`, `@sapporta/ui`, and
+  `@sapporta/grid`; all three declare `@sapporta/shared` and
   `@sapporta/rest-core`.
+- The workspace root declares `@sapporta/server` as a devDependency, pinned to
+  the spec `packages/api` already resolves, so `pnpm exec sapporta ...` runs
+  from the project root. The root imports nothing from it: pnpm links the
+  instance it installed for `packages/api`, so the root gains
+  `node_modules/.bin/sapporta` and the link, not a second copy. Application code
+  still resolves `@sapporta/*` from the workspace package that declares it.
 - `runtime.ts` is the single open path. `boot.ts` mounts Hono on top of it and
   `script-runtime.ts` opens it directly; both call the `close()` it returns, so
   the HTTP server and a command-line script cannot drift apart. It defaults mail
@@ -106,8 +112,6 @@ never edited — add another one.
 
 ## Not present
 
-- No root `node_modules/@sapporta`. An `@sapporta/*` package resolves from the
-  workspace package that imports it.
 - No browser detail route at `/tables/:tableName/:id`.
 - No `appNavigationItems` or `appHomeRoutes` exports. The extension points are
   singular `appNavigation` and `appHomeRoute`.

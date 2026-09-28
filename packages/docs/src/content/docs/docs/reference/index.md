@@ -5,11 +5,11 @@ description:
   contracts."
 ---
 
-Reference covers the public Sapporta 0.2.7 package surface, generated project
+Reference covers the public Sapporta package surface, generated project
 contract, HTTP routes, CLI, configuration, runtime behavior, and diagnostics.
-The server row-query, shared HTTP, frontend table-query, and Grid interaction
-contracts include changes through framework source revision
-`c15d8a8c8fc8276c86774d4d8e6b7c862f54c9c6`.
+The hand-written pages follow framework source revision
+`213c4b88a6fe28cf019f880bd97393f21a8b5a69`. Published package versions come from
+the generated symbol reference, which names the release it describes.
 
 ## Lookup indexes
 

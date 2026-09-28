@@ -7,8 +7,8 @@ description:
 
 ## Identity
 
-Drizzle migration artifacts, `assertMigrationsReady`, generated boot,
-`SAPPORTA_DATA_DIR`, and container command.
+Drizzle migration artifacts, `assertMigrationsReady`, `pendingMigrations`,
+`applyMigrations`, generated boot, `SAPPORTA_DATA_DIR`, and container command.
 
 ## Contract
 
@@ -27,7 +27,10 @@ Drizzle migration artifacts, `assertMigrationsReady`, generated boot,
   - an applied ledger entry whose migration is missing from disk; or
   - an applied migration whose on-disk hash changed.
 - Server startup validates this applied-ledger readiness and never applies
-  migrations from boot or request handling.
+  migrations from boot or request handling. An application that keeps its
+  migrations outside `packages/api/migrations` and migrates its own database at
+  startup calls `pendingMigrations()` and `applyMigrations()` itself; see
+  [apply migrations from application code](/docs/reference/schema/migrations/#apply-migrations-from-application-code).
 - The readiness error names the database it checked. A successful start prints
   `Database: <path>` after the ready line.
 - A failed migration or readiness mismatch is a startup/release failure.
