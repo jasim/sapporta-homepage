@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/column-preset — Types"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Types
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 55 of 102 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
@@ -53,6 +53,8 @@ type CharacterColumnSizing = {
 ```
 
 ### ColumnAlign
+
+Where a column's cells place their content across the cell's width.
 
 ```ts
 type ColumnAlign = "left" | "right" | "center";
@@ -143,6 +145,12 @@ type ColumnPresetOptions<TMeta = unknown> = {
     align?: ColumnAlign;
     width?: ColumnWidth;
     edit?: ColumnPresetEditOption;
+    /**
+     * Stops Delete and Backspace from writing `null` into the column's cells,
+     * for a column that must not be empty. Without it the keys clear an
+     * editable cell.
+     */
+    disableBackspaceCellClear?: true;
     sortable?: boolean;
     format?: (value: unknown) => string;
     parse?: (value: string, props: CellEditorProps) => unknown;
@@ -437,6 +445,14 @@ type PresetChromeOptions<TMeta = unknown, TFilter = unknown> = {
     columnSizing?: ColumnSizingOptions;
     renderColumnHeaderMenu?: (props: ColumnHeaderMenuProps<TMeta, TFilter>) => ReactNode;
     commandOverrides?: (level: HeaderLevelState<TFilter>) => Partial<GridLevelCommands<TFilter>>;
+    /**
+     * Renders a control after a nested level's label, such as a link that opens
+     * the level's rows on a page of their own. Return null to render nothing.
+     */
+    renderLevelLabelAction?: (context: {
+        path: GridPath;
+        levelName: string;
+    }) => ReactNode;
 };
 ```
 

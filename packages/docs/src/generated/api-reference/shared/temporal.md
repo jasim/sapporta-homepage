@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/shared/temporal"
 package: "@sapporta/shared"
-version: "0.3.3"
+version: "0.4.0"
 specifier: "@sapporta/shared/temporal"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/temporal
 
-Import from `@sapporta/shared/temporal`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/temporal`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 25 symbols documented here.
 

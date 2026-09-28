@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/advanced"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid/advanced"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/advanced
 
-Import from `@sapporta/grid/advanced`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/advanced`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 17 symbols documented here.
 
@@ -110,6 +110,8 @@ type PhantomRowLifecycle = {
     } | null) => void;
     readonly setPhantomCell: (path: GridPath, rowKey: RowKey, colId: ColId, value: unknown) => void;
     readonly isBlank: (columns: Readonly<Record<ColId, unknown>>) => boolean;
+    readonly isBlankDraft: (path: GridPath, columns: Readonly<Record<ColId, unknown>>) => boolean;
+    readonly nextDraftRowKey: (path: GridPath) => RowKey;
 };
 ```
 

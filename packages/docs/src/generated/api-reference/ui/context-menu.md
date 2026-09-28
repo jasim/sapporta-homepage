@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/ui/context-menu"
 package: "@sapporta/ui"
-version: "0.3.0"
+version: "0.4.0"
 specifier: "@sapporta/ui/context-menu"
 ---
 
-> Sapporta API reference for `@sapporta/ui@0.3.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/ui@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/ui/context-menu
 
-Import from `@sapporta/ui/context-menu`. Documented from `@sapporta/ui@0.3.0`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
+Import from `@sapporta/ui/context-menu`. Documented from `@sapporta/ui@0.4.0`; confirm the installed version with `node -p "require('@sapporta/ui/package.json').version"`.
 
 12 symbols documented here.
 

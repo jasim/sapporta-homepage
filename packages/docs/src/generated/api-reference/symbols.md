@@ -2,7 +2,7 @@
 
 > Every exported name in the Sapporta packages and the specifier to import it from. Search this page for a symbol name; follow the specifier's page for the signature.
 
-1237 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
+1280 names across 6 packages. Full reference: https://sapporta.com/api-reference/llms.txt
 
 Where a name lists more than one specifier, prefer the narrowest.
 
@@ -36,6 +36,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `apiWritePolicyIssues` — @sapporta/server
 - `appendQueryParam` — @sapporta/shared
 - `applyCursorContinuation` — @sapporta/grid/advanced
+- `applyMigrations` — @sapporta/server
 - `applySchemaOverrides` — @sapporta/frontend
 - `AppPage` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
 - `AppPageProps` — @sapporta/frontend/layout, @sapporta/frontend/shell, @sapporta/frontend
@@ -173,7 +174,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ColId` — @sapporta/grid
 - `ColPolicy` — @sapporta/grid
 - `column` — @sapporta/grid/column-preset
-- `ColumnAlign` — @sapporta/grid/column-preset
+- `ColumnAlign` — @sapporta/grid/column-preset, @sapporta/grid
 - `columnBySqlName` — @sapporta/server
 - `ColumnHeaderMenuProps` — @sapporta/grid/column-preset
 - `ColumnHeaderProps` — @sapporta/grid/column-preset
@@ -268,6 +269,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `createTableCatalog` — @sapporta/server
 - `createTableLookupSource` — @sapporta/frontend/lookup, @sapporta/frontend
 - `createTableRow` — @sapporta/frontend
+- `createTestAuthContext` — @sapporta/server/testing
 - `createTestConnection` — @sapporta/server/testing
 - `createTestDb` — @sapporta/server/testing
 - `createTGridColumnMapper` — @sapporta/frontend
@@ -307,7 +309,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `DEFAULT_LOOKUP_LIMIT` — @sapporta/shared/contracts
 - `DEFAULT_PAGE` — @sapporta/shared/contracts
 - `DEFAULT_PAGE_SIZE` — @sapporta/shared/contracts
-- `defaultColumnLabel` — @sapporta/shared
+- `defaultColumnLabel` — @sapporta/shared/labels, @sapporta/shared
 - `defaultGridLevelChrome` — @sapporta/grid
 - `defineSchemaTGrid` — @sapporta/frontend
 - `DefineSchemaTGridArgs` — @sapporta/frontend
@@ -350,6 +352,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `errorMessage` — @sapporta/frontend/platform
 - `ExactOriginCorsOptions` — @sapporta/server
 - `ExpandableCellFrame` — @sapporta/grid
+- `expandTGridColumnSpecs` — @sapporta/frontend
 - `exportCsvRoute` — @sapporta/server
 - `ExportRowsQuery` — @sapporta/shared/contracts
 - `exportRowsQuerySchema` — @sapporta/shared/contracts
@@ -379,12 +382,14 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `FilterCondition` — @sapporta/shared/filter, @sapporta/shared
 - `FilterDraftCondition` — @sapporta/shared/filter, @sapporta/shared
 - `FilterDraftValue` — @sapporta/shared/filter, @sapporta/shared
+- `FilterNamespace` — @sapporta/shared/filter, @sapporta/shared
 - `FilterParseError` — @sapporta/shared/filter, @sapporta/shared
 - `FilterParseErrorCode` — @sapporta/shared/filter, @sapporta/shared
 - `FilterQueryCapability` — @sapporta/grid
 - `filtersEqual` — @sapporta/shared/filter, @sapporta/shared
 - `filterSourceNodes` — @sapporta/grid
 - `FilterTableLike` — @sapporta/shared/filter, @sapporta/shared
+- `filterTreeSourceNodes` — @sapporta/grid
 - `FindManyRowsInput` — @sapporta/server
 - `findProjectRootFrom` — @sapporta/server
 - `findRowLabelColumns` — @sapporta/server
@@ -455,10 +460,14 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `gridDatasetFooterRowSchema` — @sapporta/shared/grid-dataset
 - `GridDatasetLevel` — @sapporta/shared/grid-dataset
 - `gridDatasetLevelSchema` — @sapporta/shared/grid-dataset
+- `GridDatasetLevelTree` — @sapporta/shared/grid-dataset
+- `gridDatasetLevelTreeSchema` — @sapporta/shared/grid-dataset
 - `gridDatasetLinkProblems` — @sapporta/shared/grid-dataset
 - `GridDatasetNode` — @sapporta/shared/grid-dataset
 - `gridDatasetNodeSchema` — @sapporta/shared/grid-dataset
 - `gridDatasetSchema` — @sapporta/shared/grid-dataset
+- `gridDatasetTreeColumn` — @sapporta/shared/grid-dataset
+- `gridDatasetTreeProblems` — @sapporta/shared/grid-dataset
 - `GridDataSource` — @sapporta/grid
 - `GridEffect` — @sapporta/grid
 - `GridEmptyContext` — @sapporta/grid
@@ -468,6 +477,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `GridLevelChrome` — @sapporta/grid
 - `GridLevelCommands` — @sapporta/grid/column-preset
 - `GridLevelRuntime` — @sapporta/grid
+- `GridLevelTree` — @sapporta/grid
 - `GridPath` — @sapporta/grid
 - `GridPointerInput` — @sapporta/grid
 - `GridPresentation` — @sapporta/grid
@@ -491,7 +501,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `HttpMethod` — @sapporta/server/cli/http-client, @sapporta/honest, @sapporta/server
 - `httpRequest` — @sapporta/server/cli/http-client
 - `HttpRequestOptions` — @sapporta/server/cli/http-client
-- `humanizeIdentifier` — @sapporta/shared
+- `humanizeIdentifier` — @sapporta/shared/labels, @sapporta/shared
 - `identifier` — @sapporta/grid/column-preset
 - `IdentifierPreset` — @sapporta/grid/column-preset
 - `ImmutableTableOperationError` — @sapporta/server
@@ -540,6 +550,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `LevelSnapshot` — @sapporta/grid
 - `LevelSourceState` — @sapporta/grid
 - `LevelStatus` — @sapporta/grid
+- `LevelTreeConfig` — @sapporta/grid
 - `LinkBind` — @sapporta/shared/contracts
 - `linkBindSchema` — @sapporta/shared/contracts
 - `LinkIcon` — @sapporta/shared/contracts
@@ -561,6 +572,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `listRowsQuerySchema` — @sapporta/shared/contracts
 - `listRowsRoute` — @sapporta/shared/contracts
 - `listTablesRoute` — @sapporta/shared/contracts
+- `ListTreeMeta` — @sapporta/shared/contracts
+- `listTreeMetaSchema` — @sapporta/shared/contracts
 - `loadAdminMetadata` — @sapporta/frontend/app
 - `loadColumnSizingOverrides` — @sapporta/grid/column-preset
 - `LoadedRowsBoundaryEvent` — @sapporta/grid
@@ -708,6 +721,8 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `PathDecomposition` — @sapporta/grid
 - `PathEdge` — @sapporta/grid
 - `pathOfRowId` — @sapporta/grid
+- `PendingMigration` — @sapporta/server
+- `pendingMigrations` — @sapporta/server
 - `percentage` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `PercentagePreset` — @sapporta/grid/column-preset
 - `PhantomChannel` — @sapporta/grid/advanced, @sapporta/grid
@@ -794,6 +809,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `ResolvedCountQuery` — @sapporta/server
 - `ResolvedDateRange` — @sapporta/shared/daterange, @sapporta/shared
 - `ResolvedLink` — @sapporta/frontend
+- `ResolvedPageQuery` — @sapporta/server
 - `ResolvedReferenceFact` — @sapporta/server
 - `ResolvedRoute` — @sapporta/honest, @sapporta/server
 - `resolveExportQuery` — @sapporta/server
@@ -805,6 +821,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `resolveTableGridPresentation` — @sapporta/frontend
 - `resolveTablePageMode` — @sapporta/frontend
 - `resolveTableReferences` — @sapporta/server
+- `resolveTableTree` — @sapporta/shared/contracts
 - `resolveTGridCellLinks` — @sapporta/frontend
 - `resolveTGridRowLinks` — @sapporta/frontend
 - `RestEndpointFactory` — @sapporta/grid
@@ -881,6 +898,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `schemaApi` — @sapporta/server
 - `SchemaIssue` — @sapporta/server
 - `SchemaLoadResult` — @sapporta/server
+- `SchemaTableColumns` — @sapporta/frontend
 - `SchemaTableGridSource` — @sapporta/frontend
 - `SchemaTableGridView` — @sapporta/frontend
 - `SchemaTableGridViewProps` — @sapporta/frontend
@@ -987,6 +1005,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TableColumn` — @sapporta/server
 - `TableColumnName` — @sapporta/frontend
 - `TableColumnOptions` — @sapporta/frontend
+- `TableColumnOptionsByName` — @sapporta/frontend
 - `tableColumnPresetWidth` — @sapporta/frontend
 - `TableDef` — @sapporta/server/table, @sapporta/server
 - `TableDeleteTarget` — @sapporta/frontend
@@ -995,6 +1014,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `tableFilteredByUrl` — @sapporta/frontend
 - `TableGridActionsProps` — @sapporta/frontend
 - `TableGridBinding` — @sapporta/frontend
+- `TableGridHeaderVariant` — @sapporta/frontend
 - `TableGridNavigate` — @sapporta/frontend
 - `TableGridOptionsByTable` — @sapporta/frontend/routes/table, @sapporta/frontend
 - `TableGridRoute` — @sapporta/frontend
@@ -1039,6 +1059,9 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TableSearch` — @sapporta/server/table, @sapporta/server
 - `TableSelection` — @sapporta/frontend
 - `TableSelectionSession` — @sapporta/frontend
+- `TableTree` — @sapporta/shared/contracts
+- `TableTreeInput` — @sapporta/shared/contracts
+- `tableTreeSchema` — @sapporta/shared/contracts
 - `TableUrlState` — @sapporta/frontend
 - `TableValidation` — @sapporta/server/table, @sapporta/server
 - `TableValidationContext` — @sapporta/server/table, @sapporta/server
@@ -1052,6 +1075,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `templateColumns` — @sapporta/grid/column-preset
 - `Temporal` — @sapporta/shared/temporal, @sapporta/shared
 - `TemporalDisplayPrecision` — @sapporta/shared/temporal, @sapporta/shared
+- `TestAuthContextOptions` — @sapporta/server/testing
 - `text` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `TextCell` — @sapporta/grid/column-preset
 - `TextColumnOptions` — @sapporta/grid/column-preset
@@ -1080,13 +1104,17 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TGridColumnSpec` — @sapporta/frontend
 - `TGridColumnSpecBuilder` — @sapporta/frontend
 - `TGridDefinition` — @sapporta/frontend
+- `TGridExpandedColumnSpec` — @sapporta/frontend
 - `TGridFilter` — @sapporta/frontend
+- `TGridLevelColumns` — @sapporta/frontend
 - `TGridLevelConfig` — @sapporta/frontend
 - `TGridLevelId` — @sapporta/frontend
 - `TGridLevelInfo` — @sapporta/frontend
+- `TGridLevelPagination` — @sapporta/frontend
 - `TGridLevelQueryConfig` — @sapporta/frontend
 - `TGridLevelQueryState` — @sapporta/frontend
 - `TGridLevelsConfigMap` — @sapporta/frontend
+- `TGridLevelTreeConfig` — @sapporta/frontend
 - `TGridLoadedRowsBoundaryHandler` — @sapporta/frontend
 - `TGridPresentation` — @sapporta/frontend
 - `TGridQueryState` — @sapporta/frontend
@@ -1106,11 +1134,13 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `TGridTableRow` — @sapporta/frontend
 - `TGridTableSchemaInput` — @sapporta/frontend
 - `TGridTableSchemaOverrides` — @sapporta/frontend
+- `TGridTreeResult` — @sapporta/frontend
 - `ThemeMode` — @sapporta/frontend/shell, @sapporta/frontend
 - `ThrowingClient` — @sapporta/shared/client
 - `timestamp` — @sapporta/grid/column-preset, @sapporta/server/table, @sapporta/server
 - `TimestampPreset` — @sapporta/grid/column-preset
 - `TimeZone` — @sapporta/shared/temporal, @sapporta/shared
+- `titleCaseIdentifier` — @sapporta/shared/labels, @sapporta/shared
 - `Toaster` — @sapporta/frontend/shell
 - `ToasterProps` — @sapporta/frontend/shell
 - `Tooltip` — @sapporta/ui/tooltip, @sapporta/ui
@@ -1121,8 +1151,19 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `trackForColumn` — @sapporta/grid/column-preset
 - `trailingEdge` — @sapporta/grid
 - `TreeBackedLevelRow` — @sapporta/grid
+- `TreeCellFrame` — @sapporta/grid
+- `TreeColumnOptions` — @sapporta/grid
+- `treeExpansionActivation` — @sapporta/grid
+- `TreeFilterResult` — @sapporta/grid
+- `TreeMatch` — @sapporta/server
+- `TreeMatchContext` — @sapporta/shared/contracts, @sapporta/grid
+- `treeMatchContextSchema` — @sapporta/shared/contracts
+- `TreeMatchInput` — @sapporta/server
+- `TreeMeta` — @sapporta/server/table
+- `TreeMetaInput` — @sapporta/server/table
 - `TreeNode` — @sapporta/grid
 - `treeNodeForRow` — @sapporta/grid
+- `TreeRowFacts` — @sapporta/grid
 - `truncateValues` — @sapporta/server/cli/format
 - `trustedInsertValuesForDataAuthority` — @sapporta/server
 - `TrustedInsertValuesForDataAuthority` — @sapporta/server
@@ -1209,6 +1250,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `validateColumnName` — @sapporta/server
 - `validateForeignKeyReferences` — @sapporta/server
 - `validateLevelRowHeaderColumn` — @sapporta/grid
+- `validateLevelTree` — @sapporta/grid
 - `validateTableName` — @sapporta/server
 - `ValidationError` — @sapporta/server/errors, @sapporta/server
 - `ValidationErrorDetail` — @sapporta/server
@@ -1225,6 +1267,7 @@ Where a name lists more than one specifier, prefer the narrowest.
 - `withRowExpansionColumn` — @sapporta/grid
 - `withTGridCellLinks` — @sapporta/frontend
 - `withTGridSessionContext` — @sapporta/frontend
+- `withTreeColumn` — @sapporta/grid
 - `WORKSPACE_ID_SQL_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
 - `WORKSPACE_ID_TS_COLUMN` — @sapporta/shared/row-scope, @sapporta/server, @sapporta/shared
 - `WorkspaceGlobalDataAuthority` — @sapporta/server

@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/errors"
 package: "@sapporta/server"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/server/errors"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/errors
 
-Import from `@sapporta/server/errors`. Documented from `@sapporta/server@0.7.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/errors`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 10 symbols documented here.
 
@@ -36,7 +36,7 @@ type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
 Closed taxonomy of generated table-query parse failures.
 
 ```ts
-type QueryParseErrorCode = "unknown_filter_shape" | "unknown_column" | "unknown_op" | "bad_value" | "op_not_applicable" | "bad_limit" | "bad_page" | "no_search_config";
+type QueryParseErrorCode = "unknown_filter_shape" | "unknown_column" | "unknown_op" | "bad_value" | "op_not_applicable" | "bad_limit" | "bad_page" | "no_search_config" | "no_tree_config";
 ```
 
 ### SqliteErrorContext

@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/shared/grid-dataset"
 package: "@sapporta/shared"
-version: "0.3.3"
+version: "0.4.0"
 specifier: "@sapporta/shared/grid-dataset"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/grid-dataset
 
-Import from `@sapporta/shared/grid-dataset`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/grid-dataset`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-13 symbols documented here.
+17 symbols documented here.
 
-## Types (6)
+## Types (7)
 
 ### GridDataset
 
@@ -45,6 +45,12 @@ type GridDatasetFooterRow = z.output<typeof gridDatasetFooterRowSchema>;
 type GridDatasetLevel = z.output<typeof gridDatasetLevelSchema>;
 ```
 
+### GridDatasetLevelTree
+
+```ts
+type GridDatasetLevelTree = z.output<typeof gridDatasetLevelTreeSchema>;
+```
+
 ### GridDatasetNode
 
 ```ts
@@ -59,7 +65,7 @@ type GridDatasetNode = {
 };
 ```
 
-## Functions and components (1)
+## Functions and components (3)
 
 ### gridDatasetLinkProblems
 
@@ -69,7 +75,23 @@ Checks that every declarative link in a dataset reads only columns its level act
 function gridDatasetLinkProblems(dataset: GridDataset): string[];
 ```
 
-## Values, classes, and namespaces (6)
+### gridDatasetTreeColumn
+
+The column that shows a tree level's hierarchy: the declared `tree.column`, else the first visible text column, else the first visible column.
+
+```ts
+function gridDatasetTreeColumn(level: GridDatasetLevel): string | null;
+```
+
+### gridDatasetTreeProblems
+
+Checks the columns each tree level names: its parent column is a column of the level, and its tree column is a visible column of the level.
+
+```ts
+function gridDatasetTreeProblems(dataset: GridDataset): string[];
+```
+
+## Values, classes, and namespaces (7)
 
 ### gridDatasetColumnKindSchema
 
@@ -245,6 +267,17 @@ const gridDatasetLevelSchema: z.ZodObject<{
                 _blank: "_blank";
             }>>;
 // …declaration truncated at 2500 bytes.
+```
+
+### gridDatasetLevelTreeSchema
+
+Rows of one level that refer to each other, such as accounts with a `parent_id`, shown as one tree under the level's header.
+
+```ts
+const gridDatasetLevelTreeSchema: z.ZodObject<{
+    parentColumn: z.ZodString;
+    column: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
 ```
 
 ### gridDatasetNodeSchema

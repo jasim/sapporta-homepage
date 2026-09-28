@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/server/table"
 package: "@sapporta/server"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/server/table"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/table
 
-Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.7.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-26 symbols documented here.
+28 symbols documented here.
 
-## Types (12)
+## Types (14)
 
 ### ChildMeta
 
@@ -56,9 +56,10 @@ interface ColumnMeta {
   strong: …;
   notes: …;
   apiWritable: …;
+  gridEditable: …;
   links: …;
 }
-// 15 members; inferred types elided. Read the full type from the declaration file if needed.
+// 16 members; inferred types elided. Read the full type from the declaration file if needed.
 ```
 
 ### SapportaMeta
@@ -105,6 +106,8 @@ interface SapportaMeta {
      * visible application columns by default.
      */
     search: NormalizedTableSearch;
+    /** Same-table parent/child rows. Absent for an ordinary flat table. */
+    tree?: TreeMeta;
 }
 ```
 
@@ -122,6 +125,8 @@ type SapportaTableInputMeta = Omit<SapportaMeta, SapportaMetaDefaultedField> & {
     columns?: Record<string, ColumnMeta>;
     /** Defaults to `"allColumns"`. Use `false` to disable table search. */
     search?: TableSearch;
+    /** Rows of this table form a tree through a self-referencing column. */
+    tree?: TreeMetaInput;
     /**
      * Defaults to `workspaceUserScoped`, the strictest row boundary. Use
      * `workspaceGlobal` or `systemGlobal` only for data that intentionally has a
@@ -222,6 +227,35 @@ type TableValidationField<TTable extends AnySQLiteTable> = (keyof InferInsertMod
 
 ```ts
 type TableValidationValue<TTable extends AnySQLiteTable> = Readonly<Partial<CanonicalInsertValue<TTable>>>;
+```
+
+### TreeMeta
+
+`TreeMetaInput` with its defaults resolved.
+
+```ts
+type TreeMeta = TableTree;
+```
+
+### TreeMetaInput
+
+Declares that the rows of a table form a tree: each row may name a parent row of the same table, such as an account's `parent_id`.
+
+```ts
+interface TreeMetaInput {
+    /** Nullable column that is a foreign key to this table's primary key. */
+    parentColumn: string;
+    /** Column that shows the hierarchy. Defaults to the first row label column. */
+    column?: string;
+    /** Whether rows start expanded. Defaults to `true`. */
+    defaultExpanded?: boolean;
+    /**
+     * What a search or filter keeps besides the matching rows. Defaults to
+     * `"ancestors-and-descendants"`: each match's ancestors and its whole
+     * subtree. `"ancestors"` keeps only the ancestors.
+     */
+    matchContext?: TreeMatchContext;
+}
 ```
 
 ## Functions and components (13)

@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/report"
 package: "@sapporta/frontend"
-version: "0.8.0"
+version: "0.9.0"
 specifier: "@sapporta/frontend/report"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/report
 
-Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 25 symbols documented here.
 
@@ -36,6 +36,12 @@ type ReportCellLinkContext<TInput = unknown> = {
     node: TreeNode;
     levelName: string;
     input: TInput | undefined;
+    /**
+     * The rows this row is nested under through `childLevels`, outermost
+     * first. On a tree level, the row's tree parents are rows of the same
+     * level and are not included; read the parent's `rowKey` from the level's
+     * `tree.parentColumn` value in `node.columns`.
+     */
     ancestors: GridDatasetNode[];
     column: GridDatasetColumn;
     value: unknown;

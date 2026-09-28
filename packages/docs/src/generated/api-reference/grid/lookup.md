@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/lookup"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid/lookup"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/lookup
 
-Import from `@sapporta/grid/lookup`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/lookup`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 18 symbols documented here.
 

@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/shell"
 package: "@sapporta/frontend"
-version: "0.8.0"
+version: "0.9.0"
 specifier: "@sapporta/frontend/shell"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/shell
 
-Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/shell`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 49 symbols documented here.
 
@@ -39,6 +39,18 @@ interface AccountMenuProps {
     onLogout?: () => void | Promise<void>;
     footer?: ReactNode;
     triggerAriaLabel?: string;
+    /**
+     * Show only the avatar in the standard trigger, as a collapsed sidebar rail
+     * does. A trigger from `renderTrigger` decides its own appearance.
+     */
+    compact?: boolean;
+    /**
+     * Runs when a chosen action succeeds and the menu closes. A sidebar passes
+     * `closeTemporary` from `useSidebar()`, so choosing Profile or Workspace
+     * settings puts the sidebar away as choosing a destination does. A failed
+     * action keeps the menu open with its message, and does not run this.
+     */
+    onActionComplete?: () => void;
     renderTrigger?: (props: AccountMenuTriggerRenderProps) => ReactElement;
 }
 ```
@@ -177,13 +189,33 @@ interface PageHeaderProps {
 interface SidebarController {
     sidebarId: string;
     desktopExpanded: boolean;
+    /**
+     * Whether a collapsed desktop sidebar is shown at full width over the page,
+     * which `SidebarRegion` does while the pointer rests on the rail.
+     */
+    peekOpen: boolean;
+    /**
+     * Whether the sidebar is currently the narrow desktop rail. Sidebar contents
+     * read this to show icons without labels. It is false while the sidebar is
+     * expanded, while it is open over the page, and on compact screens.
+     */
+    rail: boolean;
     drawerOpen: boolean;
     isDesktop: boolean;
     toggleDesktop: () => void;
     expandDesktop: () => void;
     collapseDesktop: () => void;
+    openPeek: () => void;
+    closePeek: () => void;
     openDrawer: () => void;
     closeDrawer: () => void;
+    /**
+     * Closes whichever temporary presentation is showing: the compact drawer, or
+     * the sidebar opened over the page from the rail. Sidebar contents pass this
+     * as `onNavigate`, so choosing a destination gives the page back without
+     * waiting for the pointer to leave.
+     */
+    closeTemporary: () => void;
 }
 ```
 
@@ -211,6 +243,11 @@ interface SidebarProviderProps extends SidebarProviderOptions {
 interface SidebarRegionProps {
     children: ReactNode;
     className?: string;
+    /**
+     * The width of the collapsed desktop sidebar. Choose it so the sidebar's
+     * icons sit in the middle of the rail.
+     */
+    railWidth?: string;
 }
 ```
 
@@ -235,7 +272,7 @@ Re-exported from `sonner`. See that package for its declaration.
 ### AccountMenu
 
 ```ts
-function AccountMenu({ context, sections, onLogout, footer, triggerAriaLabel, renderTrigger, }: AccountMenuProps): import("react").JSX.Element;
+function AccountMenu({ context, sections, onLogout, footer, triggerAriaLabel, compact, onActionComplete, renderTrigger, }: AccountMenuProps): import("react").JSX.Element;
 ```
 
 ### AppPage
@@ -349,10 +386,10 @@ function SidebarProvider({ children, defaultExpanded, storageKey, desktopMediaQu
 
 ### SidebarRegion
 
-Presents the same application navigation in two useful forms.
+Presents the same application navigation in three forms.
 
 ```ts
-function SidebarRegion({ children, className }: SidebarRegionProps): import("react").JSX.Element;
+function SidebarRegion({ children, className, railWidth, }: SidebarRegionProps): import("react").JSX.Element;
 ```
 
 ### SidebarShell
@@ -360,18 +397,19 @@ function SidebarRegion({ children, className }: SidebarRegionProps): import("rea
 The visual contents of a sidebar: application identity, navigation, and an optional account footer.
 
 ```ts
-function SidebarShell({ header, footer, children, className, onNavigate, }: {
+function SidebarShell({ header, footer, children, className, rail, onNavigate, }: {
     header: ReactNode;
     footer?: ReactNode;
     children?: ReactNode;
     className?: string;
+    rail?: boolean;
     onNavigate?: () => void;
 }): import("react").JSX.Element;
 ```
 
 ### SidebarToggle
 
-Uses the control that fits the current screen: it changes the persisted desktop width preference, or opens the temporary compact drawer.
+Uses the control that fits the current screen: on desktop it switches the persisted preference between the expanded sidebar and the rail, and on a compact screen it opens the temporary drawer.
 
 ```ts
 function SidebarToggle({ className, ...props }: SidebarToggleProps): import("react").JSX.Element;

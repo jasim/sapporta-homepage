@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Types"
 package: "@sapporta/server"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Types
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.7.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-96 of 202 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+100 of 208 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### ApiDoc
 
@@ -323,6 +323,11 @@ interface LoadSapportaProjectOptions {
      * runtime; `tsc --watch` keeps it fresh during development.
      */
     apiDistDir: string;
+    /**
+     * Absolute path to the directory holding the Drizzle migrations. Defaults
+     * to `packages/api/migrations` under `projectRoot`.
+     */
+    migrationsDir?: string;
     conn: ProjectDbConnection;
 }
 ```
@@ -434,6 +439,19 @@ interface PageRowsResult<TTable extends AnySQLiteTable = AnySQLiteTable> {
 }
 ```
 
+### PendingMigration
+
+A migration file on disk that the database's ledger does not list.
+
+```ts
+type PendingMigration = {
+    /** The migration's name in Drizzle's journal, such as `0003_add_notes`. */
+    tag: string;
+    /** The journal's `when` timestamp, which is how the ledger identifies it. */
+    folderMillis: number;
+};
+```
+
 ### Principal
 
 The requester for one request.
@@ -512,6 +530,21 @@ type ResolvedCountQuery<TTable extends AnySQLiteTable = AnySQLiteTable> = {
 } | {
     kind: "grouped";
     input: CountRowsByInput<TTable>;
+};
+```
+
+### ResolvedPageQuery
+
+A resolved list read.
+
+```ts
+type ResolvedPageQuery = {
+    kind: "rows";
+    input: PageRowsInput;
+} | {
+    kind: "treeMatch";
+    treeMatch: TreeMatchInput;
+    page: Omit<PageRowsInput, "where">;
 };
 ```
 
@@ -723,6 +756,7 @@ interface ScopeColumnFact {
 interface ScopedRows<TTable extends AnySQLiteTable = AnySQLiteTable> {
     findMany(input: FindManyRowsInput): Promise<TableRow<TTable>[]>;
     page(input?: PageRowsInput): Promise<PageRowsResult<TTable>>;
+    treeMatch(input: TreeMatchInput): Promise<TreeMatch>;
     get(id: RecordId): Promise<TableRow<TTable>>;
     create(input: readonly unknown[]): Promise<TableRow<TTable>[]>;
     create(input: Record<string, unknown>): Promise<TableRow<TTable>>;
@@ -929,6 +963,45 @@ type TableWriteParseResult = {
     success: false;
     issues: ValidationErrorDetail[];
 };
+```
+
+### TreeMatch
+
+The rows a tree match selects, and what the match found.
+
+```ts
+interface TreeMatch {
+    /**
+     * The matches, their ancestors, and for `"ancestors-and-descendants"` their
+     * descendants. Pass it as the `where` of `page`, `findMany`, `scan`, or
+     * `count`.
+     */
+    where: SQL;
+    /** Rows that satisfy `match` and `fixed` themselves. */
+    matchCount: number;
+    /** Ancestors that `where` keeps only because a descendant matched. */
+    contextIds: RecordId[];
+}
+```
+
+### TreeMatchInput
+
+```ts
+interface TreeMatchInput {
+    /**
+     * A condition every returned row satisfies, such as a child list's parent
+     * key or a page's fixed filters. The ancestors and descendants kept around
+     * the matches must satisfy it too.
+     */
+    readonly fixed?: SQL;
+    /** Selects the matches among the rows that satisfy `fixed`. */
+    readonly match: SQL;
+    /**
+     * `"ancestors"` keeps each match's ancestors. `"ancestors-and-descendants"`
+     * also keeps every descendant of a match.
+     */
+    readonly matchContext: TreeMatchContext;
+}
 ```
 
 ### TrustedInsertValuesForDataAuthority

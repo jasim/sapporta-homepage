@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/shared/contracts — Values, classes, and namespaces"
 package: "@sapporta/shared"
-version: "0.3.3"
+version: "0.4.0"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Values, classes, and namespaces
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-67 of 112 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
+70 of 120 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
 
 ### ApiError
 
@@ -232,6 +232,7 @@ const columnSchemaSchema: z.ZodObject<{
     strong: z.ZodOptional<z.ZodBoolean>;
     notes: z.ZodOptional<z.ZodString>;
     apiWritable: z.ZodOptional<z.ZodBoolean>;
+    gridEditable: z.ZodOptional<z.ZodBoolean>;
     links: z.ZodOptional<z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
         kind: z.ZodLiteral<"table">;
         table: z.ZodString;
@@ -258,8 +259,7 @@ const columnSchemaSchema: z.ZodObject<{
             "drill-into": "drill-into";
             report: "report";
         }>>;
-        target: z.ZodOptional<z.ZodEnum<{
-            _self: "_sel
+        target: z.Z
 // …declaration truncated at 2500 bytes.
 ```
 
@@ -773,6 +773,10 @@ const listMetaSchema: z.ZodObject<{
     page: z.ZodNumber;
     limit: z.ZodNumber;
     pages: z.ZodNumber;
+    tree: z.ZodOptional<z.ZodObject<{
+        matchCount: z.ZodNumber;
+        contextIds: z.ZodArray<z.ZodString>;
+    }, z.core.$strip>>;
 }, z.core.$strip>;
 ```
 
@@ -782,6 +786,10 @@ Query shape for the paged row-listing endpoint.
 
 ```ts
 const listRowsQuerySchema: z.ZodObject<{
+    tree: z.ZodOptional<z.ZodEnum<{
+        ancestors: "ancestors";
+        "ancestors-and-descendants": "ancestors-and-descendants";
+    }>>;
     page: z.ZodDefault<z.ZodCoercedNumber<string>>;
     limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
     sort: z.ZodOptional<z.ZodString>;
@@ -803,6 +811,10 @@ const listRowsRoute: {
         tableName: z.ZodString;
     }, z.core.$strip>;
     query: z.ZodObject<{
+        tree: z.ZodOptional<z.ZodEnum<{
+            ancestors: "ancestors";
+            "ancestors-and-descendants": "ancestors-and-descendants";
+        }>>;
         page: z.ZodDefault<z.ZodCoercedNumber<string>>;
         limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
         sort: z.ZodOptional<z.ZodString>;
@@ -816,6 +828,10 @@ const listRowsRoute: {
                 page: z.ZodNumber;
                 limit: z.ZodNumber;
                 pages: z.ZodNumber;
+                tree: z.ZodOptional<z.ZodObject<{
+                    matchCount: z.ZodNumber;
+                    contextIds: z.ZodArray<z.ZodString>;
+                }, z.core.$strip>>;
             }, z.core.$strip>;
         }, z.core.$strip>;
         400: z.ZodObject<{
@@ -844,6 +860,17 @@ const listTablesRoute: {
   responses: …;
 }
 // 6 members; inferred types elided. Read the full type from the declaration file if needed.
+```
+
+### listTreeMetaSchema
+
+Present on a tree list response when a filter or search was applied.
+
+```ts
+const listTreeMetaSchema: z.ZodObject<{
+    matchCount: z.ZodNumber;
+    contextIds: z.ZodArray<z.ZodString>;
+}, z.core.$strip>;
 ```
 
 ### lookupEntrySchema
@@ -1019,6 +1046,10 @@ const paginatedRowsSchema: z.ZodObject<{
         page: z.ZodNumber;
         limit: z.ZodNumber;
         pages: z.ZodNumber;
+        tree: z.ZodOptional<z.ZodObject<{
+            matchCount: z.ZodNumber;
+            contextIds: z.ZodArray<z.ZodString>;
+        }, z.core.$strip>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
 ```
@@ -1372,6 +1403,7 @@ const tableSchemaSchema: z.ZodObject<{
         strong: z.ZodOptional<z.ZodBoolean>;
         notes: z.ZodOptional<z.ZodString>;
         apiWritable: z.ZodOptional<z.ZodBoolean>;
+        gridEditable: z.ZodOptional<z.ZodBoolean>;
         links: z.ZodOptional<z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
             kind: z.ZodLiteral<"table">;
             table: z.ZodString;
@@ -1388,9 +1420,35 @@ const tableSchemaSchema: z.ZodObject<{
                 _blank: "_blank";
             }>>;
         }, z.core.$strip>, z.ZodObject<{
-            kind: z.ZodLiteral<"report">;
-            report: z.Z
+            ki
 // …declaration truncated at 2500 bytes.
+```
+
+### tableTreeSchema
+
+A table whose rows form a tree through a self-referencing column, such as accounts with `parent_id`.
+
+```ts
+const tableTreeSchema: z.ZodObject<{
+    parentColumn: z.ZodString;
+    column: z.ZodString;
+    defaultExpanded: z.ZodBoolean;
+    matchContext: z.ZodEnum<{
+        ancestors: "ancestors";
+        "ancestors-and-descendants": "ancestors-and-descendants";
+    }>;
+}, z.core.$strip>;
+```
+
+### treeMatchContextSchema
+
+What a filtered or searched tree table keeps besides the matching rows (see `TableSchema.tree`).
+
+```ts
+const treeMatchContextSchema: z.ZodEnum<{
+    ancestors: "ancestors";
+    "ancestors-and-descendants": "ancestors-and-descendants";
+}>;
 ```
 
 ### uiContract

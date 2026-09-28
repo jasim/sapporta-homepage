@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Values, classes, and namespaces"
 package: "@sapporta/frontend"
-version: "0.8.0"
+version: "0.9.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Values, classes, and namespaces
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-6 of 188 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md).
+6 of 197 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md).
 
 ### NARROW_TABLE_PAGE_MAX_WIDTH
 

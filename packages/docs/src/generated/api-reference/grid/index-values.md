@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid — Values, classes, and namespaces"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Values, classes, and namespaces
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-14 of 191 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md).
+14 of 202 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md).
 
 ### CELL_EDITING_GRID
 

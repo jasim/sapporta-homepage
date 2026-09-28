@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Functions and components"
 package: "@sapporta/frontend"
-version: "0.8.0"
+version: "0.9.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Functions and components
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-85 of 188 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+86 of 197 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### applySchemaOverrides
 
@@ -31,7 +31,7 @@ function buildRecordFormFields(args: {
 ### buildSchemaTGridConfig
 
 ```ts
-function buildSchemaTGridConfig<AppServices = unknown>({ source, rootRows, relatedRows, }: SchemaTGridConfigInput): {
+function buildSchemaTGridConfig<AppServices = unknown>({ source, rootRows, relatedRows, columns, }: SchemaTGridConfigInput<AppServices>): {
     rootLevel: string;
     levels: TGridLevelsConfigMap<SchemaTableRowsByLevel, AppServices>;
 };
@@ -39,7 +39,7 @@ function buildSchemaTGridConfig<AppServices = unknown>({ source, rootRows, relat
 
 ### buildTableRowsQuery
 
-Add pagination to a table selection for the paged rows endpoint.
+Add the fixed conditions, pagination, and tree mode to a table selection for the paged rows endpoint.
 
 ```ts
 function buildTableRowsQuery(params: Omit<FetchTableRowsParams, "tableName">): QueryParamRecord;
@@ -160,6 +160,18 @@ function deleteSelectedTableRows(session: TableSelectionSession | undefined): Pr
 
 ```ts
 function deleteTableRow(tableName: string, id: RecordId): Promise<SingleRow>;
+```
+
+### expandTGridColumnSpecs
+
+```ts
+function expandTGridColumnSpecs<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>>({ label, levelId, table, includedColumnNames, specs, }: {
+    label: string;
+    levelId: LevelId;
+    table: TableSchema;
+    includedColumnNames?: readonly TableColumnName[];
+    specs?: readonly TGridColumnSpec<RowsByLevel, AppServices, LevelId>[];
+}): readonly TGridExpandedColumnSpec<RowsByLevel, AppServices, LevelId>[];
 ```
 
 ### fetchTableRow
@@ -374,7 +386,7 @@ function sanitizeSortDescriptors(value: readonly unknown[], validColIds: Readonl
 ### SchemaTableGridView
 
 ```ts
-function SchemaTableGridView({ source, route, registerAs, onNewRecord, actions, sessionRef, onLoadedRowsBoundary, viewRelatedRows, rootRows, relatedRows, interaction, loadLookups, className, gridClassName, }: SchemaTableGridViewProps): import("react").JSX.Element;
+function SchemaTableGridView({ source, route, registerAs, onNewRecord, actions, sessionRef, onLoadedRowsBoundary, columns, viewRelatedRows, header, rootRows, relatedRows, interaction, loadLookups, className, gridClassName, }: SchemaTableGridViewProps): import("react").JSX.Element;
 ```
 
 ### selectedTableDeleteTargets
@@ -417,7 +429,7 @@ function tableGridUrlForQueryState(routePath: string, page: number, state: {
 ### TableGridView
 
 ```ts
-function TableGridView<RowsByLevel extends TGridRowsByLevel, AppServices = unknown>({ definition, table, route, services, registerAs, loadLookups, onNewRecord, actions, sessionRef, onLoadedRowsBoundary, viewRelatedRows, className, gridClassName, }: TableGridViewProps<RowsByLevel, AppServices>): import("react").JSX.Element;
+function TableGridView<RowsByLevel extends TGridRowsByLevel, AppServices = unknown>({ definition, table, route, services, registerAs, loadLookups, onNewRecord, actions, sessionRef, onLoadedRowsBoundary, viewRelatedRows, header, className, gridClassName, }: TableGridViewProps<RowsByLevel, AppServices>): import("react").JSX.Element;
 ```
 
 ### tableLoadErrorMessage
@@ -496,7 +508,7 @@ function useKeyHints(hints: KeyHint[]): void;
 ### useSchemaTableGrid
 
 ```ts
-function useSchemaTableGrid({ source, route, registerAs, onNewRecord, actions, onLoadedRowsBoundary, viewRelatedRows, rootRows, relatedRows, interaction, loadLookups, className, gridClassName, }: UseSchemaTableGridArgs): TableGridBinding<SchemaTableRowsByLevel>;
+function useSchemaTableGrid({ source, route, registerAs, onNewRecord, actions, onLoadedRowsBoundary, columns, viewRelatedRows, rootRows, relatedRows, interaction, loadLookups, className, gridClassName, }: UseSchemaTableGridArgs): TableGridBinding<SchemaTableRowsByLevel>;
 ```
 
 ### useTableGrid

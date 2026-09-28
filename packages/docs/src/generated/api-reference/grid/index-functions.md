@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid — Functions and components"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Functions and components
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-64 of 191 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
+69 of 202 symbols published from `@sapporta/grid`. Other groups: [Types](https://sapporta.com/api-reference/grid/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
 
 ### activationStartsOn
 
@@ -102,6 +102,15 @@ function ExpandableCellFrame({ activation, path, rowId, children, }: {
 
 ```ts
 function filterSourceNodes(nodes: readonly TreeNode[], predicate: RowPredicate | undefined): readonly TreeNode[];
+```
+
+### filterTreeSourceNodes
+
+```ts
+function filterTreeSourceNodes(nodes: readonly TreeNode[], predicate: RowPredicate | undefined, options: {
+    readonly parentKeyField: string;
+    readonly matchContext?: TreeMatchContext;
+}): TreeFilterResult;
 ```
 
 ### footerSourceForRow
@@ -335,6 +344,28 @@ function trailingEdge(path: GridPath): {
 } | null;
 ```
 
+### TreeCellFrame
+
+```ts
+function TreeCellFrame({ activation, row, indentStep, children, }: {
+    activation: CellRenderActivation | null;
+    row: LevelRow;
+    /** Width of one level of indentation, such as `"18px"`. */
+    indentStep?: string;
+    children?: ReactNode;
+}): import("react").JSX.Element;
+```
+
+### treeExpansionActivation
+
+The cell action that expands and collapses a tree row.
+
+```ts
+function treeExpansionActivation(options?: {
+    startsOn?: readonly CellActivationGesture[];
+}): CellActivation;
+```
+
 ### treeNodeForRow
 
 ```ts
@@ -441,8 +472,22 @@ function useSelectedRows(path: GridPath): RowSelection;
 function validateLevelRowHeaderColumn(levelName: string, level: Pick<LevelSchema, "columns" | "rowHeaderColumn">, label?: string): void;
 ```
 
+### validateLevelTree
+
+```ts
+function validateLevelTree(levelName: string, level: Pick<LevelSchema, "tree" | "childLevels">, label?: string): void;
+```
+
 ### withRowExpansionColumn
 
 ```ts
 function withRowExpansionColumn(column: ColumnSchema, options?: RowExpansionColumnOptions): ColumnSchema;
+```
+
+### withTreeColumn
+
+Makes a column the tree column of a tree level: it draws indentation and the expand control, and Space expands or collapses the row.
+
+```ts
+function withTreeColumn(column: ColumnSchema, options?: TreeColumnOptions): ColumnSchema;
 ```

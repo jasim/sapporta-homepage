@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/shared/contracts — Types"
 package: "@sapporta/shared"
-version: "0.3.3"
+version: "0.4.0"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Types
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-43 of 112 symbols published from `@sapporta/shared/contracts`. Other groups: [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/shared/contracts-values.md).
+47 of 120 symbols published from `@sapporta/shared/contracts`. Other groups: [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/shared/contracts-values.md).
 
 ### AppRoute
 
@@ -180,6 +180,12 @@ type ListMeta = z.output<typeof listMetaSchema>;
 type ListRowsQuery = z.output<typeof listRowsQuerySchema>;
 ```
 
+### ListTreeMeta
+
+```ts
+type ListTreeMeta = z.output<typeof listTreeMetaSchema>;
+```
+
 ### LookupEntry
 
 ```ts
@@ -250,6 +256,26 @@ type SwitchActiveWorkspaceBody = z.output<typeof switchActiveWorkspaceBodySchema
 
 ```ts
 type TableSchema = z.output<typeof tableSchemaSchema>;
+```
+
+### TableTree
+
+```ts
+type TableTree = z.output<typeof tableTreeSchema>;
+```
+
+### TableTreeInput
+
+A table tree as declared, before defaults: only `parentColumn` is required.
+
+```ts
+type TableTreeInput = Pick<TableTree, "parentColumn"> & Partial<Omit<TableTree, "parentColumn">>;
+```
+
+### TreeMatchContext
+
+```ts
+type TreeMatchContext = z.output<typeof treeMatchContextSchema>;
 ```
 
 ### UiContract

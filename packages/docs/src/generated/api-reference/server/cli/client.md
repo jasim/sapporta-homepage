@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/cli/client"
 package: "@sapporta/server"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/server/cli/client"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/cli/client
 
-Import from `@sapporta/server/cli/client`. Documented from `@sapporta/server@0.7.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/cli/client`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 7 symbols documented here.
 
@@ -38,6 +38,8 @@ interface RowListOptions {
     sort?: string;
     q?: string;
     where?: Record<string, unknown>;
+    fixed?: Record<string, unknown>;
+    tree?: TreeMatchContext;
 }
 ```
 
@@ -70,7 +72,7 @@ function encodePathSegment(value: string): string;
 ### whereObjectToFilterParams
 
 ```ts
-function whereObjectToFilterParams(where: Record<string, unknown> | undefined): Record<string, string>;
+function whereObjectToFilterParams(where: Record<string, unknown> | undefined, namespace?: FilterNamespace): Record<string, string>;
 ```
 
 ## Values, classes, and namespaces (1)

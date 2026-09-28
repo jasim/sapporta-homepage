@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/shared/filter"
 package: "@sapporta/shared"
-version: "0.3.3"
+version: "0.4.0"
 specifier: "@sapporta/shared/filter"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.3.3`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/filter
 
-Import from `@sapporta/shared/filter`. Documented from `@sapporta/shared@0.3.3`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/filter`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-42 symbols documented here.
+43 symbols documented here.
 
-## Types (14)
+## Types (15)
 
 ### FilterCondition
 
@@ -60,6 +60,14 @@ type FilterDraftCondition = {
 
 ```ts
 type FilterDraftValue = string | number;
+```
+
+### FilterNamespace
+
+The query-string prefix a list of conditions is written under: `filter[col][op]` or `fixed[col][op]`.
+
+```ts
+type FilterNamespace = "filter" | "fixed";
 ```
 
 ### FilterParseErrorCode
@@ -186,7 +194,7 @@ function conditionContentEqual(a: TypedFilterCondition, b: TypedFilterCondition)
 Parse filter entries out of a query-string source into a list of conditions.
 
 ```ts
-function decodeFilters(source: URLSearchParams | Readonly<QueryParamRecord>): FilterCondition[];
+function decodeFilters(source: URLSearchParams | Readonly<QueryParamRecord>, namespace?: FilterNamespace): FilterCondition[];
 ```
 
 ### encodeFilters
@@ -194,7 +202,7 @@ function decodeFilters(source: URLSearchParams | Readonly<QueryParamRecord>): Fi
 Serialize a list of conditions to `URLSearchParams` in wire format.
 
 ```ts
-function encodeFilters(filters: readonly FilterCondition[]): URLSearchParams;
+function encodeFilters(filters: readonly FilterCondition[], namespace?: FilterNamespace): URLSearchParams;
 ```
 
 ### encodeFilterValue
@@ -216,7 +224,7 @@ function encodeTypedCondition(cond: TypedFilterCondition): FilterCondition;
 Edge adapter for URL/API calls that already carry typed conditions.
 
 ```ts
-function encodeTypedFilters(filters: readonly TypedFilterCondition[]): URLSearchParams;
+function encodeTypedFilters(filters: readonly TypedFilterCondition[], namespace?: FilterNamespace): URLSearchParams;
 ```
 
 ### encodeTypedValue
@@ -323,10 +331,10 @@ function updateTypedFilterCondition(existing: TypedFilterCondition, draft: Filte
 
 ### wireKey
 
-Wire-format key for a column+op pair: `filter[col][op]`.
+Wire-format key for a column+op pair, such as `filter[col][op]`.
 
 ```ts
-function wireKey(column: string, op: Operator): string;
+function wireKey(column: string, op: Operator, namespace?: FilterNamespace): string;
 ```
 
 ## Values, classes, and namespaces (6)

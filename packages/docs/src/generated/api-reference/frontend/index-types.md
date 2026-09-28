@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Types"
 package: "@sapporta/frontend"
-version: "0.8.0"
+version: "0.9.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Types
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.8.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-97 of 188 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+105 of 197 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### ClientColumnOptions
 
@@ -71,6 +71,8 @@ interface FetchTableRowsParams {
     sort?: SortDescriptor[];
     filters?: readonly TypedFilterCondition[];
     search?: string;
+    fixed?: readonly TypedFilterCondition[];
+    tree?: TreeMatchContext;
 }
 ```
 
@@ -187,6 +189,14 @@ type ResolvedLink = {
 type RowFieldName<Row extends object = Record<string, unknown>> = keyof Row & string;
 ```
 
+### SchemaTableColumns
+
+The root table's columns in one schema table grid: the spec list or builder callback a `defineTGrid` level's `columns` takes.
+
+```ts
+type SchemaTableColumns<AppServices = unknown> = TGridLevelColumns<SchemaTableRowsByLevel, AppServices, string>;
+```
+
 ### SchemaTableGridSource
 
 ```ts
@@ -214,8 +224,36 @@ type SchemaTableGridViewProps = {
     sessionRef?: Ref<TGridSession<SchemaTableRowsByLevel>>;
     /** Replace the standard pager-focus behavior at loaded-row boundaries. */
     onLoadedRowsBoundary?: TGridLoadedRowsBoundaryHandler<SchemaTableRowsByLevel>;
+    /**
+     * The columns of `source.table` in this view only: hide some, change how
+     * some show, or add your own. This one shows the schema's columns in schema
+     * order, less `created_at`, with `note` drawn by `NoteCell`, then an `edit`
+     * column:
+     *
+     * ```ts
+     * (c) => [
+     *   c.remainingTable({
+     *     exclude: ["created_at"],
+     *     columnOptions: { note: { renderCell: NoteCell } },
+     *   }),
+     *   c.client("edit", { renderCell: EditButton, activation: editRow }),
+     * ]
+     * ```
+     *
+     * `NoteCell` and `EditButton` are your own cell components. `editRow` is a
+     * cell activation — `{ startsOn, describe, run }` — not just a handler.
+     *
+     * Keep the value stable (a module constant or `useMemo`): a new one
+     * rebuilds the grid.
+     */
+    columns?: SchemaTableColumns;
     /** Tune row expansion, row loading, interaction, controls, and styling. */
     viewRelatedRows?: ViewRelatedRowsOption;
+    /**
+     * `toolbar` drops the table's title and count, for a grid inside a page
+     * that names it already. Defaults to `page`.
+     */
+    header?: TableGridHeaderVariant;
     rootRows?: SchemaTableRootRowsOptions;
     relatedRows?: SchemaTableRelatedRowsOptions;
     interaction?: GridInteractionConfig;
@@ -255,10 +293,11 @@ type SchemaTableRowsByLevel = Record<string, Record<string, unknown>>;
 ### SchemaTGridConfigInput
 
 ```ts
-type SchemaTGridConfigInput = {
+type SchemaTGridConfigInput<AppServices = unknown> = {
     source: SchemaTableGridSource;
     rootRows?: SchemaTableRootRowsOptions;
     relatedRows?: SchemaTableRelatedRowsOptions;
+    columns?: SchemaTableColumns<AppServices>;
 };
 ```
 
@@ -284,6 +323,14 @@ type TableColumnOptions<RowsByLevel extends TGridRowsByLevel, AppServices, Level
     renderCell?: ComponentType<TGridCellRenderContext<RowsByLevel, AppServices, LevelId>>;
     copy?: TGridColumnCopyBehavior<RowsByLevel, AppServices, LevelId, RowsByLevel[LevelId][K]>;
     saveCellValue?: TGridCellWriteHandler<RowsByLevel, AppServices, LevelId, K>;
+};
+```
+
+### TableColumnOptionsByName
+
+```ts
+type TableColumnOptionsByName<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = {
+    readonly [K in RowFieldName<RowsByLevel[LevelId]>]?: TableColumnOptions<RowsByLevel, AppServices, LevelId, K>;
 };
 ```
 
@@ -327,6 +374,14 @@ type TableGridBinding<RowsByLevel extends TGridRowsByLevel, AppServices = unknow
     className?: string;
     gridClassName?: string;
 };
+```
+
+### TableGridHeaderVariant
+
+How a table grid's header presents itself.
+
+```ts
+type TableGridHeaderVariant = "page" | "toolbar";
 ```
 
 ### TableGridNavigate
@@ -376,6 +431,11 @@ type TableGridViewProps<RowsByLevel extends TGridRowsByLevel, AppServices = unkn
     /** Replace the standard pager-focus behavior at loaded-row boundaries. */
     onLoadedRowsBoundary?: TGridLoadedRowsBoundaryHandler<RowsByLevel, AppServices>;
     viewRelatedRows?: ViewRelatedRowsOption;
+    /**
+     * `toolbar` drops the table's title and count, for a grid inside a page
+     * that names it already. Defaults to `page`.
+     */
+    header?: TableGridHeaderVariant;
     className?: string;
     gridClassName?: string;
 };
@@ -654,6 +714,7 @@ type TGridColumnBuildArgs<RowsByLevel extends TGridRowsByLevel, AppServices, Lev
     rowHeaderColumn?: RowHeaderColumn | null;
     immutable: boolean;
     expandable: boolean;
+    treeColumn?: TableColumnName | null;
     columnMapper: TGridColumnMapper;
     sessionContext: () => TGridSessionContext<RowsByLevel, AppServices>;
 };
@@ -665,6 +726,7 @@ type TGridColumnBuildArgs<RowsByLevel extends TGridRowsByLevel, AppServices, Lev
 type TGridColumnBuildResult = {
     columns: GridColumnSchema[];
     rowHeaderColumn: RowHeaderColumn;
+    treeColumnId: ColId | null;
     saveCellValueByColumn: ReadonlyMap<ColId, TGridRuntimeCellWriteHandler<TGridRowsByLevel, unknown, string>>;
 };
 ```
@@ -715,14 +777,15 @@ type TGridColumnsBuilder<RowsByLevel extends TGridRowsByLevel, AppServices, Leve
     client(id: string, options: ClientColumnOptions<RowsByLevel, AppServices, LevelId>): TGridClientColumnSpec<RowsByLevel, AppServices, LevelId>;
     remainingTable(options?: {
         exclude?: readonly RowFieldName<RowsByLevel[LevelId]>[];
-    }): TGridRemainingTableColumnSpec<RowsByLevel, LevelId>;
+        columnOptions?: TableColumnOptionsByName<RowsByLevel, AppServices, LevelId>;
+    }): TGridRemainingTableColumnSpec<RowsByLevel, AppServices, LevelId>;
 };
 ```
 
 ### TGridColumnSpec
 
 ```ts
-type TGridColumnSpec<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = TGridAnyTableColumnSpec<RowsByLevel, AppServices, LevelId> | TGridClientColumnSpec<RowsByLevel, AppServices, LevelId> | TGridRemainingTableColumnSpec<RowsByLevel, LevelId>;
+type TGridColumnSpec<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = TGridAnyTableColumnSpec<RowsByLevel, AppServices, LevelId> | TGridClientColumnSpec<RowsByLevel, AppServices, LevelId> | TGridRemainingTableColumnSpec<RowsByLevel, AppServices, LevelId>;
 ```
 
 ### TGridColumnSpecBuilder
@@ -742,6 +805,12 @@ type TGridDefinition<RowsByLevel extends TGridRowsByLevel = TGridRowsByLevel, Ap
 };
 ```
 
+### TGridExpandedColumnSpec
+
+```ts
+type TGridExpandedColumnSpec<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = TGridTableColumnSpec<RowsByLevel, AppServices, LevelId> | TGridClientColumnSpec<RowsByLevel, AppServices, LevelId>;
+```
+
 ### TGridFilter
 
 ```ts
@@ -751,6 +820,12 @@ type TGridFilter = {
 };
 ```
 
+### TGridLevelColumns
+
+```ts
+type TGridLevelColumns<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = TGridColumnSpecBuilder<RowsByLevel, AppServices, LevelId> | readonly TGridColumnSpec<RowsByLevel, AppServices, LevelId>[];
+```
+
 ### TGridLevelConfig
 
 ```ts
@@ -758,7 +833,7 @@ type TGridLevelConfig<RowsByLevel extends TGridRowsByLevel, AppServices = unknow
     table: TableSchema;
     includedColumnNames?: readonly TableColumnName[];
     rowHeaderColumn?: RowHeaderColumn | null;
-    columns?: TGridColumnSpecBuilder<RowsByLevel, AppServices, LevelId> | readonly TGridColumnSpec<RowsByLevel, AppServices, LevelId>[];
+    columns?: TGridLevelColumns<RowsByLevel, AppServices, LevelId>;
     childLevels: readonly TGridLevelId<RowsByLevel>[];
     parent?: {
         level: TGridLevelId<RowsByLevel>;
@@ -767,6 +842,7 @@ type TGridLevelConfig<RowsByLevel extends TGridRowsByLevel, AppServices = unknow
     };
     query?: TGridLevelQueryConfig;
     rowsClient?: TableRowsClient;
+    tree?: TGridLevelTreeConfig;
 };
 ```
 
@@ -787,7 +863,15 @@ type TGridLevelInfo = {
         foreignKey: TableColumnName;
     };
     childSchemas: ChildSchema[];
+    tree: TableTree | null;
+    pagination: TGridLevelPagination;
 };
+```
+
+### TGridLevelPagination
+
+```ts
+type TGridLevelPagination = "pages" | "all";
 ```
 
 ### TGridLevelQueryConfig
@@ -816,11 +900,13 @@ type TGridLevelQueryState<RowShape extends TGridTableRow = TGridTableRow> = {
     page: number;
     pageSize: number;
     totalCount: number | null;
+    treeResult: TGridTreeResult | null;
     errorBanner: string | null;
     setSortState: (sort: SortDescriptor[]) => "changed" | "unchanged";
     setFilterState: (filter: TGridFilter | undefined) => "changed" | "unchanged";
     setPageState: (page: number, pageSize: number) => "changed" | "unchanged";
     setTotalCount: (totalCount: number | null) => void;
+    setTreeResult: (result: TGridTreeResult | null) => void;
     setSort: (sort: SortDescriptor[]) => void;
     clearSort: () => void;
     addFilter: (cond: TypedFilterCondition) => void;
@@ -841,6 +927,12 @@ type TGridLevelQueryState<RowShape extends TGridTableRow = TGridTableRow> = {
 type TGridLevelsConfigMap<RowsByLevel extends TGridRowsByLevel, AppServices = unknown> = {
     [LevelId in TGridLevelId<RowsByLevel>]: TGridLevelConfig<RowsByLevel, AppServices, LevelId>;
 };
+```
+
+### TGridLevelTreeConfig
+
+```ts
+type TGridLevelTreeConfig = false | Partial<TableTree>;
 ```
 
 ### TGridLoadedRowsBoundaryHandler
@@ -864,9 +956,10 @@ type TGridQueryState<RowShape extends TGridTableRow = TGridTableRow> = TGridLeve
 ### TGridRemainingTableColumnSpec
 
 ```ts
-type TGridRemainingTableColumnSpec<RowsByLevel extends TGridRowsByLevel, LevelId extends TGridLevelId<RowsByLevel>> = {
+type TGridRemainingTableColumnSpec<RowsByLevel extends TGridRowsByLevel, AppServices, LevelId extends TGridLevelId<RowsByLevel>> = {
     kind: "remainingTable";
     exclude?: readonly RowFieldName<RowsByLevel[LevelId]>[];
+    columnOptions?: TableColumnOptionsByName<RowsByLevel, AppServices, LevelId>;
 };
 ```
 
@@ -990,6 +1083,7 @@ type TGridSourceStatus = {
     status: LevelSourceState["status"];
     error: unknown;
     totalCount: number;
+    treeResult: TGridTreeResult | null;
 };
 ```
 
@@ -1041,16 +1135,26 @@ type TGridTableSchemaOverrides<RowShape extends TGridTableRow> = Partial<Omit<Ta
 };
 ```
 
+### TGridTreeResult
+
+```ts
+type TGridTreeResult = {
+    matchCount: number | null;
+    loadedRowCount: number;
+    truncated: boolean;
+};
+```
+
 ### UseSchemaTableGridArgs
 
 ```ts
-type UseSchemaTableGridArgs = Omit<SchemaTableGridViewProps, "sessionRef">;
+type UseSchemaTableGridArgs = Omit<SchemaTableGridViewProps, "sessionRef" | "header">;
 ```
 
 ### UseTableGridArgs
 
 ```ts
-type UseTableGridArgs<RowsByLevel extends TGridRowsByLevel, AppServices = unknown> = Omit<TableGridViewProps<RowsByLevel, AppServices>, "sessionRef">;
+type UseTableGridArgs<RowsByLevel extends TGridRowsByLevel, AppServices = unknown> = Omit<TableGridViewProps<RowsByLevel, AppServices>, "sessionRef" | "header">;
 ```
 
 ### UseTableGridUrlStateArgs
@@ -1112,6 +1216,10 @@ type ViewRelatedRowsContext = {
 
 ```ts
 type ViewRelatedRowsOption = boolean | {
+    /**
+     * The link's accessible name and tooltip. Defaults to
+     * "Open <related table> in table".
+     */
     label?: string;
     target?: "_self" | "_blank";
     href?: (context: ViewRelatedRowsContext) => string | null;

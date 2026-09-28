@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Functions and components"
 package: "@sapporta/server"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Functions and components
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.7.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-86 of 202 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+88 of 208 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### anonymousPrincipal
 
@@ -25,6 +25,14 @@ Returns policy violations caused by fields table API callers may not submit: aut
 
 ```ts
 function apiWritePolicyIssues(table: TableDef, payload: unknown, references?: readonly ResolvedReferenceFact[]): ValidationErrorDetail[];
+```
+
+### applyMigrations
+
+Apply the pending migrations in `migrationsDir` to `sqlite` and return the ones that were applied.
+
+```ts
+function applyMigrations(sqlite: Database.Database, migrationsDir: string): PendingMigration[];
 ```
 
 ### assertAuthSchemaDefinitions
@@ -49,6 +57,11 @@ function assertMigrationsReady(options: {
     apiDistDir: string;
     sqlite: Database.Database;
     tables: readonly TableDef[];
+    /**
+     * Absolute path to the directory holding the Drizzle migrations. Defaults
+     * to `packages/api/migrations` under `projectRoot`.
+     */
+    migrationsDir?: string;
 }): void;
 ```
 
@@ -397,6 +410,10 @@ function listRoute(def: TableDef): {
         tags: string[];
     };
     query: z.ZodObject<{
+        tree: z.ZodOptional<z.ZodEnum<{
+            ancestors: "ancestors";
+            "ancestors-and-descendants": "ancestors-and-descendants";
+        }>>;
         page: z.ZodDefault<z.ZodCoercedNumber<string>>;
         limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
         sort: z.ZodOptional<z.ZodString>;
@@ -410,6 +427,10 @@ function listRoute(def: TableDef): {
                 page: z.ZodNumber;
                 limit: z.ZodNumber;
                 pages: z.ZodNumber;
+                tree: z.ZodOptional<z.ZodObject<{
+                    matchCount: z.ZodNumber;
+                    contextIds: z.ZodArray<z.ZodString>;
+                }, z.core.$strip>>;
             }, z.core.$strip>;
         }, z.core.$strip>;
         400: z.ZodObject<{
@@ -514,6 +535,14 @@ Parses one insert or update patch at the authoritative save boundary.
 function parseTableWrite(table: TableDef, record: Record<string, unknown>, operation: "insert" | "patch"): TableWriteParseResult;
 ```
 
+### pendingMigrations
+
+The migrations in `migrationsDir` that have not been applied to `sqlite`, oldest first.
+
+```ts
+function pendingMigrations(sqlite: Database.Database, migrationsDir: string): PendingMigration[];
+```
+
 ### projectPath
 
 Join path segments onto the project root.
@@ -567,7 +596,7 @@ function resolveLookupQuery<TTable extends AnySQLiteTable>(query: LookupQuery, t
 Parse query string parameters into Drizzle query parts.
 
 ```ts
-function resolvePageQuery<TTable extends AnySQLiteTable>(query: ListRowsQuery, table: TableDef<TTable>, options: ResolveRowsQueryOptions): PageRowsInput;
+function resolvePageQuery<TTable extends AnySQLiteTable>(query: ListRowsQuery, table: TableDef<TTable>, options: ResolveRowsQueryOptions): ResolvedPageQuery;
 ```
 
 ### resolveTableReferences

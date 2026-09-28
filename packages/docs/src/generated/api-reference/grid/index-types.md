@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid — Types"
 package: "@sapporta/grid"
-version: "0.7.0"
+version: "0.8.0"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Types
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.7.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-113 of 191 symbols published from `@sapporta/grid`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
+119 of 202 symbols published from `@sapporta/grid`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
 
 ### Brand
 
@@ -32,6 +32,24 @@ type BuildRowsRequest<F = unknown> = (query: RowQuery<F>) => FetchPageRequest<F>
 ```ts
 type CellActionApi = {
     readonly rowExpansion: {
+        canToggle: (target: {
+            path: GridPath;
+            row: LevelRow;
+        }) => boolean;
+        isExpanded: (target: {
+            path: GridPath;
+            rowId: RowId;
+        }) => boolean;
+        toggle: (target: {
+            path: GridPath;
+            rowId: RowId;
+        }) => void;
+    };
+    /**
+     * Expansion of same-level tree rows (see `LevelSchema.tree`). A row can
+     * toggle only in a tree level and only while it has children.
+     */
+    readonly treeExpansion: {
         canToggle: (target: {
             path: GridPath;
             row: LevelRow;
@@ -246,6 +264,9 @@ type CellNavigationIntent = {
     };
     readonly gesture: RowSelectionGesture;
 } | {
+    readonly type: "clearCell";
+    readonly coord: Coord;
+} | {
     readonly type: "clearCellSelection";
 } | {
     readonly type: "clearRowSelection";
@@ -316,8 +337,10 @@ type ColumnSchema = {
     readonly id: ColId;
     readonly name: string;
     readonly renderCell: (props: CellRenderProps) => ReactNode;
+    readonly align?: ColumnAlign;
     readonly compare?: (a: unknown, b: unknown) => number;
     readonly edit?: CellEditBehavior;
+    readonly disableBackspaceCellClear?: true;
     readonly activation?: CellActivation;
     readonly copy?: GridColumnCopyBehavior;
     readonly meta?: unknown;
@@ -420,6 +443,7 @@ type FetchPageResponse = {
     readonly nodes: readonly TreeNode[];
     readonly totalCount?: number;
     readonly footerRows?: readonly FooterRow[];
+    readonly treeContextRowKeys?: readonly RowKey[];
 };
 ```
 
@@ -617,6 +641,11 @@ type GridEvents = {
         readonly trigger: CellActivationTrigger;
         readonly error: unknown;
     };
+    treeExpansionChanged: {
+        readonly path: GridPath;
+        readonly rowId: RowId | null;
+        readonly expanded: boolean;
+    };
 };
 ```
 
@@ -678,13 +707,49 @@ type GridLevelRuntime = {
   expand: …;
   collapse: …;
   toggleExpand: …;
+  tree: …;
   writeCell: …;
   applyChanges: …;
   createRow: …;
   removeRow: …;
   drafts: …;
 }
-// 33 members; inferred types elided. Read the full type from the declaration file if needed.
+// 34 members; inferred types elided. Read the full type from the declaration file if needed.
+```
+
+### GridLevelTree
+
+Expansion and structure of a tree level (`LevelSchema.tree`), whose rows form a tree through a parent-key field.
+
+```ts
+type GridLevelTree = {
+    /** Reads whether a row with children is expanded. A leaf reads `false`. */
+    isExpanded(rowId: RowId): boolean;
+    /** Shows a row's children. A leaf is left unchanged. */
+    expand(rowId: RowId): void;
+    /** Hides a row's descendants and moves a cursor out of them. */
+    collapse(rowId: RowId): void;
+    /** Applies `expand` or `collapse` from the row's current state. */
+    toggle(rowId: RowId): void;
+    /** Expands every row, including rows that load later. */
+    expandAll(): void;
+    /** Collapses every row, including rows that load later. */
+    collapseAll(): void;
+    /** Expands every ancestor of a row so that the row is displayed. */
+    reveal(rowId: RowId): void;
+    /** Reads a row's parent, or `null` for a top-level row. */
+    parentOf(rowId: RowId): RowId | null;
+    /** Reads a row's children in display order, including hidden ones. */
+    childrenOf(rowId: RowId): readonly RowId[];
+    /**
+     * Adds a draft row under a data row and reveals it. The draft's parent-key
+     * field holds the parent's row key unless `columns` supplies a value.
+     * Returns the draft's row id.
+     */
+    addChild(parentRowId: RowId, columns?: Readonly<Record<ColId, unknown>>): RowId;
+    /** Observes expansion changes on this level. */
+    subscribe(listener: () => void): () => void;
+};
 ```
 
 ### GridPath
@@ -805,8 +870,9 @@ type InMemoryGridDataSourceOpts<F = unknown> = {
 ### InMemoryLevelOpts
 
 ```ts
-type InMemoryLevelOpts<F = unknown> = Omit<InMemoryLevelSourceOpts<F>, "initialNodes" | "columns" | "options"> & {
+type InMemoryLevelOpts<F = unknown> = Omit<InMemoryLevelSourceOpts<F>, "initialNodes" | "columns" | "options" | "tree"> & {
     readonly?: boolean;
+    treeMatchContext?: TreeMatchContext;
 };
 ```
 
@@ -826,7 +892,6 @@ type LevelDataSource = {
 
 ```ts
 type LevelOptions = {
-    readonly defaultCollapsed?: boolean;
     readonly allowPhantoms?: boolean;
 };
 ```
@@ -851,6 +916,7 @@ type LevelRow = {
     readonly columns: Readonly<Record<ColId, unknown>>;
     readonly hasChildren: boolean;
     readonly source: TreeNode;
+    readonly tree?: TreeRowFacts;
 } | {
     readonly kind: "rollup";
     readonly id: RowId;
@@ -887,6 +953,7 @@ type LevelRow = {
     readonly rowSelectable: boolean;
     readonly columns: Readonly<Record<ColId, unknown>>;
     readonly source: PhantomRow;
+    readonly tree?: TreeRowFacts;
 };
 ```
 
@@ -913,6 +980,11 @@ type LevelSchema = {
     readonly rowHeaderColumn: RowHeaderColumn;
     readonly options: LevelOptions;
     readonly childLevels: readonly string[];
+    /**
+     * Same-level parent/child rows. A tree level declares no `childLevels`, so
+     * a row's expand control has one meaning.
+     */
+    readonly tree?: LevelTreeConfig;
 };
 ```
 
@@ -922,6 +994,7 @@ type LevelSchema = {
 type LevelSnapshot = {
     readonly nodes: readonly TreeNode[];
     readonly footerRows?: readonly FooterRow[];
+    readonly treeContextRowKeys?: readonly RowKey[];
 };
 ```
 
@@ -954,6 +1027,31 @@ type LevelSourceState = {
 
 ```ts
 type LevelStatus = LevelSourceState["status"];
+```
+
+### LevelTreeConfig
+
+Same-level parent/child rows: the rows of one level form a tree through a parent-key field, and render as one list under one header.
+
+```ts
+type LevelTreeConfig = {
+    /**
+     * Field in `TreeNode.columns` holding the parent's row key. `null`,
+     * `undefined`, and `""` mark a top-level row. The value is compared with
+     * row keys as `String(value)`.
+     */
+    readonly parentKeyField: string;
+    /**
+     * The value `addChild` writes into a new child's `parentKeyField`, read
+     * from the parent row. Supply it when the field holds a typed key, such as
+     * a number for an integer id, so a draft child stores the same value as
+     * the rows the source delivers. `String` of the value must equal the
+     * parent's row key. Default: the parent's row key.
+     */
+    readonly parentKeyValue?: (parent: TreeNode) => unknown;
+    /** Whether rows start expanded. Default `true`. */
+    readonly defaultExpanded?: boolean;
+};
 ```
 
 ### LoadedRowsBoundaryEvent
@@ -1391,6 +1489,36 @@ type TreeBackedLevelRow = Extract<LevelRow, {
 }>;
 ```
 
+### TreeColumnOptions
+
+```ts
+type TreeColumnOptions = {
+    activation?: CellActivation;
+    /** Width of one level of indentation, such as `"18px"`. */
+    indentStep?: string;
+};
+```
+
+### TreeFilterResult
+
+```ts
+type TreeFilterResult = {
+    /** Matches plus their context, in input order. */
+    readonly nodes: readonly TreeNode[];
+    /** Ancestors present only because a descendant matched, in input order. */
+    readonly contextRowKeys: readonly RowKey[];
+    readonly matchCount: number;
+};
+```
+
+### TreeMatchContext
+
+What a filtered tree level keeps besides the rows that match.
+
+```ts
+type TreeMatchContext = "ancestors" | "ancestors-and-descendants";
+```
+
 ### TreeNode
 
 ```ts
@@ -1402,6 +1530,20 @@ type TreeNode = {
     readonly children?: Readonly<Record<string, TreeNode | readonly TreeNode[]>>;
     readonly childFooterRows?: Readonly<Record<string, readonly FooterRow[]>>;
     readonly kind?: "opening" | "closing" | "subtotal";
+};
+```
+
+### TreeRowFacts
+
+```ts
+type TreeRowFacts = {
+    readonly depth: number;
+    readonly parentId: RowId | null;
+    readonly childCount: number;
+    readonly expanded: boolean;
+    readonly positionInSet: number;
+    readonly setSize: number;
+    readonly context: boolean;
 };
 ```
 
