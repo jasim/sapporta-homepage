@@ -16,6 +16,7 @@ const DEPENDENCY_KEYS = new Set([
 const IGNORED_DIRS = new Set([
   ".git",
   ".astro",
+  ".claude",
   ".vite",
   "data",
   "dist",
