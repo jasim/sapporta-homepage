@@ -2,7 +2,7 @@
 
 > Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration. Generated from the published declaration files — this is the API as shipped, not a summary of it.
 
-Describes `@sapporta/shared@0.4.0`, `@sapporta/server@0.8.0`, `@sapporta/honest@0.3.16`, `@sapporta/grid@0.8.0`, `@sapporta/frontend@0.9.0`, `@sapporta/ui@0.4.0`.
+Describes `@sapporta/shared@0.4.0`, `@sapporta/server@0.8.1`, `@sapporta/honest@0.3.17`, `@sapporta/grid@0.8.0`, `@sapporta/frontend@0.9.1`, `@sapporta/ui@0.4.0`.
 
 Read this instead of opening declaration files under `node_modules`.
 
@@ -33,7 +33,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/shared/contracts](https://sapporta.com/api-reference/shared/contracts.md): 120 documented, split by group.
 - [@sapporta/shared/client](https://sapporta.com/api-reference/shared/client.md): 6 documented.
 
-## @sapporta/server 0.8.0
+## @sapporta/server 0.8.1
 
 - [@sapporta/server](https://sapporta.com/api-reference/server/index.md): 208 documented, 27 re-exported from subpaths, split by group.
 - [@sapporta/server/table](https://sapporta.com/api-reference/server/table.md): 28 documented.
@@ -49,7 +49,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/server/cli/format](https://sapporta.com/api-reference/server/cli/format.md): 3 documented.
 - [@sapporta/server/cli/render](https://sapporta.com/api-reference/server/cli/render.md): 2 documented.
 
-## @sapporta/honest 0.3.16
+## @sapporta/honest 0.3.17
 
 - [@sapporta/honest](https://sapporta.com/api-reference/honest/index.md): 11 documented.
 
@@ -62,7 +62,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/grid/lookup/react](https://sapporta.com/api-reference/grid/lookup/react.md): 4 documented.
 - `@sapporta/grid/index.css` — stylesheet, no exported symbols. Import for side effects.
 
-## @sapporta/frontend 0.9.0
+## @sapporta/frontend 0.9.1
 
 - [@sapporta/frontend](https://sapporta.com/api-reference/frontend/index.md): 197 documented, 137 re-exported from subpaths, split by group.
 - [@sapporta/frontend/app](https://sapporta.com/api-reference/frontend/app.md): 9 documented.

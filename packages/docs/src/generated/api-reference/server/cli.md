@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/cli"
 package: "@sapporta/server"
-version: "0.8.0"
+version: "0.8.1"
 specifier: "@sapporta/server/cli"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/cli
 
-Import from `@sapporta/server/cli`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/cli`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 6 symbols documented here.
 

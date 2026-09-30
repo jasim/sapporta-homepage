@@ -15,7 +15,7 @@
     "@astrojs/react": "^5.0.7",
     "@astrojs/starlight": "^0.38.4",
     "@js-temporal/polyfill": "0.5.1",
-    "@sapporta/frontend": "0.9.0",
+    "@sapporta/frontend": "0.9.1",
     "@sapporta/grid": "0.8.0",
     "@sapporta/shared": "0.4.0",
     "@sapporta/ui": "0.4.0",

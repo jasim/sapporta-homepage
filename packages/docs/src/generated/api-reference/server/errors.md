@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/errors"
 package: "@sapporta/server"
-version: "0.8.0"
+version: "0.8.1"
 specifier: "@sapporta/server/errors"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/errors
 
-Import from `@sapporta/server/errors`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/errors`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 10 symbols documented here.
 
@@ -81,6 +81,7 @@ const ErrorCode: {
     readonly SELECT_ONLY: "SELECT_ONLY";
     readonly CONFLICT: "CONFLICT";
     readonly ROW_NOT_FOUND: "ROW_NOT_FOUND";
+    readonly ROUTE_NOT_FOUND: "ROUTE_NOT_FOUND";
     readonly PROJECT_NOT_FOUND: "PROJECT_NOT_FOUND";
     readonly REPORT_NOT_FOUND: "REPORT_NOT_FOUND";
     readonly VALIDATION_FAILED: "VALIDATION_FAILED";

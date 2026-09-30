@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/layout"
 package: "@sapporta/frontend"
-version: "0.9.0"
+version: "0.9.1"
 specifier: "@sapporta/frontend/layout"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.9.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.9.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/layout
 
-Import from `@sapporta/frontend/layout`. Documented from `@sapporta/frontend@0.9.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/layout`. Documented from `@sapporta/frontend@0.9.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 23 symbols documented here.
 

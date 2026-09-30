@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/data-dir"
 package: "@sapporta/server"
-version: "0.8.0"
+version: "0.8.1"
 specifier: "@sapporta/server/data-dir"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/data-dir
 
-Import from `@sapporta/server/data-dir`. Documented from `@sapporta/server@0.8.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/data-dir`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 2 symbols documented here.
 
