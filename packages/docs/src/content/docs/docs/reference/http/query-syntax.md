@@ -16,7 +16,7 @@ That request reads `tasks` in project 1, keeps rows whose status is `open` or
 `review`, applies the table's search plan to the term `launch`, orders by due
 date ascending and then by ID descending, and returns the first 25 matches.
 
-Generated list, CSV export, count, and lookup routes all share this same
+Generated list, CSV export, count, and lookup search routes all share this same
 grammar. Each route then accepts its own non-filter parameters and rejects every
 parameter it does not own.
 
@@ -258,10 +258,43 @@ accidentally broadening into search.
 
 | Mode   | Parameters             | Bounds                                                                                    |
 | ------ | ---------------------- | ----------------------------------------------------------------------------------------- |
-| ID     | `ids=7,9`              | `1` through `500` non-empty values; rejects `q`, `fields`, `limit`                        |
+| ID     | `ids=7,9`              | `1` through `500` non-empty values; rejects `q`, `fields`, `limit`, `notUnder`, and filters |
 | Search | `q`, `fields`, `limit` | `fields` names visible display fields; `limit` defaults to `50` and accepts at most `500` |
 
-Lookup does not accept `filter[column][operator]` parameters.
+Both modes accept `computed=name,name2`, which returns the named computed fields
+of the entries in the response's `computed` member; see
+[Computed fields](/docs/reference/http/table-endpoints/#computed-fields).
+
+### Narrow a lookup search
+
+Search mode accepts `filter[column][operator]=value` conditions in the
+[filter grammar](#filter-conditions), so a picker can offer only some rows of a
+table:
+
+```http
+GET /api/tables/accounts/_lookup?q=fu&filter[account_type][in]=asset,expense
+```
+
+The conditions follow every rule of list filters: the same operators, value
+formats, repeated keys, and error codes. They combine with the search and the
+table's row scope using AND. Search mode does not accept `fixed[...]` keys.
+
+On a table that declares `meta.tree`, `notUnder=<id>` leaves out the row with
+that primary key and every row below it. It gives the choices for a row's
+parent without the rows that would make a loop:
+
+```http
+GET /api/tables/accounts/_lookup?q=&notUnder=12
+```
+
+The walk that finds the rows below `<id>` goes through every row of the table,
+including rows the caller cannot see, so a row below `<id>` through a hidden row
+is also left out. The walk only removes rows, so it shows the caller nothing
+new. `notUnder` on a table without `meta.tree`, or an id that does not parse in
+the primary key's kind, returns `bad_value`.
+
+ID mode accepts neither filters nor `notUnder`. A chosen row therefore keeps its
+label after it stops matching the narrowing.
 
 ## Group a count
 
@@ -280,10 +313,11 @@ order.
 
 | Route                                | Filters | `q`                  | `sort` | Pagination      | Own parameters               |
 | ------------------------------------ | ------- | -------------------- | ------ | --------------- | ---------------------------- |
-| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | `fixed[...]`, `tree`         |
+| `GET /api/tables/<table>`            | yes     | table search         | yes    | `page`, `limit` | `fixed[...]`, `tree`, `computed` |
+| `GET /api/tables/<table>/<id>`       | no      | no                   | no     | no              | `computed`                   |
 | `GET /api/tables/<table>/export.csv` | yes     | table search         | yes    | unpaginated     | —                            |
 | `GET /api/tables/<table>/_count`     | yes     | no                   | no     | no              | `group_by`, `order`, `limit` |
-| `GET /api/tables/<table>/_lookup`    | no      | display-field search | no     | `limit`         | `ids`, `fields`              |
+| `GET /api/tables/<table>/_lookup`    | search mode only | display-field search | no | `limit`  | `ids`, `fields`, `notUnder`, `computed` |
 
 ## Read a rejected query
 
@@ -302,6 +336,7 @@ return HTTP `400` with one of these stable codes:
 | `bad_value`            | a value that does not parse in the column's kind, an empty `in` list or item, or an `is` polarity other than `null` or `notnull` |
 | `no_search_config`     | a non-empty `q` on a table with `search: false`                                                                                  |
 | `no_tree_config`       | `tree` on a table that does not declare `meta.tree`                                                                              |
+| `unknown_computed_field` | a `computed` name that is not a computed field of the table                                                                    |
 
 This malformed filter omits its operator:
 

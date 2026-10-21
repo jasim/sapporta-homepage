@@ -27,12 +27,17 @@ testing it.
 | `levels`     | record of level name to level | yes      |
 | `nodes`      | `GridDatasetNode[]`           | yes      |
 | `footerRows` | `GridDatasetFooterRow[]`      | no       |
+| `computed`   | record of table name to `ComputedValues` | no |
 
 `name` is stable renderer identity. The current renderer combines it with the
 level name for persisted column sizing, so changing it can change saved layout
 identity. `label` is display text and may include a date baseline. The screen
 must render the label itself; `ReportGridDataset` does not render it as a
 heading.
+
+`computed` carries computed field values of the rows that
+[reference columns](#reference-columns) name, by table name, then field name,
+then row id. `attachReferenceComputed()` from `@sapporta/server` fills it.
 
 `stats` and `errors` are not `GridDataset` members. Summary cards are a separate
 frontend surface through `ReportSummaryStats` and `ReportStat[]`;
@@ -117,6 +122,9 @@ Optional fields accepted by the schema:
 - `strong: boolean`
 - `notes: string`
 - `sortable`, `filterable`, `searchable`: booleans
+- `links`: cell links; see [Report links](/docs/reference/reports/report-links/)
+- `reference: { table: string; idColumn: string }`: the table row each cell
+  names; see [Reference columns](#reference-columns)
 
 The current report adapter consumes the display, sizing, hidden, color, zero,
 strong, and sorting fields. Although the schema accepts `notes`, `filterable`,
@@ -140,6 +148,53 @@ when a reader hovers the cell. The declared `kind` decides which of the two
 shapes a column reads in, so a column reads the same way in every row even where
 the values underneath it vary. A value in neither canonical shape is rendered as
 the text it arrived as.
+
+## Reference columns
+
+A column with `reference` names one row of a table in each cell, such as the
+account of a ledger line:
+
+```ts
+{
+  id: "account",
+  label: "Account",
+  kind: "text",
+  reference: { table: "accounts", idColumn: "account_id" },
+}
+```
+
+| Field      | Type     | Meaning                                                    |
+| ---------- | -------- | ---------------------------------------------------------- |
+| `table`    | `string` | SQL name of the referenced table                           |
+| `idColumn` | `string` | column of the same level that holds the referenced row's id |
+
+- The cell's value stays the label text that the report chose. `idColumn` is
+  usually `visuallyHidden`, as for `links`.
+- `ReportGridDataset` draws each cell through the referenced table's label slot,
+  on the `"cell"` surface in compact density, with `as: "reference"` and
+  `hierarchyShown: false`. Sapporta's default draws the label alone. A cell whose
+  id is `null`, `undefined`, or `""`, or whose label is empty, draws its plain
+  value.
+- Before drawing, the grid stores `dataset.computed`, then asks for the label
+  slots' remaining `needs` in one lookup per table for all ids of the dataset.
+- A `renderCell` override for the column receives the reference drawing as
+  `defaultContent`. Column links wrap the result.
+- The type of the field is `GridDatasetColumnReference`, and its schema is
+  `gridDatasetColumnReferenceSchema`.
+
+`gridDatasetReferenceProblems(dataset)` returns one message per `reference`
+whose `idColumn` is not a column of its level, naming the level and column; it
+returns `[]` for a well-formed dataset. `ReportGridDataset` throws with these
+messages.
+
+`gridDatasetReferenceIds(dataset)` returns a `Map` from each referenced table
+name to the ids its reference columns name, across every level, node, child,
+and footer row. Each id appears once per table, as a `RecordId` string, in the
+order first met. Empty ids (`null`, `undefined`, `""`) and values that are
+neither strings nor numbers are skipped.
+
+Both functions come from `@sapporta/shared/grid-dataset`. See
+[Name table rows in report cells](/docs/guides/reports/report-reference-columns/).
 
 ## Node
 
@@ -184,13 +239,16 @@ number and ratio rules as ordinary nodes.
 - `links` and `linkContext`: cell links and the input they read; see
   [Report links](/docs/reference/reports/report-links/).
 - `renderCell`: cell renderers keyed by level name, then column id. A renderer
-  receives the preset's own cell as `defaultContent` and sits inside the
-  column's link.
+  receives the preset's own cell as `defaultContent`, or the label-slot drawing
+  on a `reference` column, and sits inside the column's link.
 - `columnSizing`: every ColumnPreset column-sizing option except `storageKey`,
   including `minWidths`; see
   [Column sizing](/docs/reference/column-sizing/#raise-the-built-in-widths).
   Dragged widths are stored under
   `sapporta:report-grid-columns:<dataset name>:<level>`.
+
+`ReportGridDataset` holds its own row store, built with the displays of the
+nearest `RowDisplayProvider` and connected to `invalidateRows` while mounted.
 
 Give `renderCell` and `columnSizing` stable identities, at module level or in
 `useMemo`; the grid is rebuilt whenever either changes.
@@ -202,5 +260,6 @@ also `18px` by default.
 ## Related documentation
 
 - [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
+- [Name table rows in report cells](/docs/guides/reports/report-reference-columns/)
 - [Report links](/docs/reference/reports/report-links/)
 - [Column sizing](/docs/reference/column-sizing/)

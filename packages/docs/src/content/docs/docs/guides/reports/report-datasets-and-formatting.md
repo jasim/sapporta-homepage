@@ -206,6 +206,11 @@ A report whose numbers depend on a zone names it. `ReportTimeZoneNote` from
 `@sapporta/frontend/report` renders `Asia/Kolkata UTC+05:30` in the toolbar,
 including when the zone is UTC.
 
+A column that shows the name of a table row, such as each line's account, can
+declare which row it names with `reference: { table, idColumn }`. The grid then
+draws the cell with the table's label slot; see
+[Name table rows in report cells](/docs/guides/reports/report-reference-columns/).
+
 For hierarchical reports, add named child levels, put source values in each
 node's `columns`, put computed parent values in `rollup`, and attach child
 arrays through `children`. Root totals belong in `footerRows`; totals inside a
@@ -372,6 +377,7 @@ validity alone does not prove that a hierarchy is coherent.
 ## Related documentation
 
 - [GridDataset](/docs/reference/reports/grid-dataset/)
+- [Name table rows in report cells](/docs/guides/reports/report-reference-columns/)
 - [Column sizing](/docs/reference/column-sizing/)
 - [Route-based reports](/docs/guides/reports/route-based-reports/)
 - [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)

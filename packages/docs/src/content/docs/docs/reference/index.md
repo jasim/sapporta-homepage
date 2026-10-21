@@ -38,6 +38,7 @@ report rendering. Standalone `@sapporta/grid` has its own
 - [Scoped lookups and counts](/docs/reference/server/row-scoped-data/lookups-and-counts/)
 - [Generated query resolvers](/docs/reference/server/row-scoped-data/generated-query-resolvers/)
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
+- [Computed fields and tree paths](/docs/reference/server/row-scoped-data/computed-fields-and-tree-paths/)
 
 ## Frontend state and interaction
 

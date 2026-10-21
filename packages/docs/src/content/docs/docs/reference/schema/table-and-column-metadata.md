@@ -9,15 +9,16 @@ description:
 `SapportaMeta`, `SapportaTableInputMeta`, `ColumnMeta`, `ChildMeta`,
 `TreeMetaInput`, `TreeMeta`, `columnBySqlName()`, and `columnPropertyName()`
 from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
-`ChildSchema`, and `TableTree` from `@sapporta/shared/contracts`.
+`ChildSchema`, `ComputedFieldSchema`, and `TableTree` from
+`@sapporta/shared/contracts`.
 
 ## Contract
 
 - `SapportaTableInputMeta` is the sparse authoring shape accepted by
   `sapportaTable()`. `SapportaMeta` is its normalized server form.
 - Authoring metadata includes `label`, required `rowLabelColumns`, `rowScope`,
-  `immutable`, `references`, `defaultSort`, `children`, `columns`, `search`, and
-  `tree`.
+  `immutable`, `references`, `defaultSort`, `children`, `columns`, `search`,
+  `tree`, and `rowCaption`.
 - `rowLabelColumns` must contain at least one real SQL column name from the
   current table. Labels concatenate those stored values; they do not resolve
   referenced-row labels.
@@ -81,15 +82,52 @@ from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
   accepted and the value is silently replaced by the created master's key.
 - Browser `TableSchema` contains `name`, `label`, `immutable`, `columns`,
   `children`, optional `rowLinks`, `rowLabelColumns`, optional `rowCount`,
-  `searchable`, and optional `tree` with every field resolved. It does not
+  `searchable`, optional `tree` with every field resolved, optional `computed`,
+  and optional `rowCaption`. `computed` lists the table's computed fields as
+  `{ name, label, kind, notes? }` (`ComputedFieldSchema`) and is absent when the
+  table declares none. `rowCaption` is the caption's column or field name. It does not
   serialize row scope, abilities, request authority, authoring references,
   validation callbacks, the table-level Drizzle `defaultSort`, or the recursive
   search plan.
 - Visual metadata, hidden fields, and a protected frontend route do not replace
   server authorization or row scope.
 
+## Row caption
+
+`meta.rowCaption` names one column or
+[computed field](/docs/reference/schema/table-definitions/#computed-fields) of
+the table. The default row display draws its text under the row's label, such as
+an account's parent path under its name:
+
+```ts
+meta: {
+  rowLabelColumns: ["name"],
+  tree: { parentColumn: "parent_id" },
+  rowCaption: "parentPath",
+},
+computed: { parentPath: treePath() },
+```
+
+- `sapportaTable()` throws when `rowCaption` names neither a column nor a
+  computed field.
+- A column caption is the row's value as text. A computed caption is formatted
+  by its field's `kind`: a number with digit grouping, a boolean as "Yes" or
+  "No", a `"json"` value as JSON text, and any other kind as text. `null` and
+  `""` show no caption.
+- The caption is drawn on the `"option"`, `"selected"`, and `"field"` surfaces:
+  picker and editor options, beside a picker's chosen value, and record sheet
+  references. Grid cells, report cells, and filter chips draw the label alone;
+  a filter chip uses the caption as its tooltip. A view that already shows the
+  row's place in its tree draws no caption.
+- Every lookup of the table carries a computed caption, so references arrive
+  with it.
+
+See
+[Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/).
+
 ## Related documentation
 
+- [Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/)
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
 - [Configure table search](/docs/guides/model-data/configure-table-search/)
 - [Auth and row security](/docs/reference/server/auth-and-row-security/)

@@ -34,8 +34,20 @@ await rows.lookup({
 });
 ```
 
+Search mode also accepts `where`, a Drizzle `SQL` expression that narrows the
+choices, such as accounts of one type. It is combined with the search and the
+request's row predicate using AND:
+
+```ts
+await rows.lookup({
+  search: "fu",
+  where: eq(accountsTable.account_type, "expense"),
+});
+```
+
 ID mode accepts between `1` and `500` string `RowId` values and does not accept
-`search`, `fields`, or `limit`. Numeric primary-key IDs are validated and
+`search`, `fields`, `limit`, or `where`, so a selected value keeps its label
+after it stops matching a narrowing. Numeric primary-key IDs are validated and
 converted before SQL; text primary-key IDs remain strings. Search mode accepts
 visible Drizzle columns from the bound table, defaults to `50` results, and
 accepts at most `500`. Keeping the modes disjoint prevents a selected-value

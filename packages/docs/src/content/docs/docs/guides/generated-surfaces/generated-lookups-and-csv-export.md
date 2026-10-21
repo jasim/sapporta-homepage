@@ -40,6 +40,13 @@ caller.
 Search on `/_lookup` uses the lookup's displayed fields. It is separate from the
 recursive table-search plan configured for list and export.
 
+Search mode also accepts `filter[col][op]` conditions and, on a tree table,
+`notUnder=<id>`, which narrow the choices. ID mode is never narrowed, so a
+selected value keeps its label. Both modes accept `computed=name`, which returns
+computed field values of the entries; see
+[Narrow a lookup search](/docs/reference/http/query-syntax/#narrow-a-lookup-search)
+and [Computed fields](/docs/reference/http/table-endpoints/#computed-fields).
+
 ## Export the active table selection
 
 CSV export follows the active typed filters, table search, sort, ability, and

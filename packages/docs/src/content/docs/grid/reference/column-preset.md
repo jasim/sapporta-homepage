@@ -103,6 +103,42 @@ type ColumnPresetOptions<TMeta = unknown> = {
 any cell a custom `renderCell` wraps keep it. A preset sets it from its kind:
 numbers right, booleans center.
 
+### Lookup Columns
+
+```ts
+type LookupColumnOptions<TMeta = unknown> = ColumnPresetOptions<TMeta> & {
+  valueLookup: ValueLookup;
+  searchLookup?: SearchLookup;
+  renderEntry?: LookupEntryRenderer;
+};
+
+type LookupEntryRenderer = (props: LookupEntryRenderProps) => ReactNode;
+
+type LookupEntryRenderProps = {
+  entry: LookupEntry;
+  surface: "cell" | "option";
+  density: "compact" | "regular";
+  selected?: boolean;
+  defaultContent: ReactNode;
+};
+```
+
+`foreignKey` and `lookupValue` take `renderEntry`, which draws each entry in the
+column's cells (`surface: "cell"`) and in its editor's options
+(`surface: "option"`, where `selected` marks the current value). Cells and the
+cell editor are compact. `defaultContent` is what the column draws without it,
+the entry's label; return it to keep that drawing, or wrap it. The cell editor's
+placeholder names the current value. `lookupEntryRenderer(preset)` returns the
+`renderEntry` a lookup column was built with, or `undefined`.
+
+The caches behind `valueLookup` and `searchLookup` can be read again after the
+underlying rows change. `CachedValueLookup.reloadEntries()` loads every cached
+entry again, and every entry whose first load is in flight.
+`CachedSearchLookup.markSearchesStale()` makes the next load of each cached
+search read it again. Both keep the old results readable until the new ones
+arrive, and an answer to a request sent before the reload never replaces a newer
+one.
+
 ### Widths
 
 ```ts

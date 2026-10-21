@@ -221,6 +221,27 @@ const result = await rows.page({
 [Scoped CRUD and bounded reads](/docs/reference/server/row-scoped-data/scoped-crud-and-bounded-reads/#match-a-tree-with-its-context)
 describes the inputs and the result.
 
+## Show each row's parent path
+
+`treePath()` gives each row of a tree table the labels of its ancestors, such as
+"Expenses > Kitchen", as a computed field. With `meta.rowCaption` naming it,
+pickers show the path under each account's name, including the parent column's
+picker:
+
+```ts
+meta: {
+  rowLabelColumns: ["name"],
+  tree: { parentColumn: "parent_id" },
+  rowCaption: "parentPath",
+},
+computed: { parentPath: treePath() },
+```
+
+[Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/#give-a-tree-table-a-parent-path)
+describes the field, and
+[Choose a tree row's parent](/docs/guides/application-code/custom-forms-and-validation/#choose-a-tree-rows-parent)
+shows a parent picker that leaves out the row and its descendants.
+
 ## Related documentation
 
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)

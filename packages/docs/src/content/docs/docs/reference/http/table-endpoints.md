@@ -26,7 +26,8 @@ Generated HTTP routes under `/api/tables/<table>`.
   and the ids of ancestors present only because a descendant matched. See
   [Keep tree matches in context](/docs/reference/http/query-syntax/#keep-tree-matches-in-context).
 - `GET /api/tables/<table>/<id>` returns `{ data: row }`. This HTTP operation
-  does not imply a generated frontend detail route.
+  does not imply a generated frontend detail route. It accepts only the
+  `computed` query parameter; any other query key returns HTTP `400`.
 - `POST /api/tables/<table>` accepts one row, an array of rows, or a supported
   master-with-`$details` body. It returns HTTP `201` with `{ data: row }`,
   `{ data: row[] }`, or `{ data: { master: row, details: row[] } }`,
@@ -43,9 +44,13 @@ Generated HTTP routes under `/api/tables/<table>`.
   `meta` contains ordinary visible source-row fields; it is not invariantly
   empty. The query uses exactly one of two modes:
   - `ids=1,2` recovers `1` through `500` selected IDs and rejects `q`, `fields`,
-    or `limit`.
+    `limit`, `notUnder`, and filter conditions.
   - `q=relaunch&fields=name,code&limit=20` searches visible display fields.
-    Search defaults to `50` results and accepts at most `500`.
+    Search defaults to `50` results and accepts at most `500`. Search mode also
+    accepts `filter[col][op]=value` conditions and, on a tree table,
+    `notUnder=<id>`, which narrow the choices; see
+    [Narrow a lookup search](/docs/reference/http/query-syntax/#narrow-a-lookup-search).
+  - Both modes accept `computed`.
 - `GET /api/tables/<table>/_count` returns either
   `{ data: { kind: "total", count: number } }` or
   `{ data: { kind: "grouped", groups: Array<{ value, count }> } }`. Group values
@@ -95,6 +100,39 @@ Generated HTTP routes under `/api/tables/<table>`.
   Action denial is a separate authorization result. The
   [auth and row-security reference](/docs/reference/server/auth-and-row-security/)
   owns the exact managed-field and authorization boundaries.
+
+### Computed fields
+
+The list read (including tree reads and child-level reads), the single-row
+read, and both lookup modes accept `computed=name,name2`, the names of
+[computed fields](/docs/reference/schema/table-definitions/#computed-fields)
+declared by the table. The response then carries a `computed` member beside
+`data` or `entries`:
+
+```json
+{
+  "data": [{ "id": 12, "name": "Groceries", "parent_id": 7 }],
+  "meta": { "total": 1, "page": 1, "limit": 50, "pages": 1 },
+  "computed": { "parentPath": { "12": "Expenses > Kitchen" } }
+}
+```
+
+- `computed` maps each requested field name to an object keyed by row id, in
+  its string form, and each id to the field's value. Its type is
+  `ComputedValues` from `@sapporta/shared/contracts`.
+- Every requested field holds every returned row's id. `null` means the row has
+  no value for the field. A tree read covers the context rows as well as the
+  matches.
+- Without `computed`, or with an empty value, the response has no `computed`
+  member. Repeated names are computed once.
+- A name the table does not declare returns HTTP `400` with the code
+  `unknown_computed_field`, and the message lists the table's computed fields.
+- A loader that throws, leaves out an id, or returns a value its `schema`
+  rejects fails the read with HTTP `500`.
+- Create, update, and delete compute nothing, and their responses have no
+  `computed` member. CSV export and count do not accept `computed`.
+- The OpenAPI response schema lists each computed field of the table, with its
+  value `schema` and `notes`.
 
 ### Example envelopes
 
@@ -148,6 +186,7 @@ is not the trusted write shape produced after auth preparation.
 ## Related documentation
 
 - [Generated table APIs](/docs/guides/generated-surfaces/generated-table-apis/)
+- [Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)
 - [Filtering, sorting, search, and pagination](/docs/guides/generated-surfaces/filtering-sorting-search-and-pagination/)
 - [Use table search](/docs/guides/model-data/use-table-search/)

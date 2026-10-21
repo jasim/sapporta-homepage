@@ -23,7 +23,7 @@ import { fetchTableRow, fetchTableRows } from "@sapporta/frontend";
 
 await fetchTableRow(tableName, recordId, { signal });
 await fetchTableRows(
-  { tableName, page, limit, sort, filters, search, fixed, tree },
+  { tableName, page, limit, sort, filters, search, fixed, tree, computed },
   { signal },
 );
 ```
@@ -40,6 +40,13 @@ or `tree: "ancestors-and-descendants"` returns each match with its ancestors
 `contextIds`. See
 [Fixed conditions](/docs/reference/http/query-syntax/#fixed-conditions) and
 [Keep tree matches in context](/docs/reference/http/query-syntax/#keep-tree-matches-in-context).
+
+`computed` takes names of the table's computed fields, such as
+`computed: ["parentPath"]`, and sends them as `computed=parentPath`. The
+returned `PaginatedRows` then carries `computed`, the values by field name and
+row id. `tableRecordsPageQueryOptions()` takes the same field, and its pages
+keep the `computed` member. `fetchTableRow()` does not take `computed`. See
+[Computed fields](/docs/reference/http/table-endpoints/#computed-fields).
 
 ## Selection and page serializers
 

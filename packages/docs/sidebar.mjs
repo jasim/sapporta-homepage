@@ -44,6 +44,9 @@ export default [
             slug: "docs/guides/model-data/show-a-table-as-a-tree",
           },
           {
+            slug: "docs/guides/model-data/computed-fields-and-row-captions",
+          },
+          {
             label: "Table search",
             items: [
               {
@@ -93,6 +96,9 @@ export default [
         items: [
           {
             slug: "docs/guides/generated-surfaces/grid-first-record-workflows",
+          },
+          {
+            slug: "docs/guides/generated-surfaces/row-captions-and-display-slots",
           },
           {
             label: "Registered-table Grid",
@@ -223,6 +229,9 @@ export default [
           },
           {
             slug: "docs/guides/reports/report-datasets-and-formatting",
+          },
+          {
+            slug: "docs/guides/reports/report-reference-columns",
           },
           {
             slug: "docs/guides/reports/report-screens-and-url-state",
@@ -371,6 +380,9 @@ export default [
               },
               {
                 slug: "docs/reference/server/row-scoped-data/table-row-security-guards",
+              },
+              {
+                slug: "docs/reference/server/row-scoped-data/computed-fields-and-tree-paths",
               },
             ],
           },

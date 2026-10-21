@@ -33,6 +33,7 @@ index for the whole site.
 - [Tables, columns, and schema metadata](/docs/guides/model-data/tables-columns-and-schema-metadata/)
 - [Relationships and lookup behavior](/docs/guides/model-data/relationships-and-lookup-behavior/)
 - [Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/)
+- [Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/)
 - **Table search**
   - [Search table rows and relationships](/docs/guides/model-data/search-indexes-and-display-metadata/)
   - [Configure table search](/docs/guides/model-data/configure-table-search/)
@@ -50,6 +51,7 @@ index for the whole site.
 ### Build custom data interfaces
 
 - [Grid-first record workflows](/docs/guides/generated-surfaces/grid-first-record-workflows/)
+- [Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/)
 - **Registered-table Grid**
   - [Grid interaction and selection](/docs/guides/generated-surfaces/grid-interaction-and-selection/)
   - [Table-aware grids and customization](/docs/guides/generated-surfaces/table-aware-grids-and-customization/)
@@ -94,6 +96,7 @@ index for the whole site.
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
 - [Group and filter by day](/docs/guides/reports/group-and-filter-by-day/)
 - [Report datasets and formatting](/docs/guides/reports/report-datasets-and-formatting/)
+- [Name table rows in report cells](/docs/guides/reports/report-reference-columns/)
 - [Report screens and URL state](/docs/guides/reports/report-screens-and-url-state/)
 - [Drill-through and cross-report links](/docs/guides/reports/drill-through-and-cross-report-links/)
 
@@ -152,6 +155,7 @@ index for the whole site.
   - [Scoped lookups and counts](/docs/reference/server/row-scoped-data/lookups-and-counts/)
   - [Generated query resolvers](/docs/reference/server/row-scoped-data/generated-query-resolvers/)
   - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
+  - [Computed fields and tree paths](/docs/reference/server/row-scoped-data/computed-fields-and-tree-paths/)
 - [Runtime services](/docs/reference/server/runtime-services/)
 
 ### Shared contracts and clients

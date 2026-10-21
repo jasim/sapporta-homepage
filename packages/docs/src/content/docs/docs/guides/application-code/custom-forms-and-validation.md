@@ -83,6 +83,169 @@ Workflow values that are not table columns remain ordinary TanStack Form fields.
 Application-specific controls can consume a Sapporta field model without using
 `FormField` when the default rendering does not fit.
 
+## Pick a related row
+
+A foreign-key field from `buildRecordFormFields()` renders a `LookupPicker` over
+the referenced table. The picker searches the table through its row-scoped
+lookup and draws each option with the table's row display. For a table with a
+`rowCaption`, such as accounts with their parent path, each option shows the
+caption under the label, and the chosen row's caption shows inside the field at
+its end. [Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/)
+describes the row display.
+
+A form that lays out its own fields builds the picker from `useTableLookup()`:
+
+```tsx
+import { LookupPicker, useTableLookup } from "@sapporta/frontend/lookup";
+
+function AccountField({
+  value,
+  onChange,
+}: {
+  value: number | null;
+  onChange: (value: number | null) => void;
+}) {
+  const accounts = useTableLookup<number>("accounts");
+  return (
+    <LookupPicker<number>
+      lookup={accounts}
+      value={value}
+      onChange={onChange}
+      placeholder="Select account"
+    />
+  );
+}
+```
+
+### Narrow the choices
+
+The second argument of `useTableLookup()` limits the rows that the picker's
+search offers. `filter` takes conditions in the list filter grammar. This picker
+offers only asset accounts:
+
+```tsx
+const assetAccounts = useTableLookup<number>("accounts", {
+  filter: [{ column: "account_type", op: "in", values: ["asset"] }],
+});
+```
+
+A condition has the shape `{ column, op, value }` for one value,
+`{ column, op: "in" | "nin", values }` for a list, or
+`{ column, op: "is", polarity: "null" | "notnull" }`. Several conditions are
+combined with AND, and the server combines them with the table's row scope.
+
+Lookups by id are never narrowed. A chosen row therefore keeps its label after
+it stops matching, such as an account whose type changed after the form loaded.
+
+Each narrowing has its own caches beside the table's caches. An equal narrowing
+built again on each render uses the same caches, so the object can be written
+inline.
+
+### Choose a tree row's parent
+
+On a tree table, picking a row's own descendant as its parent would make a loop.
+`notUnder` leaves out one row and every row below it:
+
+```tsx
+function ParentAccountField({
+  accountId,
+  value,
+  onChange,
+}: {
+  accountId: number | undefined;
+  value: number | null;
+  onChange: (value: number | null) => void;
+}) {
+  const parents = useTableLookup<number>("accounts", { notUnder: accountId });
+  return (
+    <LookupPicker<number>
+      lookup={parents}
+      value={value}
+      onChange={onChange}
+      placeholder="Top-level account"
+    />
+  );
+}
+```
+
+For a new account, `accountId` is `undefined` and the picker offers every
+visible account. The walk that finds the rows below `accountId` goes through
+every row of the table, including rows the user cannot see, so a row below the
+account through a hidden row is also left out. `notUnder` and `filter` can be
+combined. The generated record form and the grid's parent cell editor do not
+pass `notUnder`.
+
+With `rowCaption: "parentPath"` on the table, each option of this picker shows
+its parent path, so two accounts named "Fuel" under different parents can be
+told apart.
+
+### Draw the options
+
+`itemDisplay` changes how each option is drawn. `fields` names the columns that
+the option shows; the lookup search also matches those columns. Without a
+`component`, the picker draws those columns side by side:
+
+```tsx
+import type { Row } from "@sapporta/shared/contracts";
+
+<LookupPicker<number, Row>
+  lookup={accounts}
+  value={value}
+  onChange={onChange}
+  itemDisplay={{ fields: ["code", "name"] }}
+/>;
+```
+
+The second type argument, `Row`, is the type of each entry's `meta`. It lets
+`fields` name the table's columns.
+
+A `component` draws each option itself. It receives the `entry` (its `value`,
+`label`, and `meta`, the row's visible fields) and `defaultContent`, which is the
+option as the table's label slot draws it, caption included. Wrap
+`defaultContent` to keep the caption:
+
+```tsx
+import type { LookupPickerItemProps } from "@sapporta/frontend/lookup";
+import type { Row } from "@sapporta/shared/contracts";
+
+function AccountOption({
+  entry,
+  defaultContent,
+}: LookupPickerItemProps<number, Row>) {
+  return (
+    <span className="flex min-w-0 flex-1 items-center gap-2">
+      <span className="font-mono text-sap-meta">{String(entry.meta.code)}</span>
+      {defaultContent}
+    </span>
+  );
+}
+
+<LookupPicker<number, Row>
+  lookup={accounts}
+  value={value}
+  onChange={onChange}
+  itemDisplay={{ fields: ["code", "name"], component: AccountOption }}
+/>;
+```
+
+`itemDisplay` changes the options only. The chosen value is always drawn with
+the table's label slot.
+
+### Place the chosen row's caption
+
+`selectedCaption` decides where the chosen row's caption is drawn:
+
+| Value                | Draws the caption                                                       |
+| -------------------- | ----------------------------------------------------------------------- |
+| `"inline"` (default) | inside the field, at its end, hidden while the person types             |
+| `"below"`            | on its own line under the field, at full width                          |
+
+`"below"` suits long captions in narrow dialogs, where the inline caption would
+be cut short. The line under the field is kept while it is empty, so choosing a
+value does not move the fields that follow. With `"below"`, `className` applies
+to the element that holds the field and the caption line. The generated record
+form uses `"inline"`.
+
 ## Name the form instance's type
 
 `ReturnType<typeof useForm<MealDraft>>` and `ReactFormExtendedApi<MealDraft>`
@@ -178,6 +341,7 @@ apply directly. Non-obvious points:
 
 - [Stage multi-row drafts in a Grid](/docs/guides/application-code/staged-multi-row-drafts/)
 - [Table lookups and record ids](/docs/reference/frontend/lookups/)
+- [Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/)
 - [Generated record surfaces and form helpers](/docs/reference/frontend/generated-record-surfaces/)
 - [Cached table reads and refresh](/docs/guides/application-code/cached-table-reads-and-refresh/)
 - [Typed API clients](/docs/guides/application-code/typed-api-clients/)

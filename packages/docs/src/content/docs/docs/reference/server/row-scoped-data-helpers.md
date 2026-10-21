@@ -19,6 +19,9 @@ authorizes its caller. Choose the leaf that matches the operation:
 - [Table row-security guards](/docs/reference/server/row-scoped-data/table-row-security-guards/)
   covers `ownedRows()`, trusted insert/patch preparation, `serverValues`,
   synchronous transactions, and raw/custom Drizzle responsibilities.
+- [Computed fields and tree paths](/docs/reference/server/row-scoped-data/computed-fields-and-tree-paths/)
+  covers `computeFields()`, the `treePath()` computed field, and the
+  `treePathRelation()` SQL relation.
 
 These helpers enforce row visibility only at the documented data boundary.
 Custom routes still choose and check their ability and data authority before

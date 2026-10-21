@@ -17,7 +17,15 @@ runtime primitives come from `@sapporta/grid`.
 - `useTGridSession()` creates a session after React commit and disposes it on
   unmount. It returns `null` until the session exists.
 - `createTGridSession()` creates a session for tests and non-React hosts. Its
-  owner must call `dispose()`.
+  owner must call `dispose()`. It takes `rowDisplays`, the
+  [display slots](/docs/reference/frontend/lookups/#display-slots) the session
+  draws rows with; `useTGridSession()` reads them from the nearest
+  `RowDisplayProvider` and starts a new session when they change.
+- A session's `lookups` is a
+  [row data store](/docs/reference/frontend/lookups/#row-data-store). Page reads
+  ask for the computed fields the level's visible slots need and store them
+  there, and a write through the session refreshes the store and every other
+  connected store.
 - `TGrid` renders a configured session. `TableRoute` and `SchemaTableGridView`
   connect standard table routes.
 - `useSchemaTableGrid()` exposes the session when an application composition

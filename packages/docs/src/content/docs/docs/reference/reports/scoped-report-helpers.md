@@ -67,7 +67,62 @@ Ability checks remain separate. The route first authorizes the report action and
 resolves data authority; these helpers then constrain the data visible to that
 authorized action.
 
+## `attachReferenceComputed()`
+
+```ts
+function attachReferenceComputed(
+  dataset: GridDataset,
+  input: {
+    db: BetterSQLite3Database;
+    auth: SapportaAuthContext;
+    tables: readonly TableDef[] | Pick<TableCatalog, "get">;
+    names?: Readonly<Record<string, readonly string[]>>;
+  },
+): Promise<GridDataset>;
+```
+
+`attachReferenceComputed()` from `@sapporta/server` computes the fields that the
+rows named by the dataset's
+[`reference` columns](/docs/reference/reports/grid-dataset/#reference-columns)
+are drawn with, and returns the dataset with `computed` set:
+
+```ts
+return c.json(
+  await attachReferenceComputed(dataset, {
+    db,
+    auth,
+    tables: [accounts],
+    names: { accounts: ["parentPath"] },
+  }),
+  200,
+);
+```
+
+- It collects each referenced table's ids with `gridDatasetReferenceIds()` and
+  runs `computeFields()` once per table.
+- The fields for a table are its `rowCaption`, when the caption is a computed
+  field, and the names `names` lists for the table, such as the `needs` of the
+  table's label slot.
+- A table with no fields to compute, or no ids, is left out. A dataset with
+  nothing to compute is returned unchanged. Existing `dataset.computed` values
+  are kept, and new values for the same table and field replace them.
+- `tables` takes the table definitions as a list, or the table catalog. A
+  referenced table missing from it throws an error naming the dataset and the
+  table. A failing field rejects the promise.
+- `computeFields()` does not check that the request may read the ids. Call the
+  helper only on a dataset whose ids come from the report's own scoped reads.
+
+## Tree paths in report SQL
+
+`treePathRelation(table, auth, options?)` from `@sapporta/server` returns one
+member of a `with recursive` list, `tree_paths(id, parent_path, path)`, holding
+the path of every row of a tree table that `auth` may see. A report joins it
+like any other guarded base relation. See
+[Computed fields and tree paths](/docs/reference/server/row-scoped-data/computed-fields-and-tree-paths/#treepathrelation).
+
 ## Related documentation
+
+- [Name table rows in report cells](/docs/guides/reports/report-reference-columns/)
 
 - [Scoped report data](/docs/guides/reports/scoped-report-data/)
 - [Count visible rows](/docs/guides/generated-surfaces/count-visible-rows/)

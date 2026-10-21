@@ -76,6 +76,14 @@ keys remain strings. The lookup route returns entries, not an ID-to-label map:
 those fields for presentation, but they should not assume the object is empty or
 that it has one universal shape.
 
+Two rows can share a label, such as two accounts named "Fuel" under different
+parents. `meta.rowCaption` names a column or computed field whose text pickers
+show under the label, such as the account's parent path; see
+[Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/).
+A custom form can also narrow a picker's choices, such as to accounts of one
+type, or leave out a row and its descendants when choosing its parent; see
+[Pick a related row](/docs/guides/application-code/custom-forms-and-validation/#pick-a-related-row).
+
 `children` describes the reverse path. Expanding a project row in
 `/tables/projects` filters `tasks` by `project_id`, shows the chosen columns,
 and applies the stable due-date sort. This is a table-row expansion and child
@@ -110,6 +118,8 @@ ability and row scope. Relationship metadata never widens access.
 
 ## Related reference
 
+- [Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/)
+- [Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/)
 - [Table and column metadata](/docs/reference/schema/table-and-column-metadata/)
 - [Table endpoints](/docs/reference/http/table-endpoints/)
 - [Configure table search](/docs/guides/model-data/configure-table-search/)
