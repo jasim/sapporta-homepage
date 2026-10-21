@@ -57,6 +57,12 @@ for each editable column. The union contains `text`, `number`, `currency`,
 variants. Select models include their declared options. Foreign-key models
 include scoped lookup capabilities.
 
+Pass `rowId` when the form edits an existing row:
+`buildRecordFormFields({ table, lookups, rowId })`. On a tree table, the field
+for the parent column then offers every row except that row and the rows below
+it, through `lookups.table(table.name, { notUnder: rowId })`. A form for a new
+row leaves `rowId` out, since a new row has no descendants.
+
 Columns do not produce editable field models when they are `visuallyHidden`, are
 primary keys with a generated default, have `apiWritable: false`, or use a
 system-managed scope name. Client-assigned primary keys remain editable when the

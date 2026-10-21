@@ -110,6 +110,7 @@ type LookupColumnOptions<TMeta = unknown> = ColumnPresetOptions<TMeta> & {
   valueLookup: ValueLookup;
   searchLookup?: SearchLookup;
   renderEntry?: LookupEntryRenderer;
+  lookupForRow?: (row: LevelRow) => LookupCapabilities | undefined;
 };
 
 type LookupEntryRenderer = (props: LookupEntryRenderProps) => ReactNode;
@@ -130,6 +131,14 @@ cell editor are compact. `defaultContent` is what the column draws without it,
 the entry's label; return it to keep that drawing, or wrap it. The cell editor's
 placeholder names the current value. `lookupEntryRenderer(preset)` returns the
 `renderEntry` a lookup column was built with, or `undefined`.
+
+`lookupForRow` gives the choices the cell editor offers for one row, when they
+differ by row. For example, the parent column of a tree table leaves out the row
+itself and the rows below it, which would make a loop. The editor uses the
+capabilities it returns, and falls back to the column's lookup when it returns
+`undefined`; cells keep reading labels from `valueLookup`.
+`rowLookupCapabilities(preset, row)` returns the capabilities the editor uses
+for `row`.
 
 The caches behind `valueLookup` and `searchLookup` can be read again after the
 underlying rows change. `CachedValueLookup.reloadEntries()` loads every cached

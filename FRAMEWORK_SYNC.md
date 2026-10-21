@@ -16,8 +16,9 @@ Hand-written docs cover `../sapporta` through:
   `LookupPicker` composition and `selectedCaption` (`82ed1582`),
   `invalidateRows` (`eb8fa6d0`), filter row display (`1e1df09f`),
   `treePathRelation` (`2c79a537`), lookup narrowing and `notUnder`
-  (`a3b6de03`), and report reference columns (`aaae9c2d`, `3db1aee3`,
-  `ed9d3a8f`). A later sync that advances the marker past them needs no new
+  (`a3b6de03`), report reference columns (`aaae9c2d`, `3db1aee3`,
+  `ed9d3a8f`), and tree parent choices in the grid editor and record sheet
+  (`a00f637d`). A later sync that advances the marker past them needs no new
   work for these commits.
 
 ## Open
@@ -32,7 +33,8 @@ Hand-written docs cover `../sapporta` through:
   `applyMigrations`, `gridEditable`, `TableGridHeaderVariant`,
   `expandTGridColumnSpecs`, and the row display symbols (`computedField`,
   `computeFields`, `treePath`, `treePathRelation`, `attachReferenceComputed`,
-  `RowDisplayProvider`, `useRowComputed`, `invalidateRows`, and others).
+  `RowDisplayProvider`, `useRowComputed`, `invalidateRows`,
+  `rowLookupCapabilities`, and others).
 - `titleCaseIdentifier` in `@sapporta/shared/labels` has no hand-written page;
   the generated reference covers it.
 - `e59cd71b` `createTestAuthContext` in `@sapporta/server/testing`: no

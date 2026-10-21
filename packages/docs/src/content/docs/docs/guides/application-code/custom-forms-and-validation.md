@@ -172,8 +172,9 @@ For a new account, `accountId` is `undefined` and the picker offers every
 visible account. The walk that finds the rows below `accountId` goes through
 every row of the table, including rows the user cannot see, so a row below the
 account through a hidden row is also left out. `notUnder` and `filter` can be
-combined. The generated record form and the grid's parent cell editor do not
-pass `notUnder`.
+combined. Sapporta's own screens do the same for a tree table's parent column:
+the grid's parent cell editor and the record sheet's parent field leave out the
+row being edited and every row below it.
 
 With `rowCaption: "parentPath"` on the table, each option of this picker shows
 its parent path, so two accounts named "Fuel" under different parents can be
