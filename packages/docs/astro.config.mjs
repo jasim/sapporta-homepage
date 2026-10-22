@@ -6,6 +6,7 @@ import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import agentDocs from "nuaj-agent-docs";
+import { themeExpressiveCode, themeHead } from "nuaj-agent-docs/theme";
 import docsSidebar from "./sidebar.mjs";
 import { codeThemes } from "./src/lib/code-themes.mjs";
 import {
@@ -68,17 +69,7 @@ export default defineConfig({
     starlight({
       title: "Sapporta",
       customCss: ["./src/styles/sapporta.css"],
-      head: [
-        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
-        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "anonymous" } },
-        {
-          tag: "link",
-          attrs: {
-            rel: "stylesheet",
-            href: "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap",
-          },
-        },
-      ],
+      head: [...themeHead],
       plugins: [
         agentDocs({
           canonicalOrigin: gettingStartedEnv.docsCanonicalOrigin,
@@ -128,18 +119,7 @@ export default defineConfig({
           replacements: gettingStartedEnvTokens(gettingStartedEnv),
         }),
       ],
-      expressiveCode: {
-        themes: ["github-dark-default", "github-light-default"],
-        useStarlightUiThemeColors: false,
-        styleOverrides: {
-          borderRadius: "0px",
-          borderWidth: "0px",
-          codePaddingBlock: "0.75rem",
-          codePaddingInline: "1rem",
-          codeFontSize: "0.875rem",
-          codeLineHeight: "1.5",
-        },
-      },
+      expressiveCode: themeExpressiveCode,
       social: [
         {
           icon: "github",
