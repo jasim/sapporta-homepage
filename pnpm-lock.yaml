@@ -215,8 +215,8 @@ importers:
         specifier: ^0.513.0
         version: 0.513.0(react@19.2.6)
       nuaj-agent-docs:
-        specifier: github:jasim/nuaj-agent-docs#072b1ffb42d40267bc7d4548c639a70c7c978158
-        version: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/072b1ffb42d40267bc7d4548c639a70c7c978158(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
+        specifier: github:jasim/nuaj-agent-docs#cc83573a0c18421f386f28c135223747ee5b1d3b
+        version: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/cc83573a0c18421f386f28c135223747ee5b1d3b(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       react:
         specifier: 19.2.6
         version: 19.2.6
@@ -3304,15 +3304,15 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/072b1ffb42d40267bc7d4548c639a70c7c978158:
-    resolution: {gitHosted: true, integrity: sha512-G8TAp44lHOOnl6gtE9PA2Z0fG3ZL8YYil4xyh51L6KDi0jwMlfu4OOFI7c9xQzEHJEVNPxM35fAWuobK5Nom3w==, tarball: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/072b1ffb42d40267bc7d4548c639a70c7c978158}
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2:
+    resolution: {gitHosted: true, integrity: sha512-3KEBBJzosgVMZ7UsXOYj4FLiST1MVFINv8Hz0FtDxlJbvlJkQpTYzPLJHuWB3mEHjkmV7wmC6yW3y1tdFjCJQA==, tarball: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2}
     version: 0.1.0
     peerDependencies:
       '@astrojs/starlight': '>=0.38.0'
       astro: '>=6.0.0'
 
-  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2:
-    resolution: {gitHosted: true, integrity: sha512-3KEBBJzosgVMZ7UsXOYj4FLiST1MVFINv8Hz0FtDxlJbvlJkQpTYzPLJHuWB3mEHjkmV7wmC6yW3y1tdFjCJQA==, tarball: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2}
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/cc83573a0c18421f386f28c135223747ee5b1d3b:
+    resolution: {gitHosted: true, integrity: sha512-8iyFo030TZGUUUbPMU6RGHz+4vBv4ueIRIBrm4f6lT8GAaUzFrgjNYpqnJATYwUpOqxNzTWDEtTfOVbv+doVow==, tarball: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/cc83573a0c18421f386f28c135223747ee5b1d3b}
     version: 0.1.0
     peerDependencies:
       '@astrojs/starlight': '>=0.38.0'
@@ -7229,7 +7229,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/072b1ffb42d40267bc7d4548c639a70c7c978158(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)):
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)):
     dependencies:
       '@astrojs/starlight': 0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       astro: 6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)
@@ -7238,7 +7238,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)):
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/cc83573a0c18421f386f28c135223747ee5b1d3b(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)):
     dependencies:
       '@astrojs/starlight': 0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       astro: 6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)
