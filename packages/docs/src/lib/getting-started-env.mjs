@@ -27,15 +27,18 @@ export function resolveGettingStartedEnv(env = process.env, publishedInitCommand
   });
 }
 
-export function replaceGettingStartedEnvTokens(text, environment) {
-  const replacements = {
+/** Each `{{TOKEN}}` documentation pages may contain, and its value. */
+export function gettingStartedEnvTokens(environment) {
+  return {
     "{{SAPPORTA_INIT_COMMAND}}": environment.initCommand,
     "{{SAPPORTA_SKILL_INSTALL_COMMAND}}": environment.skillInstallCommand,
     "{{SAPPORTA_GETTING_STARTED_AGENT_URL}}": environment.agentMarkdownUrl("docs/getting-started/introduction"),
   };
+}
 
+export function replaceGettingStartedEnvTokens(text, environment) {
   let rendered = text;
-  for (const [token, value] of Object.entries(replacements)) {
+  for (const [token, value] of Object.entries(gettingStartedEnvTokens(environment))) {
     rendered = rendered.replaceAll(token, value);
   }
   return rendered;

@@ -32,6 +32,9 @@ importers:
 
   .:
     devDependencies:
+      nuaj-agent-docs:
+        specifier: github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2
+        version: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       prettier:
         specifier: ^3.9.1
         version: 3.9.6
@@ -83,6 +86,9 @@ importers:
       nodemailer:
         specifier: 6.10.1
         version: 6.10.1
+      nuaj-agent-docs:
+        specifier: github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2
+        version: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       sapporta-homepage-app-shared:
         specifier: workspace:*
         version: link:../shared
@@ -208,9 +214,9 @@ importers:
       lucide-react:
         specifier: ^0.513.0
         version: 0.513.0(react@19.2.6)
-      mdast-util-from-markdown:
-        specifier: ^2.0.3
-        version: 2.0.3
+      nuaj-agent-docs:
+        specifier: github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2
+        version: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
       react:
         specifier: 19.2.6
         version: 19.2.6
@@ -223,9 +229,6 @@ importers:
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
-      unist-util-visit:
-        specifier: ^5.1.0
-        version: 5.1.0
       zustand:
         specifier: 5.0.13
         version: 5.0.13(@types/react@19.2.17)(immer@11.1.18)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
@@ -3300,6 +3303,13 @@ packages:
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
+
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2:
+    resolution: {gitHosted: true, integrity: sha512-3KEBBJzosgVMZ7UsXOYj4FLiST1MVFINv8Hz0FtDxlJbvlJkQpTYzPLJHuWB3mEHjkmV7wmC6yW3y1tdFjCJQA==, tarball: https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2}
+    version: 0.1.0
+    peerDependencies:
+      '@astrojs/starlight': '>=0.38.0'
+      astro: '>=6.0.0'
 
   obug@2.1.4:
     resolution: {integrity: sha512-4a+OsYv9UktOJKE+l1A4OufDgdRF9PifWj+tJnHURo/P+WOxpG4GzUFL9qCalmWauao6ogiG+QvnCovwPoyAWA==}
@@ -7211,6 +7221,15 @@ snapshots:
   nth-check@2.1.1:
     dependencies:
       boolbase: 1.0.0
+
+  nuaj-agent-docs@https://codeload.github.com/jasim/nuaj-agent-docs/tar.gz/4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2(@astrojs/starlight@0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)))(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)):
+    dependencies:
+      '@astrojs/starlight': 0.38.5(astro@6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1))
+      astro: 6.4.8(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.3)(tsx@4.23.1)
+      mdast-util-from-markdown: 2.0.3
+      unist-util-visit: 5.1.0
+    transitivePeerDependencies:
+      - supports-color
 
   obug@2.1.4: {}
 

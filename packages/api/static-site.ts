@@ -14,6 +14,7 @@ import type { SapportaEnv } from "@sapporta/server";
 import {
   alternateMarkdownPath,
   explicitlyPrefersMarkdown,
+  isDocumentationPath,
   markdownVariantPath,
 } from "./docs-negotiation.js";
 import {
@@ -58,12 +59,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
       alternatePath !== undefined &&
       existsSync(join(docsDistDir, alternatePath.replace(/^\//, "")));
     const isLlmsIndex = llmsIndexPaths.has(c.req.path);
-    const isDocumentationSurface =
-      c.req.path === "/docs" ||
-      c.req.path === "/docs.md" ||
-      c.req.path.startsWith("/docs/") ||
-      c.req.path === "/grid" ||
-      c.req.path.startsWith("/grid/");
+    const isDocumentationSurface = isDocumentationPath(c.req.path);
     const isHomepage = c.req.path === "/" || c.req.path === "/index.html";
 
     if (isHomepage) {

@@ -23,12 +23,11 @@
     "@tanstack/react-query": "5.101.4",
     "astro": "^6.1.9",
     "lucide-react": "^0.513.0",
-    "mdast-util-from-markdown": "^2.0.3",
+    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-router-dom": "7.15.1",
     "sharp": "^0.34.5",
-    "unist-util-visit": "^5.1.0",
     "zustand": "5.0.13"
   },
   "devDependencies": {

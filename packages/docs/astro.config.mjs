@@ -5,9 +5,14 @@ import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
+import agentDocs from "nuaj-agent-docs";
 import docsSidebar from "./sidebar.mjs";
 import { codeThemes } from "./src/lib/code-themes.mjs";
-import { gettingStartedEnv, replaceGettingStartedEnvTokens } from "./src/lib/getting-started-env.mjs";
+import {
+  gettingStartedEnv,
+  gettingStartedEnvTokens,
+  replaceGettingStartedEnvTokens,
+} from "./src/lib/getting-started-env.mjs";
 import { rehypeHomepageContent } from "./src/markdown/rehype-homepage-content.mjs";
 
 function injectGettingStartedEnv() {
@@ -22,6 +27,13 @@ function injectGettingStartedEnv() {
     visit(tree);
   };
 }
+
+const apiReferenceLink = {
+  title: "Sapporta API reference",
+  href: `${gettingStartedEnv.docsOrigin}/api-reference/llms.txt`,
+  description:
+    "Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration.",
+};
 
 /*
  * Dev topology: the Hono server on SAPPORTA_API_PORT is the only origin the
@@ -56,10 +68,66 @@ export default defineConfig({
     starlight({
       title: "Sapporta",
       customCss: ["./src/styles/sapporta.css"],
-      components: {
-        Head: "./src/components/AgentHead.astro",
-        PageTitle: "./src/components/AgentPageTitle.astro",
-      },
+      head: [
+        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
+        { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "anonymous" } },
+        {
+          tag: "link",
+          attrs: {
+            rel: "stylesheet",
+            href: "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap",
+          },
+        },
+      ],
+      plugins: [
+        agentDocs({
+          canonicalOrigin: gettingStartedEnv.docsCanonicalOrigin,
+          retrievalOrigin: gettingStartedEnv.docsOrigin,
+          title: "Sapporta documentation",
+          summary: "Documentation for Sapporta and the standalone Sapporta Grid.",
+          links: [
+            {
+              heading: "API reference",
+              links: [
+                {
+                  ...apiReferenceLink,
+                  description: `${apiReferenceLink.description} Read this instead of opening declaration files under \`node_modules\`.`,
+                },
+              ],
+            },
+          ],
+          sections: [
+            {
+              prefix: "docs",
+              title: "Sapporta application framework documentation",
+              summary: "Documentation for building database applications with Sapporta.",
+              setLabel: "Sapporta application framework",
+              setDescription: "Guides and reference for building and operating Sapporta applications.",
+              bundleName: "framework",
+              links: [
+                {
+                  heading: "API reference",
+                  links: [
+                    {
+                      ...apiReferenceLink,
+                      description: `${apiReferenceLink.description} The pages below explain behaviour; this names the surface.`,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              prefix: "grid",
+              title: "Sapporta Grid documentation",
+              summary: "Documentation for the standalone @sapporta/grid React data grid.",
+              setLabel: "Sapporta Grid",
+              setDescription: "Guides and reference for the standalone React data grid.",
+              bundleName: "Grid",
+            },
+          ],
+          replacements: gettingStartedEnvTokens(gettingStartedEnv),
+        }),
+      ],
       expressiveCode: {
         themes: ["github-dark-default", "github-light-default"],
         useStarlightUiThemeColors: false,

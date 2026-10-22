@@ -59,6 +59,10 @@ whole site.
   generated — never edit it. Change `packages/docs/sidebar.mjs` and run
   `pnpm generate:docs-index`. The page is the index of every documentation page,
   served as `/docs` and as `/docs.md` for coding agents.
+- Agent Markdown (`/<slug>.md`, every `llms.txt`, Copy/View as Markdown): the
+  `nuaj-agent-docs` Starlight plugin in `../nuaj-agent-docs`, shared with the
+  Nuabase site. Change behaviour there; `astro.config.mjs` holds only its
+  configuration.
 - Sapporta API reference: the pages under `packages/docs/src/generated/api-reference/`
   are generated — never edit them. Change `packages/api-reference/` and run
   `pnpm generate:api-reference`. Bump the `@sapporta/*` versions in

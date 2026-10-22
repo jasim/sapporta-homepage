@@ -28,6 +28,7 @@
     "@hono/node-server": "2.0.6",
     "hono": "4.12.29",
     "nodemailer": "6.10.1",
+    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2",
     "drizzle-kit": "0.31.10",
     "drizzle-orm": "0.45.2",
     "better-sqlite3": "12.11.1",

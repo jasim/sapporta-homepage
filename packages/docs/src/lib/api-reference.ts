@@ -1,7 +1,3 @@
-import { gettingStartedEnv } from "./getting-started-env.mjs";
-
-const RETRIEVAL_SITE_ORIGIN = gettingStartedEnv.docsOrigin;
-
 /**
  * The generated symbol reference, committed under `src/generated/api-reference`
  * by `packages/api-reference`. Pages are served as Markdown only: they exist for
@@ -67,8 +63,4 @@ export function apiReferenceIndex() {
   const index = getApiReferencePages().get("index");
   if (!index) throw new Error("The API reference index is missing.");
   return index.content;
-}
-
-export function apiReferenceIndexUrl() {
-  return `${RETRIEVAL_SITE_ORIGIN}/api-reference/llms.txt`;
 }
