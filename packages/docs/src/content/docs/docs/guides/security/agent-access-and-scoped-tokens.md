@@ -21,10 +21,11 @@ contract at `/api/openapi.json`. The generated `.env.development` sets
 server with no credential, and their output carries each route's parameters,
 request body, and response schemas.
 
-The commands that read or write workspace data need a token in
-`SAPPORTA_API_TOKEN`: `rows`, `tables`, `sql`, and `api`. A deployment leaves
-`SAPPORTA_OPENAPI_POLICY` unset, which keeps the contract behind sign-in, so
-endpoint discovery there needs a token as well.
+The commands that read or write workspace data need a token: `rows`, `tables`,
+`sql`, and `api`. The CLI takes the token from `--api-token`, then from
+`SAPPORTA_API_TOKEN`, then from the project's `.env.agent`, described below. A
+deployment leaves `SAPPORTA_OPENAPI_POLICY` unset, which keeps the contract
+behind sign-in, so endpoint discovery there needs a token as well.
 
 Only a signed-in person creates a token. A freshly scaffolded project has no
 user until someone signs up, and the data commands are unavailable until then.
@@ -69,7 +70,9 @@ To supply `SAPPORTA_API_URL` and `SAPPORTA_API_TOKEN`, the agent reuses the
 project's existing directory environment tooling, such as mise, direnv, or a
 dotenv runner, unless the project's docs already name where the token goes. If
 the project has no such tool, the fallback is a private, gitignored local
-wrapper rather than a newly installed environment manager.
+wrapper rather than a newly installed environment manager. When a project's
+agent docs name `.env.agent` as the token's location, the agent writes the token
+there instead, and the CLI reads it with no environment tooling.
 
 When the project's docs give no authenticated command, the agent adds the exact
 invocation to `AGENTS.md`; it does not edit agent docs that already give one.
@@ -108,6 +111,48 @@ export SAPPORTA_API_TOKEN
 pnpm exec sapporta endpoints show "GET /api/reports/project-progress"
 pnpm exec sapporta rows list tasks --output json
 ```
+
+## Keep the token in the project's `.env.agent`
+
+A project can keep its agents' token in `.env.agent`, a dotenv file in the
+project root:
+
+```bash
+# .env.agent
+SAPPORTA_API_TOKEN=spat_<token-id>_<secret>
+```
+
+The CLI reads the file when neither `--api-token` nor `SAPPORTA_API_TOKEN` sets
+a token, from any directory inside the project. It reads only
+`SAPPORTA_API_TOKEN` from the file, and a blank value counts as no token.
+`pnpm dev` loads only `.env.development`, so the API process's environment never
+holds the agents' token.
+
+The file is a credential:
+
+- The generated `.gitignore` ignores `.env*`, so the file is not committed.
+- The generated `.dockerignore` ignores `.env*` at the project root, so the file
+  is not sent to a Docker build. A project scaffolded earlier keeps its own
+  `.dockerignore`; replace its `.env` lines with `.env*`.
+- Make the file readable only by its owner, for example with
+  `chmod 600 .env.agent`.
+
+The token in `.env.agent` is sent only to the project's own API: the URL the CLI
+reads from `.env.development`, or the built-in default. When `--api-url` or
+`SAPPORTA_API_URL` chooses the URL, the CLI withholds the file's token and an
+authentication failure says so. To reach another deployment, supply that
+deployment's token with `SAPPORTA_API_TOKEN`.
+
+If `.env.agent` exists but cannot be read, for example because another user owns
+it, every CLI command stops with an error that names the file.
+
+An application that provisions its agents' token writes the file with
+`writeProjectApiToken(projectRoot, token)` from `@sapporta/server` and reads it
+back with `readProjectApiToken(projectRoot)`. The writer creates an owner-only
+file and renames it into place. It throws on a token that would not read back as
+written, such as a blank one or one that contains `#` or quotes.
+
+## Call the API over HTTP
 
 If you call HTTP directly instead, send a normal bearer header:
 
@@ -150,10 +195,11 @@ Then exercise each recovery branch:
 Status and code are the contract. Message wording is illustrative.
 
 Revoking the credential invalidates the next API request. Removing a local
-environment variable does not revoke it:
+environment variable or deleting `.env.agent` does not revoke it:
 
 ```bash
 unset SAPPORTA_API_TOKEN
+rm .env.agent
 ```
 
 ## Related documentation
