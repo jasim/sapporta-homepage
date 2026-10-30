@@ -9,12 +9,13 @@ description:
 not HTTP query grammar:
 
 `@sapporta/server` exports `TableColumn`, `LookupRowsInput`,
-`LookupRowsByIdInput`, `LookupRowsBySearchInput`, `CountRowsInput`,
-`CountRowsByInput`, and `GroupCount`.
+`LookupRowsByIdInput`, `LookupRowsBySearchInput`, `LookupTreeInput`,
+`CountRowsInput`, `CountRowsByInput`, `GroupCount`, and `TreeTooLargeError`.
 
 ```ts
 interface ScopedRows<TTable extends AnySQLiteTable> {
   lookup(input?: LookupRowsInput<TTable>): Promise<LookupEntry[]>;
+  lookupTree(input?: LookupTreeInput): Promise<LookupTreeEntry[]>;
   count(input?: CountRowsInput): Promise<number>;
   countBy(input: CountRowsByInput<TTable>): Promise<GroupCount[]>;
 }
@@ -52,6 +53,39 @@ converted before SQL; text primary-key IDs remain strings. Search mode accepts
 visible Drizzle columns from the bound table, defaults to `50` results, and
 accepts at most `500`. Keeping the modes disjoint prevents a selected-value
 lookup from quietly becoming a broader search.
+
+## Read a tree table's choices as a tree
+
+On a table that declares `meta.tree`, `lookupTree()` returns the choices of a
+tree picker: every row that passes `where`, with the ancestors that place it, in
+display order.
+
+```ts
+await rows.lookupTree({
+  where: eq(accountsTable.account_type, "Expense"),
+  notUnder: "12",
+});
+```
+
+Each `LookupTreeEntry` is a lookup entry with `depth`, `0` for a top-level row,
+and `role`:
+
+- `"choice"`: the row passes `where` and is not under `notUnder`.
+- `"context"`: an ancestor of a choice that does not pass `where` itself.
+- `"editing"`: the `notUnder` row, returned where it sits. The rows below it are
+  not returned.
+
+No branch without a choice is returned. The walk is `treeMatch()` with
+`matchContext: "ancestors"`, so it reads only rows the request may see. The
+entries are depth-first: top-level rows in `meta.tree.rootOrder`, siblings in the
+table's `defaultSort`, then by primary key. A row whose parent is not returned is
+placed at the top level, and a loop of parents is placed once, from its first
+row.
+
+`lookupTree()` returns every row it selects, up to `MAX_LOOKUP_TREE_ROWS`
+(`5000`). It throws `TreeTooLargeError` for a larger tree rather than cut it
+short; the generated route answers `400` with code `TREE_TOO_LARGE`. It throws a
+`TypeError` on a table without `meta.tree`.
 
 ## Scalar and grouped counts
 

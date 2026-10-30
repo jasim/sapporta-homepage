@@ -32,12 +32,23 @@ from `@sapporta/server`; serialized `TableSchema`, `ColumnSchema`,
   (the column that shows the hierarchy, default the first `rowLabelColumns`
   entry), `defaultExpanded` (default `true`), and `matchContext`
   (`"ancestors-and-descendants"` by default, or `"ancestors"`), which sets what
-  a search or filter keeps besides the matching rows.
+  a search or filter keeps besides the matching rows. Two optional fields have
+  no default:
+  - `rootOrder: { column, values }` orders the top-level rows by `column`, in
+    the order of `values`; rows whose value is not listed come last. Siblings
+    otherwise follow `defaultSort`. A tree read with no `sort`, such as the
+    table page's tree, and a tree lookup use this order.
+  - `path` names a computed field made with `treePath()`. The table's tree
+    pickers draw a chosen row and each search match with that path. The
+    resolved `TableSchema.tree` carries `path` and `pathSeparator`, the
+    separator given to `treePath()`.
 - `parentColumn` must be a nullable, single-column foreign key to the same
   table's primary key, declared with Drizzle `.references()` or a
   `meta.references` rule. `column` must be a visible column, and the table
-  cannot also list itself in `meta.children`. A violation fails the boot with
-  the table and column in the message.
+  cannot also list itself in `meta.children`. `rootOrder.column` must be a
+  column of the table with at least one value listed, and `path` must name a
+  `treePath()` field. A violation fails the boot with the table and column in
+  the message.
 - The stock table page shows a tree table as one list with the hierarchy in the
   tree column, loads all its rows at once (up to 1,000), and shows each search
   or filter match under its ancestors. The `meta.children` entries of a tree

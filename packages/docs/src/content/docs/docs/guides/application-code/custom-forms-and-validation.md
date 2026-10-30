@@ -91,7 +91,9 @@ lookup and draws each option with the table's row display. For a table with a
 `rowCaption`, such as accounts with their parent path, each option shows the
 caption under the label, and the chosen row's caption shows inside the field at
 its end. [Show rows with their captions and display slots](/docs/guides/generated-surfaces/row-captions-and-display-slots/)
-describes the row display.
+describes the row display. Over a table that declares `meta.tree`, the picker
+draws the table as a tree instead; [Pick from a tree](#pick-from-a-tree)
+describes it.
 
 A form that lays out its own fields builds the picker from `useTableLookup()`:
 
@@ -141,10 +143,63 @@ Each narrowing has its own caches beside the table's caches. An equal narrowing
 built again on each render uses the same caches, so the object can be written
 inline.
 
+### Pick from a tree
+
+Over a tree table, `LookupPicker` shows the table as an indented tree when it
+opens. Every row that passes the narrowing can be picked, and its ancestors that
+do not pass are shown greyed to place it. A branch with nothing to pick is left
+out. This picker offers expense accounts, under their greyed parents where a
+parent is of another type:
+
+```tsx
+const expenseAccounts = useTableLookup<number>("accounts", {
+  filter: [{ column: "account_type", op: "in", values: ["Expense"] }],
+});
+
+<LookupPicker<number>
+  lookup={expenseAccounts}
+  value={value}
+  onChange={onChange}
+  placeholder="Select account"
+/>;
+```
+
+Typing searches the table on the server and lists the matches flat, each after
+its parent path. The chosen row shows its parent path before its name, inside
+the field. Both paths are the table's `tree.path` field, so the separator is the
+one given to `treePath()`; without `tree.path`, the picker shows names only. The
+siblings follow the table's `defaultSort`, and the top-level rows its
+`tree.rootOrder`. [Show a table as a tree](/docs/guides/model-data/show-a-table-as-a-tree/#pick-a-row-from-the-tree)
+describes the declarations.
+
+The narrowing is applied by the server, as for a flat picker: the form passes
+only the conditions, such as the account type, and never walks the tree itself.
+Pass `tree={false}` to draw the flat search list instead.
+
+The server's search returns the first 50 matches, in the order of the table's
+primary key. The tree picker has already read the whole narrowed tree, so it
+can search that tree in the browser instead, finding every match in tree order
+without a request per keystroke:
+
+```tsx
+const expenseAccounts = useTableLookup<number>(
+  "accounts",
+  { filter: [{ column: "account_type", op: "in", values: ["Expense"] }] },
+  { search: "client" },
+);
+```
+
+Both searches match the same rows. Until the tree is read, or when it is too
+large to send, the picker searches the server. Keep the default for a table
+that can grow without bound; see
+[Choose where a search runs](/docs/reference/frontend/lookups/#choose-where-a-search-runs).
+
 ### Choose a tree row's parent
 
 On a tree table, picking a row's own descendant as its parent would make a loop.
-`notUnder` leaves out one row and every row below it:
+`notUnder` leaves out every row below one row. The tree picker shows that row
+where it sits, greyed and marked "(being edited)", so the person sees where the
+account is now:
 
 ```tsx
 function ParentAccountField({
@@ -169,16 +224,17 @@ function ParentAccountField({
 ```
 
 For a new account, `accountId` is `undefined` and the picker offers every
-visible account. The walk that finds the rows below `accountId` goes through
+visible account. Pass `labels={{ editing: "(this account)" }}` for other words
+after the edited row; a table's label slot that draws its own content receives
+them as `context.editingNote`. The walk that finds the rows below `accountId` goes through
 every row of the table, including rows the user cannot see, so a row below the
 account through a hidden row is also left out. `notUnder` and `filter` can be
 combined. Sapporta's own screens do the same for a tree table's parent column:
 the grid's parent cell editor and the record sheet's parent field leave out the
 row being edited and every row below it.
 
-With `rowCaption: "parentPath"` on the table, each option of this picker shows
-its parent path, so two accounts named "Fuel" under different parents can be
-told apart.
+In the tree, two accounts named "Fuel" under different parents are told apart
+by where they sit. In a search, each match shows its parent path.
 
 ### Draw the options
 
@@ -241,11 +297,37 @@ the table's label slot.
 | `"inline"` (default) | inside the field, at its end, hidden while the person types             |
 | `"below"`            | on its own line under the field, at full width                          |
 
+A tree picker draws no caption; the chosen row's parent path sits before its
+name instead, and `selectedCaption` has no effect.
+
 `"below"` suits long captions in narrow dialogs, where the inline caption would
 be cut short. The line under the field is kept while it is empty, so choosing a
 value does not move the fields that follow. With `"below"`, `className` applies
 to the element that holds the field and the caption line. The generated record
 form uses `"inline"`.
+
+### Word the picker in the application's terms
+
+`labels` replaces the picker's own words, such as the clear button's name in a
+parent picker, where clearing makes the account a top-level one:
+
+```tsx
+<LookupPicker<number>
+  lookup={parents}
+  value={value}
+  onChange={onChange}
+  placeholder="Top-level account"
+  labels={{
+    clear: "Make it a top-level account",
+    empty: "No account matches.",
+    loadFailed: "Could not read the chart of accounts.",
+  }}
+/>
+```
+
+Each label left out keeps Sapporta's wording.
+[Name the picker's buttons and messages](/docs/reference/frontend/lookups/#name-the-pickers-buttons-and-messages)
+lists them.
 
 ## Name the form instance's type
 

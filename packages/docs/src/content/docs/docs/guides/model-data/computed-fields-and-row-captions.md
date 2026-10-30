@@ -38,7 +38,7 @@ export const accounts = sapportaTable({
     label: "Accounts",
     rowScope: "workspaceGlobal",
     rowLabelColumns: ["name"],
-    tree: { parentColumn: "parent_id" },
+    tree: { parentColumn: "parent_id", path: "parentPath" },
     rowCaption: "parentPath",
   },
   computed: {
@@ -46,6 +46,10 @@ export const accounts = sapportaTable({
   },
 });
 ```
+
+`tree.path` names the field for the table's tree pickers, which draw a chosen
+account as "Expenses > Kitchen > Groceries", with the path before the name.
+`rowCaption` draws the path under the name everywhere else.
 
 An account named Groceries under Kitchen under Expenses has the parent path
 "Expenses > Kitchen". A top-level account has no parent path, so its value is

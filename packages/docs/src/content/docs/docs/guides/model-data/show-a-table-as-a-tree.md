@@ -80,6 +80,8 @@ covers reviewing the generated SQL.
 | `column`          | first `rowLabelColumns` entry | the column that shows the indentation and chevrons        |
 | `defaultExpanded` | `true`                        | whether rows start expanded                               |
 | `matchContext`    | `"ancestors-and-descendants"` | what a search or filter keeps besides the rows that match |
+| `rootOrder`       | none                          | the order of the top-level rows, by one column's values   |
+| `path`            | none                          | the `treePath()` field that pickers draw as a row's path  |
 
 With `"ancestors-and-descendants"`, a search for a parent account shows the
 account with its whole subtree. `"ancestors"` keeps only the path from the top
@@ -95,12 +97,38 @@ tree: {
 
 The browser receives the resolved declaration as `TableSchema.tree`.
 
+### Order the top-level rows
+
+Siblings follow the table's `defaultSort` at every depth. The top-level rows of
+a chart of accounts usually have an order of their own, such as Asset,
+Liability, Equity, Revenue, Expense, which no column sorts into. `rootOrder`
+names a column and lists its values in that order:
+
+```ts
+defaultSort: asc(accountsTable.name),
+tree: {
+  parentColumn: "parent_id",
+  rootOrder: {
+    column: "account_type",
+    values: ["Asset", "Liability", "Equity", "Revenue", "Expense"],
+  },
+},
+```
+
+Top-level rows whose value is not listed come after the listed ones. Rows with
+the same value, and every row below the top level, follow `defaultSort`. The
+table page and the table's pickers use this order, so both show the tree the
+same way. A sort that the person picks on the table page replaces `rootOrder`
+and `defaultSort`. Sapporta checks at boot that `column` is a column of the
+table and that `values` is not empty.
+
 ## Work with the tree on the table page
 
 Open `/tables/accounts`. The page shows every account in one list. The name
 column indents each account by its depth and shows a chevron on accounts with
-children. The other columns stay aligned across all depths. A sort orders the
-siblings at every depth.
+children. The other columns stay aligned across all depths. Without a sort, the
+top-level rows follow `rootOrder` and every depth follows `defaultSort`. A sort
+orders the siblings at every depth.
 
 - **Expand and collapse.** Click a chevron, or press Space on the name cell.
 - **Add a child.** Right-click an account and choose **Add child row**. The page
@@ -224,23 +252,57 @@ describes the inputs and the result.
 ## Show each row's parent path
 
 `treePath()` gives each row of a tree table the labels of its ancestors, such as
-"Expenses > Kitchen", as a computed field. With `meta.rowCaption` naming it,
-pickers show the path under each account's name, including the parent column's
-picker:
+"Expenses > Kitchen", as a computed field. Name it in `tree.path` so the table's
+pickers draw it, and in `meta.rowCaption` so other screens, such as the record
+sheet and flat lists, show it under each account's name:
 
 ```ts
 meta: {
   rowLabelColumns: ["name"],
-  tree: { parentColumn: "parent_id" },
+  tree: { parentColumn: "parent_id", path: "parentPath" },
   rowCaption: "parentPath",
 },
-computed: { parentPath: treePath() },
+computed: { parentPath: treePath({ separator: " > " }) },
 ```
 
+The separator is declared once, in `treePath()`. The grids, the SQL relation
+from `treePathRelation()` and the pickers all show the path the field gives, so
+an application uses one separator everywhere. `tree.path` must name a field made
+with `treePath()`; Sapporta checks it at boot.
+
 [Computed fields and row captions](/docs/guides/model-data/computed-fields-and-row-captions/#give-a-tree-table-a-parent-path)
-describes the field, and
-[Choose a tree row's parent](/docs/guides/application-code/custom-forms-and-validation/#choose-a-tree-rows-parent)
-shows a parent picker that leaves out the row and its descendants.
+describes the field.
+
+## Pick a row from the tree
+
+A `LookupPicker` over a tree table draws the table as a tree. It is the picker
+of a foreign-key field that refers to the table, including the table's own
+parent column, and of `useTableLookup("accounts")` in a custom form:
+
+- **Opened with nothing typed**, the picker shows the table as an indented tree,
+  in the table's order. Every row that passes the picker's narrowing can be
+  picked. Its ancestors that do not pass are shown greyed, only to place it, and
+  cannot be picked. A branch with nothing to pick in it is left out. For
+  example, a picker narrowed to asset accounts shows the Assets branch only.
+- **With `notUnder`**, such as when choosing an account's parent, the account
+  being edited is shown where it sits, greyed and marked "(being edited)", or
+  the picker's `labels.editing`, and the rows below it are left out.
+- **Typing searches** the table on the server, as for any lookup, and lists the
+  matches flat, each after its parent path, such as "Assets > Bank Accounts >
+  Savings". With `useTableLookup(table, narrowing, { search: "client" })`, it
+  searches the tree the picker holds instead: every match, in tree order.
+- **The chosen row** shows its parent path before its name, inside the field.
+
+The arrow keys move through the rows at every depth and skip the greyed rows.
+The tree is read whole from the server, so every row that passes is shown,
+however many there are. A table with more than 5,000 such rows cannot be shown
+as a tree: the picker says so and offers the search instead.
+
+Use the tree picker wherever a person chooses a row by where it sits, such as a
+parent account, a category, or a folder. Pass `tree={false}` to `LookupPicker`
+for the flat search list, such as for a picker that only ever searches by code.
+[Pick from a tree](/docs/guides/application-code/custom-forms-and-validation/#pick-from-a-tree)
+shows the narrowing and `notUnder` in a form.
 
 ## Related documentation
 

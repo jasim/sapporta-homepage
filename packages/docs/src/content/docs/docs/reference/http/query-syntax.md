@@ -58,6 +58,11 @@ column kind. The value is parsed in the column's kind first, so
 A row whose column is `NULL` holds no value to compare, so it matches neither
 `eq` nor `neq`. Select those rows with `is`.
 
+An empty value is a value only on a `text` column, where `filter[title][eq]=`
+matches empty text. On a `number`, `date`, or `timestamp` column an empty value
+returns `bad_value`, under every operator that takes a value; match a missing
+value with `is`.
+
 ### Ordering
 
 `gt`, `gte`, `lt`, `lte` compare one value in the column's own ordering and
@@ -98,8 +103,11 @@ boolean column takes `eq` and `neq` instead.
 | `nin`    | the stored value is none of the items | `filter[project_id][nin]=4,5`    |
 
 The list must be non-empty and contain no empty item: `filter[status][in]=` and
-`filter[status][in]=open,,review` both return `bad_value`. A comma inside a
-value has no escape; match such a value with `eq`.
+`filter[status][in]=open,,review` both return `bad_value`.
+
+Inside an item, write a comma as `\,` and a backslash as `\\`:
+`filter[terms][in]=Net 30\, EOM,Net 60` matches the two options `Net 30, EOM`
+and `Net 60`. A backslash before any other character returns `bad_value`.
 
 ### Presence
 
@@ -260,6 +268,10 @@ accidentally broadening into search.
 | ------ | ---------------------- | ----------------------------------------------------------------------------------------- |
 | ID     | `ids=7,9`              | `1` through `500` non-empty values; rejects `q`, `fields`, `limit`, `notUnder`, and filters |
 | Search | `q`, `fields`, `limit` | `fields` names visible display fields; `limit` defaults to `50` and accepts at most `500` |
+
+Search mode matches the trimmed `q`, ignoring case, inside the row's label or
+inside one of `fields`. `lookupEntryMatches` in `@sapporta/shared` states the
+same rule for a search that runs in the browser.
 
 Both modes accept `computed=name,name2`, which returns the named computed fields
 of the entries in the response's `computed` member; see

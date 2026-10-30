@@ -51,6 +51,22 @@ Generated HTTP routes under `/api/tables/<table>`.
     `notUnder=<id>`, which narrow the choices; see
     [Narrow a lookup search](/docs/reference/http/query-syntax/#narrow-a-lookup-search).
   - Both modes accept `computed`.
+- `GET /api/tables/<table>/_lookup_tree` reads a table that declares
+  `meta.tree` as a tree, for a tree picker. It returns
+  `{ entries: Array<{ value, label, meta, depth, role }> }` in display order:
+  depth-first, each row after its parent, top-level rows at `depth` `0`. It
+  accepts `filter[col][op]=value` conditions, `notUnder=<id>`, and `computed`,
+  and rejects `q`, `ids`, `fields`, and `limit`.
+  - `role: "choice"` is a row that passes the filters and is not under
+    `notUnder`. `"context"` is an ancestor of a choice that does not pass
+    itself. `"editing"` is the `notUnder` row, returned where it sits without
+    the rows below it. No other rows are returned, so a branch without a choice
+    is left out.
+  - Top-level rows follow `meta.tree.rootOrder`, and siblings the table's
+    `defaultSort`, then the primary key.
+  - Every row is returned, up to `5000` (`MAX_LOOKUP_TREE_ROWS`). A larger tree
+    is refused with `400` and code `TREE_TOO_LARGE` rather than cut short.
+  - A table without `meta.tree` returns `400` with code `no_tree_config`.
 - `GET /api/tables/<table>/_count` returns either
   `{ data: { kind: "total", count: number } }` or
   `{ data: { kind: "grouped", groups: Array<{ value, count }> } }`. Group values

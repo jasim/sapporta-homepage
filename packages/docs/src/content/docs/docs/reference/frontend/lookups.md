@@ -1,9 +1,10 @@
 ---
 title: "Table lookups and record ids"
 description:
-  "Look up scoped table lookup capabilities, lookup narrowing, LookupPicker
-  props, the row data store, display slots, row refresh, lookup value identity,
-  and the RecordId address boundary."
+  "Look up scoped table lookup capabilities, lookup narrowing, where a lookup
+  search runs, LookupPicker props and labels, the row data store, display
+  slots, row refresh, lookup value identity, and the RecordId address
+  boundary."
 ---
 
 ## Identity
@@ -16,9 +17,10 @@ description:
 
 - `useLookupStore()` creates one row data store for a component, connected to
   [`invalidateRows`](#refresh-rows-after-a-write) while the component is
-  mounted. `useTableLookup(tableName, narrowing?)` returns the
+  mounted. `useTableLookup(tableName, narrowing?, options?)` returns the
   `LookupCapabilities` for one table, optionally
-  [narrowed](#narrow-a-lookup).
+  [narrowed](#narrow-a-lookup), with its search on the server or
+  [in the browser](#choose-where-a-search-runs).
 - `LookupPicker` renders a scoped picker over those capabilities. It owns remote
   search, selected-label loading for an entry outside the current search page,
   lookup cache subscriptions, `null` clearing, disabled and invalid states, and
@@ -70,6 +72,7 @@ type LookupNarrowing = {
 function useTableLookup<TValue extends LookupValue = LookupValue>(
   tableName: string,
   narrowing?: LookupNarrowing,
+  options?: { search?: LookupSearchMode },
 ): LookupCapabilities<TValue, Row>;
 ```
 
@@ -88,17 +91,54 @@ const parentChoices = useTableLookup<number>("accounts", {
   `{ column, op: "is", polarity }`. They are sent as `filter[col][op]` on the
   lookup search; repeated conditions on one key are ANDed.
 - `notUnder` leaves out that row of a tree table and every row below it, such as
-  the choices for the row's own parent. `undefined` narrows nothing.
-- Only the search is narrowed. Lookups by id are never narrowed, so a chosen row
+  the choices for the row's own parent. A tree picker still draws that row,
+  where it sits, as the row being edited. `undefined` narrows nothing.
+- The search and the tree lookup are narrowed. Lookups by id are never narrowed, so a chosen row
   keeps its label after it stops matching.
 - Each narrowing has its own label and computed-value caches, keyed by the
   table and the narrowing's content. An equal narrowing built again on each
   render reuses them. A narrowing with no conditions is the table itself.
-- `store.table(tableName, narrowing)` on a [row data store](#row-data-store)
-  returns the same narrowed row data outside the hook.
+- `store.table(tableName, narrowing, options)` on a
+  [row data store](#row-data-store) returns the same narrowed row data outside
+  the hook.
 
 The HTTP form is described in
 [Narrow a lookup search](/docs/reference/http/query-syntax/#narrow-a-lookup-search).
+
+## Choose where a search runs
+
+```ts
+type LookupSearchMode = "server" | "client";
+
+const parentChoices = useTableLookup<number>(
+  "accounts",
+  { notUnder: accountId },
+  { search: "client" },
+);
+```
+
+| `search`             | Where typing is matched                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `"server"` (default) | the narrowed lookup search on the server: at most `searchLimit` matches, in primary-key order               |
+| `"client"`           | while the lookup holds its tree, in the browser: every choice that matches, in tree order, with no request |
+
+- `"client"` applies to a tree table's lookup drawn by a
+  [tree picker](#tree-picker), which reads the whole narrowed tree. The search
+  runs on the server until that tree is read, while it is read again after a
+  write, and when it could not be read, such as one too large to send.
+- Both find the same rows. `lookupEntryMatches(entry, searchText, fields)` from
+  `@sapporta/shared` states the rule: the trimmed text, ignoring case, inside
+  the entry's label or inside one of `fields` in its `meta`. The server's SQL
+  follows the same rule, so `itemDisplay.fields` widens a client search as it
+  widens a server one.
+- A client search finds only entries with `role: "choice"`; the greyed
+  ancestors and the edited row are never offered.
+- `"server"` suits any table, however large; a grid's foreign-key cell and the
+  record form's fields search this way. `"client"` suits a picker whose tree
+  is small enough to send whole, where every match in tree order matters, such
+  as a chart of accounts.
+- The search mode is part of the cache key: a client and a server lookup of the
+  same narrowing keep separate caches and each read the tree.
 
 ## `LookupPicker` props
 
@@ -109,6 +149,8 @@ The HTTP form is described in
 | `onChange`         | `(value: TValue \| null) => void`     | required      | called with the picked id, or `null` when cleared                       |
 | `itemDisplay`      | `LookupPickerItemDisplay`             | none          | how each option is drawn                                                |
 | `selectedCaption`  | `"inline" \| "below"`                 | `"inline"`    | where a table lookup draws the chosen row's caption                     |
+| `tree`             | `boolean`                             | `true`        | over a table with `meta.tree`, draws the tree picker; `false` draws the flat list |
+| `labels`           | `LookupPickerLabels`                  | Sapporta's    | the picker's [wording](#name-the-pickers-buttons-and-messages)          |
 | `placeholder`      | `string`                              | `"Select..."` | input placeholder                                                       |
 | `disabled`         | `boolean`                             | `false`       | disables the picker                                                     |
 | `allowClear`       | `boolean`                             | `true`        | shows the clear button                                                  |
@@ -139,12 +181,68 @@ type LookupPickerItemProps<TValue, TMeta> = {
   a table's row data, it is the entry's label.
 - `itemDisplay` applies to options only. The chosen value is drawn with the
   table's label slot.
+
+### Name the picker's buttons and messages
+
+```ts
+type LookupPickerLabels = {
+  clear?: string;
+  open?: string;
+  empty?: string;
+  loading?: string;
+  tooLarge?: string;
+  loadFailed?: string;
+  editing?: string;
+};
+```
+
+| Label        | Default                                         | Where it is shown                                                  |
+| ------------ | ----------------------------------------------- | ------------------------------------------------------------------ |
+| `clear`      | `"Clear selection"`                             | the clear button's accessible name                                 |
+| `open`       | `"Open popup"`                                  | the accessible name of the button that opens the list              |
+| `empty`      | `"No results."`                                 | the list when nothing matches                                      |
+| `loading`    | `"Loading…"`                                    | a tree picker's list while the tree is read                        |
+| `tooLarge`   | `"Too many rows to show here. Type to search."` | a tree picker's list when the tree is too large to send            |
+| `loadFailed` | `"Could not load the choices."`                 | a tree picker's list when the tree could not be read               |
+| `editing`    | `"(being edited)"`                              | after the label of the `notUnder` row, as `context.editingNote`    |
+
+- Each label left out keeps its default. `DEFAULT_LOOKUP_PICKER_LABELS` holds
+  the defaults.
+- A flat picker shows only `clear`, `open`, and `empty`.
 - Over a table's lookup, each option is drawn on the `"option"` surface and the
   chosen row on the `"selected"` surface. With `selectedCaption: "inline"` the
   caption is drawn inside the input group, at its end, and hidden while the
   search text is not empty. With `"below"` it is drawn on its own line under the
   field at full width; the line is kept while empty, so choosing a value does
   not move the content below.
+
+### Tree picker
+
+Over the row data of a table that declares `meta.tree`, and unless `tree` is
+`false`, `LookupPicker` draws a tree picker:
+
+- With no search text, it reads the table's
+  [tree lookup](/docs/reference/http/table-endpoints/#contract) once, with the
+  narrowing, and draws the entries in the order and at the depth the server
+  returns. Entries with `role: "context"` or `"editing"` are disabled, greyed,
+  and skipped by the arrow keys. The tree is read again with the table's labels,
+  such as after `invalidateRows()`; the input keeps its text meanwhile.
+- With search text, it runs the lookup's search, on the server or, with
+  [`search: "client"`](#choose-where-a-search-runs), over the tree it holds,
+  and draws the matches flat, each after its `tree.path` value and
+  `tree.pathSeparator`.
+- The chosen row's `tree.path` value and separator are drawn inside the input
+  group, before the input. No caption is drawn, so `selectedCaption` does not
+  apply.
+- Options are drawn on the `"option"` surface with `hierarchyShown: true`. The
+  `"editing"` entry has `context.editingNote` set to `labels.editing`; the
+  default draws it after the label.
+- A refused tree lookup, such as `TREE_TOO_LARGE`, is reported in the popup,
+  and the search still works, on the server.
+
+The row data's `treeLookup` (`CachedTreeLookup`) holds the tree: `state()`
+returns `{ entries, status, error? }`, `load()` reads it once, `reload()` reads
+it again, and `subscribe(listener)` reports changes.
 
 ## Row data store
 
@@ -162,7 +260,11 @@ type RowDataStoreOptions = {
 };
 
 type RowDataStore = {
-  table(tableName: string, narrowing?: LookupNarrowing): TableRowData;
+  table(
+    tableName: string,
+    narrowing?: LookupNarrowing,
+    options?: { search?: LookupSearchMode },
+  ): TableRowData;
   foreignKey(column: ColumnSchema): TableRowData | undefined;
   requireForeignKey(args: { tableName: string; column: ColumnSchema }): TableRowData;
   clear(): void;
@@ -275,6 +377,7 @@ type DisplayContext = {
   source?: { table: string; column?: string; levelPath?: GridPath };
   hierarchyShown: boolean;
   selected?: boolean;
+  editingNote?: string;
 };
 
 type ComputedRecord = Readonly<Record<string, Json>>;
@@ -312,7 +415,12 @@ type ReferenceSlotProps<TComputed = ComputedRecord> = CellSlotProps<TComputed> &
 - `density` is `"compact"` in grid cells and the grid editor, and `"regular"` in
   pickers, forms, the record sheet, and filters.
 - `hierarchyShown` is `true` where the view already shows the row's place in its
-  tree, such as a tree level's tree column. The default draws no caption there.
+  tree, such as a tree level's tree column or a tree picker. The default draws
+  no caption there.
+- `editingNote` is set only on a tree picker's option for the `notUnder` row,
+  which is shown but cannot be picked. It holds the words to draw after the
+  label, the picker's `labels.editing`. The default content already draws
+  them; a slot that draws its own content reads them here.
 - `computed` holds only the fields in the slot's `needs`. `row` holds the row on
   its own label cell, and the lookup entry's visible fields for a reference when
   Sapporta has them.
