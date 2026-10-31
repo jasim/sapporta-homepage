@@ -33,7 +33,7 @@
     ]
   },
   "devDependencies": {
-    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#4d23bb40d2a1d16c485547d72c8caa4fecc0bbc2",
+    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#ecf2880515e6a3a207b77b13adcfe3cd52972e48",
     "prettier": "^3.9.1",
     "prettier-plugin-astro": "^0.14.1"
   }

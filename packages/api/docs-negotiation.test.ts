@@ -41,11 +41,12 @@ describe("documentation Markdown paths", () => {
     ["/docs/guides", "/docs/guides.md"],
     ["/docs", "/docs.md"],
     ["/grid/reference/", "/grid/reference.md"],
+    ["/", "/llms.txt"],
   ])("maps %s to %s", (pathname, expected) => {
     expect(markdownVariantPath(pathname)).toBe(expected);
   });
 
-  it.each(["/", "/grid", "/grid/", "/docs/llms.txt", "/docs/page.md"])(
+  it.each(["/index.html", "/grid", "/grid/", "/docs/llms.txt", "/docs/page.md"])(
     "does not negotiate %s",
     (pathname) => {
       expect(markdownVariantPath(pathname)).toBeUndefined();

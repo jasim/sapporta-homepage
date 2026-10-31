@@ -23,6 +23,7 @@ describe("crawler-facing static routes", () => {
     await Promise.all([
       writeFile(join(docsDistDir, "index.html"), "<h1>Homepage</h1>"),
       writeFile(join(docsDistDir, "docs.md"), "# Documentation\n"),
+      writeFile(join(docsDistDir, "llms.txt"), "# Sapporta\n"),
       writeFile(
         join(docsDistDir, "docs", "index.html"),
         "<h1>Documentation</h1>",
@@ -215,6 +216,20 @@ describe("crawler-facing static routes", () => {
     expect(response.headers.get("Link")).toBe(
       '</llms.txt>; rel="alternate"; type="text/markdown"',
     );
+    expect(response.headers.get("Vary")).toBe("Accept");
     expect(await response.text()).toContain("<h1>Homepage</h1>");
+  });
+
+  it("answers the homepage with llms.txt when Accept asks for Markdown", async () => {
+    const response = await app.request("/", {
+      headers: { Accept: "text/markdown" },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/markdown; charset=utf-8",
+    );
+    expect(response.headers.get("Vary")).toBe("Accept");
+    expect(await response.text()).toContain("# Sapporta");
   });
 });

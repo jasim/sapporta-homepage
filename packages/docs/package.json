@@ -23,7 +23,7 @@
     "@tanstack/react-query": "5.101.4",
     "astro": "^6.1.9",
     "lucide-react": "^0.513.0",
-    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#cc83573a0c18421f386f28c135223747ee5b1d3b",
+    "nuaj-agent-docs": "github:jasim/nuaj-agent-docs#ecf2880515e6a3a207b77b13adcfe3cd52972e48",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-router-dom": "7.15.1",

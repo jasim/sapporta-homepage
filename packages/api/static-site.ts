@@ -72,7 +72,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
       c.header("Link", links.join(", "));
       c.header("X-Llms-Txt", "/llms.txt");
     }
-    if (alternateExists && !c.req.path.endsWith(".md")) {
+    if ((alternateExists && !c.req.path.endsWith(".md")) || c.req.path === "/") {
       c.header("Vary", "Accept", { append: true });
     }
 
@@ -126,6 +126,7 @@ export function mountStaticSite(app: AppServer, options: StaticSiteOptions) {
     await next();
   };
 
+  app.use("/", negotiateDocumentationMarkdown);
   app.use("/docs/*", negotiateDocumentationMarkdown);
   app.use("/grid/*", negotiateDocumentationMarkdown);
 
