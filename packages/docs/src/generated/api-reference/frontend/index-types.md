@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Types"
 package: "@sapporta/frontend"
-version: "0.9.1"
+version: "0.12.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.9.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.12.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Types
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.9.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.12.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-105 of 197 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+111 of 209 symbols published from `@sapporta/frontend`. Other groups: [Functions and components](https://sapporta.com/api-reference/frontend/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### ClientColumnOptions
 
@@ -50,6 +50,13 @@ type CreateTGridSessionArgs<RowsByLevel extends TGridRowsByLevel = TGridRowsByLe
     routeQuerySeeds?: Partial<Record<TGridLevelId<RowsByLevel>, TGridRouteQuerySeed>>;
     /** Handle loaded-row edges in the composition that owns the surrounding UI. */
     onLoadedRowsBoundary?: TGridLoadedRowsBoundaryHandler<RowsByLevel, AppServices>;
+    /**
+     * Display slots the session draws rows with: labels, references and
+     * cells. React pages pass the displays of the nearest
+     * `RowDisplayProvider`; code outside React passes them here. Read once,
+     * when the session is created.
+     */
+    rowDisplays?: RowDisplays;
 };
 ```
 
@@ -73,6 +80,7 @@ interface FetchTableRowsParams {
     search?: string;
     fixed?: readonly TypedFilterCondition[];
     tree?: TreeMatchContext;
+    computed?: readonly string[];
 }
 ```
 
@@ -301,6 +309,16 @@ type SchemaTGridConfigInput<AppServices = unknown> = {
 };
 ```
 
+### ShowTableRowState
+
+```ts
+type ShowTableRowState = {
+    showTableRow: TableRowToShow & {
+        table: string;
+    };
+};
+```
+
 ### TableColumnName
 
 ```ts
@@ -504,6 +522,14 @@ type TablePatchValueDraftParseResult = {
 };
 ```
 
+### TableReturnState
+
+```ts
+type TableReturnState = {
+    tableSearch: string;
+};
+```
+
 ### TableRowsClient
 
 ```ts
@@ -519,6 +545,16 @@ type TableRowsClient = {
 
 ```ts
 type TableRowsSelectionParams = Pick<FetchTableRowsParams, "sort" | "filters" | "search">;
+```
+
+### TableRowToShow
+
+```ts
+type TableRowToShow = {
+    rowKey: string;
+    /** The row as the table API saved it, when the page that saved it has it. */
+    savedRow?: Readonly<Record<string, unknown>>;
+};
 ```
 
 ### TableSelection
@@ -727,6 +763,7 @@ type TGridColumnBuildResult = {
     columns: GridColumnSchema[];
     rowHeaderColumn: RowHeaderColumn;
     treeColumnId: ColId | null;
+    titleColumnId: ColId | null;
     saveCellValueByColumn: ReadonlyMap<ColId, TGridRuntimeCellWriteHandler<TGridRowsByLevel, unknown, string>>;
 };
 ```
@@ -756,6 +793,18 @@ type TGridColumnCopyBehavior<RowsByLevel extends TGridRowsByLevel, AppServices, 
 }) => readonly GridCopyColumn<Readonly<RowsByLevel[LevelId]>>[] | Promise<readonly GridCopyColumn<Readonly<RowsByLevel[LevelId]>>[]>;
 ```
 
+### TGridColumnDisplay
+
+Where a column is drawn, for its display slots.
+
+```ts
+type TGridColumnDisplay = {
+    /** The level shows its rows as a tree, and this column shows the place of
+     *  each row in it. */
+    hierarchyShown?: boolean;
+};
+```
+
 ### TGridColumnMapper
 
 ```ts
@@ -764,6 +813,36 @@ type TGridColumnMapper = {
         tableName: string;
         column: TableColumnSchema;
         immutable: boolean;
+        display?: TGridColumnDisplay;
+        /** Set when this column holds the parent of a tree table's row. Its
+         *  editor then leaves out the row itself and the rows below it, which
+         *  would make a loop. */
+        treeParent?: {
+            rowKeyColumn: string;
+        };
+    }): GridColumnSchema;
+    /**
+     * Draws the level's own label column (the first visible row-label column,
+     * which is also the card title) with the table's `label` slot. Returns the
+     * column unchanged when the table has no label slot.
+     */
+    labelColumnFor(args: {
+        tableName: string;
+        rowKeyColumn: string;
+        labelColumns: readonly string[];
+        gridColumn: GridColumnSchema;
+        display?: TGridColumnDisplay;
+    }): GridColumnSchema;
+    /**
+     * Draws a table column with the column's slot, over what the column draws
+     * without it. Returns the column unchanged when the column has no slot.
+     */
+    columnSlotColumnFor(args: {
+        tableName: string;
+        column: TableColumnSchema;
+        rowKeyColumn: string;
+        gridColumn: GridColumnSchema;
+        display?: TGridColumnDisplay;
     }): GridColumnSchema;
     metaOf(column: Pick<GridColumnSchema, "meta">): TGridTableColumnMeta | undefined;
 };
@@ -1051,15 +1130,24 @@ type TGridSession<RowsByLevel extends TGridRowsByLevel = TGridRowsByLevel, AppSe
     getLoadedRow<LevelId extends TGridLevelId<RowsByLevel>>(rowKey: string, levelId?: LevelId, path?: GridPath): Readonly<RowsByLevel[LevelId]> | undefined;
     getQueryState<LevelId extends TGridLevelId<RowsByLevel>>(levelId?: LevelId): TGridLevelQueryState<RowsByLevel[LevelId]>;
     reloadRows(levelId?: TGridLevelId<RowsByLevel>, path?: GridPath): Promise<SourceLoadResult>;
+    /**
+     * Shows one root row: puts the cursor on it, opens the tree branches above
+     * it and scrolls it into view. Use it after creating a row, so the user
+     * sees where it landed. On a flat table, pass the row as the table API
+     * saved it as `savedRow`: when the loaded rows don't include it, it joins
+     * them at the top, and the other rows keep their places. It stays there
+     * until the rows are read again, such as on reload or a change of page,
+     * sort, search or filter. Otherwise the rows are read again when the
+     * table doesn't have the row yet. With `clearQueryIfHidden`, a search or
+     * filter that leaves the row out is then cleared, and the URL follows;
+     * when clearing does not bring the row, the search and filters are put
+     * back. Resolves to `"not-found"` when the row is still not on screen,
+     * such as a row on another page of a paged table.
+     */
+    showRow(rowKey: string, options?: TGridShowRowOptions): Promise<TGridShowRowResult>;
     setLevelSort(levelId: TGridLevelId<RowsByLevel>, path: GridPath, sort: SortDescriptor[]): Promise<SourceLoadResult>;
-    setLevelFilter(levelId: TGridLevelId<RowsByLevel>, path: GridPath, filter: TGridFilter | undefined): Promise<SourceLoadResult>;
-    setLevelPage(levelId: TGridLevelId<RowsByLevel>, path: GridPath, page: number, pageSize: number): Promise<SourceLoadResult>;
-    setErrorBanner(message: string | null): void;
-    lookups: LookupStore;
-    lookupForColumn: LookupForColumn;
-    csvExportUrl(levelId?: TGridLevelId<RowsByLevel>): string;
-    dispose(): void;
-};
+    setLevelFilter(levelId:
+// …declaration truncated at 2500 bytes.
 ```
 
 ### TGridSessionContext
@@ -1074,6 +1162,24 @@ type TGridSessionContext<RowsByLevel extends TGridRowsByLevel, AppServices> = {
     appServices: AppServices;
     lookups: LookupStore;
 };
+```
+
+### TGridShowRowOptions
+
+```ts
+type TGridShowRowOptions = {
+    /** The row as the table API saved it. A flat table that has not loaded
+     *  the row shows it at the top of its loaded rows. */
+    savedRow?: Readonly<Record<string, unknown>>;
+    /** Clear the search and filters when they leave the row out. */
+    clearQueryIfHidden?: boolean;
+};
+```
+
+### TGridShowRowResult
+
+```ts
+type TGridShowRowResult = "shown" | "not-found";
 ```
 
 ### TGridSourceStatus
@@ -1191,7 +1297,7 @@ type UseTGridQueryStateArgs<RowsByLevel extends TGridRowsByLevel, AppServices, L
 ### UseTGridSessionArgs
 
 ```ts
-type UseTGridSessionArgs<RowsByLevel extends TGridRowsByLevel, AppServices> = CreateTGridSessionArgs<RowsByLevel, AppServices>;
+type UseTGridSessionArgs<RowsByLevel extends TGridRowsByLevel, AppServices> = Omit<CreateTGridSessionArgs<RowsByLevel, AppServices>, "rowDisplays">;
 ```
 
 ### ViewRelatedRowsContext

@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Values, classes, and namespaces"
 package: "@sapporta/server"
-version: "0.8.1"
+version: "0.10.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.10.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Values, classes, and namespaces
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.10.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-20 of 208 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Functions and components](https://sapporta.com/api-reference/server/index-functions.md).
+22 of 220 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Functions and components](https://sapporta.com/api-reference/server/index-functions.md).
 
 ### ApiWritePolicyError
 
@@ -51,6 +51,14 @@ Path of the generated app contract, kept in one place across boot.
 
 ```ts
 const OPENAPI_PATH = "/api/openapi.json";
+```
+
+### PROJECT_API_TOKEN_FILE
+
+The project's agent token file: a dotenv file in the project root holding `SAPPORTA_API_TOKEN` for the coding agents that work in the folder.
+
+```ts
+const PROJECT_API_TOKEN_FILE = ".env.agent";
 ```
 
 ### PROJECT_MARKER
@@ -155,6 +163,16 @@ const tableWriteZod: {
 };
 ```
 
+### TreeTooLargeError
+
+A tree lookup would return more than `MAX_LOOKUP_TREE_ROWS` rows.
+
+```ts
+class TreeTooLargeError extends Error {
+    constructor(tableName: string);
+}
+```
+
 ### TsRestApi
 
 `TsRestApi` IS a Hono app.
@@ -171,28 +189,34 @@ class TsRestApi<E extends Env = Env, DocCtx = void> extends Hono<E> {
      * Do not mutate from outside.
      */
     readonly docEmitters: DocEmitter<DocCtx>[];
+    /**
+     * Where each emitter merged from another api is documented: the mount
+     * paths that `route()` used, and the entry that `extend()` added, if
+     * any. `route()` merges once per (emitter, mount path), so one sub-api
+     * mounted at `/v1` and `/v2` is documented at both. `extend()` adds an
+     * emitter only when no merge has documented it yet, so code that calls
+     * both `route()` and `extend()` lists each route once.
+     */
+    private readonly mergedEmitters;
     register<R extends AppRoute>(operationId: string, route: R, handler: RouteHandler<R, E>): this;
     registerFamily(opts: FamilyOptions<E, DocCtx>): this;
+    /**
+     * Mount another Hono app under `path`, as Hono's `route()` does. When
+     * the mounted app is a `TsRestApi`, its doc emitters are merged too, with
+     * `path` prepended to each contract path, so this api's
+     * `generateDocument()` lists the mounted routes at the URLs that serve
+     * them. Like Hono's `route()`, this copies what `app` holds at call time:
+     * routes registered on `app` afterwards are neither served nor documented.
+     * A mounted `TsRestApi` must accept this api's doc context, or have none.
+     */
+    route<SubPath extends string, SubEnv extends Env, SubSchema extends Schema, SubBasePath extends string>(path: SubPath, app: Hono<SubEnv, SubSchema, SubBasePath> & MountableDocs<DocCtx>): import("hono/hono-base").HonoBase<E, import("hono/types").BlankSchema | import("hono/types").MergeSchemaPath<SubSchema, import("hono/types").MergePath<"/", SubPath>>, "/", "/">;
     /**
      * Pull another `TsRestApi`'s doc emitters into this one, so this api's
      * `generateDocument()` spec includes the other's routes. Runtime routes
      * on `other` are served by `other`'s own Hono tree (mount it separately
      * via `parentApp.route(prefix, other)`). This is the decoupling point:
-     * per-sub-app Hono autonomy, centralized spec emission.
-     */
-    extend(other: {
-        docEmitters: readonly DocEmitter<DocCtx>[];
-    }): this;
-    extend(other: {
-        docEmitters: readonly DocEmitter<void>[];
-    }): this;
-    /**
-     * Walk every registered route into a flat `AppRouter` object and defer
-     * to `@sapporta/rest-open-api`. Path+method uniqueness is enforced; operation
-     * keys are disambiguated by suffix if a family happens to reuse one.
-     */
-    generateDocument(ctx: DocCtx, apiDoc: ApiDoc, options?: GenerateOptions): ReturnType<typeof generateOpenApi>;
-}
+     * per-sub-app Hono autonomy, centralized
+// …declaration truncated at 2500 bytes.
 ```
 
 ### WATCHABLE_SUBDIRS

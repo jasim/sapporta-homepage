@@ -2,7 +2,7 @@
 
 > Every symbol published by the Sapporta packages, with the specifier to import it from and its exact declaration. Generated from the published declaration files — this is the API as shipped, not a summary of it.
 
-Describes `@sapporta/shared@0.4.0`, `@sapporta/server@0.8.1`, `@sapporta/honest@0.3.17`, `@sapporta/grid@0.8.0`, `@sapporta/frontend@0.9.1`, `@sapporta/ui@0.4.0`.
+Describes `@sapporta/shared@0.7.0`, `@sapporta/server@0.10.0`, `@sapporta/honest@0.3.18`, `@sapporta/grid@0.10.1`, `@sapporta/frontend@0.12.0`, `@sapporta/ui@0.4.0`.
 
 Read this instead of opening declaration files under `node_modules`.
 
@@ -16,27 +16,27 @@ Read this instead of opening declaration files under `node_modules`.
 - Prefer the narrowest specifier that publishes a symbol. Root barrels re-export their subpaths and link to them rather than repeating signatures.
 - Signatures are the published declarations verbatim. Behaviour a signature cannot express is covered by the guides at https://sapporta.com/docs.md.
 
-## @sapporta/shared 0.4.0
+## @sapporta/shared 0.7.0
 
-- [@sapporta/shared](https://sapporta.com/api-reference/shared/index.md): 11 documented, 115 re-exported from subpaths.
+- [@sapporta/shared](https://sapporta.com/api-reference/shared/index.md): 14 documented, 115 re-exported from subpaths.
 - [@sapporta/shared/filter](https://sapporta.com/api-reference/shared/filter.md): 43 documented.
 - [@sapporta/shared/value-kind](https://sapporta.com/api-reference/shared/value-kind.md): 4 documented.
 - [@sapporta/shared/temporal](https://sapporta.com/api-reference/shared/temporal.md): 25 documented.
 - [@sapporta/shared/daterange](https://sapporta.com/api-reference/shared/daterange.md): 16 documented.
 - [@sapporta/shared/labels](https://sapporta.com/api-reference/shared/labels.md): 3 documented.
 - [@sapporta/shared/csv](https://sapporta.com/api-reference/shared/csv.md): 3 documented.
-- [@sapporta/shared/grid-dataset](https://sapporta.com/api-reference/shared/grid-dataset.md): 17 documented.
+- [@sapporta/shared/grid-dataset](https://sapporta.com/api-reference/shared/grid-dataset.md): 24 documented.
 - [@sapporta/shared/record-id](https://sapporta.com/api-reference/shared/record-id.md): 2 documented.
 - [@sapporta/shared/row-scope](https://sapporta.com/api-reference/shared/row-scope.md): 7 documented.
 - [@sapporta/shared/error](https://sapporta.com/api-reference/shared/error.md): 1 documented.
 - [@sapporta/shared/validation](https://sapporta.com/api-reference/shared/validation.md): 11 documented.
-- [@sapporta/shared/contracts](https://sapporta.com/api-reference/shared/contracts.md): 120 documented, split by group.
+- [@sapporta/shared/contracts](https://sapporta.com/api-reference/shared/contracts.md): 138 documented, split by group.
 - [@sapporta/shared/client](https://sapporta.com/api-reference/shared/client.md): 6 documented.
 
-## @sapporta/server 0.8.1
+## @sapporta/server 0.10.0
 
-- [@sapporta/server](https://sapporta.com/api-reference/server/index.md): 208 documented, 27 re-exported from subpaths, split by group.
-- [@sapporta/server/table](https://sapporta.com/api-reference/server/table.md): 28 documented.
+- [@sapporta/server](https://sapporta.com/api-reference/server/index.md): 220 documented, 36 re-exported from subpaths, split by group.
+- [@sapporta/server/table](https://sapporta.com/api-reference/server/table.md): 37 documented.
 - [@sapporta/server/errors](https://sapporta.com/api-reference/server/errors.md): 10 documented.
 - [@sapporta/server/data-dir](https://sapporta.com/api-reference/server/data-dir.md): 2 documented.
 - [@sapporta/server/testing](https://sapporta.com/api-reference/server/testing.md): 4 documented.
@@ -49,22 +49,22 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/server/cli/format](https://sapporta.com/api-reference/server/cli/format.md): 3 documented.
 - [@sapporta/server/cli/render](https://sapporta.com/api-reference/server/cli/render.md): 2 documented.
 
-## @sapporta/honest 0.3.17
+## @sapporta/honest 0.3.18
 
 - [@sapporta/honest](https://sapporta.com/api-reference/honest/index.md): 11 documented.
 
-## @sapporta/grid 0.8.0
+## @sapporta/grid 0.10.1
 
-- [@sapporta/grid](https://sapporta.com/api-reference/grid/index.md): 202 documented, 4 re-exported from subpaths, split by group.
+- [@sapporta/grid](https://sapporta.com/api-reference/grid/index.md): 203 documented, 4 re-exported from subpaths, split by group.
 - [@sapporta/grid/advanced](https://sapporta.com/api-reference/grid/advanced.md): 17 documented.
-- [@sapporta/grid/column-preset](https://sapporta.com/api-reference/grid/column-preset.md): 102 documented, split by group.
+- [@sapporta/grid/column-preset](https://sapporta.com/api-reference/grid/column-preset.md): 106 documented, split by group.
 - [@sapporta/grid/lookup](https://sapporta.com/api-reference/grid/lookup.md): 18 documented.
 - [@sapporta/grid/lookup/react](https://sapporta.com/api-reference/grid/lookup/react.md): 4 documented.
 - `@sapporta/grid/index.css` — stylesheet, no exported symbols. Import for side effects.
 
-## @sapporta/frontend 0.9.1
+## @sapporta/frontend 0.12.0
 
-- [@sapporta/frontend](https://sapporta.com/api-reference/frontend/index.md): 197 documented, 137 re-exported from subpaths, split by group.
+- [@sapporta/frontend](https://sapporta.com/api-reference/frontend/index.md): 209 documented, 182 re-exported from subpaths, split by group.
 - [@sapporta/frontend/app](https://sapporta.com/api-reference/frontend/app.md): 9 documented.
 - [@sapporta/frontend/platform](https://sapporta.com/api-reference/frontend/platform.md): 11 documented.
 - [@sapporta/frontend/form](https://sapporta.com/api-reference/frontend/form.md): 3 documented.
@@ -77,7 +77,7 @@ Read this instead of opening declaration files under `node_modules`.
 - [@sapporta/frontend/routes/new-record](https://sapporta.com/api-reference/frontend/routes/new-record.md): 1 documented.
 - [@sapporta/frontend/table/query](https://sapporta.com/api-reference/frontend/table/query.md): 10 documented.
 - [@sapporta/frontend/report](https://sapporta.com/api-reference/frontend/report.md): 25 documented.
-- [@sapporta/frontend/lookup](https://sapporta.com/api-reference/frontend/lookup.md): 18 documented.
+- [@sapporta/frontend/lookup](https://sapporta.com/api-reference/frontend/lookup.md): 63 documented.
 - [@sapporta/frontend/layout](https://sapporta.com/api-reference/frontend/layout.md): 23 documented.
 - [@sapporta/frontend/shell](https://sapporta.com/api-reference/frontend/shell.md): 49 documented.
 - `@sapporta/frontend/index.css` — stylesheet, no exported symbols. Import for side effects.

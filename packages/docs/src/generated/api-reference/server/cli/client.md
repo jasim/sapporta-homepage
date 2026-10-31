@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/server/cli/client"
 package: "@sapporta/server"
-version: "0.8.1"
+version: "0.10.0"
 specifier: "@sapporta/server/cli/client"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.10.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/cli/client
 
-Import from `@sapporta/server/cli/client`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/cli/client`. Documented from `@sapporta/server@0.10.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
 7 symbols documented here.
 
@@ -70,6 +70,8 @@ function encodePathSegment(value: string): string;
 ```
 
 ### whereObjectToFilterParams
+
+Encode a `--where` / `--fixed` JSON object as `filter[col][op]` query keys.
 
 ```ts
 function whereObjectToFilterParams(where: Record<string, unknown> | undefined, namespace?: FilterNamespace): Record<string, string>;

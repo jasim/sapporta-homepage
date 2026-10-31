@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/shared/filter"
 package: "@sapporta/shared"
-version: "0.4.0"
+version: "0.7.0"
 specifier: "@sapporta/shared/filter"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/filter
 
-Import from `@sapporta/shared/filter`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/filter`. Documented from `@sapporta/shared@0.7.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
 43 symbols documented here.
 
-## Types (15)
+## Types (14)
 
 ### FilterCondition
 
@@ -39,6 +39,8 @@ type FilterCondition = {
 ```
 
 ### FilterDraftCondition
+
+A condition without an id, such as one being authored or one about to be encoded.
 
 ```ts
 type FilterDraftCondition = {
@@ -95,16 +97,6 @@ type FilterTableLike = {
 type ListOp = (typeof LIST_OPS)[number];
 ```
 
-### NewFilterCondition
-
-A condition being authored — same shape as `FilterCondition` minus `id`, which controllers mint on insert.
-
-```ts
-type NewFilterCondition = FilterCondition extends infer T ? T extends {
-    id: string;
-} ? Omit<T, "id"> : never : never;
-```
-
 ### NullOp
 
 ```ts
@@ -120,7 +112,7 @@ type Operator = (typeof OPERATORS)[number];
 ### Polarity
 
 ```ts
-type Polarity = "null" | "notnull";
+type Polarity = (typeof POLARITIES)[number];
 ```
 
 ### ScalarOp
@@ -189,6 +181,14 @@ Deep equality on the `column + op + value` content of a condition.
 function conditionContentEqual(a: TypedFilterCondition, b: TypedFilterCondition): boolean;
 ```
 
+### decodeFilterObject
+
+Parse filter conditions written as a JSON object, such as the CLI's `--where` flag:
+
+```ts
+function decodeFilterObject(source: unknown): FilterDraftCondition[];
+```
+
 ### decodeFilters
 
 Parse filter entries out of a query-string source into a list of conditions.
@@ -202,7 +202,7 @@ function decodeFilters(source: URLSearchParams | Readonly<QueryParamRecord>, nam
 Serialize a list of conditions to `URLSearchParams` in wire format.
 
 ```ts
-function encodeFilters(filters: readonly FilterCondition[], namespace?: FilterNamespace): URLSearchParams;
+function encodeFilters(filters: readonly FilterDraftCondition[], namespace?: FilterNamespace): URLSearchParams;
 ```
 
 ### encodeFilterValue
@@ -210,7 +210,7 @@ function encodeFilters(filters: readonly FilterCondition[], namespace?: FilterNa
 Serialize a condition's value for transmission.
 
 ```ts
-function encodeFilterValue(cond: FilterCondition): string;
+function encodeFilterValue(cond: FilterDraftCondition): string;
 ```
 
 ### encodeTypedCondition
@@ -253,12 +253,6 @@ function filtersEqual(a: readonly TypedFilterCondition[], b: readonly TypedFilte
 
 ```ts
 function isOperator(v: string): v is Operator;
-```
-
-### materializeFilterCondition
-
-```ts
-function materializeFilterCondition(cond: NewFilterCondition, id?: string): FilterCondition;
 ```
 
 ### materializeTypedFilterCondition
@@ -337,11 +331,11 @@ Wire-format key for a column+op pair, such as `filter[col][op]`.
 function wireKey(column: string, op: Operator, namespace?: FilterNamespace): string;
 ```
 
-## Values, classes, and namespaces (6)
+## Values, classes, and namespaces (7)
 
 ### FilterParseError
 
-Thrown by `decodeFilters` on a grammar violation.
+Thrown on a grammar violation: by `decodeFilters` and `decodeFilterObject` on input, and by `wireKey` and `encodeFilterValue` for a filter the wire format cannot carry.
 
 ```ts
 class FilterParseError extends Error {
@@ -366,6 +360,12 @@ const NULL_OPS: readonly ["is"];
 
 ```ts
 const OPERATORS: readonly ["eq", "neq", "gt", "gte", "lt", "lte", "contains", "startswith", "endswith", "in", "nin", "is"];
+```
+
+### POLARITIES
+
+```ts
+const POLARITIES: readonly ["null", "notnull"];
 ```
 
 ### SCALAR_OPS

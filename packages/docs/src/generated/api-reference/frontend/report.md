@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/frontend/report"
 package: "@sapporta/frontend"
-version: "0.9.1"
+version: "0.12.0"
 specifier: "@sapporta/frontend/report"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.9.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.12.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend/report
 
-Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.9.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend/report`. Documented from `@sapporta/frontend@0.12.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
 25 symbols documented here.
 
@@ -67,7 +67,8 @@ type ReportCellRenderContext = CellRenderProps & {
     reportColumn: GridDatasetColumn;
     /**
      * The cell as the column renders it on its own, formatting and truncation
-     * included. The report's drill-through link wraps the override's output
+     * included. On a `reference` column it is the row drawn with its table's
+     * label slot. The report's drill-through link wraps the override's output
      * afterwards, so wrapping this keeps the link either way.
      */
     defaultContent: ReactNode;

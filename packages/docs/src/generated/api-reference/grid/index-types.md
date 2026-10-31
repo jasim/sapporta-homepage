@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid — Types"
 package: "@sapporta/grid"
-version: "0.8.0"
+version: "0.10.1"
 specifier: "@sapporta/grid"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.10.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid — Types
 
-Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid`. Documented from `@sapporta/grid@0.10.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-119 of 202 symbols published from `@sapporta/grid`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
+120 of 203 symbols published from `@sapporta/grid`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/index-values.md).
 
 ### Brand
 
@@ -339,11 +339,21 @@ type ColumnSchema = {
     readonly renderCell: (props: CellRenderProps) => ReactNode;
     readonly align?: ColumnAlign;
     readonly compare?: (a: unknown, b: unknown) => number;
+    readonly sortKeys?: readonly ColumnSortKey[];
     readonly edit?: CellEditBehavior;
     readonly disableBackspaceCellClear?: true;
     readonly activation?: CellActivation;
     readonly copy?: GridColumnCopyBehavior;
     readonly meta?: unknown;
+};
+```
+
+### ColumnSortKey
+
+```ts
+type ColumnSortKey = {
+    readonly field: ColId;
+    readonly compare: (a: unknown, b: unknown) => number;
 };
 ```
 
@@ -702,6 +712,7 @@ type GridLevelRuntime = {
   toggleRowSelection: …;
   extendRowSelectionTo: …;
   clearRowSelection: …;
+  focusRow: …;
   isExpanded: …;
   subscribeExpansion: …;
   expand: …;
@@ -711,10 +722,11 @@ type GridLevelRuntime = {
   writeCell: …;
   applyChanges: …;
   createRow: …;
+  addSavedRow: …;
   removeRow: …;
   drafts: …;
 }
-// 34 members; inferred types elided. Read the full type from the declaration file if needed.
+// 36 members; inferred types elided. Read the full type from the declaration file if needed.
 ```
 
 ### GridLevelTree
@@ -1555,6 +1567,7 @@ type WriteCapability = {
     readonly applyChanges: (changes: readonly CellChange[]) => void;
     readonly createNode: (node: TreeNode, atIndex?: number) => Promise<CreateNodeResult>;
     readonly removeNode: (rowKey: RowKey) => void | Promise<void>;
+    readonly addSavedNode?: (node: TreeNode, atIndex?: number) => CreateNodeResult;
     readonly onReconcile: (fn: (event: ReconcileEvent) => void) => () => void;
     readonly canAppendRow?: () => boolean;
 };

@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/shared/grid-dataset"
 package: "@sapporta/shared"
-version: "0.4.0"
+version: "0.7.0"
 specifier: "@sapporta/shared/grid-dataset"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/grid-dataset
 
-Import from `@sapporta/shared/grid-dataset`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/grid-dataset`. Documented from `@sapporta/shared@0.7.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-17 symbols documented here.
+24 symbols documented here.
 
-## Types (7)
+## Types (9)
 
 ### GridDataset
 
@@ -33,6 +33,12 @@ type GridDatasetColumn = z.output<typeof gridDatasetColumnSchema>;
 type GridDatasetColumnKind = z.output<typeof gridDatasetColumnKindSchema>;
 ```
 
+### GridDatasetColumnReference
+
+```ts
+type GridDatasetColumnReference = z.output<typeof gridDatasetColumnReferenceSchema>;
+```
+
 ### GridDatasetFooterRow
 
 ```ts
@@ -43,6 +49,12 @@ type GridDatasetFooterRow = z.output<typeof gridDatasetFooterRowSchema>;
 
 ```ts
 type GridDatasetLevel = z.output<typeof gridDatasetLevelSchema>;
+```
+
+### GridDatasetLevelSort
+
+```ts
+type GridDatasetLevelSort = z.output<typeof gridDatasetLevelSortSchema>;
 ```
 
 ### GridDatasetLevelTree
@@ -65,7 +77,7 @@ type GridDatasetNode = {
 };
 ```
 
-## Functions and components (3)
+## Functions and components (6)
 
 ### gridDatasetLinkProblems
 
@@ -73,6 +85,30 @@ Checks that every declarative link in a dataset reads only columns its level act
 
 ```ts
 function gridDatasetLinkProblems(dataset: GridDataset): string[];
+```
+
+### gridDatasetReferenceIds
+
+The ids of the rows each referenced table is named by, across every level, node, child and footer row of the dataset.
+
+```ts
+function gridDatasetReferenceIds(dataset: GridDataset): Map<string, RecordId[]>;
+```
+
+### gridDatasetReferenceProblems
+
+Checks that every `reference` column names an `idColumn` its level has.
+
+```ts
+function gridDatasetReferenceProblems(dataset: GridDataset): string[];
+```
+
+### gridDatasetSortProblems
+
+Checks that every `sortBy` entry is a column of the level.
+
+```ts
+function gridDatasetSortProblems(dataset: GridDataset): string[];
 ```
 
 ### gridDatasetTreeColumn
@@ -91,7 +127,7 @@ Checks the columns each tree level names: its parent column is a column of the l
 function gridDatasetTreeProblems(dataset: GridDataset): string[];
 ```
 
-## Values, classes, and namespaces (7)
+## Values, classes, and namespaces (9)
 
 ### gridDatasetColumnKindSchema
 
@@ -103,6 +139,17 @@ const gridDatasetColumnKindSchema: z.ZodEnum<{
     date: "date";
     timestamp: "timestamp";
 }>;
+```
+
+### gridDatasetColumnReferenceSchema
+
+The table rows a report column names.
+
+```ts
+const gridDatasetColumnReferenceSchema: z.ZodObject<{
+    table: z.ZodString;
+    idColumn: z.ZodString;
+}, z.core.$strip>;
 ```
 
 ### gridDatasetColumnSchema
@@ -142,6 +189,7 @@ const gridDatasetColumnSchema: z.ZodObject<{
     strong: z.ZodOptional<z.ZodBoolean>;
     notes: z.ZodOptional<z.ZodString>;
     sortable: z.ZodOptional<z.ZodBoolean>;
+    sortBy: z.ZodOptional<z.ZodArray<z.ZodString>>;
     filterable: z.ZodOptional<z.ZodBoolean>;
     searchable: z.ZodOptional<z.ZodBoolean>;
     links: z.ZodOptional<z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
@@ -181,8 +229,6 @@ const gridDatasetColumnSchema: z.ZodObject<{
         label: z.ZodOptional<z.ZodString>;
         icon: z.ZodOptional<z.ZodEnum<{
             external: "external";
-            "drill-up": "drill-up";
-            "drill
 // …declaration truncated at 2500 bytes.
 ```
 
@@ -234,6 +280,7 @@ const gridDatasetLevelSchema: z.ZodObject<{
         strong: z.ZodOptional<z.ZodBoolean>;
         notes: z.ZodOptional<z.ZodString>;
         sortable: z.ZodOptional<z.ZodBoolean>;
+        sortBy: z.ZodOptional<z.ZodArray<z.ZodString>>;
         filterable: z.ZodOptional<z.ZodBoolean>;
         searchable: z.ZodOptional<z.ZodBoolean>;
         links: z.ZodOptional<z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
@@ -263,10 +310,22 @@ const gridDatasetLevelSchema: z.ZodObject<{
                 report: "report";
             }>>;
             target: z.ZodOptional<z.ZodEnum<{
-                _self: "_self";
-                _blank: "_blank";
-            }>>;
+                _self: "_self
 // …declaration truncated at 2500 bytes.
+```
+
+### gridDatasetLevelSortSchema
+
+One key of a level's starting sort.
+
+```ts
+const gridDatasetLevelSortSchema: z.ZodObject<{
+    column: z.ZodString;
+    direction: z.ZodEnum<{
+        asc: "asc";
+        desc: "desc";
+    }>;
+}, z.core.$strip>;
 ```
 
 ### gridDatasetLevelTreeSchema
@@ -329,6 +388,7 @@ const gridDatasetSchema: z.ZodObject<{
             strong: z.ZodOptional<z.ZodBoolean>;
             notes: z.ZodOptional<z.ZodString>;
             sortable: z.ZodOptional<z.ZodBoolean>;
+            sortBy: z.ZodOptional<z.ZodArray<z.ZodString>>;
             filterable: z.ZodOptional<z.ZodBoolean>;
             searchable: z.ZodOptional<z.ZodBoolean>;
             links: z.ZodOptional<z.ZodArray<z.ZodDiscriminatedUnion<[z.ZodObject<{
@@ -349,7 +409,6 @@ const gridDatasetSchema: z.ZodObject<{
             }, z.core.$strip>, z.ZodObject<{
                 kind: z.ZodLiteral<"report">;
                 report: z.ZodString;
-                bind: z.ZodRecord<z.ZodString, z.ZodString>;
-                label: z.ZodOptional<z.ZodString>;
+                bind: z.ZodRecord<z.ZodString, z.Zo
 // …declaration truncated at 2500 bytes.
 ```

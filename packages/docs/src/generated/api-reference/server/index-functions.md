@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Functions and components"
 package: "@sapporta/server"
-version: "0.8.1"
+version: "0.10.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.10.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Functions and components
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.10.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-88 of 208 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+93 of 220 symbols published from `@sapporta/server`. Other groups: [Types](https://sapporta.com/api-reference/server/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### anonymousPrincipal
 
@@ -73,6 +73,14 @@ Fails boot when schema definitions use column shapes Sapporta cannot safely serv
 function assertSchemaDefinitions(tables: readonly TableDef[]): void;
 ```
 
+### attachReferenceComputed
+
+Computes the fields that the rows named by the dataset's `reference` columns are drawn with: each referenced table's `rowCaption` when it is a computed field, and the fields `names` lists for the table.
+
+```ts
+function attachReferenceComputed(dataset: GridDataset, input: AttachReferenceComputedInput): Promise<GridDataset>;
+```
+
 ### buildSearchPredicate
 
 Binds a compiled search plan to one request's authorization context.
@@ -107,6 +115,14 @@ Resolves every table's recursive search metadata into immutable table and column
 
 ```ts
 function compileSearchPlans(tables: readonly TableDef[]): CompiledSearchPlans;
+```
+
+### computeFields
+
+Computes the named fields of `table` for a batch of rows.
+
+```ts
+function computeFields<TTable extends AnySQLiteTable>(input: ComputeFieldsInput<TTable>): Promise<ComputedValues>;
 ```
 
 ### connectProject
@@ -324,9 +340,15 @@ function getRoute(def: TableDef): {
     pathParams: z.ZodObject<{
         id: z.ZodString;
     }, z.core.$strip>;
+    query: z.ZodObject<{
+        computed: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>;
     responses: {
         200: z.ZodObject<{
             data: import("../index.js").TableObjectZod;
+            computed: z.ZodOptional<z.ZodObject<{
+                [x: string]: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodNullable<z.ZodType<import("@sapporta/shared/contracts").Json, unknown, z.core.$ZodTypeInternals<import("@sapporta/shared/contracts").Json, unknown>>>>>;
+            }, z.core.$strip>>;
         }, z.core.$strip>;
         404: z.ZodObject<{
             error: z.ZodString;
@@ -414,6 +436,7 @@ function listRoute(def: TableDef): {
             ancestors: "ancestors";
             "ancestors-and-descendants": "ancestors-and-descendants";
         }>>;
+        computed: z.ZodOptional<z.ZodString>;
         page: z.ZodDefault<z.ZodCoercedNumber<string>>;
         limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
         sort: z.ZodOptional<z.ZodString>;
@@ -432,6 +455,9 @@ function listRoute(def: TableDef): {
                     contextIds: z.ZodArray<z.ZodString>;
                 }, z.core.$strip>>;
             }, z.core.$strip>;
+            computed: z.ZodOptional<z.ZodObject<{
+                [x: string]: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodNullable<z.ZodType<import("@sapporta/shared/contracts").Json, unknown, z.core.$ZodTypeInternals<import("@sapporta/shared/contracts").Json, unknown>>>>>;
+            }, z.core.$strip>>;
         }, z.core.$strip>;
         400: z.ZodObject<{
             error: z.ZodString;
@@ -559,6 +585,14 @@ The absolute path to the current Sapporta project root — Rails.root analogue.
 function projectRoot(): string;
 ```
 
+### readProjectApiToken
+
+The token the project at `root` keeps for its agents, or undefined when the file is absent or its token is missing or blank.
+
+```ts
+function readProjectApiToken(root: string): string | undefined;
+```
+
 ### requestDataAuthority
 
 ```ts
@@ -571,6 +605,14 @@ Returns resolved reference facts or throws an `AuthSchemaValidationError`.
 
 ```ts
 function requireResolvedTableReferences(table: TableDef, registeredTables: readonly TableDef[]): ResolvedReferenceFact[];
+```
+
+### resolveComputedQuery
+
+Parse a `computed=name,name2` parameter into the table's computed field names.
+
+```ts
+function resolveComputedQuery(param: string | undefined, table: TableDef): string[];
 ```
 
 ### resolveCountQuery
@@ -863,6 +905,14 @@ function workspaceUserScopedAuthority(input: {
     workspace: AuthWorkspace;
     user: SapportaAuthUser;
 }): WorkspaceUserScopedAuthority;
+```
+
+### writeProjectApiToken
+
+Writes `token` as the project's agent token, replacing the file.
+
+```ts
+function writeProjectApiToken(root: string, token: string, comment?: readonly string[]): void;
 ```
 
 ### zodForColumnValue

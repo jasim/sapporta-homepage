@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Types"
 package: "@sapporta/grid"
-version: "0.8.0"
+version: "0.10.1"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.10.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Types
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.10.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-55 of 102 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+57 of 106 symbols published from `@sapporta/grid/column-preset`. Other groups: [Functions and components](https://sapporta.com/api-reference/grid/column-preset-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### BooleanPreset
 
@@ -280,6 +280,8 @@ type DatePreset = PresetBase & {
 type ForeignKeyPreset = PresetBase & {
     kind: "foreignKey";
     lookup: LookupCapabilities;
+    renderEntry?: LookupEntryRenderer;
+    lookupForRow?: (row: LevelRow) => LookupCapabilities | undefined;
 };
 ```
 
@@ -345,6 +347,39 @@ type LookupCapabilities<TValue extends LookupValue = LookupValue, TMeta = unknow
 type LookupColumnOptions<TMeta = unknown> = ColumnPresetOptions<TMeta> & {
     valueLookup: ValueLookup;
     searchLookup?: SearchLookup;
+    renderEntry?: LookupEntryRenderer;
+    /**
+     * The choices the editor offers for one row, when they differ by row,
+     * such as a parent column that must leave out the row itself. Cells
+     * still read their labels from `valueLookup`.
+     */
+    lookupForRow?: (row: LevelRow) => LookupCapabilities | undefined;
+};
+```
+
+### LookupEntryRenderer
+
+Draws a lookup entry in a lookup column's cells and editor options.
+
+```ts
+type LookupEntryRenderer = (props: LookupEntryRenderProps) => ReactNode;
+```
+
+### LookupEntryRenderProps
+
+Props of a lookup column's `renderEntry`: the entry to draw, where it is drawn, and what the column would draw without it.
+
+```ts
+type LookupEntryRenderProps = {
+    entry: LookupEntry;
+    /** `"cell"` for the column's cells, `"option"` for the editor's options. */
+    surface: "cell" | "option";
+    /** Cells and the cell editor are compact. */
+    density: "compact" | "regular";
+    /** For options: the option of the current value. */
+    selected?: boolean;
+    /** The column's own drawing of the entry: its label. */
+    defaultContent: ReactNode;
 };
 ```
 
@@ -354,6 +389,8 @@ type LookupColumnOptions<TMeta = unknown> = ColumnPresetOptions<TMeta> & {
 type LookupPreset = PresetBase & {
     kind: "lookupValue";
     lookup: LookupCapabilities;
+    renderEntry?: LookupEntryRenderer;
+    lookupForRow?: (row: LevelRow) => LookupCapabilities | undefined;
 };
 ```
 

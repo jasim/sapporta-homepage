@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/grid/column-preset — Functions and components"
 package: "@sapporta/grid"
-version: "0.8.0"
+version: "0.10.1"
 specifier: "@sapporta/grid/column-preset"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.10.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/column-preset — Functions and components
 
-Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/column-preset`. Documented from `@sapporta/grid@0.10.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
-43 of 102 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
+45 of 106 symbols published from `@sapporta/grid/column-preset`. Other groups: [Types](https://sapporta.com/api-reference/grid/column-preset-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/grid/column-preset-values.md).
 
 ### boolean
 
@@ -161,6 +161,14 @@ function loadColumnSizingOverrides(sizing: ResolvedColumnSizing, schema: readonl
 function lookupCapabilities(preset: ColumnPreset): LookupCapabilities | undefined;
 ```
 
+### lookupEntryRenderer
+
+The `renderEntry` a lookup column was built with, if any.
+
+```ts
+function lookupEntryRenderer(preset: ColumnPreset): LookupEntryRenderer | undefined;
+```
+
 ### lookupValue
 
 ```ts
@@ -221,6 +229,14 @@ function presetRuntime<TMeta = unknown>(column: ColumnSchema): ColumnPresetRunti
 
 ```ts
 function resolveColumnSizing(options: ColumnSizingOptions | undefined, context: ColumnSizingStorageKeyContext): ResolvedColumnSizing;
+```
+
+### rowLookupCapabilities
+
+The choices a lookup column's editor offers for `row`: its `lookupForRow`, or the column's lookup.
+
+```ts
+function rowLookupCapabilities(preset: ColumnPreset, row: LevelRow): LookupCapabilities | undefined;
 ```
 
 ### rowSelectionColumn

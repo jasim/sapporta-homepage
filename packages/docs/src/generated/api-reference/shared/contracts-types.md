@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/shared/contracts — Types"
 package: "@sapporta/shared"
-version: "0.4.0"
+version: "0.7.0"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Types
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.7.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-47 of 120 symbols published from `@sapporta/shared/contracts`. Other groups: [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/shared/contracts-values.md).
+55 of 138 symbols published from `@sapporta/shared/contracts`. Other groups: [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/shared/contracts-values.md).
 
 ### AppRoute
 
@@ -99,6 +99,18 @@ Re-exported from `@sapporta/rest-core`. See that package for its declaration.
 type ColumnSchema = z.output<typeof columnSchemaSchema>;
 ```
 
+### ComputedFieldSchema
+
+```ts
+type ComputedFieldSchema = z.output<typeof computedFieldSchemaSchema>;
+```
+
+### ComputedValues
+
+```ts
+type ComputedValues = z.output<typeof computedValuesSchema>;
+```
+
 ### CountQuery
 
 ```ts
@@ -148,6 +160,16 @@ interface GroupCount {
     value: CountGroupValue;
     count: number;
 }
+```
+
+### Json
+
+A JSON value, as computed fields carry them.
+
+```ts
+type Json = string | number | boolean | null | readonly Json[] | {
+    readonly [key: string]: Json;
+};
 ```
 
 ### LinkBind
@@ -204,6 +226,30 @@ type LookupQuery = z.output<typeof lookupQuerySchema>;
 type LookupResponse = z.output<typeof lookupResponseSchema>;
 ```
 
+### LookupTreeEntry
+
+```ts
+type LookupTreeEntry = z.output<typeof lookupTreeEntrySchema>;
+```
+
+### LookupTreeQuery
+
+```ts
+type LookupTreeQuery = z.output<typeof lookupTreeQuerySchema>;
+```
+
+### LookupTreeResponse
+
+```ts
+type LookupTreeResponse = z.output<typeof lookupTreeResponseSchema>;
+```
+
+### LookupTreeRole
+
+```ts
+type LookupTreeRole = z.output<typeof lookupTreeRoleSchema>;
+```
+
 ### NavLink
 
 ```ts
@@ -246,6 +292,12 @@ Re-exported from `@sapporta/rest-core`. See that package for its declaration.
 type SingleRow = z.output<typeof singleRowSchema>;
 ```
 
+### SingleRowQuery
+
+```ts
+type SingleRowQuery = z.output<typeof singleRowQuerySchema>;
+```
+
 ### SwitchActiveWorkspaceBody
 
 ```ts
@@ -269,7 +321,7 @@ type TableTree = z.output<typeof tableTreeSchema>;
 A table tree as declared, before defaults: only `parentColumn` is required.
 
 ```ts
-type TableTreeInput = Pick<TableTree, "parentColumn"> & Partial<Omit<TableTree, "parentColumn">>;
+type TableTreeInput = Pick<TableTree, "parentColumn"> & Partial<Omit<TableTree, "parentColumn" | "rootOrder" | "path" | "pathSeparator">>;
 ```
 
 ### TreeMatchContext

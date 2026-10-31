@@ -1,15 +1,15 @@
 ---
 title: "@sapporta/grid/lookup"
 package: "@sapporta/grid"
-version: "0.8.0"
+version: "0.10.1"
 specifier: "@sapporta/grid/lookup"
 ---
 
-> Sapporta API reference for `@sapporta/grid@0.8.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/grid@0.10.1`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/grid/lookup
 
-Import from `@sapporta/grid/lookup`. Documented from `@sapporta/grid@0.8.0`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
+Import from `@sapporta/grid/lookup`. Documented from `@sapporta/grid@0.10.1`; confirm the installed version with `node -p "require('@sapporta/grid/package.json').version"`.
 
 18 symbols documented here.
 
@@ -149,6 +149,7 @@ class CachedSearchLookup<TValue extends LookupValue = LookupValue, TMeta = unkno
     private readonly searchPagesByScope;
     private readonly loadingSearchesByRequest;
     private readonly latestRequestBySearchScope;
+    private staleMarks;
     constructor(args: {
         loadEntriesForSearch: LoadEntriesForSearch<TValue, TMeta>;
         defaultSearchLimit?: number;
@@ -156,6 +157,12 @@ class CachedSearchLookup<TValue extends LookupValue = LookupValue, TMeta = unkno
     });
     cachedSearchResults(request?: Pick<LookupSearchRequest, "searchText" | "fields">): readonly LookupEntry<TValue, TMeta>[];
     loadSearchResults(request?: LookupSearchRequest): Promise<LookupSearchPage<TValue, TMeta>>;
+    /**
+     * Marks every cached search as out of date, such as after rows of the
+     * table were edited. Cached results stay readable, and the next load of
+     * each search reads it again.
+     */
+    markSearchesStale(): void;
     private normalizeRequest;
     private loadAndStoreSearchPage;
     private evictOldSearches;
@@ -172,6 +179,16 @@ class CachedValueLookup<TValue extends LookupValue = LookupValue, TMeta = unknow
         loadEntriesForValues: LoadEntriesForValues<TValue, TMeta>;
     });
     loadMissingEntries(values: readonly unknown[]): Promise<void>;
+    /**
+     * Loads every cached entry again, such as after its rows were edited, and
+     * every entry whose first load is in flight. The old entries stay readable
+     * until the new ones arrive, so cells do not flash; an entry the load no
+     * longer returns keeps its old value. A load already in flight was sent
+     * before the edit, so its answer no longer counts for the entries this
+     * reload asks for.
+     */
+    reloadEntries(): Promise<void>;
+    private startLoad;
     private loadAndStoreEntries;
 }
 ```

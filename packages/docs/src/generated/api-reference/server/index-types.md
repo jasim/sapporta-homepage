@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/server — Types"
 package: "@sapporta/server"
-version: "0.8.1"
+version: "0.10.0"
 specifier: "@sapporta/server"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.10.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server — Types
 
-Import from `@sapporta/server`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server`. Documented from `@sapporta/server@0.10.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-100 of 208 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
+105 of 220 symbols published from `@sapporta/server`. Other groups: [Functions and components](https://sapporta.com/api-reference/server/index-functions.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/server/index-values.md).
 
 ### ApiDoc
 
@@ -37,6 +37,20 @@ Re-exported from `@sapporta/rest-core`. See that package for its declaration.
 A router (or contract) in
 
 Re-exported from `@sapporta/rest-core`. See that package for its declaration.
+
+### AttachReferenceComputedInput
+
+```ts
+interface AttachReferenceComputedInput {
+    db: BetterSQLite3Database;
+    auth: SapportaAuthContext;
+    /** The app's tables, as a list or as the table catalog. */
+    tables: readonly TableDef[] | Pick<TableCatalog, "get">;
+    /** More computed fields to compute, by table name, such as the fields an
+     *  app's `label` slot `needs`. */
+    names?: Readonly<Record<string, readonly string[]>>;
+}
+```
 
 ### AuthoritySlots
 
@@ -143,6 +157,27 @@ type ColumnValueZod = z.ZodType;
 interface CompiledSearchPlans {
     readonly plans: ReadonlyMap<string, SearchPlan>;
     readonly warnings: readonly SearchPlanWarning[];
+}
+```
+
+### ComputedValues
+
+```ts
+type ComputedValues = z.output<typeof computedValuesSchema>;
+```
+
+### ComputeFieldsInput
+
+```ts
+interface ComputeFieldsInput<TTable extends AnySQLiteTable> {
+    db: BetterSQLite3Database;
+    auth: SapportaAuthContext;
+    table: TableDef<TTable>;
+    /** Primary keys of rows the request may read, such as the rows a scoped
+     *  read just returned. */
+    ids: readonly RecordId[];
+    /** Names of computed fields of `table`. */
+    names: readonly string[];
 }
 ```
 
@@ -308,6 +343,16 @@ interface InsertValuesOptions<T extends Record<string, unknown> = Record<string,
 }
 ```
 
+### Json
+
+A JSON value, as computed fields carry them.
+
+```ts
+type Json = string | number | boolean | null | readonly Json[] | {
+    readonly [key: string]: Json;
+};
+```
+
 ### LoadSapportaProjectOptions
 
 ```ts
@@ -351,6 +396,10 @@ type LookupRowsBySearchInput<TTable extends AnySQLiteTable = AnySQLiteTable> = {
     search?: string;
     fields?: readonly TableColumn<TTable>[];
     limit?: number;
+    /** Narrows the choices, such as to accounts of one type. Lookups by id
+     *  do not take it, so a chosen row still shows its label after it stops
+     *  matching. */
+    where?: SQL;
 };
 ```
 
@@ -358,6 +407,21 @@ type LookupRowsBySearchInput<TTable extends AnySQLiteTable = AnySQLiteTable> = {
 
 ```ts
 type LookupRowsInput<TTable extends AnySQLiteTable = AnySQLiteTable> = LookupRowsByIdInput | LookupRowsBySearchInput<TTable>;
+```
+
+### LookupTreeInput
+
+The choices of a tree lookup.
+
+```ts
+interface LookupTreeInput {
+    /** Narrows the choices, such as to accounts of one type. */
+    where?: SQL;
+    /** The row being edited, such as when choosing its parent: it is shown
+     *  where it sits but cannot be picked, and the rows below it are left
+     *  out. */
+    notUnder?: RecordId;
+}
 ```
 
 ### MaybePromise
@@ -765,6 +829,7 @@ interface ScopedRows<TTable extends AnySQLiteTable = AnySQLiteTable> {
     delete(id: RecordId): Promise<TableRow<TTable>>;
     scan(input?: RowsQuery): AsyncIterable<TableRow<TTable>>;
     lookup(input?: LookupRowsInput<TTable>): Promise<LookupEntry[]>;
+    lookupTree(input?: LookupTreeInput): Promise<LookupTreeEntry[]>;
     count(input?: CountRowsInput): Promise<number>;
     countBy(input: CountRowsByInput<TTable>): Promise<GroupCount[]>;
 }
@@ -806,6 +871,10 @@ interface SearchPlanWarning {
 ```ts
 type SearchValuePlan = {
     readonly kind: "column";
+    readonly column: SQLiteColumn;
+} | {
+    /** A number column: a numeric search word matches it by value. */
+    readonly kind: "number";
     readonly column: SQLiteColumn;
 } | {
     readonly kind: "referenceLabel";
@@ -887,6 +956,7 @@ interface TableHandlers<E extends Env> {
     delete: TableFamilyHandler<ReturnType<typeof deleteRoute>, E>;
     exportCsv: TableFamilyHandler<ReturnType<typeof exportCsvRoute>, E>;
     lookup: RouteHandler<typeof lookupRoute, E>;
+    lookupTree: RouteHandler<typeof lookupTreeRoute, E>;
     count: RouteHandler<typeof countRoute, E>;
 }
 ```

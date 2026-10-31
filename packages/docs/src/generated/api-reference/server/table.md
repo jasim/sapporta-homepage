@@ -1,19 +1,19 @@
 ---
 title: "@sapporta/server/table"
 package: "@sapporta/server"
-version: "0.8.1"
+version: "0.10.0"
 specifier: "@sapporta/server/table"
 ---
 
-> Sapporta API reference for `@sapporta/server@0.8.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/server@0.10.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/server/table
 
-Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.8.1`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
+Import from `@sapporta/server/table`. Documented from `@sapporta/server@0.10.0`; confirm the installed version with `node -p "require('@sapporta/server/package.json').version"`.
 
-28 symbols documented here.
+37 symbols documented here.
 
-## Types (14)
+## Types (20)
 
 ### ChildMeta
 
@@ -62,6 +62,80 @@ interface ColumnMeta {
 // 16 members; inferred types elided. Read the full type from the declaration file if needed.
 ```
 
+### ComputedBatch
+
+The rows one loader run computes values for, and what the loader may use to compute them.
+
+```ts
+interface ComputedBatch<TTable extends AnySQLiteTable = AnySQLiteTable> {
+    /** The table whose rows these are. */
+    readonly table: TableDef<TTable>;
+    /** The rows to compute for, as primary keys, in the order the read
+     *  returned them. Read the rows themselves, or other tables, through
+     *  `scopedRows(batch.db, batch.auth, table)`. */
+    readonly ids: readonly RecordId[];
+    /**
+     * Runs `compute` once per batch for each `key`, and gives every caller the
+     * same result. Use it when two fields come from one query, such as buy and
+     * sell volume from one scan of trades, or when one field is built from
+     * another's values: both call the same function through `once`.
+     */
+    once<T>(key: string, compute: () => Promise<T>): Promise<T>;
+    readonly db: BetterSQLite3Database;
+    /** The auth of the request. Read other tables through
+     *  `scopedRows(batch.db, batch.auth, table)`, so values never come from rows
+     *  the request may not read. */
+    readonly auth: SapportaAuthContext;
+}
+```
+
+### ComputedField
+
+One computed field of a table.
+
+```ts
+interface ComputedField<TTable extends AnySQLiteTable = AnySQLiteTable, TValue extends Json = Json> {
+    /** How the value reads. It chooses the default formatting, and it is listed
+     *  in the table's metadata. */
+    kind: ComputedFieldKind;
+    /** Display label. Defaults to the name in title case, as for columns. */
+    label?: string;
+    /** Notes on what the value means, shown in the table's metadata. */
+    notes?: string;
+    /**
+     * Schema of one value. Every value except `null` is checked against it,
+     * and it documents the value in the generated OpenAPI.
+     */
+    schema?: z.ZodType<TValue>;
+    /**
+     * Computes the values for a batch of rows. It runs inside reads, including
+     * the lookups a picker sends while someone types, so it must not write.
+     */
+    load: ComputedFieldLoader<TTable, TValue>;
+    /** Set by `treePath()`: the field is a tree table's parent path, joined
+     *  with `separator`. `meta.tree.path` names such a field. */
+    treePath?: {
+        readonly separator: string;
+    };
+}
+```
+
+### ComputedFieldKind
+
+How a computed value reads.
+
+```ts
+type ComputedFieldKind = ValueKind | "json";
+```
+
+### ComputedFieldLoader
+
+Computes a field's values for a batch of rows.
+
+```ts
+type ComputedFieldLoader<TTable extends AnySQLiteTable = AnySQLiteTable, TValue extends Json = Json> = (batch: ComputedBatch<TTable>) => Promise<ReadonlyMap<RecordId, TValue | null>> | ReadonlyMap<RecordId, TValue | null>;
+```
+
 ### SapportaMeta
 
 Normalized Sapporta metadata attached to a TableDef.
@@ -108,6 +182,13 @@ interface SapportaMeta {
     search: NormalizedTableSearch;
     /** Same-table parent/child rows. Absent for an ordinary flat table. */
     tree?: TreeMeta;
+    /**
+     * A column or computed field whose text the default display of a row draws
+     * under its label, such as an account's parent path. It shows wherever the
+     * row is shown or referenced: pickers, the record sheet, and grid cells
+     * that opt in.
+     */
+    rowCaption?: string;
 }
 ```
 
@@ -156,6 +237,8 @@ interface TableDef<TTable extends AnySQLiteTable = AnySQLiteTable> {
     sqlName: string;
     /** Sapporta metadata */
     meta: SapportaMeta;
+    /** Computed fields by name, as declared in `TableOptions`. */
+    computed?: Readonly<Record<string, ComputedField>>;
     /** Runtime form of the application validation declared in `TableOptions`. */
     validate?(value: Readonly<Record<string, unknown>>, context: {
         operation: "insert" | "patch";
@@ -182,6 +265,12 @@ interface TableOptions<TTable extends AnySQLiteTable> {
      * Field keys are inferred public SQL column names.
      */
     validate?(value: TableValidationValue<TTable>, context: TableValidationContext<TTable>): void;
+    /**
+     * Values of each row that the server computes when a read asks for them by
+     * name, such as an account's parent path or an item's stock on hand. Their
+     * names must differ from the column names.
+     */
+    computed?: Record<string, ComputedField<TTable>>;
 }
 ```
 
@@ -255,15 +344,68 @@ interface TreeMetaInput {
      * subtree. `"ancestors"` keeps only the ancestors.
      */
     matchContext?: TreeMatchContext;
+    /**
+     * Orders the top-level rows by the values of one column, such as
+     * `{ column: "account_type", values: ["Asset", "Liability", "Equity",
+     * "Revenue", "Expense"] }`. Top-level rows whose value is not listed come
+     * last. Within one value, and below the top level, rows follow
+     * `defaultSort`. The table page's tree and the table's pickers use this
+     * order; a sort the user picks replaces it.
+     */
+    rootOrder?: {
+        column: string;
+        values: readonly string[];
+    };
+    /**
+     * The computed field, made with `treePath()`, that gives each row's parent
+     * path. A picker on the table draws a chosen row with this path before its
+     * name, and each search match with its path.
+     */
+    path?: string;
 }
 ```
 
-## Functions and components (13)
+### TreePathOptions
+
+```ts
+interface TreePathOptions {
+    /** Placed between two ancestors' labels. Defaults to `" > "`. */
+    separator?: string;
+    /** Column whose value names each ancestor. Defaults to the row label. */
+    column?: string;
+    /** Display label of the field. */
+    label?: string;
+}
+```
+
+### TreePathRelationOptions
+
+```ts
+interface TreePathRelationOptions {
+    /** Name of the relation in the `with recursive` list. Defaults to
+     *  `tree_paths`. */
+    name?: string;
+    /** Placed between two ancestors' labels. Defaults to `" > "`. */
+    separator?: string;
+    /** Column whose value names each row. Defaults to the row label. */
+    column?: string;
+}
+```
+
+## Functions and components (16)
 
 ### bool
 
 ```ts
 function bool<TName extends string>(name: TName): import("drizzle-orm/sqlite-core").SQLiteBooleanBuilderInitial<TName>;
+```
+
+### computedField
+
+Declares a computed field.
+
+```ts
+function computedField<TTable extends AnySQLiteTable = AnySQLiteTable, TValue extends Json = Json>(field: ComputedField<TTable, TValue>): ComputedField<TTable, TValue>;
 ```
 
 ### date
@@ -348,6 +490,22 @@ function timestamp<TName extends string>(name: TName): import("drizzle-orm/sqlit
     driverParam: string;
     enumValues: undefined;
 }>;
+```
+
+### treePath
+
+A computed field for a table with `meta.tree`: the labels of each row's ancestors, from the top down, joined by `separator`.
+
+```ts
+function treePath(options?: TreePathOptions): ComputedField;
+```
+
+### treePathRelation
+
+The paths of a tree table's rows as a SQL relation, for reports and other code that runs raw SQL.
+
+```ts
+function treePathRelation(table: TableDef, auth: SapportaAuthContext, options?: TreePathRelationOptions): SQL;
 ```
 
 ### uniqueIndex

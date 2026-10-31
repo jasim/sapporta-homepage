@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/shared/contracts — Values, classes, and namespaces"
 package: "@sapporta/shared"
-version: "0.4.0"
+version: "0.7.0"
 specifier: "@sapporta/shared/contracts"
 ---
 
-> Sapporta API reference for `@sapporta/shared@0.4.0`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/shared@0.7.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/shared/contracts — Values, classes, and namespaces
 
-Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.4.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
+Import from `@sapporta/shared/contracts`. Documented from `@sapporta/shared@0.7.0`; confirm the installed version with `node -p "require('@sapporta/shared/package.json').version"`.
 
-70 of 120 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
+80 of 138 symbols published from `@sapporta/shared/contracts`. Other groups: [Types](https://sapporta.com/api-reference/shared/contracts-types.md), [Functions and components](https://sapporta.com/api-reference/shared/contracts-functions.md).
 
 ### ApiError
 
@@ -261,6 +261,33 @@ const columnSchemaSchema: z.ZodObject<{
         }>>;
         target: z.Z
 // …declaration truncated at 2500 bytes.
+```
+
+### computedFieldSchemaSchema
+
+A computed field of a table: a value of each row that the server computes when a read names it in its `computed` parameter.
+
+```ts
+const computedFieldSchemaSchema: z.ZodObject<{
+    name: z.ZodString;
+    label: z.ZodString;
+    kind: z.ZodUnion<readonly [z.ZodEnum<{
+        number: "number";
+        boolean: "boolean";
+        text: "text";
+        date: "date";
+        timestamp: "timestamp";
+    }>, z.ZodLiteral<"json">]>;
+    notes: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+```
+
+### computedValuesSchema
+
+Computed field values that a row read returns beside its rows, when the request names fields in its `computed` parameter: field name, then row id (in its string form, as `toRecordId` writes it), then the value.
+
+```ts
+const computedValuesSchema: z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<Json, unknown, z.core.$ZodTypeInternals<Json, unknown>>>>;
 ```
 
 ### countQuerySchema
@@ -516,6 +543,7 @@ const deleteRowRoute: {
     responses: {
         200: z.ZodObject<{
             data: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
         }, z.core.$strip>;
         403: z.ZodObject<{
             error: z.ZodString;
@@ -659,9 +687,13 @@ const getRowRoute: {
         tableName: z.ZodString;
         id: z.ZodString;
     }, z.core.$strip>;
+    query: z.ZodObject<{
+        computed: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>;
     responses: {
         200: z.ZodObject<{
             data: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
         }, z.core.$strip>;
         404: z.ZodObject<{
             error: z.ZodString;
@@ -697,6 +729,12 @@ const groupCountSchema: z.ZodType<GroupCount>;
 Instantiate a ts-rest client, primarily to access `router`, `response`, and `body`
 
 Re-exported from `@sapporta/rest-core`. See that package for its declaration.
+
+### jsonSchema
+
+```ts
+const jsonSchema: z.ZodType<Json>;
+```
 
 ### linkBindSchema
 
@@ -790,6 +828,7 @@ const listRowsQuerySchema: z.ZodObject<{
         ancestors: "ancestors";
         "ancestors-and-descendants": "ancestors-and-descendants";
     }>>;
+    computed: z.ZodOptional<z.ZodString>;
     page: z.ZodDefault<z.ZodCoercedNumber<string>>;
     limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
     sort: z.ZodOptional<z.ZodString>;
@@ -815,6 +854,7 @@ const listRowsRoute: {
             ancestors: "ancestors";
             "ancestors-and-descendants": "ancestors-and-descendants";
         }>>;
+        computed: z.ZodOptional<z.ZodString>;
         page: z.ZodDefault<z.ZodCoercedNumber<string>>;
         limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
         sort: z.ZodOptional<z.ZodString>;
@@ -833,6 +873,7 @@ const listRowsRoute: {
                     contextIds: z.ZodArray<z.ZodString>;
                 }, z.core.$strip>>;
             }, z.core.$strip>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
         }, z.core.$strip>;
         400: z.ZodObject<{
             error: z.ZodString;
@@ -890,15 +931,19 @@ const lookupEntrySchema: z.ZodObject<{
 ```ts
 const lookupQuerySchema: z.ZodUnion<readonly [z.ZodObject<{
     ids: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<string[], string>>, z.ZodArray<z.ZodString>>;
+    computed: z.ZodOptional<z.ZodString>;
     q: z.ZodOptional<z.ZodNever>;
     fields: z.ZodOptional<z.ZodNever>;
     limit: z.ZodOptional<z.ZodNever>;
+    notUnder: z.ZodOptional<z.ZodNever>;
 }, z.core.$strict>, z.ZodObject<{
     ids: z.ZodOptional<z.ZodNever>;
     q: z.ZodOptional<z.ZodString>;
     fields: z.ZodOptional<z.ZodString>;
+    computed: z.ZodOptional<z.ZodString>;
     limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
-}, z.core.$strict>]>;
+    notUnder: z.ZodOptional<z.ZodString>;
+}, z.core.$catchall<z.ZodType<QueryParamValue, unknown, z.core.$ZodTypeInternals<QueryParamValue, unknown>>>>]>;
 ```
 
 ### lookupResponseSchema
@@ -910,6 +955,7 @@ const lookupResponseSchema: z.ZodObject<{
         label: z.ZodString;
         meta: z.ZodRecord<z.ZodString, z.ZodUnknown>;
     }, z.core.$strip>>;
+    computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<Json, unknown, z.core.$ZodTypeInternals<Json, unknown>>>>>;
 }, z.core.$strip>;
 ```
 
@@ -928,15 +974,19 @@ const lookupRoute: {
     }, z.core.$strip>;
     query: z.ZodUnion<readonly [z.ZodObject<{
         ids: z.ZodPipe<z.ZodPipe<z.ZodString, z.ZodTransform<string[], string>>, z.ZodArray<z.ZodString>>;
+        computed: z.ZodOptional<z.ZodString>;
         q: z.ZodOptional<z.ZodNever>;
         fields: z.ZodOptional<z.ZodNever>;
         limit: z.ZodOptional<z.ZodNever>;
+        notUnder: z.ZodOptional<z.ZodNever>;
     }, z.core.$strict>, z.ZodObject<{
         ids: z.ZodOptional<z.ZodNever>;
         q: z.ZodOptional<z.ZodString>;
         fields: z.ZodOptional<z.ZodString>;
+        computed: z.ZodOptional<z.ZodString>;
         limit: z.ZodDefault<z.ZodCoercedNumber<string>>;
-    }, z.core.$strict>]>;
+        notUnder: z.ZodOptional<z.ZodString>;
+    }, z.core.$catchall<z.ZodType<import("../query-params.js").QueryParamValue, unknown, z.core.$ZodTypeInternals<import("../query-params.js").QueryParamValue, unknown>>>>]>;
     responses: {
         200: z.ZodObject<{
             entries: z.ZodArray<z.ZodObject<{
@@ -944,6 +994,114 @@ const lookupRoute: {
                 label: z.ZodString;
                 meta: z.ZodRecord<z.ZodString, z.ZodUnknown>;
             }, z.core.$strip>>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
+        }, z.core.$strip>;
+        400: z.ZodObject<{
+            error: z.ZodString;
+            code: z.ZodOptional<z.ZodString>;
+            details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
+        }, z.core.$strip>;
+        404: z.ZodObject<{
+            error: z.ZodString;
+            code: z.ZodOptional<z.ZodString>;
+            details: z.ZodOptional<z.ZodArray<z.ZodUnknown>>;
+        }, z.core.$strip>;
+    };
+};
+```
+
+### lookupTreeEntrySchema
+
+One row of a tree lookup, in display order: depth-first, each row after its parent.
+
+```ts
+const lookupTreeEntrySchema: z.ZodObject<{
+    value: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
+    label: z.ZodString;
+    meta: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+    depth: z.ZodNumber;
+    role: z.ZodEnum<{
+        choice: "choice";
+        context: "context";
+        editing: "editing";
+    }>;
+}, z.core.$strip>;
+```
+
+### lookupTreeQuerySchema
+
+Query shape for a tree lookup: every row of a tree table that passes the narrowing, with the ancestors that place it, in tree order.
+
+```ts
+const lookupTreeQuerySchema: z.ZodObject<{
+    computed: z.ZodOptional<z.ZodString>;
+    notUnder: z.ZodOptional<z.ZodString>;
+}, z.core.$catchall<z.ZodType<QueryParamValue, unknown, z.core.$ZodTypeInternals<QueryParamValue, unknown>>>>;
+```
+
+### lookupTreeResponseSchema
+
+```ts
+const lookupTreeResponseSchema: z.ZodObject<{
+    entries: z.ZodArray<z.ZodObject<{
+        value: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
+        label: z.ZodString;
+        meta: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+        depth: z.ZodNumber;
+        role: z.ZodEnum<{
+            choice: "choice";
+            context: "context";
+            editing: "editing";
+        }>;
+    }, z.core.$strip>>;
+    computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<Json, unknown, z.core.$ZodTypeInternals<Json, unknown>>>>>;
+}, z.core.$strip>;
+```
+
+### lookupTreeRoleSchema
+
+What a row of a tree lookup is there for: - `"choice"`: it can be picked; - `"context"`: an ancestor of a choice that cannot be picked itself, drawn only to place the rows under it; - `"editing"`: the `notUnder` row, drawn where it sits, without its branch.
+
+```ts
+const lookupTreeRoleSchema: z.ZodEnum<{
+    choice: "choice";
+    context: "context";
+    editing: "editing";
+}>;
+```
+
+### lookupTreeRoute
+
+```ts
+const lookupTreeRoute: {
+    method: "GET";
+    path: "/tables/:tableName/_lookup_tree";
+    summary: "Lookup the rows of a tree table as a tree";
+    description: "Returns every row that passes the filters, with the ancestors that place it, depth-first. A tree larger than MAX_LOOKUP_TREE_ROWS is refused with tree_too_large.";
+    metadata: {
+        tags: string[];
+    };
+    pathParams: z.ZodObject<{
+        tableName: z.ZodString;
+    }, z.core.$strip>;
+    query: z.ZodObject<{
+        computed: z.ZodOptional<z.ZodString>;
+        notUnder: z.ZodOptional<z.ZodString>;
+    }, z.core.$catchall<z.ZodType<import("../query-params.js").QueryParamValue, unknown, z.core.$ZodTypeInternals<import("../query-params.js").QueryParamValue, unknown>>>>;
+    responses: {
+        200: z.ZodObject<{
+            entries: z.ZodArray<z.ZodObject<{
+                value: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
+                label: z.ZodString;
+                meta: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+                depth: z.ZodNumber;
+                role: z.ZodEnum<{
+                    choice: "choice";
+                    context: "context";
+                    editing: "editing";
+                }>;
+            }, z.core.$strip>>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
         }, z.core.$strip>;
         400: z.ZodObject<{
             error: z.ZodString;
@@ -969,6 +1127,14 @@ const MAX_LOOKUP_IDS = 500;
 
 ```ts
 const MAX_LOOKUP_LIMIT = 500;
+```
+
+### MAX_LOOKUP_TREE_ROWS
+
+The most rows a tree lookup returns.
+
+```ts
+const MAX_LOOKUP_TREE_ROWS = 5000;
 ```
 
 ### MAX_PAGE
@@ -1051,6 +1217,7 @@ const paginatedRowsSchema: z.ZodObject<{
             contextIds: z.ZodArray<z.ZodString>;
         }, z.core.$strip>>;
     }, z.core.$strip>;
+    computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<Json, unknown, z.core.$ZodTypeInternals<Json, unknown>>>>>;
 }, z.core.$strip>;
 ```
 
@@ -1133,11 +1300,22 @@ const selectOptionsSchema: z.ZodObject<{
 }, z.core.$strip>;
 ```
 
+### singleRowQuerySchema
+
+Query shape of the read that returns one row.
+
+```ts
+const singleRowQuerySchema: z.ZodObject<{
+    computed: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+```
+
 ### singleRowSchema
 
 ```ts
 const singleRowSchema: z.ZodObject<{
     data: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+    computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<Json, unknown, z.core.$ZodTypeInternals<Json, unknown>>>>>;
 }, z.core.$strip>;
 ```
 
@@ -1437,6 +1615,12 @@ const tableTreeSchema: z.ZodObject<{
         ancestors: "ancestors";
         "ancestors-and-descendants": "ancestors-and-descendants";
     }>;
+    rootOrder: z.ZodOptional<z.ZodObject<{
+        column: z.ZodString;
+        values: z.ZodArray<z.ZodString>;
+    }, z.core.$strip>>;
+    path: z.ZodOptional<z.ZodString>;
+    pathSeparator: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 ```
 
@@ -1476,9 +1660,10 @@ const uiContract: {
   updateRow: …;
   deleteRow: …;
   lookup: …;
+  lookupTree: …;
   count: …;
 }
-// 20 members; inferred types elided. Read the full type from the declaration file if needed.
+// 21 members; inferred types elided. Read the full type from the declaration file if needed.
 ```
 
 ### updateRowRoute
@@ -1499,6 +1684,7 @@ const updateRowRoute: {
     responses: {
         200: z.ZodObject<{
             data: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+            computed: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodType<import("./table-schema.js").Json, unknown, z.core.$ZodTypeInternals<import("./table-schema.js").Json, unknown>>>>>;
         }, z.core.$strip>;
         403: z.ZodObject<{
             error: z.ZodString;

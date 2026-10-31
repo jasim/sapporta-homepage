@@ -1,17 +1,17 @@
 ---
 title: "@sapporta/frontend — Functions and components"
 package: "@sapporta/frontend"
-version: "0.9.1"
+version: "0.12.0"
 specifier: "@sapporta/frontend"
 ---
 
-> Sapporta API reference for `@sapporta/frontend@0.9.1`. Index: https://sapporta.com/api-reference/llms.txt
+> Sapporta API reference for `@sapporta/frontend@0.12.0`. Index: https://sapporta.com/api-reference/llms.txt
 
 # @sapporta/frontend — Functions and components
 
-Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.9.1`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
+Import from `@sapporta/frontend`. Documented from `@sapporta/frontend@0.12.0`; confirm the installed version with `node -p "require('@sapporta/frontend/package.json').version"`.
 
-86 of 197 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
+92 of 209 symbols published from `@sapporta/frontend`. Other groups: [Types](https://sapporta.com/api-reference/frontend/index-types.md), [Values, classes, and namespaces](https://sapporta.com/api-reference/frontend/index-values.md).
 
 ### applySchemaOverrides
 
@@ -25,6 +25,9 @@ function applySchemaOverrides<RowsByLevel extends TGridRowsByLevel, LevelId exte
 function buildRecordFormFields(args: {
     table: TableSchema;
     lookups: LookupStore;
+    /** The row being edited, when the form edits one. A tree table's parent
+     *  field then leaves out the row itself and the rows below it. */
+    rowId?: LookupValue;
 }): RecordFormFieldModel[];
 ```
 
@@ -109,6 +112,10 @@ function createTableRow(tableName: string, data: Row): Promise<{
 ```ts
 function createTGridColumnMapper(args: {
     lookups: LookupStore;
+    /** The row store whose display slots draw labels, references and cells.
+     *  A table session passes its `lookups`; without it, cells draw Sapporta's
+     *  default. */
+    rowData?: RowDataStore;
 }): TGridColumnMapper;
 ```
 
@@ -262,8 +269,10 @@ function linkRel(target: LinkTarget | undefined): "noopener noreferrer" | undefi
 
 ### navigateToNewRecord
 
+Opens a table's New record form.
+
 ```ts
-function navigateToNewRecord(tableName: string): void;
+function navigateToNewRecord(tableName: string, tableSearch?: string): void;
 ```
 
 ### NewRecordPage
@@ -395,6 +404,22 @@ function SchemaTableGridView({ source, route, registerAs, onNewRecord, actions, 
 function selectedTableDeleteTargets(session: TableSelectionSession | undefined): readonly TableDeleteTarget[];
 ```
 
+### showCreatedRowState
+
+Location state that asks a table's page to show a row the table API just created, read from its primary key.
+
+```ts
+function showCreatedRowState(table: TableSchema, created: Record<string, unknown> | readonly Record<string, unknown>[]): ShowTableRowState | undefined;
+```
+
+### showTableRowState
+
+Location state that asks a table's page to show one of its rows.
+
+```ts
+function showTableRowState(table: string, rowKey: string, savedRow?: Readonly<Record<string, unknown>>): ShowTableRowState;
+```
+
 ### startTGridLookupLoading
 
 ```ts
@@ -458,6 +483,30 @@ function tableQuerySeedFromUrlState(args: {
 }): TGridRouteQuerySeed;
 ```
 
+### tableReturnState
+
+Location state for a page that returns to a table page with `search`.
+
+```ts
+function tableReturnState(search: string): TableReturnState;
+```
+
+### tableReturnUrl
+
+The table page URL to return to from a location with `state`.
+
+```ts
+function tableReturnUrl(table: string, state: unknown): string;
+```
+
+### tableRowToShow
+
+The row a location asks this table to show, if any.
+
+```ts
+function tableRowToShow(state: unknown, table: string): TableRowToShow | null;
+```
+
 ### tableViewPreferenceKey
 
 ```ts
@@ -509,6 +558,14 @@ function useKeyHints(hints: KeyHint[]): void;
 
 ```ts
 function useSchemaTableGrid({ source, route, registerAs, onNewRecord, actions, onLoadedRowsBoundary, columns, viewRelatedRows, rootRows, relatedRows, interaction, loadLookups, className, gridClassName, }: UseSchemaTableGridArgs): TableGridBinding<SchemaTableRowsByLevel>;
+```
+
+### useShowTableRowFromLocation
+
+Shows the row the current location asks for, once, through the table's live session.
+
+```ts
+function useShowTableRowFromLocation<RowsByLevel extends TGridRowsByLevel, AppServices>(table: string, session: TGridSession<RowsByLevel, AppServices> | null): void;
 ```
 
 ### useTableGrid
